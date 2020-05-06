@@ -1,12 +1,12 @@
 ---
-title: laravel+react实战打造企业级高并发分布式电商小程序（一）--权限管理
+title: laravel+react实战打造企业级高并发分布式电商小程序（二）--权限管理
 date: 2020-04-11 18:16:31
 tags: ['php','laravel', 'javascript', 'react', '高并发', '小程序']
 category: laravel+react实战打造企业级高并发分布式电商小程序
-article: laravel+react实战打造企业级高并发分布式电商小程序（一）--权限管理
+article: laravel+react实战打造企业级高并发分布式电商小程序（二）--权限管理
 ---
 
-# laravel+react实战打造企业级高并发分布式电商小程序（一）
+# laravel+react实战打造企业级高并发分布式电商小程序（二）
 
 整体使用laravel7+react打造整个电商小程序。里面会涉及到高并发的知识，mysql的分库分表，主从读写分离的配置，redis集群的使用，缓存系统的使用，队列系统的使用等。
 
