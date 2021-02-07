@@ -41,7 +41,7 @@ cd ./php-7.4.12
 执行configure,注意这里`prefix`一定要是/usr/local/php7，要不然找不到配置文件php.ini。这里有这个坑。
 
 ```
-sudo ./configure --enable-fpm --with-mysql --with-pear --with-zip --enable-sockets --enable-soap --with-pdo-mysql  --enable-gd --enable-ftp --with-ffi  --with-zlib  --with-curl --with-openssl --enable-mbstring --prefix=/usr/local/php7 --with-config-file-path=/usr/local/php7 --with-external-gd --with-webp  --with-jpeg  --with-xpm  --with-freetype
+sudo ./configure --enable-fpm --with-mysql --with-pear --with-zip --enable-sockets --enable-soap --with-pdo-mysql  --enable-gd --enable-ftp --with-ffi  --with-zlib  --with-curl --with-openssl --enable-mbstring --prefix=/usr/local/php7 --with-config-file-path=/usr/local/php7 --with-external-gd --with-webp  --with-jpeg  --with-xpm  --with-freetype  --enable-bcmath
 ```
 
 执行完上面一步如果没有错误就可以了。
