@@ -52,6 +52,21 @@ sudo ./configure --enable-fpm --with-mysql --with-pear --with-zip --enable-socke
 sudo make && sudo make install
 ```
 
+复制一些配置文件
+```
+sudo cp /usr/local/src/php7/etc/php-fpm.conf.default /usr/local/src/php7/etc/php-fpm.conf
+sudo cp /usr/local/src/php7/etc/php-fpm.d/www.conf.default /usr/local/src/php7/etc/php-fpm.d/www.conf
+```
+
+修改php-fpm的用户
+```
+sudo vim /usr/local/src/php7/etc/php-fpm.d/www.conf
+```
+
+找到 `user` 和 `group` 这两个参数，原来的值是 `nobody`改成`www-data`，然后保存退出。
+
+
+
 建立软连接或者环境变量。我们要配置全局的环境变量有两种方式。
 - 在环境变量目录里面增加软连接
 - 把php目录增加到环境变量里面
