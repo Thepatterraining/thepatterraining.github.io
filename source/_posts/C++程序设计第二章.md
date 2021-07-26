@@ -1,8 +1,8 @@
 ---
 title: C++程序设计第二章
-date: 2020-08-21 10:12:47
-tags: ['php']
-category: php
+date: 2021-07-18 10:12:47
+tags: ['C++']
+category: C++
 article: C++程序设计第二章
 ---
 
