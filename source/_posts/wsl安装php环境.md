@@ -129,7 +129,7 @@ cd ./nginx-1.19.5
 执行安装
 
 ```
-sudo ./configure --prefix=/usr/local/src/nginx
+sudo ./configure --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --prefix=/usr/local/src/nginx
 sudo make && sudo make install
 ```
 
