@@ -231,10 +231,10 @@ make install
 
 然后就可以启动了，直接启动就可以
 
-指定日志文件路径 `/usr/local/src/nginx/logs/access.log` -o 输出到某个html文件中 --real-time-html 代表实时刷新, --log-format 代表日志格式
+指定日志文件路径 `/usr/local/src/nginx/logs/access.log` -o 输出到某个html文件中 --real-time-html 代表实时刷新, --log-format 代表日志格式 ，--daemonize 代表守护进程后台执行 仅在 开启了 --real-time-html 实时刷新有效
 
 ```
-goaccess /usr/local/src/nginx/logs/access.log -o ~/wwwroot/goaccess.html --real-time-html --log-format=COMBINED
+goaccess /usr/local/src/nginx/logs/access.log -o ~/wwwroot/goaccess.html --real-time-html --log-format=COMBINED --daemonize
 ```
 
 这里要注意，如果开启了  --real-time-html 实时刷新，那么会启动一个 socket 进程监听 7890 端口，所以 7890 端口要开放才行
@@ -242,4 +242,34 @@ goaccess /usr/local/src/nginx/logs/access.log -o ~/wwwroot/goaccess.html --real-
 可以配置 nginx 文件访问这个输出的 html 文件了，就可以看到一个可视化界面了
 
 
-## 
+## ssl
+
+ssl(Secure Sosckets Layer) 
+tls(Transport Layer Security)
+
+- 1995年-ssl3.0
+- 1999 - tls1.0
+- 2006 - tls1.1
+- 2008 - tls1.2
+- 2018 - tls1.3
+
+ssl/tls 运行在 `ISO7层模型的表示层中`，而http协议运行在表示层的上层`应用层`。在http的数据传输到`表示层`以后，ssl/tls就会对数据进行加密
+
+- 握手
+- 交换秘钥
+- 告警
+- 对称加密的应用数据
+
+tls安全套件
+
+> TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+
+- tls代表tls加密
+- ECDHE 代表秘钥交换算法
+- RSA 代表身份验证算法
+- AES 代表对称加密算法
+- 128 代表强度
+- GCM 代表分组模式
+- SHA256 代表签名 hash 算法
+
+
