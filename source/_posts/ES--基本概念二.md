@@ -64,7 +64,7 @@ Data Node
 
 Coordinating Node
 - 负责接受Client 的请求，将请求分发到合适的节点，最终把结果汇集到一起。
-- 每个节点默认都气到了Coordinating Node的职责
+- 每个节点默认都起到了Coordinating Node的职责
 
 
 ### 其他的节点类型
