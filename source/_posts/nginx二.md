@@ -1,9 +1,9 @@
 ---
-title: nginx一 -- 初识nginx
-date: 2021-10-04 10:12:47
+title: nginx二 -- 初识nginx
+date: 2021-10-08 10:12:47
 tags: ['nginx']
 category: nginx
-article: nginx一 -- 初识nginx
+article: nginx二 -- 初识nginx
 ---
 
 # nginx
