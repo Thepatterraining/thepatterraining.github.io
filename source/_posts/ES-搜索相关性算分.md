@@ -68,13 +68,13 @@ PHP架构师001
 GET job_ik/_search
 {
   "query": {
-    "boosting": {
-      "positive": {
+    "boosting": {  //boosting 关键字
+      "positive": {  //positive 关键字
         "match": {
           "job_name": "php"
         }
       },
-      "negative": {
+      "negative": {  //negative 关键字
         "match": {
           "job_name": "首席"
         }
