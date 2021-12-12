@@ -31,8 +31,8 @@ sudo tar -zxvf go1.16.3.linux-amd64.tar.gz
 执行`vim ~/.zshrc`。然后添加变量信息
 
 ```
-export $GOROOT=/usr/local/src/go
-export $PATH=$PATH:$GOROOT/bin
+export GOROOT="/usr/local/src/go"
+export PATH="$PATH:$GOROOT/bin"
 ```
 
 接下来重新加载一下配置文件
@@ -51,7 +51,7 @@ source ~/.zshrc
 执行`vim ~/.zshrc`。然后添加变量信息
 
 ```
-export $GOPATH=$HOME/go
+export GOPATH="$HOME/go"
 ```
 
 
