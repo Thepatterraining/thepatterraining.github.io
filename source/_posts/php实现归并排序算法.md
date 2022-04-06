@@ -1,6 +1,6 @@
 ---
 title: php实现归并排序算法
-date: 2022-02-18 10:12:47
+date: 2022-03-07 10:12:47
 tags: ['php','算法','归并排序']
 category: php
 article: php实现归并排序算法
@@ -71,7 +71,9 @@ article: php实现归并排序算法
 ### 归并排序原理
 
 归并排序和快排刚好相反，是先将整个数组左右打散，然后在逐一合并进行排序，最终完成整个数组的排序，排序示意图如下：
-!(mpdf)[../images/mergesort01.png]
+
+![mergesort1](/images/mergesort01.png)
+
 首先将整个数组左右打散，变成单个元素，因为单个元素可以被认为是有序的。
 对应代码
 ```php
@@ -105,6 +107,7 @@ return $res;
 ```
 
 示意图如下：
-!(mpdf)[../images/mergesort02.png]
+
+![mergesort2](/images/mergesort02.png)
 
 

@@ -21,9 +21,9 @@ article: php-mpdf扩展包中文乱码问题
 
 看一下mpdf文档上面的描述。
 
-!(mpdf)[../images/mpdf1.png]
+![mpdf](/images/mpdf1.png)
 
-!(mpdf)[../images/mpdf2.png]
+![mpdf](/images/mpdf2.png)
 
 可以看到默认值是false，所以我们使用的时候需要改成true。
 
@@ -62,7 +62,7 @@ function test() {
 
 我给他们的github上面提了一个issue，他们才把文档改过来了。
 
-!(mpdf)[../images/mpdf3.png]
+![mpdf](/images/mpdf3.png)
 
 最后附上mpdf官方文档：
 
