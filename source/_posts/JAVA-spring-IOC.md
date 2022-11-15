@@ -374,6 +374,70 @@ public class main{
 }
 ```
 
+#### 自动注入
+
+可以通过配置XML文件来使用自动注入，就不需要手动增加`<property name="url" ref="avatar"></property>`或`<constructor-arg name="avatar" ref="avatar"></constructor-arg>`的标签了，只需要配置一个属性`autowire`就可以了。但是这种的只适用于注入其他的`bean`。
+
+`autowire`只有两个值，一个是`byName`，是通过bean的名称进行注入，比如你的属性名是`avatar`，就会查找`id=avatar`这个类。还有一个是`byType`，是通过bean的类型进行注入，比如类型是`Avatar`，那么就会查找`class=Avatar`的bean进行注入。
+
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="avatar" class="com.test.java.Avatar">
+         <property name="url" value="http://baidu.com"></property>
+    </bean>
+
+    <bean id="person" class="com.test.java.Person" autowire="byName">
+       <property name="name" value="tony"></property>
+       <!-- <property name="avatar" ref="avatar"></property> -->
+    </bean>
+
+</beans>
+```
+
+#### XML读取外部配置文件
+
+通过XML可以读取外部的配置文件，这样的话像数据库，redis连接这些就可以把`host`,`name`,`password`这些写到外部的配置文件中。
+
+配置文件使用`.properties`后缀。比如`spring.properties`。
+
+增加一个配置文件`spring.properties`。
+
+```properties
+spring.person.name=tony
+```
+
+修改XML直接从配置中读取`person.name`来注入。读取的时候还需要在XML中增加`context`命名空间。并通过context命名空间来读取配置文件
+
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 增加context命名空间 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/beans/spring-context.xsd">
+
+    <!-- 读取配置文件 -->
+    <context:property-placeholder location="classpath:spring.properties">
+
+    <bean id="avatar" class="com.test.java.Avatar">
+         <property name="url" value="http://baidu.com"></property>
+    </bean>
+
+    <bean id="person" class="com.test.java.Person" autowire="byName">
+        <!-- 读取配置文件的值 -->
+       <property name="name" value="${spring.person.name}"></property>
+       <!-- <property name="avatar" ref="avatar"></property> -->
+    </bean>
+
+</beans>
+```
+
+
 ### 注解方式
 
 注解方式要比`XML`方式简单的多，其中原理就是不再手动配置，而是通过注解告诉`Spring`我是一个`bean`。快来注册我吧。
