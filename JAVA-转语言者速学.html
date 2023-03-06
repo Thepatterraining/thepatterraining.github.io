@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="转语言者速学java注解 @Autowired  Spring提供的，基于类型注入的，可以放在setter方法上，变量上，构造函数上 @Inject     同@Autowired @Qualifier  Spring提供的，基于名称注入的，一般和@Autowired配合使用来通过value参数指定名称 @Name       同@Qualifier，给@Inject配合使用 @Primary @">
+<meta property="og:type" content="article">
+<meta property="og:title" content="转语言者速学java">
+<meta property="og:url" content="https://thepatterraining.github.io/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="转语言者速学java注解 @Autowired  Spring提供的，基于类型注入的，可以放在setter方法上，变量上，构造函数上 @Inject     同@Autowired @Qualifier  Spring提供的，基于名称注入的，一般和@Autowired配合使用来通过value参数指定名称 @Name       同@Qualifier，给@Inject配合使用 @Primary @">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-02T02:12:47.000Z">
+<meta property="article:modified_time" content="2023-03-06T02:10:23.732Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="php">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>转语言者速学java | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          转语言者速学java
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-02 10:12:47" itemprop="dateCreated datePublished" datetime="2023-03-02T10:12:47+08:00">2023-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-06 10:10:23" itemprop="dateModified" datetime="2023-03-06T10:10:23+08:00">2023-03-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html" class="post-meta-item leancloud_visitors" data-flag-title="转语言者速学java" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/JAVA-%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="转语言者速学java"><a href="#转语言者速学java" class="headerlink" title="转语言者速学java"></a>转语言者速学java</h1><h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><ul>
+<li>@Autowired  Spring提供的，基于类型注入的，可以放在setter方法上，变量上，构造函数上</li>
+<li>@Inject     同@Autowired</li>
+<li>@Qualifier  Spring提供的，基于名称注入的，一般和@Autowired配合使用来通过value参数指定名称</li>
+<li>@Name       同@Qualifier，给@Inject配合使用</li>
+<li>@Primary</li>
+<li>@Resource   Java提供的，可以基于类型或名称注入的,可以通过name参数来指定名称，可以放在setter方法上</li>
+<li>@RequiredArgsConstructor  lombok提供的，基于类型注入，通过增加一个构造函数来注入。</li>
+<li>@Value      Spring提供的，注入基本类型的注解，一般用来从配置文件取值。</li>
+<li>@Component 单纯的说我是一个<code>bean</code></li>
+<li>@Service 和上面的一样，不过一般用在service类中，更加语义化</li>
+<li>@Controller 和上面的一样，一般用在controller类中</li>
+<li>@Repository 我也是一个<code>bean</code>，一般用在dao数据访问层</li>
+<li>@Bean 我也是一个bean，导入第三方包里面的注解</li>
+<li>@Import 导入组件</li>
+<li>@ImportSelector 返回需要导入的组件的全类名数组</li>
+<li>@ImportBeanDefinitionRegistrar 手动注册Bean到容器</li>
+<li>@JsonIgnore  json的时候忽略属性</li>
+<li>@Bean(initMethod&#x3D;”init”,destoryMethod&#x3D;”destory”) 设置初始化和销毁方法</li>
+<li>@PostConstruct：初始化方法</li>
+<li>@PreDestory：销毁方法</li>
+<li>BeanPostProcessor：bean的后置处理器，在bean初始化前后进行一些处理工作</li>
+<li>@Configuration 声明为配置类</li>
+<li>@ComponentScan 扫描Component</li>
+<li>@Aspect 声明一个切面</li>
+<li>@After 在方法执行之后执行（方法上）</li>
+<li>@Before 在方法执行之前执行（方法上）</li>
+<li>@Around 在方法执行之前与之后执行（方法上）</li>
+<li>@PointCut 声明切点</li>
+<li>@EnableAspectJAutoProxy 启Spring对AspectJ代理的支持</li>
+<li>@Scope设置类型包括：</li>
+</ul>
+<p>设置Spring容器如何新建Bean实例（方法上，得有@Bean）</p>
+<p>① Singleton</p>
+<p>（单例,一个Spring容器中只有一个bean实例，默认模式）,</p>
+<p>② Protetype</p>
+<p>（每次调用新建一个bean）,</p>
+<p>③ Request</p>
+<p>（web项目中，给每个http request新建一个bean）,</p>
+<p>④ Session</p>
+<p>（web项目中，给每个http session新建一个bean）,</p>
+<p>⑤ GlobalSession</p>
+<p>（给每一个 global http session新建一个Bean实例）</p>
+<ul>
+<li>@Profile 指定组件在哪个环境的情况下才能被注册到容器中，不指定，任何环境下都能注册这个组件。</li>
+<li>@Conditional 通过实现Condition接口，并重写matches方法，从而决定该bean是否被实例化。</li>
+<li>@EnableAsync 配置类中通过此注解开启对异步任务的支持</li>
+<li>@Async  在实际执行的bean方法使用该注解来声明其是一个异步任务</li>
+<li>@EnableScheduling  在配置类上使用，开启计划任务的支持</li>
+<li>@Scheduled  来申明这是一个任务，包括cron,fixDelay,fixRate等类型</li>
+<li>@EnableConfigurationProperties：开启对@ConfigurationProperties注解配置Bean的支持；</li>
+<li>@EnableJpaRepositories：开启对SpringData JPA Repository的支持；</li>
+<li>@EnableTransactionManagement：开启注解式事务的支持；</li>
+<li>@EnableCaching：开启注解式的缓存支持；</li>
+<li>@EnableAspectAutoProxy：开启对AspectJ自动代理的支持；</li>
+<li>@EnableWebMvc   在配置类中开启Web MVC的配置支持。</li>
+<li>@RequestMapping   用于映射web请求，包括访问路径和参数。</li>
+<li>@ResponseBody    支持将返回值放到response内，而不是一个页面，通常用户返回json数据。</li>
+<li>@RequestBody           允许request的参数在request体中，而不是在直接连接的地址后面。</li>
+<li>@PathVariable         用于接收路径参数，比如@RequestMapping(“&#x2F;hello&#x2F;{name}”)声明的路径，将注解放在参数前，即可获取该值，通常作为Restful的接口实现方法。</li>
+<li>@RestController       该注解为一个组合注解，相当于@Controller和@ResponseBody的组合，注解在类上，意味着，该Controller的所有方法都默认加上了@ResponseBody。</li>
+<li>@ControllerAdvice     全局异常处理 全局数据绑定 全局数据预处理</li>
+<li>@ExceptionHandler     用于全局处理控制器里的异常。</li>
+<li>@InitBinder           用来设置WebDataBinder，WebDataBinder用来自动绑定前台请求参数到Model中。</li>
+<li>@ModelAttribute       </li>
+<li>@Transactional <ul>
+<li>name 当在配置文件中有多个 TransactionManager , 可以用该属性指定选择哪个事务管理器。</li>
+<li>propagation 事务的传播行为，默认值为 REQUIRED。<ul>
+<li>REQUIRED  如果当前存在事务，则加入该事务，如果当前不存在事务，则创建一个新的事务。( 也就是说如果A方法和B方法都添加了注解，在默认传播模式下，A方法内部调用B方法，会把两个方法的事务合并为一个事务 ）</li>
+<li>SUPPORTS  如果当前存在事务，则加入该事务；如果当前不存在事务，则以非事务的方式继续运行。</li>
+<li>MANDATORY 如果当前存在事务，则加入该事务；如果当前不存在事务，则抛出异常。</li>
+<li>REQUIRES_NEW  重新创建一个新的事务，如果当前存在事务，暂停当前的事务。</li>
+<li>NOT_SUPPORTED 以非事务的方式运行，如果当前存在事务，暂停当前的事务。</li>
+<li>NEVER         以非事务的方式运行，如果当前存在事务，则抛出异常。</li>
+<li>NESTED        和 REQUIRED 效果一样。</li>
+</ul>
+</li>
+<li>isolation 事务的隔离度，默认值采用 DEFAULT</li>
+<li>timeout   事务的超时时间，默认值为-1。如果超过该时间限制但事务还没有完成，则自动回滚事务。</li>
+<li>read-only 指定事务是否为只读事务，默认值为 false；为了忽略那些不需要事务的方法，比如读取数据，可以设置 read-only 为 true。</li>
+<li>rollback-for  用于指定能够触发事务回滚的异常类型，如果有多个异常类型需要指定，各类型之间可以通过逗号分隔。</li>
+<li>no-rollback- for  抛出 no-rollback-for 指定的异常类型，不回滚事务。</li>
+</ul>
+</li>
+<li>@Schema   表示此类对应的数据库表对应的schema。</li>
+<li>@JsonFormat   可以方便的把Date类型直接转化为我们想要的模式</li>
+<li>@Transient    如果一个属性并非数据库表的字段映射，就务必将其标示为@Transient</li>
+<li>@JsonProperty 可以指定某个属性和json映射的名称</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/php/" rel="tag"># php</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/JAVA-stream%E4%B8%AD%E9%97%B4%E6%80%81%E5%8E%9F%E7%90%86.html" rel="prev" title="JAVA-stream中间态原理">
+      <i class="fa fa-chevron-left"></i> JAVA-stream中间态原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/JAVA-optional%E5%B9%B6%E9%9D%9E%E9%93%B6%E5%BC%B9.html" rel="next" title="JAVA-optional并非银弹">
+      JAVA-optional并非银弹 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AC%E8%AF%AD%E8%A8%80%E8%80%85%E9%80%9F%E5%AD%A6java"><span class="nav-number">1.</span> <span class="nav-text">转语言者速学java</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.0.1.</span> <span class="nav-text">注解</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">153</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
