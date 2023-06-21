@@ -1,8 +1,8 @@
 ---
 title: 深入理解计算机系统一--Amdahl定律
 date: 2020-08-21 10:12:47
-tags: ['计算机']
-category: 计算机
+tags: ['csapp']
+category: csapp
 article: 深入理解计算机系统一--Amdahl定律
 ---
 
