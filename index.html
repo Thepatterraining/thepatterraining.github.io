@@ -859,6 +859,504 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" class="post-title-link" itemprop="url">深入理解计算机系统DataLab</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-21 10:12:47" itemprop="dateCreated datePublished" datetime="2023-06-21T10:12:47+08:00">2023-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-06 14:49:43" itemprop="dateModified" datetime="2023-07-06T14:49:43+08:00">2023-07-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统DataLab" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Data-Lab"><a href="#Data-Lab" class="headerlink" title="Data Lab"></a>Data Lab</h1><p>data lab 数据实验</p>
+<p>这个数据实验请在linux机器上面运行，实测mac m1本跑不起来。windows没试过。</p>
+<p>centos上需要安装好gcc运行环境。</p>
+<p>如果跑不起来记得安装下面这个东西：</p>
+<blockquote>
+<p>yum -y install glibc-devel.i686</p>
+</blockquote>
+<p>运行<code>make btest</code>的时候可能会有<code>warning</code>提示，不用管，这个时候其实已经创建完<code>btest</code>了，可以直接运行<code>btest</code>。</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-1.png" alt="lab准备"></p>
+<h3 id="bitXor"><a href="#bitXor" class="headerlink" title="bitXor"></a>bitXor</h3><p>第一个函数是实现<code>位</code>的<code>异或</code>。</p>
+<p>看一下异或的要求，相同为0，不同为1，这个函数里面只能使用<code>按位与&amp;</code>和<code>按位取反~</code>。</p>
+<p>最大操作符号数：14</p>
+<table>
+<thead>
+<tr>
+<th align="left">x</th>
+<th align="left">y</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+</tr>
+</tbody></table>
+<p>假设我们有4 &#x3D; 100, 5 &#x3D; 101，异或的结果为1 &#x3D; 001.</p>
+<p>先看按位与的结果。100 &amp; 101 &#x3D; 100 这个时候能得到 0 0 0这个正确的组合</p>
+<table>
+<thead>
+<tr>
+<th align="left">x</th>
+<th align="left">y</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>100再取反就是011，就可以得到 1 1 0 这个正确的组合。</p>
+<table>
+<thead>
+<tr>
+<th align="left">x</th>
+<th align="left">y</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+</tr>
+</tbody></table>
+<p>先看按位或的结果。100 | 101 &#x3D; 101 这个时候能得到 0 1 1 和 1 0 1这个正确的组合</p>
+<table>
+<thead>
+<tr>
+<th align="left">x</th>
+<th align="left">y</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>可以看到 ~(x &amp; y) &amp; (x | y) 就可以得出结果了，但是我们不能用 | ，所以我们需要通过 &amp;，～来实现 |。</p>
+<p>可以通过 <del>(</del>x &amp; ~y) 来实现 ｜ ,4 &#x3D; 100 取反 &#x3D; 011， 5 &#x3D; 101 取反 &#x3D; 010, 011 &amp; 010 &#x3D; 010,取反 &#x3D; 101. 100 | 101 &#x3D; 101。</p>
+<p>所以 异或就是 <del>(x &amp; y) &amp; (</del>(~x &amp; ~y))</p>
+<p>代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">bitXor</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ~(x &amp; y) &amp; ~(~x &amp; ~y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-2.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-3.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-4.png" alt="lab1 dlc"></p>
+<h3 id="Tmin"><a href="#Tmin" class="headerlink" title="Tmin"></a>Tmin</h3><p>Tmin是<code>1000 0000</code>，也就是最小的有符号数，那当然是符号位是1，剩下全0了。</p>
+<p>可以使用操作符：! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</p>
+<p>最大操作符号数量：4</p>
+<p>分数：1</p>
+<p>返回 1000 0000就可以了。正常的int Tmin就是1后面31个0，也就是1左移动31位</p>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">tmin</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-5.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-6.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-7.png" alt="lab1 dlc"></p>
+<h3 id="isTmax"><a href="#isTmax" class="headerlink" title="isTmax"></a>isTmax</h3><p>Tmax是<code>0111</code></p>
+<p>可以使用操作符: ! ~ &amp; ^ | +<br>最大操作符号数量: 10</p>
+<p>4位的话，Tmax就是7，看一下7的一些操作结果,可以发现，7+1 &#x3D; ~7</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7 = 0111</span><br><span class="line">7 + 1 = 1000 = -8</span><br><span class="line">~7 = 1000 = -8</span><br><span class="line">1000 ^ 0000 = 1000 !1000 = 0000</span><br></pre></td></tr></table></figure>
+
+<p>但是 -1 + 1 也等于 ~-1,所以我们需要排除-1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-1 = 1111</span><br><span class="line">-1 + 1 = 0000</span><br><span class="line">~-1 = 0000</span><br><span class="line">0000 ^ 0000 = 0000 !0000 = 0001</span><br></pre></td></tr></table></figure>
+
+<p>可以看到4的话，4 + 1 不等于~4</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">4 = 100</span><br><span class="line">4 + 1 = 0101</span><br><span class="line">~4 = 1011</span><br><span class="line">101 ^ 000 = 101 !101 = 000</span><br></pre></td></tr></table></figure>
+
+<p>怎么排除-1呢，观察发现-1+1 &#x3D; 0，而0^0 &#x3D; 0,但是tmax ^ 0 不等于0</p>
+<p>所以tmax需要满足两个条件</p>
+<ol>
+<li>x + 1 &#x3D;&#x3D; ~x</li>
+<li>x + 1 !&#x3D; 0</li>
+</ol>
+<p>可以用<code>^</code>操作来实现<code>==</code>。如果相等，那么x+1 ^ ~x 就会等于0，!0 &#x3D;&#x3D; 1，所以第一个条件就是</p>
+<blockquote>
+<p>!((x+1) ^ ~x)</p>
+</blockquote>
+<p>第二个条件同样通过<code>^</code>来实现。</p>
+<blockquote>
+<p>!!((x+1) ^ 0)</p>
+</blockquote>
+<p>只要这两个都满足就是Tmax了，都满足可以通过<code>&amp;</code>来实现，如果都是1，那么<code>&amp;</code>以后就是1，有一个不满足<code>&amp;</code>以后就是0.</p>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isTmax</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="type">int</span> xPlus = x + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> !(xPlus ^ ~x) &amp; !!(xPlus ^ <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-8.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-9.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-10.png" alt="lab1 dlc"></p>
+<h3 id="allOddBits"><a href="#allOddBits" class="headerlink" title="allOddBits"></a>allOddBits</h3><p>如果所有的奇数位都是1就返回1，否则返回0</p>
+<p>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 12<br>分数: 2</p>
+<p>比如 <code>1010 1010</code>就是奇数位上全1.</p>
+<p>所以只要和 <code>1010 1010</code> 做 <code>&amp;</code> 操作，只要做完以后还是 <code>1010 1010</code>的话，那么就返回1，不然就是0.</p>
+<p>因为假设 x 奇数位上有一个是0，比如 <code>1010 1000</code>，那么结果就会是 <code>1010 1000</code>，所以只有奇数位上全1，<code>&amp;</code>以后一定是<code>1010 1010</code>。</p>
+<p>所以需要满足条件</p>
+<ol>
+<li>x &amp; 1010 1010 &#x3D;&#x3D; 1010 1010</li>
+</ol>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">allOddBits</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="type">int</span> odd = <span class="number">0xAA</span>; <span class="comment">//1010 1010</span></span><br><span class="line">  <span class="type">int</span> halfOdd = (odd &lt;&lt; <span class="number">8</span>) + odd; <span class="comment">// 1010 1010 0000 0000 + 1010 1010 = 1010 1010 1010 1010</span></span><br><span class="line">  <span class="type">int</span> allOdd = (halfOdd &lt;&lt; <span class="number">16</span>) + halfOdd;</span><br><span class="line">  <span class="keyword">return</span> !((allOdd &amp; x)  ^ allOdd );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-11.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-12.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-13.png" alt="lab1 dlc"></p>
+<h3 id="negate"><a href="#negate" class="headerlink" title="negate"></a>negate</h3><p>返回-x<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 5<br>分数: 2</p>
+<p>这里要分成三部</p>
+<ul>
+<li>正数，比如 7 &#x3D; 0111</li>
+<li>0， 0 &#x3D; 0000</li>
+<li>负数，-1 &#x3D; 1111</li>
+</ul>
+<p>如果使用按位取反</p>
+<ul>
+<li>7 &#x3D; 0111，～7 &#x3D; 1000 &#x3D; -8</li>
+<li>0 &#x3D; 0000， ～0 &#x3D; 1111 &#x3D; -1</li>
+<li>-1 &#x3D; 1111， ～-1 &#x3D; 0000 &#x3D; 0</li>
+<li>-8 &#x3D; 1000， ～-8 &#x3D; 0111 &#x3D; 7</li>
+</ul>
+<p>取反以后的值 + 1就是对应的负数了，-8 + 1 &#x3D; -7, -1 + 1 &#x3D; 0, 0 + 1 &#x3D; 1, 7 + 1 &#x3D; 8</p>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">negate</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ~x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-14.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-15.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-16.png" alt="lab1 dlc"></p>
+<h3 id="isAsciiDigit"><a href="#isAsciiDigit" class="headerlink" title="isAsciiDigit"></a>isAsciiDigit</h3><p>如果 0x30 &lt;&#x3D; x &lt;&#x3D; 0x39，返回1，否则0<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 15<br>分数: 3</p>
+<p>0x30 &#x3D; 0011 0000, 0x39 &#x3D; 0011 1001。<br>根据题目，也就是判断 0011 0000 &lt;&#x3D; x &lt;&#x3D; 0011 1001</p>
+<p>首先高位要等于 0011，如果不等于0011，那么肯定不在这个范围。可以通过 &gt;&gt; 4位然后 ^ 0011，如果结果为0，那么高位就是满足的。</p>
+<p>低位在0000 到 1001之间,当首位是0的时候，后面是啥都行，首位是1，那么后面两位必须是00，也就是前三位是100.</p>
+<p>判断首位是0可以通过 &amp; 0x8 然后 ^ 0来判断，如果结果是0首位就是0，不然首位是1</p>
+<p>判断低4位的前3位，先 &amp; 0xE来获取前3位，然后 ^ 0x8来判断是不是 100</p>
+<p>所以需要满足条件1并且满足条件2或者3</p>
+<ol>
+<li>x &gt;&gt; 4 ^ 0011 &#x3D;&#x3D; 0</li>
+<li>(x &amp; 0x8) ^ 0 &#x3D;&#x3D; 0 </li>
+<li>(x &amp; 0xE) ^ 0x8 &#x3D;&#x3D; 0</li>
+</ol>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isAsciiDigit</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="type">int</span> xh = x &gt;&gt; <span class="number">4</span>;</span><br><span class="line">    <span class="type">int</span> a3 = <span class="number">0x3</span>;</span><br><span class="line">    <span class="type">int</span> xlh = x &amp; <span class="number">0x8</span>;</span><br><span class="line">    <span class="type">int</span> xorxlh = xlh^<span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> xorxl = (x &amp; <span class="number">0xE</span>) ^ <span class="number">0x8</span>;</span><br><span class="line">    <span class="keyword">return</span> (!(xh ^ a3 ^ <span class="number">0</span>)) &amp; (!xorxlh | !xorxl);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-17.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-18.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-19.png" alt="lab1 dlc"></p>
+<h3 id="conditional"><a href="#conditional" class="headerlink" title="conditional"></a>conditional</h3><p>实现三元运算 x ? y : z<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 16<br>分数: 3</p>
+<p>x 为真代表 x &amp; 1 &#x3D;&#x3D; 1,x 为假代表 x &amp; 1 &#x3D;&#x3D; 0。<br>需要满足条件</p>
+<ol>
+<li>x &amp; 1 &#x3D;&#x3D; 1时，返回y,所以z需要置为0并且和y一起返回。<code>!(x &amp; 1) &amp; z</code>就可以把z置为0，所以应该返回 <code>(!(x &amp; 1) &amp; z) | y</code></li>
+<li>x &amp; 1 &#x3D;&#x3D; 0时，返回z,所以y需要置为0并且和z一起返回。<code>x &amp; 1 &amp; y</code>就可以把y置为0。所以应该返回 <code>(x &amp; 1 &amp; y) | z</code></li>
+</ol>
+<p>把上面的2个条件合并起来。</p>
+<blockquote>
+<p>(!(x &amp; 1) &amp; z) ｜ (x &amp; 1 &amp; y)</p>
+</blockquote>
+<p>但是发现这样并不行，所以重新思考，发现 x &amp; 1 &#x3D;&#x3D; 1时候是没错，但是我们应该让 x &#x3D; 0xFF才行。</p>
+<p>所以改进一下子</p>
+<ul>
+<li>先对x取反。!x &#x3D; 1,说明x &#x3D; 0,这个时候应该返回 z,所以需要<code>(0 &amp; y) | z</code></li>
+<li>!x &#x3D; 0,说明x &#x3D; 1，应该返回y,所以需要 <code>(0 &amp; z) | y</code></li>
+</ul>
+<p>这里把 !x 在按位取反 + 1就可以得到当 x &#x3D; 0时候，condition &#x3D; 1111 1111。这个时候返回z。</p>
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">conditional</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> z)</span> &#123;</span><br><span class="line">  <span class="type">int</span> xn = !x;</span><br><span class="line">  <span class="type">int</span> condition = ~xn + <span class="number">1</span>; <span class="comment">//x = 0,condition = 1111 1111, x = 1, condition = 0000 0000</span></span><br><span class="line">  <span class="keyword">return</span> (condition &amp; z) | (~condition &amp; y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-20.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-21.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-22.png" alt="lab1 dlc"></p>
+<h3 id="isLessOrEqual"><a href="#isLessOrEqual" class="headerlink" title="isLessOrEqual"></a>isLessOrEqual</h3><p>如果x &lt;&#x3D; y，返回1，否则0<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 24<br>分数: 3</p>
+<p>等于可以通过<code>异或</code>来做。</p>
+<blockquote>
+<p>!(x ^ y) </p>
+</blockquote>
+<p>在看小于，如果一个正数和一个负数，那么负数一定小于正数，负数的符号位1，正数的符号位0.</p>
+<p>取出符号位，通过右移动31位来获取符号位，但是负数会补1，所以在和1与一下，就可以得到符号位了。</p>
+<blockquote>
+<p>(x &gt;&gt; 31) &amp; 1</p>
+</blockquote>
+<p>可以<code>|</code>一下，如果是 <code>1 | 0</code>就返回1了。</p>
+<blockquote>
+<p>((x &gt;&gt; 31) &amp; 1 ) | ((y &gt;&gt; 31) &amp; 1)</p>
+</blockquote>
+<p>如果两个都是正数或者负数，那么符号位相同。</p>
+<ul>
+<li>对较小的数进行按位取反，在加上大的数的话，会产生溢出。也就是 x &lt; y, ~x + y 会溢出，所以首位是0</li>
+<li>如果两个数相等或者较大的数取反了在加上小的数，不会溢出。x &gt;&#x3D; y, ~x + y 不会溢出，所以首位是1</li>
+<li>所以对于等于的情况还需要处理，如果两个数相等，那么 ~x + y &#x3D; -1，也就是所有位都是1，让这个值+1就是0了，就和小于保持一致了</li>
+</ul>
+<p>如果两个数的符号位不同，那么x是1,y是0的话，就返回1，否则0</p>
+<ul>
+<li>对x的符号位取反，如果x符号位是1，那么取反0,y的符号位是0，那么就返回1</li>
+<li>如果x符号位是0，取反1，y是1，那么返回0</li>
+</ul>
+<p>代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isLessOrEqual</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line">  <span class="comment">// 取首位</span></span><br><span class="line">  <span class="type">int</span> signalX = (x &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> signalY = (y &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="comment">// !(signalX ^ signalY)是符号位相同的情况</span></span><br><span class="line">  <span class="comment">// !(((~x + y + 1) &gt;&gt; 31) &amp; 1) 是符号位相同时候小于等于的情况</span></span><br><span class="line">  <span class="type">int</span> lessEq = !(signalX ^ signalY) &amp; !(((~x + y + <span class="number">1</span>) &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>);</span><br><span class="line">  <span class="comment">// 如果符号位不同的情况</span></span><br><span class="line">  <span class="type">int</span> neq = (!signalY) &amp; signalX;</span><br><span class="line">  <span class="comment">// 两个情况做|，满足任一个情况则返回1</span></span><br><span class="line">  <span class="keyword">return</span> (lessEq | neq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-23.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-24.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-25.png" alt="lab1 dlc"></p>
+<h3 id="logicalNeg"><a href="#logicalNeg" class="headerlink" title="logicalNeg"></a>logicalNeg</h3><p>对x取反，实现!操作<br>可以使用的操作符: ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 12<br>分数: 4</p>
+<p>两种情况</p>
+<ul>
+<li>0，(~0 + 1) | 0 的首位是0</li>
+<li>其他数， (~x + 1) | x的首位是1</li>
+</ul>
+<p>0要返回1，1要返回0，可以异或1</p>
+<p>代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">logicalNeg</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ((((~x + <span class="number">1</span>) | x) &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>) ^ <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-26.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-27.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-28.png" alt="lab1 dlc"></p>
+<h3 id="howManyBits"><a href="#howManyBits" class="headerlink" title="howManyBits"></a>howManyBits</h3><p>输出最少需要的位数来表示int x<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 90<br>分数: 4</p>
+<p>例子：</p>
+<ul>
+<li>howManyBits(12) &#x3D; 5 &#x3D; 10010</li>
+<li>howManyBits(298) &#x3D; 10 &#x3D; 10 1001 1000</li>
+<li>howManyBits(-5) &#x3D; 4 &#x3D; 1011</li>
+<li>howManyBits(0)  &#x3D; 1 &#x3D; 0</li>
+<li>howManyBits(-1) &#x3D; 1 &#x3D; 1</li>
+<li>howManyBits(0x80000000) &#x3D; 32 &#x3D; 1000….</li>
+</ul>
+<p>三种情况</p>
+<ul>
+<li>正数的首位都是1，遇到1的话，找到1是哪位就可以了</li>
+<li>负数的首位是符号位都是1，所以需要找到第二个1，如果把负数的符号位变成0，就可以按照正数处理了</li>
+<li>0，直接返回0，也可以使用正数的方法找1，找不到自然返回0了</li>
+</ul>
+<p>有没有1，可以通过!!来判断，如果是!!0，就是0，如果是其他数!!x就是1了。</p>
+<p>这道题的代码是从网上抄的。</p>
+<p>代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">howManyBits</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="type">int</span> signal = x &gt;&gt; <span class="number">31</span>;</span><br><span class="line">  <span class="type">int</span> b1,b2,b3,b4,b5,h16,h8,h4,h2,h1;</span><br><span class="line">  x =  (signal &amp; ~x) | (~signal &amp; x);</span><br><span class="line">  <span class="comment">// 查看高16位是否有1</span></span><br><span class="line">  h16 = !!(x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">  <span class="comment">// 如果高16位有1，那么肯定需要16位来表示，记住这16位</span></span><br><span class="line">  <span class="comment">// 因为高 16bit 有1，那么h16就是1，所以1 &lt;&lt; 4 就是16，代表最低需要16位表示</span></span><br><span class="line">  <span class="comment">// 如果高 16bit 没有1，那么h16就是0，所以 0&lt;&lt; 4就是0，代表最低需要0位表示</span></span><br><span class="line">  b1 = h16 &lt;&lt; <span class="number">4</span>;</span><br><span class="line">  <span class="comment">// 如果高位有1，那么x &gt;&gt; 16位，这样的原来的高位变成了低位</span></span><br><span class="line">  <span class="comment">// 如果高位没有1，那么x &gt;&gt; 0位，这样低16位还是低16位</span></span><br><span class="line">  x = x &gt;&gt; b1;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 这里分为两种情况，如果高16位有1，需要继续看高8位是否有1，如果高16位没有1，需要看低16位的高8位是否有1</span></span><br><span class="line">  <span class="comment">// 因为上面对于高16位有1的时候，将高16位变成了低16位，所以都只需要看低16位的高8位就可以了</span></span><br><span class="line">   h8 = !!(x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">  <span class="comment">// 和上面同理，如果现在16位的高8位有1，那么b2代表 1 &lt;&lt; 3就是8，如果没有，那么就是0</span></span><br><span class="line">   b2 = h8 &lt;&lt; <span class="number">3</span></span><br><span class="line">  <span class="comment">// 同样处理，如果有，那么高8位变低8位</span></span><br><span class="line">  x = x &gt;&gt; b2;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//处理8位的高4位</span></span><br><span class="line">   h4 = !!(x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">   b3 = h4 &lt;&lt; <span class="number">2</span>;</span><br><span class="line">  x = x &gt;&gt; b3;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 处理4位的高2位</span></span><br><span class="line">   h2 = !!(x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">   b4 = h2 &lt;&lt; <span class="number">1</span>;</span><br><span class="line">  x = x &gt;&gt; b4;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 处理最后2位是否有1</span></span><br><span class="line">   h1 = !!(x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">   b5 = h1;</span><br><span class="line">  x = x &gt;&gt; b5;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 所有结果相加 最后+1，因为高16位有1，那么需要17位表示</span></span><br><span class="line">  <span class="keyword">return</span> b1 + b2 + b3 + b4 + b5 + x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-29.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-30.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-31.png" alt="lab1 dlc"></p>
+<h3 id="float-twice"><a href="#float-twice" class="headerlink" title="float_twice"></a>float_twice</h3><p>传入一个无符号数uf,返回uf * 2的小数的bit表示<br>可以使用的操作符: 任何整数的操作，包||,&amp;&amp;,if,while<br>最大数量: 30<br>分数: 4</p>
+<p>在复习一下，IEEE浮点标准用<code>V = (-1)的s次方 * M * 2的E次方</code>来表示。<br>单精度尾数是23位，exp是8位，符号位1位</p>
+<p>取符号位<br>int s &#x3D; (uf &gt;&gt; 31) &amp; 1;</p>
+<p>取exp<br>int exp &#x3D; (uf &lt;&lt; 1) &gt;&gt; 24</p>
+<p>当阶码exp不等于全0或不等于全1的时候，就表示规格化的浮点数。<br>E的计算方式</p>
+<ul>
+<li>E &#x3D; 阶码 - Bias</li>
+<li>Bias &#x3D; 单精度是127</li>
+<li>单精度下，假设阶码为 0000 0001, 那么E &#x3D; 1 - 127 &#x3D; -126<br>E &#x3D; exp - Bias</li>
+</ul>
+<p>M的计算方式</p>
+<ul>
+<li>M &#x3D; 1.XXXXXX</li>
+<li>尾数就是 XXXXXX</li>
+<li>假设 尾数为 0000 0000 0000 0000 0000 001，那么M &#x3D; 1.00000000000000000000001</li>
+</ul>
+<p>-1^s * 1.尾数 * 2^E</p>
+<p>当阶码等于全0的时候，就表示非规格化的浮点数。<br>exp ^ 0是0就代表全0，非规格化<br>E的计算方式，他跟阶码没关系了，因为阶码永远是0</p>
+<ul>
+<li>E &#x3D; 1 - Bias</li>
+<li>Bias &#x3D; 单精度是127</li>
+<li>阶码永远为 0000 0000, E &#x3D; 1 - 127 &#x3D; -126<br>E &#x3D; 1 - 127</li>
+</ul>
+<p>M的计算方式</p>
+<ul>
+<li>M &#x3D; 0.XXXXXX</li>
+<li>尾数就是 XXXXXX</li>
+<li>假设 尾数为 0000 0000 0000 0000 0000 001，那么M &#x3D; 0.00000000000000000000001</li>
+</ul>
+<p>-1^s * 0.尾数 * 2^E</p>
+<p>当阶码等于全1的时候，就表示特殊的浮点数。<br>~exp ^ 0是0就代表全1，特殊浮点数 当尾数不为全0的时候，就是NaN，返回参数。</p>
+<p>小数乘法</p>
+<ul>
+<li>符号位s1 ^ s2</li>
+<li>M &#x3D; M1 * M2</li>
+<li>E &#x3D; E1 + E2</li>
+</ul>
+<p>对于规格化的数，<em>2，自然是e+1，因为2的E次方，E+1，那就等于多乘了个2<br>对于非规格化的数，E是固定的-126，没法改变，所以尾数</em>2</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="title function_">float_twice</span><span class="params">(<span class="type">unsigned</span> uf)</span> &#123;</span><br><span class="line">  <span class="comment">// 初始化s符号位，exp阶码，fre尾数</span></span><br><span class="line">  <span class="type">int</span> s,<span class="built_in">exp</span>,fre;</span><br><span class="line">  s = (uf &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">exp</span> = (uf &amp; <span class="number">0x7F800000</span>) &gt;&gt; <span class="number">23</span>;</span><br><span class="line">  fre = uf &amp; <span class="number">0x7FFFFF</span>;</span><br><span class="line">  <span class="comment">// 如果exp == 0，代表非规格化的数</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 非规格化</span></span><br><span class="line">    <span class="comment">// 尾数 * 2</span></span><br><span class="line">    fre = fre &lt;&lt; <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (<span class="built_in">exp</span> &lt;&lt; <span class="number">23</span>) | fre;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0xFF</span>) &#123;</span><br><span class="line">    <span class="comment">// 特殊</span></span><br><span class="line">    <span class="keyword">return</span> uf;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 规格化 exp + 1</span></span><br><span class="line">    <span class="built_in">exp</span> = <span class="built_in">exp</span> + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// +1以后有可能是全1，那么就是无穷大，也就是特殊值，无穷大需要把尾数变成全0</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0xff</span>) &#123;</span><br><span class="line">        fre = <span class="number">0x0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (<span class="built_in">exp</span> &lt;&lt; <span class="number">23</span>) | fre;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>btest 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-32.png" alt="lab1 btest"></p>
+<p>dlc 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-33.png" alt="lab1 dlc"></p>
+<p>bdd check 结果：</p>
+<p><img src="/../images/csapp/lab1/csapp-lab1-34.png" alt="lab1 dlc"></p>
+<h3 id="float-i2f"><a href="#float-i2f" class="headerlink" title="float_i2f"></a>float_i2f</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%EF%BC%88%E4%B8%80%EF%BC%89.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1707,504 +2205,6 @@
 <li>死锁：给定所有互斥操作的一个全序，如果每个线程都是以一种顺序<code>获得互斥锁</code>并以<code>相反的顺序释放</code>，那么这个程序就是<code>无死锁</code>的</li>
 </ul>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" class="post-title-link" itemprop="url">深入理解计算机系统DataLab</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-21 10:12:47" itemprop="dateCreated datePublished" datetime="2023-06-21T10:12:47+08:00">2023-06-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-06 14:49:43" itemprop="dateModified" datetime="2023-07-06T14:49:43+08:00">2023-07-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统DataLab" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FDataLab.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Data-Lab"><a href="#Data-Lab" class="headerlink" title="Data Lab"></a>Data Lab</h1><p>data lab 数据实验</p>
-<p>这个数据实验请在linux机器上面运行，实测mac m1本跑不起来。windows没试过。</p>
-<p>centos上需要安装好gcc运行环境。</p>
-<p>如果跑不起来记得安装下面这个东西：</p>
-<blockquote>
-<p>yum -y install glibc-devel.i686</p>
-</blockquote>
-<p>运行<code>make btest</code>的时候可能会有<code>warning</code>提示，不用管，这个时候其实已经创建完<code>btest</code>了，可以直接运行<code>btest</code>。</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-1.png" alt="lab准备"></p>
-<h3 id="bitXor"><a href="#bitXor" class="headerlink" title="bitXor"></a>bitXor</h3><p>第一个函数是实现<code>位</code>的<code>异或</code>。</p>
-<p>看一下异或的要求，相同为0，不同为1，这个函数里面只能使用<code>按位与&amp;</code>和<code>按位取反~</code>。</p>
-<p>最大操作符号数：14</p>
-<table>
-<thead>
-<tr>
-<th align="left">x</th>
-<th align="left">y</th>
-<th align="left">结果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-</tr>
-<tr>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-</tr>
-</tbody></table>
-<p>假设我们有4 &#x3D; 100, 5 &#x3D; 101，异或的结果为1 &#x3D; 001.</p>
-<p>先看按位与的结果。100 &amp; 101 &#x3D; 100 这个时候能得到 0 0 0这个正确的组合</p>
-<table>
-<thead>
-<tr>
-<th align="left">x</th>
-<th align="left">y</th>
-<th align="left">结果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-</tr>
-<tr>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-</tr>
-</tbody></table>
-<p>100再取反就是011，就可以得到 1 1 0 这个正确的组合。</p>
-<table>
-<thead>
-<tr>
-<th align="left">x</th>
-<th align="left">y</th>
-<th align="left">结果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-</tr>
-</tbody></table>
-<p>先看按位或的结果。100 | 101 &#x3D; 101 这个时候能得到 0 1 1 和 1 0 1这个正确的组合</p>
-<table>
-<thead>
-<tr>
-<th align="left">x</th>
-<th align="left">y</th>
-<th align="left">结果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-</tr>
-<tr>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-</tr>
-</tbody></table>
-<p>可以看到 ~(x &amp; y) &amp; (x | y) 就可以得出结果了，但是我们不能用 | ，所以我们需要通过 &amp;，～来实现 |。</p>
-<p>可以通过 <del>(</del>x &amp; ~y) 来实现 ｜ ,4 &#x3D; 100 取反 &#x3D; 011， 5 &#x3D; 101 取反 &#x3D; 010, 011 &amp; 010 &#x3D; 010,取反 &#x3D; 101. 100 | 101 &#x3D; 101。</p>
-<p>所以 异或就是 <del>(x &amp; y) &amp; (</del>(~x &amp; ~y))</p>
-<p>代码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">bitXor</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ~(x &amp; y) &amp; ~(~x &amp; ~y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-2.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-3.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-4.png" alt="lab1 dlc"></p>
-<h3 id="Tmin"><a href="#Tmin" class="headerlink" title="Tmin"></a>Tmin</h3><p>Tmin是<code>1000 0000</code>，也就是最小的有符号数，那当然是符号位是1，剩下全0了。</p>
-<p>可以使用操作符：! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</p>
-<p>最大操作符号数量：4</p>
-<p>分数：1</p>
-<p>返回 1000 0000就可以了。正常的int Tmin就是1后面31个0，也就是1左移动31位</p>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">tmin</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span> &lt;&lt; <span class="number">31</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-5.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-6.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-7.png" alt="lab1 dlc"></p>
-<h3 id="isTmax"><a href="#isTmax" class="headerlink" title="isTmax"></a>isTmax</h3><p>Tmax是<code>0111</code></p>
-<p>可以使用操作符: ! ~ &amp; ^ | +<br>最大操作符号数量: 10</p>
-<p>4位的话，Tmax就是7，看一下7的一些操作结果,可以发现，7+1 &#x3D; ~7</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7 = 0111</span><br><span class="line">7 + 1 = 1000 = -8</span><br><span class="line">~7 = 1000 = -8</span><br><span class="line">1000 ^ 0000 = 1000 !1000 = 0000</span><br></pre></td></tr></table></figure>
-
-<p>但是 -1 + 1 也等于 ~-1,所以我们需要排除-1</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-1 = 1111</span><br><span class="line">-1 + 1 = 0000</span><br><span class="line">~-1 = 0000</span><br><span class="line">0000 ^ 0000 = 0000 !0000 = 0001</span><br></pre></td></tr></table></figure>
-
-<p>可以看到4的话，4 + 1 不等于~4</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">4 = 100</span><br><span class="line">4 + 1 = 0101</span><br><span class="line">~4 = 1011</span><br><span class="line">101 ^ 000 = 101 !101 = 000</span><br></pre></td></tr></table></figure>
-
-<p>怎么排除-1呢，观察发现-1+1 &#x3D; 0，而0^0 &#x3D; 0,但是tmax ^ 0 不等于0</p>
-<p>所以tmax需要满足两个条件</p>
-<ol>
-<li>x + 1 &#x3D;&#x3D; ~x</li>
-<li>x + 1 !&#x3D; 0</li>
-</ol>
-<p>可以用<code>^</code>操作来实现<code>==</code>。如果相等，那么x+1 ^ ~x 就会等于0，!0 &#x3D;&#x3D; 1，所以第一个条件就是</p>
-<blockquote>
-<p>!((x+1) ^ ~x)</p>
-</blockquote>
-<p>第二个条件同样通过<code>^</code>来实现。</p>
-<blockquote>
-<p>!!((x+1) ^ 0)</p>
-</blockquote>
-<p>只要这两个都满足就是Tmax了，都满足可以通过<code>&amp;</code>来实现，如果都是1，那么<code>&amp;</code>以后就是1，有一个不满足<code>&amp;</code>以后就是0.</p>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isTmax</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="type">int</span> xPlus = x + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> !(xPlus ^ ~x) &amp; !!(xPlus ^ <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-8.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-9.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-10.png" alt="lab1 dlc"></p>
-<h3 id="allOddBits"><a href="#allOddBits" class="headerlink" title="allOddBits"></a>allOddBits</h3><p>如果所有的奇数位都是1就返回1，否则返回0</p>
-<p>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 12<br>分数: 2</p>
-<p>比如 <code>1010 1010</code>就是奇数位上全1.</p>
-<p>所以只要和 <code>1010 1010</code> 做 <code>&amp;</code> 操作，只要做完以后还是 <code>1010 1010</code>的话，那么就返回1，不然就是0.</p>
-<p>因为假设 x 奇数位上有一个是0，比如 <code>1010 1000</code>，那么结果就会是 <code>1010 1000</code>，所以只有奇数位上全1，<code>&amp;</code>以后一定是<code>1010 1010</code>。</p>
-<p>所以需要满足条件</p>
-<ol>
-<li>x &amp; 1010 1010 &#x3D;&#x3D; 1010 1010</li>
-</ol>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">allOddBits</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="type">int</span> odd = <span class="number">0xAA</span>; <span class="comment">//1010 1010</span></span><br><span class="line">  <span class="type">int</span> halfOdd = (odd &lt;&lt; <span class="number">8</span>) + odd; <span class="comment">// 1010 1010 0000 0000 + 1010 1010 = 1010 1010 1010 1010</span></span><br><span class="line">  <span class="type">int</span> allOdd = (halfOdd &lt;&lt; <span class="number">16</span>) + halfOdd;</span><br><span class="line">  <span class="keyword">return</span> !((allOdd &amp; x)  ^ allOdd );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-11.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-12.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-13.png" alt="lab1 dlc"></p>
-<h3 id="negate"><a href="#negate" class="headerlink" title="negate"></a>negate</h3><p>返回-x<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 5<br>分数: 2</p>
-<p>这里要分成三部</p>
-<ul>
-<li>正数，比如 7 &#x3D; 0111</li>
-<li>0， 0 &#x3D; 0000</li>
-<li>负数，-1 &#x3D; 1111</li>
-</ul>
-<p>如果使用按位取反</p>
-<ul>
-<li>7 &#x3D; 0111，～7 &#x3D; 1000 &#x3D; -8</li>
-<li>0 &#x3D; 0000， ～0 &#x3D; 1111 &#x3D; -1</li>
-<li>-1 &#x3D; 1111， ～-1 &#x3D; 0000 &#x3D; 0</li>
-<li>-8 &#x3D; 1000， ～-8 &#x3D; 0111 &#x3D; 7</li>
-</ul>
-<p>取反以后的值 + 1就是对应的负数了，-8 + 1 &#x3D; -7, -1 + 1 &#x3D; 0, 0 + 1 &#x3D; 1, 7 + 1 &#x3D; 8</p>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">negate</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ~x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-14.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-15.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-16.png" alt="lab1 dlc"></p>
-<h3 id="isAsciiDigit"><a href="#isAsciiDigit" class="headerlink" title="isAsciiDigit"></a>isAsciiDigit</h3><p>如果 0x30 &lt;&#x3D; x &lt;&#x3D; 0x39，返回1，否则0<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 15<br>分数: 3</p>
-<p>0x30 &#x3D; 0011 0000, 0x39 &#x3D; 0011 1001。<br>根据题目，也就是判断 0011 0000 &lt;&#x3D; x &lt;&#x3D; 0011 1001</p>
-<p>首先高位要等于 0011，如果不等于0011，那么肯定不在这个范围。可以通过 &gt;&gt; 4位然后 ^ 0011，如果结果为0，那么高位就是满足的。</p>
-<p>低位在0000 到 1001之间,当首位是0的时候，后面是啥都行，首位是1，那么后面两位必须是00，也就是前三位是100.</p>
-<p>判断首位是0可以通过 &amp; 0x8 然后 ^ 0来判断，如果结果是0首位就是0，不然首位是1</p>
-<p>判断低4位的前3位，先 &amp; 0xE来获取前3位，然后 ^ 0x8来判断是不是 100</p>
-<p>所以需要满足条件1并且满足条件2或者3</p>
-<ol>
-<li>x &gt;&gt; 4 ^ 0011 &#x3D;&#x3D; 0</li>
-<li>(x &amp; 0x8) ^ 0 &#x3D;&#x3D; 0 </li>
-<li>(x &amp; 0xE) ^ 0x8 &#x3D;&#x3D; 0</li>
-</ol>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isAsciiDigit</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    <span class="type">int</span> xh = x &gt;&gt; <span class="number">4</span>;</span><br><span class="line">    <span class="type">int</span> a3 = <span class="number">0x3</span>;</span><br><span class="line">    <span class="type">int</span> xlh = x &amp; <span class="number">0x8</span>;</span><br><span class="line">    <span class="type">int</span> xorxlh = xlh^<span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> xorxl = (x &amp; <span class="number">0xE</span>) ^ <span class="number">0x8</span>;</span><br><span class="line">    <span class="keyword">return</span> (!(xh ^ a3 ^ <span class="number">0</span>)) &amp; (!xorxlh | !xorxl);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-17.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-18.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-19.png" alt="lab1 dlc"></p>
-<h3 id="conditional"><a href="#conditional" class="headerlink" title="conditional"></a>conditional</h3><p>实现三元运算 x ? y : z<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 16<br>分数: 3</p>
-<p>x 为真代表 x &amp; 1 &#x3D;&#x3D; 1,x 为假代表 x &amp; 1 &#x3D;&#x3D; 0。<br>需要满足条件</p>
-<ol>
-<li>x &amp; 1 &#x3D;&#x3D; 1时，返回y,所以z需要置为0并且和y一起返回。<code>!(x &amp; 1) &amp; z</code>就可以把z置为0，所以应该返回 <code>(!(x &amp; 1) &amp; z) | y</code></li>
-<li>x &amp; 1 &#x3D;&#x3D; 0时，返回z,所以y需要置为0并且和z一起返回。<code>x &amp; 1 &amp; y</code>就可以把y置为0。所以应该返回 <code>(x &amp; 1 &amp; y) | z</code></li>
-</ol>
-<p>把上面的2个条件合并起来。</p>
-<blockquote>
-<p>(!(x &amp; 1) &amp; z) ｜ (x &amp; 1 &amp; y)</p>
-</blockquote>
-<p>但是发现这样并不行，所以重新思考，发现 x &amp; 1 &#x3D;&#x3D; 1时候是没错，但是我们应该让 x &#x3D; 0xFF才行。</p>
-<p>所以改进一下子</p>
-<ul>
-<li>先对x取反。!x &#x3D; 1,说明x &#x3D; 0,这个时候应该返回 z,所以需要<code>(0 &amp; y) | z</code></li>
-<li>!x &#x3D; 0,说明x &#x3D; 1，应该返回y,所以需要 <code>(0 &amp; z) | y</code></li>
-</ul>
-<p>这里把 !x 在按位取反 + 1就可以得到当 x &#x3D; 0时候，condition &#x3D; 1111 1111。这个时候返回z。</p>
-<p>代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">conditional</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> z)</span> &#123;</span><br><span class="line">  <span class="type">int</span> xn = !x;</span><br><span class="line">  <span class="type">int</span> condition = ~xn + <span class="number">1</span>; <span class="comment">//x = 0,condition = 1111 1111, x = 1, condition = 0000 0000</span></span><br><span class="line">  <span class="keyword">return</span> (condition &amp; z) | (~condition &amp; y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-20.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-21.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-22.png" alt="lab1 dlc"></p>
-<h3 id="isLessOrEqual"><a href="#isLessOrEqual" class="headerlink" title="isLessOrEqual"></a>isLessOrEqual</h3><p>如果x &lt;&#x3D; y，返回1，否则0<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 24<br>分数: 3</p>
-<p>等于可以通过<code>异或</code>来做。</p>
-<blockquote>
-<p>!(x ^ y) </p>
-</blockquote>
-<p>在看小于，如果一个正数和一个负数，那么负数一定小于正数，负数的符号位1，正数的符号位0.</p>
-<p>取出符号位，通过右移动31位来获取符号位，但是负数会补1，所以在和1与一下，就可以得到符号位了。</p>
-<blockquote>
-<p>(x &gt;&gt; 31) &amp; 1</p>
-</blockquote>
-<p>可以<code>|</code>一下，如果是 <code>1 | 0</code>就返回1了。</p>
-<blockquote>
-<p>((x &gt;&gt; 31) &amp; 1 ) | ((y &gt;&gt; 31) &amp; 1)</p>
-</blockquote>
-<p>如果两个都是正数或者负数，那么符号位相同。</p>
-<ul>
-<li>对较小的数进行按位取反，在加上大的数的话，会产生溢出。也就是 x &lt; y, ~x + y 会溢出，所以首位是0</li>
-<li>如果两个数相等或者较大的数取反了在加上小的数，不会溢出。x &gt;&#x3D; y, ~x + y 不会溢出，所以首位是1</li>
-<li>所以对于等于的情况还需要处理，如果两个数相等，那么 ~x + y &#x3D; -1，也就是所有位都是1，让这个值+1就是0了，就和小于保持一致了</li>
-</ul>
-<p>如果两个数的符号位不同，那么x是1,y是0的话，就返回1，否则0</p>
-<ul>
-<li>对x的符号位取反，如果x符号位是1，那么取反0,y的符号位是0，那么就返回1</li>
-<li>如果x符号位是0，取反1，y是1，那么返回0</li>
-</ul>
-<p>代码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">isLessOrEqual</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> &#123;</span><br><span class="line">  <span class="comment">// 取首位</span></span><br><span class="line">  <span class="type">int</span> signalX = (x &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="type">int</span> signalY = (y &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="comment">// !(signalX ^ signalY)是符号位相同的情况</span></span><br><span class="line">  <span class="comment">// !(((~x + y + 1) &gt;&gt; 31) &amp; 1) 是符号位相同时候小于等于的情况</span></span><br><span class="line">  <span class="type">int</span> lessEq = !(signalX ^ signalY) &amp; !(((~x + y + <span class="number">1</span>) &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>);</span><br><span class="line">  <span class="comment">// 如果符号位不同的情况</span></span><br><span class="line">  <span class="type">int</span> neq = (!signalY) &amp; signalX;</span><br><span class="line">  <span class="comment">// 两个情况做|，满足任一个情况则返回1</span></span><br><span class="line">  <span class="keyword">return</span> (lessEq | neq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-23.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-24.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-25.png" alt="lab1 dlc"></p>
-<h3 id="logicalNeg"><a href="#logicalNeg" class="headerlink" title="logicalNeg"></a>logicalNeg</h3><p>对x取反，实现!操作<br>可以使用的操作符: ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 12<br>分数: 4</p>
-<p>两种情况</p>
-<ul>
-<li>0，(~0 + 1) | 0 的首位是0</li>
-<li>其他数， (~x + 1) | x的首位是1</li>
-</ul>
-<p>0要返回1，1要返回0，可以异或1</p>
-<p>代码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">logicalNeg</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ((((~x + <span class="number">1</span>) | x) &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>) ^ <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-26.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-27.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-28.png" alt="lab1 dlc"></p>
-<h3 id="howManyBits"><a href="#howManyBits" class="headerlink" title="howManyBits"></a>howManyBits</h3><p>输出最少需要的位数来表示int x<br>可以使用的操作符: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;<br>最大数量: 90<br>分数: 4</p>
-<p>例子：</p>
-<ul>
-<li>howManyBits(12) &#x3D; 5 &#x3D; 10010</li>
-<li>howManyBits(298) &#x3D; 10 &#x3D; 10 1001 1000</li>
-<li>howManyBits(-5) &#x3D; 4 &#x3D; 1011</li>
-<li>howManyBits(0)  &#x3D; 1 &#x3D; 0</li>
-<li>howManyBits(-1) &#x3D; 1 &#x3D; 1</li>
-<li>howManyBits(0x80000000) &#x3D; 32 &#x3D; 1000….</li>
-</ul>
-<p>三种情况</p>
-<ul>
-<li>正数的首位都是1，遇到1的话，找到1是哪位就可以了</li>
-<li>负数的首位是符号位都是1，所以需要找到第二个1，如果把负数的符号位变成0，就可以按照正数处理了</li>
-<li>0，直接返回0，也可以使用正数的方法找1，找不到自然返回0了</li>
-</ul>
-<p>有没有1，可以通过!!来判断，如果是!!0，就是0，如果是其他数!!x就是1了。</p>
-<p>这道题的代码是从网上抄的。</p>
-<p>代码</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">howManyBits</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">  <span class="type">int</span> signal = x &gt;&gt; <span class="number">31</span>;</span><br><span class="line">  <span class="type">int</span> b1,b2,b3,b4,b5,h16,h8,h4,h2,h1;</span><br><span class="line">  x =  (signal &amp; ~x) | (~signal &amp; x);</span><br><span class="line">  <span class="comment">// 查看高16位是否有1</span></span><br><span class="line">  h16 = !!(x &gt;&gt; <span class="number">16</span>);</span><br><span class="line">  <span class="comment">// 如果高16位有1，那么肯定需要16位来表示，记住这16位</span></span><br><span class="line">  <span class="comment">// 因为高 16bit 有1，那么h16就是1，所以1 &lt;&lt; 4 就是16，代表最低需要16位表示</span></span><br><span class="line">  <span class="comment">// 如果高 16bit 没有1，那么h16就是0，所以 0&lt;&lt; 4就是0，代表最低需要0位表示</span></span><br><span class="line">  b1 = h16 &lt;&lt; <span class="number">4</span>;</span><br><span class="line">  <span class="comment">// 如果高位有1，那么x &gt;&gt; 16位，这样的原来的高位变成了低位</span></span><br><span class="line">  <span class="comment">// 如果高位没有1，那么x &gt;&gt; 0位，这样低16位还是低16位</span></span><br><span class="line">  x = x &gt;&gt; b1;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 这里分为两种情况，如果高16位有1，需要继续看高8位是否有1，如果高16位没有1，需要看低16位的高8位是否有1</span></span><br><span class="line">  <span class="comment">// 因为上面对于高16位有1的时候，将高16位变成了低16位，所以都只需要看低16位的高8位就可以了</span></span><br><span class="line">   h8 = !!(x &gt;&gt; <span class="number">8</span>);</span><br><span class="line">  <span class="comment">// 和上面同理，如果现在16位的高8位有1，那么b2代表 1 &lt;&lt; 3就是8，如果没有，那么就是0</span></span><br><span class="line">   b2 = h8 &lt;&lt; <span class="number">3</span></span><br><span class="line">  <span class="comment">// 同样处理，如果有，那么高8位变低8位</span></span><br><span class="line">  x = x &gt;&gt; b2;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//处理8位的高4位</span></span><br><span class="line">   h4 = !!(x &gt;&gt; <span class="number">4</span>);</span><br><span class="line">   b3 = h4 &lt;&lt; <span class="number">2</span>;</span><br><span class="line">  x = x &gt;&gt; b3;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 处理4位的高2位</span></span><br><span class="line">   h2 = !!(x &gt;&gt; <span class="number">2</span>);</span><br><span class="line">   b4 = h2 &lt;&lt; <span class="number">1</span>;</span><br><span class="line">  x = x &gt;&gt; b4;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 处理最后2位是否有1</span></span><br><span class="line">   h1 = !!(x &gt;&gt; <span class="number">1</span>);</span><br><span class="line">   b5 = h1;</span><br><span class="line">  x = x &gt;&gt; b5;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 所有结果相加 最后+1，因为高16位有1，那么需要17位表示</span></span><br><span class="line">  <span class="keyword">return</span> b1 + b2 + b3 + b4 + b5 + x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-29.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-30.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-31.png" alt="lab1 dlc"></p>
-<h3 id="float-twice"><a href="#float-twice" class="headerlink" title="float_twice"></a>float_twice</h3><p>传入一个无符号数uf,返回uf * 2的小数的bit表示<br>可以使用的操作符: 任何整数的操作，包||,&amp;&amp;,if,while<br>最大数量: 30<br>分数: 4</p>
-<p>在复习一下，IEEE浮点标准用<code>V = (-1)的s次方 * M * 2的E次方</code>来表示。<br>单精度尾数是23位，exp是8位，符号位1位</p>
-<p>取符号位<br>int s &#x3D; (uf &gt;&gt; 31) &amp; 1;</p>
-<p>取exp<br>int exp &#x3D; (uf &lt;&lt; 1) &gt;&gt; 24</p>
-<p>当阶码exp不等于全0或不等于全1的时候，就表示规格化的浮点数。<br>E的计算方式</p>
-<ul>
-<li>E &#x3D; 阶码 - Bias</li>
-<li>Bias &#x3D; 单精度是127</li>
-<li>单精度下，假设阶码为 0000 0001, 那么E &#x3D; 1 - 127 &#x3D; -126<br>E &#x3D; exp - Bias</li>
-</ul>
-<p>M的计算方式</p>
-<ul>
-<li>M &#x3D; 1.XXXXXX</li>
-<li>尾数就是 XXXXXX</li>
-<li>假设 尾数为 0000 0000 0000 0000 0000 001，那么M &#x3D; 1.00000000000000000000001</li>
-</ul>
-<p>-1^s * 1.尾数 * 2^E</p>
-<p>当阶码等于全0的时候，就表示非规格化的浮点数。<br>exp ^ 0是0就代表全0，非规格化<br>E的计算方式，他跟阶码没关系了，因为阶码永远是0</p>
-<ul>
-<li>E &#x3D; 1 - Bias</li>
-<li>Bias &#x3D; 单精度是127</li>
-<li>阶码永远为 0000 0000, E &#x3D; 1 - 127 &#x3D; -126<br>E &#x3D; 1 - 127</li>
-</ul>
-<p>M的计算方式</p>
-<ul>
-<li>M &#x3D; 0.XXXXXX</li>
-<li>尾数就是 XXXXXX</li>
-<li>假设 尾数为 0000 0000 0000 0000 0000 001，那么M &#x3D; 0.00000000000000000000001</li>
-</ul>
-<p>-1^s * 0.尾数 * 2^E</p>
-<p>当阶码等于全1的时候，就表示特殊的浮点数。<br>~exp ^ 0是0就代表全1，特殊浮点数 当尾数不为全0的时候，就是NaN，返回参数。</p>
-<p>小数乘法</p>
-<ul>
-<li>符号位s1 ^ s2</li>
-<li>M &#x3D; M1 * M2</li>
-<li>E &#x3D; E1 + E2</li>
-</ul>
-<p>对于规格化的数，<em>2，自然是e+1，因为2的E次方，E+1，那就等于多乘了个2<br>对于非规格化的数，E是固定的-126，没法改变，所以尾数</em>2</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="title function_">float_twice</span><span class="params">(<span class="type">unsigned</span> uf)</span> &#123;</span><br><span class="line">  <span class="comment">// 初始化s符号位，exp阶码，fre尾数</span></span><br><span class="line">  <span class="type">int</span> s,<span class="built_in">exp</span>,fre;</span><br><span class="line">  s = (uf &gt;&gt; <span class="number">31</span>) &amp; <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">exp</span> = (uf &amp; <span class="number">0x7F800000</span>) &gt;&gt; <span class="number">23</span>;</span><br><span class="line">  fre = uf &amp; <span class="number">0x7FFFFF</span>;</span><br><span class="line">  <span class="comment">// 如果exp == 0，代表非规格化的数</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 非规格化</span></span><br><span class="line">    <span class="comment">// 尾数 * 2</span></span><br><span class="line">    fre = fre &lt;&lt; <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (<span class="built_in">exp</span> &lt;&lt; <span class="number">23</span>) | fre;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0xFF</span>) &#123;</span><br><span class="line">    <span class="comment">// 特殊</span></span><br><span class="line">    <span class="keyword">return</span> uf;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 规格化 exp + 1</span></span><br><span class="line">    <span class="built_in">exp</span> = <span class="built_in">exp</span> + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// +1以后有可能是全1，那么就是无穷大，也就是特殊值，无穷大需要把尾数变成全0</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">exp</span> == <span class="number">0xff</span>) &#123;</span><br><span class="line">        fre = <span class="number">0x0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (s &lt;&lt; <span class="number">31</span>) | (<span class="built_in">exp</span> &lt;&lt; <span class="number">23</span>) | fre;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>btest 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-32.png" alt="lab1 btest"></p>
-<p>dlc 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-33.png" alt="lab1 dlc"></p>
-<p>bdd check 结果：</p>
-<p><img src="/../images/csapp/lab1/csapp-lab1-34.png" alt="lab1 dlc"></p>
-<h3 id="float-i2f"><a href="#float-i2f" class="headerlink" title="float_i2f"></a>float_i2f</h3>
       
     </div>
 

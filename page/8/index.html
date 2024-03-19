@@ -196,306 +196,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-title-link" itemprop="url">ElasticSearch九--RequestBody和Query DSL简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch九--RequestBody和Query DSL简介" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="RequestBody和Query-DSL简介"><a href="#RequestBody和Query-DSL简介" class="headerlink" title="RequestBody和Query DSL简介"></a>RequestBody和Query DSL简介</h1><p>通过RequestBody 实现搜索</p>
-<p>参数：</p>
-<ul>
-<li>q:指定查询语句，使用Query String Syntax</li>
-<li>df:默认字段，不指定会对所有字段进行查询</li>
-<li>sort:排序</li>
-<li>from&#x2F;size: 用来分页</li>
-<li>Profile 可以查看查询是如何被执行的</li>
-</ul>
-<p>这个方法的参数和URI是一样的，比如我们在kibana里面执行下面的指令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;from&quot;:0,</span><br><span class="line">  &quot;size&quot;:10,</span><br><span class="line">  &quot;sort&quot;:[&#123;&quot;id&quot;:&quot;desc&quot;&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="查询指定字段"><a href="#查询指定字段" class="headerlink" title="查询指定字段"></a>查询指定字段</h2><p>这种方式还可以查询指定字段，通过<code>_source</code>参数来指定。支持通配符</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="脚本字段"><a href="#脚本字段" class="headerlink" title="脚本字段"></a>脚本字段</h2><p>可以进行一些简单运算，拼接字符串等操作</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;script_fields&quot;:&#123;</span><br><span class="line">    &quot;new_field&quot;:&#123;</span><br><span class="line">      &quot;script&quot;:&#123;</span><br><span class="line">        &quot;lang&quot;:&quot;painless&quot; //使用这个脚本</span><br><span class="line">        &quot;source&quot;: &quot;doc[&#x27;job_name&#x27;].value+&#x27;_hello&#x27;&quot; //在职位名称后面拼接_hello</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;fields&quot;:&#123;</span><br><span class="line">  &quot;new_fields&quot;:[</span><br><span class="line">    &quot;产品_hello&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="query-DSL"><a href="#query-DSL" class="headerlink" title="query DSL"></a>query DSL</h2><p>通过DSL查询产品怎么办呢，可以使用query参数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;:&quot;产品&quot;  //这里就相当于出现产 或者 品 都会搜出来 左边的 job_name 就是搜索的字段</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果想使用<code>AND</code>可以增加参数，如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;operator&quot;:&quot;AND&quot;  //这里指定AND OR NOT</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="短语搜索-match-phrase"><a href="#短语搜索-match-phrase" class="headerlink" title="短语搜索 match phrase"></a>短语搜索 match phrase</h3><p>这里就是短语，单词搜索，等价于URI的phrase search</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_phrase&quot;:&#123;   //使用match_phrase</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;slop&quot;:1, //代表可以有一个错误</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>极客时间 ES 学习笔记</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-title-link" itemprop="url">ElasticSearch五--ES--倒排索引</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch五--ES--倒排索引" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="正排索引和倒排索引"><a href="#正排索引和倒排索引" class="headerlink" title="正排索引和倒排索引"></a>正排索引和倒排索引</h1><h2 id="正排索引"><a href="#正排索引" class="headerlink" title="正排索引"></a>正排索引</h2><p>正排索引就是通过索引id找到内容，比如通过书本的目录找到内容。</p>
-<h2 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h2><p>倒排索引就是把正排索引倒过来，通过内容找到索引id.</p>
-<h3 id="建立一个倒排索引"><a href="#建立一个倒排索引" class="headerlink" title="建立一个倒排索引"></a>建立一个倒排索引</h3><table>
-<thead>
-<tr>
-<th align="left">id</th>
-<th align="left">内容</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">1</td>
-<td align="left">php java go</td>
-</tr>
-<tr>
-<td align="left">2</td>
-<td align="left">php es</td>
-</tr>
-<tr>
-<td align="left">3</td>
-<td align="left">php 开发</td>
-</tr>
-</tbody></table>
-<p>把上面的内容可以建立成下面的倒排索引</p>
-<table>
-<thead>
-<tr>
-<th align="left">内容</th>
-<th align="left">Count</th>
-<th align="left">id</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">php</td>
-<td align="left">3</td>
-<td align="left">1:0,2:0,3:0</td>
-</tr>
-<tr>
-<td align="left">java</td>
-<td align="left">1</td>
-<td align="left">1:1</td>
-</tr>
-<tr>
-<td align="left">go</td>
-<td align="left">1</td>
-<td align="left">1:2</td>
-</tr>
-<tr>
-<td align="left">es</td>
-<td align="left">1</td>
-<td align="left">2:1</td>
-</tr>
-<tr>
-<td align="left">开发</td>
-<td align="left">1</td>
-<td align="left">3:1</td>
-</tr>
-</tbody></table>
-<h3 id="倒排索引的核心组成"><a href="#倒排索引的核心组成" class="headerlink" title="倒排索引的核心组成"></a>倒排索引的核心组成</h3><p><code>单词词典</code> 记录所有文档的单词 记录单词到倒排列表的关联关系。<br>单词词典一般比较大，可以通过B+树或hash拉链法实现，以满足高性能的插入和查询</p>
-<p><code>倒排列表</code>记录了单词对应的文档结合，由倒排索引项组成</p>
-<p><code>倒排索引项</code></p>
-<ul>
-<li>文档id</li>
-<li>词频 该单词在文档中出现的次数，用于相关性评分</li>
-<li>位置 单词在文档中分词的位置。用于语句搜索</li>
-<li>偏移 记录单词的开始结束位置，实现高亮显示</li>
-</ul>
-<h2 id="ES中的倒排索引"><a href="#ES中的倒排索引" class="headerlink" title="ES中的倒排索引"></a>ES中的倒排索引</h2><p>ES的JSON文档中的每个字段，都有自己的倒排索引<br>可以指定对某些字段不做索引</p>
-<ul>
-<li>优点：节省存储空间</li>
-<li>缺点：字段无法被搜索</li>
-</ul>
-<blockquote>
-<p>极客时间 ES 学习笔记</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -750,6 +450,306 @@
 <p>指令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;query_string&quot;:&#123;</span><br><span class="line">      &quot;query&quot;:&quot;产-品&quot;, //这里-代表OR</span><br><span class="line">      &quot;fields&quot;:[&#x27;job_name&#x27;] //搜索job_name是产品的</span><br><span class="line">      &quot;default_operator&quot;: &quot;OR&quot;  //指定默认操作符</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-title-link" itemprop="url">ElasticSearch五--ES--倒排索引</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch五--ES--倒排索引" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="正排索引和倒排索引"><a href="#正排索引和倒排索引" class="headerlink" title="正排索引和倒排索引"></a>正排索引和倒排索引</h1><h2 id="正排索引"><a href="#正排索引" class="headerlink" title="正排索引"></a>正排索引</h2><p>正排索引就是通过索引id找到内容，比如通过书本的目录找到内容。</p>
+<h2 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h2><p>倒排索引就是把正排索引倒过来，通过内容找到索引id.</p>
+<h3 id="建立一个倒排索引"><a href="#建立一个倒排索引" class="headerlink" title="建立一个倒排索引"></a>建立一个倒排索引</h3><table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">php java go</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">php es</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">php 开发</td>
+</tr>
+</tbody></table>
+<p>把上面的内容可以建立成下面的倒排索引</p>
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">Count</th>
+<th align="left">id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">php</td>
+<td align="left">3</td>
+<td align="left">1:0,2:0,3:0</td>
+</tr>
+<tr>
+<td align="left">java</td>
+<td align="left">1</td>
+<td align="left">1:1</td>
+</tr>
+<tr>
+<td align="left">go</td>
+<td align="left">1</td>
+<td align="left">1:2</td>
+</tr>
+<tr>
+<td align="left">es</td>
+<td align="left">1</td>
+<td align="left">2:1</td>
+</tr>
+<tr>
+<td align="left">开发</td>
+<td align="left">1</td>
+<td align="left">3:1</td>
+</tr>
+</tbody></table>
+<h3 id="倒排索引的核心组成"><a href="#倒排索引的核心组成" class="headerlink" title="倒排索引的核心组成"></a>倒排索引的核心组成</h3><p><code>单词词典</code> 记录所有文档的单词 记录单词到倒排列表的关联关系。<br>单词词典一般比较大，可以通过B+树或hash拉链法实现，以满足高性能的插入和查询</p>
+<p><code>倒排列表</code>记录了单词对应的文档结合，由倒排索引项组成</p>
+<p><code>倒排索引项</code></p>
+<ul>
+<li>文档id</li>
+<li>词频 该单词在文档中出现的次数，用于相关性评分</li>
+<li>位置 单词在文档中分词的位置。用于语句搜索</li>
+<li>偏移 记录单词的开始结束位置，实现高亮显示</li>
+</ul>
+<h2 id="ES中的倒排索引"><a href="#ES中的倒排索引" class="headerlink" title="ES中的倒排索引"></a>ES中的倒排索引</h2><p>ES的JSON文档中的每个字段，都有自己的倒排索引<br>可以指定对某些字段不做索引</p>
+<ul>
+<li>优点：节省存储空间</li>
+<li>缺点：字段无法被搜索</li>
+</ul>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-title-link" itemprop="url">ElasticSearch九--RequestBody和Query DSL简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch九--RequestBody和Query DSL简介" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RequestBody和Query-DSL简介"><a href="#RequestBody和Query-DSL简介" class="headerlink" title="RequestBody和Query DSL简介"></a>RequestBody和Query DSL简介</h1><p>通过RequestBody 实现搜索</p>
+<p>参数：</p>
+<ul>
+<li>q:指定查询语句，使用Query String Syntax</li>
+<li>df:默认字段，不指定会对所有字段进行查询</li>
+<li>sort:排序</li>
+<li>from&#x2F;size: 用来分页</li>
+<li>Profile 可以查看查询是如何被执行的</li>
+</ul>
+<p>这个方法的参数和URI是一样的，比如我们在kibana里面执行下面的指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;from&quot;:0,</span><br><span class="line">  &quot;size&quot;:10,</span><br><span class="line">  &quot;sort&quot;:[&#123;&quot;id&quot;:&quot;desc&quot;&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询指定字段"><a href="#查询指定字段" class="headerlink" title="查询指定字段"></a>查询指定字段</h2><p>这种方式还可以查询指定字段，通过<code>_source</code>参数来指定。支持通配符</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="脚本字段"><a href="#脚本字段" class="headerlink" title="脚本字段"></a>脚本字段</h2><p>可以进行一些简单运算，拼接字符串等操作</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;script_fields&quot;:&#123;</span><br><span class="line">    &quot;new_field&quot;:&#123;</span><br><span class="line">      &quot;script&quot;:&#123;</span><br><span class="line">        &quot;lang&quot;:&quot;painless&quot; //使用这个脚本</span><br><span class="line">        &quot;source&quot;: &quot;doc[&#x27;job_name&#x27;].value+&#x27;_hello&#x27;&quot; //在职位名称后面拼接_hello</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;fields&quot;:&#123;</span><br><span class="line">  &quot;new_fields&quot;:[</span><br><span class="line">    &quot;产品_hello&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="query-DSL"><a href="#query-DSL" class="headerlink" title="query DSL"></a>query DSL</h2><p>通过DSL查询产品怎么办呢，可以使用query参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;:&quot;产品&quot;  //这里就相当于出现产 或者 品 都会搜出来 左边的 job_name 就是搜索的字段</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果想使用<code>AND</code>可以增加参数，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;operator&quot;:&quot;AND&quot;  //这里指定AND OR NOT</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="短语搜索-match-phrase"><a href="#短语搜索-match-phrase" class="headerlink" title="短语搜索 match phrase"></a>短语搜索 match phrase</h3><p>这里就是短语，单词搜索，等价于URI的phrase search</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_phrase&quot;:&#123;   //使用match_phrase</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;slop&quot;:1, //代表可以有一个错误</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
