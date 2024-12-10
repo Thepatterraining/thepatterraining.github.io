@@ -1,0 +1,1337 @@
+---
+title: mysql优化指南
+date: 2024-11-21 14:02:52
+tags: ['mysql']
+category: mysql
+article: mysql优化指南
+---
+
+# mysql优化
+
+## 数据库级别优化
+
+1. 表结构是否合理？列的数据类型是否正确？
+2. 索引设置和选择是否合理？
+3. 存储引擎是否合理？通常使用Innodb性能更好
+4. Innodb表压缩是否开启？
+5. 获取的锁是否正确？是否可以支持数据库更好的并发运行
+6. buffer pool设置是否正确？
+
+## 硬件级别优化
+
+1. 磁盘寻道时间优化
+2. 使用SSD高速硬盘，提升读写效率，或使用磁盘阵列来并行读取
+3. CPU周期
+4. 内存带宽
+
+## SQL语句优化
+
+### select语句优化
+
+where语句总是比全表查询更快，尽量避免全表查询，where语句尽量走索引，但需要注意索引对于磁盘空间的占用和增删改的影响。
+
+定期使用`ANALYZE TABLE`来更新mysql的统计信息，以确保优化器正确选择索引。
+
+了解存储引擎特有的调优技术
+
+避免写出难以理解的查询语句
+
+仔细阅读`EXPLAIN`查询计划，根据计划来调优
+
+调整buffer pool以容纳更多的缓存
+
+处理锁定问题，以避免锁冲突、锁等待造成查询慢
+
+#### where子句优化
+
+在mysql准备阶段，即优化阶段之前，mysql会进行一些语句重写。
+
+删除不必要的括号，比如
+```
+((a AND b) AND c OR (((a AND b) AND (c AND d))))
+```
+
+删除以后
+```
+(a AND b AND c) OR (a AND b AND c AND d)
+```
+
+恒定折叠，比如a<b and a = 5, 那么可知 b > 5
+```
+(a<b AND b=c) AND a=5
+```
+
+优化以后
+```
+b>5 AND b=c AND a=5
+```
+
+恒等式移除，比如一些永真式或永假式可以直接移除掉，包括常用的where 1 = 1，下面1=1永真，5=6永假，所以b=7也去掉
+```
+(b>=5 AND b=5) OR (b=6 AND 1=1) OR (b=7 AND 5=6)
+```
+
+优化以后
+```
+b=5 or b=6
+```
+
+索引使用的常数表达式只计算一次。
+
+早期检测无效的常量表达式。MySQL会快速检测到某些SELECT语句是不可能的，并且不返回任何行。
+
+如果不使用group by，那么having将和where合并
+
+对于联接中的每个表，构造一个更简单的WHERE，以获得表的快速WHERE计算，并尽快跳过行。
+
+在查询中，所有常量表都在任何其他表之前首先读取。常量表是以下任何一种：
+1. 空表或只有一行的表。
+2. where放在主键索引或者唯一索引上的，所有的索引部分都和常亮表达式比较，并定义为NOT NULL
+比如
+```
+SELECT * FROM t WHERE primary_key=1;
+SELECT * FROM t1,t2 WHERE t1.primary_key=1 AND t2.primary_key=t1.id;
+```
+
+通过尝试所有的可能性来找到连接表的最佳连接组合。如果ORDER BY和GROUP BY子句中的所有列都来自同一个表，则在联接时首选该表。
+
+如果有一个ORDER BY子句和一个不同的GROUP BY子句，或者如果ORDER BY或GROUP BY包含来自连接队列中第一个表以外的表的列，则将创建一个临时表。
+
+如果使用SQL_SMALL_RESULT修饰符，MySQL将使用内存中的临时表。
+
+查询每个表索引，并使用最佳索引，除非优化器认为使用表扫描更有效。曾经，扫描是根据最佳索引是否覆盖表的30%以上来使用的，但固定的百分比不再决定使用索引还是扫描。优化器现在更加复杂，它的估计基于其他因素，如表大小、行数和I/O块大小。
+
+在某些情况下，MySQL可以从索引中读取行，甚至不需要查阅数据文件。如果索引中使用的所有列都是数值列，则仅使用索引树来解析查询。
+
+在输出每一行之前，将跳过与HAVING子句不匹配的行。
+
+一些非常快的查询示例：
+
+```
+SELECT COUNT(*) FROM tbl_name;
+
+SELECT MIN(key_part1),MAX(key_part1) FROM tbl_name;
+
+SELECT MAX(key_part2) FROM tbl_name
+  WHERE key_part1=constant;
+
+SELECT ... FROM tbl_name
+  ORDER BY key_part1,key_part2,... LIMIT 10;
+
+SELECT ... FROM tbl_name
+  ORDER BY key_part1 DESC, key_part2 DESC, ... LIMIT 10;
+```
+
+MySQL只使用索引树解析以下查询，假设索引列是数字：
+
+```
+SELECT key_part1,key_part2 FROM tbl_name WHERE key_part1=val;
+
+SELECT COUNT(*) FROM tbl_name
+  WHERE key_part1=val1 AND key_part2=val2;
+
+SELECT MAX(key_part2) FROM tbl_name GROUP BY key_part1;
+```
+
+以下查询使用索引来按排序顺序检索行，而无需单独的排序过程：
+
+```
+SELECT ... FROM tbl_name
+  ORDER BY key_part1,key_part2,... ;
+
+SELECT ... FROM tbl_name
+  ORDER BY key_part1 DESC, key_part2 DESC, ... ;
+```
+
+#### 范围优化
+
+对于BTREE和HASH索引，当使用=、<=>、IN（）、IS NULL或IS NOT NULL运算符时，键部分与常量值的比较是范围条件。此外，对于BTREE索引，当使用>，<，>=，<=，BETWEEN，！= 、或<>运算符，或者LIKE比较（如果LIKE的参数是不以小写字符开头的常量字符串）。对于所有索引类型，多个范围条件与OR或AND组合形成范围条件。
+
+给定数据
+
+```
+key_part1  key_part2  key_part3
+  NULL       1          'abc'
+  NULL       1          'xyz'
+  NULL       2          'foo'
+   1         1          'abc'
+   1         1          'xyz'
+   1         2          'abc'
+   2         1          'aaa'
+```
+
+执行where key_part1= 1，其扫描范围为 1,负无穷，负无穷到 1,正无穷，正无穷
+```
+(1,-inf,-inf) <= (key_part1,key_part2,key_part3) < (1,+inf,+inf)
+```
+即覆盖了这三行
+```
+   1         1          'abc'
+   1         1          'xyz'
+   1         2          'abc'
+```
+
+index dives，优化器在范围的两端进行dives, 可以帮助优化器更准确的评估扫描的行数，index dives提供了更准确的行估计，但是随着比较值数量的增加，更加耗时，使用统计信息的准确性不如index dives，但允许对大值列表进行更快的行估计。
+
+eq_range_index_dive_limit系统变量使您能够配置优化器从一个行估计策略切换到另一个行估计策略时的值数量。要允许使用索引潜水来比较最多N个相等范围，请将eq_range_index_dive_limit设置为N+ 1。要禁用统计信息并始终使用索引潜水而不管N，请将eq_range_index_dive_limit设置为0。
+
+若要更新表索引统计信息以获得最佳估计值，请使用ANALYZE TABLE。
+
+skip scan,比如有索引(f1,f2)，都知道最左前缀原则，所以一般where f2 > 40是不走索引的，skip scan可以让他走索引，通过构造f1 = 1 and f2 > 40，扫描完以后再扫描 f1 = 2 and f2 > 40，以此类推，可以通过explain来看extra列是否有skip scan
+
+in优化，in查询可以用如下形式
+```
+SELECT ... FROM t1 WHERE ( col_1, col_2 ) IN (( 'a', 'b' ), ( 'c', 'd' ));
+```
+
+range_optimizer_max_size_size系统变量可以设置优化器使用的内存
+
+#### index merge 优化
+
+index merge就是多个索引并发扫描，再将扫描结果合并
+
+索引合并不适用于全文索引。
+
+索引合并访问方法检索具有多个范围扫描的行，并将其结果合并为一个。此访问方法只合并单个表的索引扫描，而不合并多个表的扫描。合并可以产生其底层扫描的并集、交集或交集的并集。
+
+可以使用索引合并的查询示例：
+```
+SELECT * FROM tbl_name WHERE key1 = 10 OR key2 = 20;
+
+SELECT * FROM tbl_name
+  WHERE (key1 = 10 OR key2 = 20) AND non_key = 30;
+
+SELECT * FROM t1, t2
+  WHERE (t1.key1 IN (1,2) OR t1.key2 LIKE 'value%')
+  AND t2.key1 = t1.some_col;
+
+SELECT * FROM t1, t2
+  WHERE t1.key1 = 1
+  AND (t2.key1 = t1.some_col OR t2.key2 = t1.some_col2);
+```
+
+> 如果你的查询有一个带有深度AND/OR嵌套的复杂WHERE子句，并且MySQL没有选择最佳计划，请尝试使用以下恒等转换来分发术语：
+
+```
+(x AND y) OR z => (x OR z) AND (y OR z)
+(x OR y) AND z => (x AND z) OR (y AND z)
+```
+
+在EXPLAIN输出中，Index Merge方法在type列中显示为index_merge。在本例中，key列包含使用的索引列表，key_len包含这些索引的最长键部分列表。
+
+索引合并访问方法有几种算法，它们显示在EXPLAIN输出的Extra字段中：
+- intersect：对多个and条件生效
+- union：对多个or条件生效
+- sort_union：sort-union算法和union算法之间的区别在于，sort-union算法必须首先获取所有行的行ID，并在返回任何行之前对其进行排序。
+
+索引合并的使用取决于optimizer_switch系统变量的index_merge、index_merge_intersection、index_merge_union和index_merge_sort_union标志的值。默认情况下，所有这些标志都是打开的。
+
+#### hash join
+
+默认情况下，MySQL尽可能使用哈希连接。可以使用BNL和NO_BNL优化器提示之一来控制是否使用散列连接。
+
+hash join比嵌套join快的多，首先创建hash表，在循环另一个表进行hash，判断是否相等
+
+可以使用join_buffer_size系统变量控制哈希连接的内存使用量;哈希连接使用的内存量不能超过此值。当哈希连接所需的内存超过可用量时，MySQL会使用磁盘上的文件来处理。如果发生这种情况，您应该注意，如果哈希连接无法容纳内存并且它创建的文件比为open_files_limit设置的文件多，则连接可能不会成功。要避免此类问题，请进行以下更改之一：
+- 增加join_buffer_size，使哈希连接不会溢出到磁盘。
+- 增加open_files_limit。
+
+#### 引擎条件下推
+
+只有ndb引擎可以使用，假设查询如下，a有索引，b没有索引
+```
+SELECT a, b FROM t1 WHERE b = 10;
+```
+
+那么可以条件下推给ndb引擎执行where条件，如果where a =10则不会下推，因为索引更快
+
+explain里面可以显示为：Extra: Using where with pushed condition
+
+like,between,is null,is not null,in也可以执行下推。
+
+BLOB，TEXT，JSON,BIT,ENUM类型的字段不能执行下推
+
+#### 索引条件下推
+
+索引条件下推（ICP）是MySQL使用索引从表中检索行的情况下的优化。如果没有ICP，存储引擎将遍历索引以定位基表中的行，并将它们返回到MySQL服务器，该服务器将评估行的WHERE条件。在启用ICP的情况下，如果可以仅使用索引中的列来计算部分WHERE条件，则MySQL服务器会将这部分WHERE条件下推到存储引擎。然后，存储引擎通过使用索引条目来评估推送的索引条件，并且仅当满足该条件时才从表中读取行。ICP可以减少存储引擎必须访问基表的次数以及MySQL服务器必须访问存储引擎的次数。
+
+索引条件下推优化的适用性受以下条件的限制：
+- 当需要访问整个表行时，ICP用于range、ref、eq_ref和ref_or_null访问方法。
+- ICP可以用于InnoDB和MyISAM表，包括分区的InnoDB和MyISAM表。
+- 对于InnoDB表，ICP仅用于辅助索引。ICP的目标是减少整行读取的数量，从而减少I/O操作。对于InnoDB聚集索引，完整的记录已经读入InnoDB缓冲区。在这种情况下使用ICP不会减少I/O。
+- ICP不支持在虚拟生成列上创建辅助索引。InnoDB支持虚拟生成列的二级索引。
+- 引用子查询的条件不能下推。
+- 引用存储函数的条件不能下推。存储引擎不能调用存储的函数。
+- 触发的条件不能下推。
+- 不能将条件下推到包含对系统变量的引用的派生表。
+
+
+要理解这种优化是如何工作的，首先考虑当不使用索引条件下推时索引扫描是如何进行的：
+1. 获取下一行，首先通过阅读索引元组，然后使用索引元组定位并读取整个表行。
+2. 测试应用于此表的部分WHERE条件。根据测试结果接受或拒绝行。
+
+使用Index Condition Pushdown，扫描过程如下所示：
+1. 获取下一行的索引元组（但不是整个表行）。
+2. 测试应用于此表且只能使用索引列进行检查的WHERE条件部分。如果不满足条件，则继续执行下一行的索引元组。
+3. 如果满足条件，则使用索引元组定位并读取整个表行。
+4. 测试应用于此表的WHERE条件的其余部分。根据测试结果接受或拒绝行。
+
+假设一个表包含有关人员及其地址的信息，并且该表的索引定义为 INDEX (zipcode, lastname, firstname) 。如果我们知道一个人的zipcode值，但不确定他的姓氏，我们可以这样搜索：
+```
+SELECT * FROM people
+  WHERE zipcode='95054'
+  AND lastname LIKE '%etrunia%'
+  AND address LIKE '%Main Street%';
+```
+MySQL可以使用索引扫描zipcode ='95054'的人。第二部分（lastname LIKE '%etrunia%'）不能用于限制必须扫描的行数，因此如果没有Index Condition Pushdown，则此查询必须检索所有zipcode ='95054'的人的完整表行。
+
+使用Index Condition Pushdown，MySQL在阅读整个表行之前检查lastname LIKE“%etrunia%”部分。这样可以避免阅读与zipcode条件匹配但与lastname条件不匹配的索引元组对应的整行。
+
+默认情况下，索引条件下推处于启用状态。可以通过设置index_condition_pushdown标志来使用optimizer_switch系统变量控制它：
+```
+SET optimizer_switch = 'index_condition_pushdown=off';
+SET optimizer_switch = 'index_condition_pushdown=on';
+```
+
+#### 条件过滤
+
+在联接处理中，前缀行是在联接中从一个表传递到下一个表的那些行。通常，优化器会尝试将前缀计数较低的表放在连接顺序的早期，以防止行组合的数量快速增加。如果优化器可以使用有关从一个表中选择并传递到下一个表的行的条件的信息，那么它就可以更准确地计算行估计值并选择最佳执行计划。
+
+如果没有条件过滤，表的前缀行计数将基于WHERE子句根据优化器选择的访问方法所选择的估计行数。条件筛选使优化器能够在WHERE子句中使用访问方法未考虑的其他相关条件，从而改进其前缀行计数估计。例如，即使可能有一个基于索引的访问方法可用于在联接中从当前表中选择行，但在WHERE子句中也可能有用于表的附加条件，这些条件可以过滤（进一步限制）传递给下一个表的合格行的估计。
+
+前缀行计数（估计在联接中从当前表传递到下一个表的行数）是行与筛选值的乘积。也就是说，前缀行计数是估计的行计数，减去估计的过滤效果。例如，如果行数为1000，筛选为20%，则条件筛选会将估计的行数1000减少到前缀行数1000 × 20% = 1000 × .2 = 200。
+
+假设以下查询
+
+```
+SELECT *
+  FROM employee JOIN department ON employee.dept_no = department.dept_no
+  WHERE employee.first_name = 'John'
+  AND employee.hire_date BETWEEN '2018-01-01' AND '2018-06-01';
+```
+
+- employee表有1024行。
+- department表有12行。
+- 这两个表都有一个关于dept_no的索引。
+- employee表在first_name上有一个索引。
+- 在employee.first_name上有8行满足此条件：first_name = 'John'
+- 在employee.hire_date上有150行满足此条件：hire_date BETWEEN '2018-01-01' AND '2018-06-01'
+- 1行满足两个条件：WHERE employee.first_name = 'John' AND employee.hire_date BETWEEN '2018-01-01' AND '2018-06-01';
+
+如果没有条件过滤，EXPLAIN会产生如下输出：
+```
++----+------------+--------+------------------+---------+---------+------+----------+
+| id | table      | type   | possible_keys    | key     | ref     | rows | filtered |
++----+------------+--------+------------------+---------+---------+------+----------+
+| 1  | employee   | ref    | name,h_date,dept | name    | const   | 8    | 100.00   |
+| 1  | department | eq_ref | PRIMARY          | PRIMARY | dept_no | 1    | 100.00   |
++----+------------+--------+------------------+---------+---------+------+----------+
+```
+
+对于employee，name索引上的访问方法选取与名称“John”匹配的8行。没有进行过滤（filtered是100%），所以所有行都是下一个表的前缀行：前缀行计数是rows×filtered = 8 × 100% = 8。
+
+通过条件过滤，优化器还考虑了访问方法没有考虑的WHERE子句中的条件。在本例中，优化器使用BETWEEN条件对employee.hire_date的过滤效果估计为16.31%。因此，EXPLAIN会产生如下输出：
+
+```
++----+------------+--------+------------------+---------+---------+------+----------+
+| id | table      | type   | possible_keys    | key     | ref     | rows | filtered |
++----+------------+--------+------------------+---------+---------+------+----------+
+| 1  | employee   | ref    | name,h_date,dept | name    | const   | 8    | 16.31    |
+| 1  | department | eq_ref | PRIMARY          | PRIMARY | dept_no | 1    | 100.00   |
++----+------------+--------+------------------+---------+---------+------+----------+
+```
+
+现在前缀行数为rows×filtered = 8 × 16.31% = 1.3，这更接近于实际数据集。
+
+要控制优化器是否考虑其他筛选条件，请使用optimizer_switch系统变量的condition_fanout_filter标志，默认启用
+
+如果优化器高估了条件筛选的效果，则性能可能会比不使用条件筛选时更差。在这种情况下，这些技术可能有助于：
+- 如果某个列没有索引，那么对它进行索引，这样优化器就可以获得一些关于列值分布的信息，并可以改进其行估计。
+- 同样，如果没有列直方图信息可用，则生成一个直方图
+- 更改连接顺序。实现这一点的方法包括连接顺序优化器提示
+- 禁用会话的条件筛选：SET optimizer_switch = 'condition_fanout_filter=off';
+
+#### order by 优化
+
+要提高ORDER BY的速度，请检查是否可以让MySQL使用索引而不是额外的排序阶段。如果无法做到这一点，请尝试以下策略：
+- 增加sort_buffer_size变量值。理想情况下，该值应该足够大，以使整个结果集能够放入排序缓冲区（以避免写入磁盘和合并过程）。
+- 请注意，存储在排序缓冲区中的列值的大小受max_sort_length系统变量值的影响。例如，如果元组存储长字符串列的值，并且您增加max_sort_length的值，则排序缓冲区元组的大小也会增加，并且可能需要您增加sort_buffer_size。
+- 要监视合并通道的数量（合并临时文件），请检查Sort_merge_passes状态变量。
+- 增加read_rnd_buffer_size变量值，以便一次读取更多行。
+- 将tmpdir系统变量更改为指向具有大量可用空间的专用文件系统。变量值可以列出以循环方式使用的多个路径;您可以使用此功能将负载分散到多个目录。在Unix上用冒号（：）分隔路径，在Windows上用冒号（;）分隔路径。路径应该命名位于不同物理磁盘上的文件系统中的目录，而不是同一磁盘上的不同分区。
+
+如果EXPLAIN输出的Extra列不包含Using filesort，则使用索引，不执行filesort。
+如果EXPLAIN输出的Extra列包含Using filesort，则不使用索引并执行filesort。
+
+#### group by优化
+
+group by其实就是构建一个hash表，key就是group by的key, value包括Min max之类的值。
+
+将索引用于GROUP BY的最重要的先决条件是，所有GROUP BY列都引用来自同一索引的属性，并且索引按顺序存储其键（例如，对于BTREE索引是这样，但对于HASH索引则不是这样）。索引访问是否可以取代临时表的使用还取决于查询中使用索引的哪些部分、为这些部分指定的条件以及所选的聚合函数。
+
+有两种方法可以通过索引访问执行GROUP BY查询，下面几节将详细介绍。第一个方法将分组操作与所有范围谓词（如果有）一起应用。第二种方法首先执行范围扫描，然后对结果元组进行分组。
+- 松散索引扫描
+- 紧密索引扫描
+
+松散索引扫描
+
+如果松散索引扫描适用于查询，则EXPLAIN输出在Extra列中显示Using index for group-by。
+
+假设在表t1（c1，c2，c3，c4）上存在索引idx（c1，c2，c3）。松散索引扫描访问方法可用于以下查询：
+```
+SELECT c1, c2 FROM t1 GROUP BY c1, c2;
+SELECT DISTINCT c1, c2 FROM t1;
+SELECT c1, MIN(c2) FROM t1 GROUP BY c1;
+SELECT c1, c2 FROM t1 WHERE c1 < const GROUP BY c1, c2;
+SELECT MAX(c3), MIN(c3), c1, c2 FROM t1 WHERE c2 > const GROUP BY c1, c2;
+SELECT c2 FROM t1 WHERE c1 < const GROUP BY c1, c2;
+SELECT c1, c2 FROM t1 WHERE c3 = const GROUP BY c1, c2;
+```
+
+以下查询无法使用此快速选择方法执行，原因如下：
+- 除了MIN（）或MAX（）之外，还有其他聚合函数：
+- GROUP BY子句中的列不构成索引的最左边前缀：
+- 该查询引用位于GROUP BY部分之后的键的一部分，并且对于该部分，不存在与常量相等的情况：
+
+假设在表t1（c1，c2，c3，c4）上存在索引idx（c1，c2，c3）。松散索引扫描访问方法可用于以下查询：
+```
+SELECT COUNT(DISTINCT c1), SUM(DISTINCT c1) FROM t1;
+
+SELECT COUNT(DISTINCT c1, c2), COUNT(DISTINCT c2, c1) FROM t1;
+```
+
+紧密索引扫描
+
+紧密索引扫描可以是全索引扫描，也可以是范围索引扫描，具体取决于查询条件。
+
+当不满足松散索引扫描的条件时，仍然可以避免为GROUP BY查询创建临时表。如果WHERE子句中有范围条件，则此方法只读取满足这些条件的键。否则，它将执行索引扫描。由于此方法读取WHERE子句定义的每个范围中的所有键，或者在没有范围条件的情况下扫描整个索引，因此称为紧密索引扫描。使用紧密索引扫描时，只有在找到满足范围条件的所有键后才执行分组操作。
+
+要使此方法起作用，查询中的所有列都有一个常量相等条件就足够了，该条件引用位于GROUP BY键之前或之间的键部分。相等条件中的常数填充搜索关键字中的任何“空白“，以便可以形成索引的完整前缀。然后，这些索引前缀可以用于索引查找。如果GROUP BY结果需要排序，并且可以形成作为索引前缀的搜索键，MySQL也避免了额外的排序操作，因为在有序索引中使用前缀搜索已经按顺序检索了所有键。
+
+假设在表t1（c1，c2，c3，c4）上存在索引idx（c1，c2，c3）。以下查询不适用于前面描述的松散索引扫描访问方法，但仍适用于紧密索引扫描访问方法。
+GROUP BY中有一个间隙，但它被条件c2 = 'a'覆盖：
+```
+SELECT c1, c2, c3 FROM t1 WHERE c2 = 'a' GROUP BY c1, c3;
+```
+
+GROUP BY并不从键的第一部分开始开始，但有一个条件为该部分提供了一个常量：
+```
+SELECT c1, c2, c3 FROM t1 WHERE c1 = 'a' GROUP BY c2, c3;
+```
+
+#### limit优化
+
+比如order by + limit可以启用topN排序，不需要对所有元素排序。
+
+如果将LIMIT与DISTINCT结合使用，MySQL会在找到row_count唯一行时立即停止。
+
+在某些情况下，GROUP BY可以通过按顺序阅读索引（或对索引进行排序），然后计算摘要直到索引值更改来解决。在这种情况下，LIMIT不会计算任何不必要的GROUP BY值。
+
+一旦MySQL向客户端发送了所需的行数，它就会中止查询，除非您使用SQL_CALC_FOUND_ROWS。在这种情况下，可以使用 SELECT FOUND_ROWS() 检索行数。
+
+如果ORDER BY没有使用索引，但也存在LIMIT子句，则优化器可以避免使用合并文件，并使用内存中的文件排序操作对内存中的行进行排序。
+
+总之一句话，最好加上limit
+
+#### 子查询物化
+
+将子查询的结果保存在临时表，而不是每次都执行。需要开启optimizer_switch = materialization 
+
+#### 其他优化技巧
+
+如果应用程序发出多个数据库请求以执行相关更新，则将这些语句组合到存储例程中可以提高性能。同样，如果应用程序基于多个列值或大量数据计算单个结果，则将计算组合到一个函数中可以提高性能。然后，所产生的快速数据库操作可供其他查询、应用程序甚至用不同编程语言编写的代码重用。
+
+如果可能，将报告分类为“实时“或“统计“，其中统计报告所需的数据仅从实时数据定期生成的汇总表中创建。
+
+如果您的数据不符合行列表结构，则可以将数据打包并存储到BLOB列中。在这种情况下，您必须在应用程序中提供代码来打包和解包信息，但这可能会节省I/O操作来读取和写入相关值集。
+
+对于Web服务器，将图像和其他二进制资产存储为文件，路径名存储在数据库中，而不是文件本身。大多数Web服务器更擅长缓存文件而不是数据库内容，因此使用文件通常更快。
+
+如果你真的需要很高的速度，看看底层的MySQL接口。例如，通过直接访问MySQLInnoDB或MyISAM存储引擎，与使用SQL接口相比，您可以获得显著的速度提升。
+
+复制可以为某些操作提供性能优势。您可以在副本之间分发客户端检索以分割负载。为了避免在进行备份时降低源的速度，可以使用复制副本进行备份。
+
+### 索引优化
+
+如果一个表有许多列，并且您查询了许多不同的列组合，那么将不太常用的数据拆分到单独的表中，每个表有几个列，然后通过从主表复制数字ID列将它们关联回主表，这样可能会更有效。这样，每个小表都可以有一个用于快速查找其数据的主键，并且您可以使用连接操作仅查询所需的列集。根据数据的分布方式，查询可能会执行更少的I/O并占用更少的缓存内存，因为相关的列在磁盘上打包在一起。
+
+最常见的索引类型涉及单个列，将该列的值的副本存储在数据结构中，允许快速查找具有相应列值的行。B树数据结构允许索引快速查找WHERE子句中与=、>、≤、BETWEEN、IN等运算符对应的特定值、一组值或一个值范围。
+
+所有存储引擎都支持每个表至少16个索引，总索引长度至少为256字节。大多数存储引擎有更高的限制。
+
+可以对字符串创建前n个字符串的索引，减少索引长度。
+
+FULLTEXT索引用于全文搜索。只有InnoDB和MyISAM存储引擎支持FULLTEXT索引，并且只支持CHAR、VARCHAR和TEXT列。索引总是在整个列上进行，并且不支持列前缀索引。
+
+存储引擎收集有关表的统计信息供优化器使用。表统计信息基于值组，其中值组是具有相同键前缀值的一组行。出于优化目的，一个重要的统计信息是平均值组大小。
+
+随着索引的平均值组大小的增加，索引对这两个目的的用处越来越小，因为每次查找的平均行数增加了：为了使索引有利于优化，最好每个索引值针对表中的少量行。当给定的索引值产生大量的行时，索引就不那么有用了，MySQL也不太可能使用它。
+
+平均值组大小与表基数有关，表基数是值组的数量。SHOW INDEX语句显示基于N/S的基数值，其中N是表中的行数，S是平均值组大小。该比率产生表中的值组的近似数量。
+对于基于=运算符的连接，NULL与非NULL值不同：当expr1或expr2（或两者）为NULL时，expr1=expr2不为真。这会影响tbl_name.key=expr形式的比较的ref访问：如果expr的当前值为NULL，MySQL不会访问表，因为比较不可能为true。
+
+对于=比较，表中有多少NULL值并不重要。出于优化目的，相关值是非NULL值组的平均大小。但是，MySQL目前还不能收集或使用该平均大小。
+
+对于InnoDB和MyISAM表，您可以分别通过innodb_stats_method和myisam_stats_method系统变量来控制表统计信息的收集。这些变量有三个可能的值，其不同之处如下：
+- 当变量设置为nulls_equal时，所有NULL值都被视为相同的（即，它们都形成一个值组）。如果NULL值组大小远高于平均非NULL值组大小，则此方法会使平均值组大小向上倾斜。这使得索引在优化器看来没有它在查找非NULL值的联接中实际上那么有用。因此，nulls_equal方法可能会导致优化器在应该使用索引进行ref访问时不使用索引。
+- 当变量设置为nulls_unequal时，NULL值不被认为是相同的。相反，每个NULL值形成一个大小为1的单独的值组。如果有许多NULL值，此方法会使平均值组大小向下倾斜。如果非NULL值组的平均大小很大，则将每个NULL值计为大小为1的组会导致优化器过高估计查找非NULL值的联接的索引值。因此，nulls_unequal方法可能会导致优化器在其他方法可能更好的情况下使用此索引进行ref查找。
+- 当变量设置为nulls_ignored时，NULL值将被忽略。
+
+#### hash index
+
+它们仅用于使用=或<=>运算符的相等比较（但非常快）。它们不用于查找值范围的比较运算符，如<。依赖于这种单值查找的系统被称为“键值存储”;要将MySQL用于此类应用程序，请尽可能使用散列索引。
+
+优化器不能使用哈希索引来加速ORDER BY操作。(This索引类型不能用于按顺序搜索下一个条目。)
+
+MySQL无法确定两个值之间大约有多少行（这是由范围优化器用来决定使用哪个索引）。如果您将MyISAM或InnoDB表更改为哈希索引的MEMORY表，这可能会影响某些查询。
+
+只能使用整个键来搜索行。(With B树索引，键的任何最左边的前缀都可以用来查找行。)
+
+#### b树索引
+
+b-tree索引通常比hash索引更好
+
+B树索引可用于使用=、>、>=、<、<=或BETWEEN运算符的表达式中的列比较。如果LIKE的参数是不以通配符开头的常量字符串，则该索引也可用于LIKE比较。
+
+#### 索引扩展
+
+InnoDB会自动扩展每个二级索引，将主键列追加到二级索引上。考虑下面的表定义：
+```
+CREATE TABLE t1 (
+  i1 INT NOT NULL DEFAULT 0,
+  i2 INT NOT NULL DEFAULT 0,
+  d DATE DEFAULT NULL,
+  PRIMARY KEY (i1, i2),
+  INDEX k_d (d)
+) ENGINE = InnoDB;
+```
+
+此表定义列（i1，i2）上的主键。它还在列（d）上定义了一个二级索引k_d，但InnoDB内部扩展了这个索引，并将其视为列（d，i1，i2）。
+
+考虑查询
+```
+EXPLAIN SELECT COUNT(*) FROM t1 WHERE i1 = 3 AND d = '2000-01-01'
+```
+
+如果不扩展索引，那么查询计划如下
+
+```
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t1
+         type: ref
+possible_keys: PRIMARY,k_d
+          key: k_d
+      key_len: 4
+          ref: const
+         rows: 5
+        Extra: Using where; Using index
+```
+
+如果扩展索引，那么查询计划如下
+
+```
+mysql> EXPLAIN SELECT COUNT(*) FROM t1 WHERE i1 = 3 AND d = '2000-01-01'\G
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t1
+         type: ref
+possible_keys: PRIMARY,k_d
+          key: k_d
+      key_len: 8
+          ref: const,const
+         rows: 1
+        Extra: Using index
+```
+
+- key_len从4个字节变为8个字节，表明键查找使用列d和i1，而不仅仅是d。
+- ref值从const变为const，const，因为键查找使用两个键部分，而不是一个。
+- 行数从5减少到1，表明InnoDB应该需要检查更少的行来生成结果。
+- Extra值从Using where; Using index更改为Using index。这意味着可以仅使用索引读取行，而无需查询数据行中的列。
+
+### 优化数据库结构
+
+设计表以最小化它们在磁盘上的空间。这可以通过减少写入磁盘和从磁盘读取的数据量来实现巨大的改进。较小的表通常需要较少的主内存，而它们的内容在查询执行期间被主动处理。表数据的任何空间减少都会导致索引变小，从而可以更快地处理。
+
+尽可能使用最有效（最小）的数据类型。MySQL有许多专门的类型，可以节省磁盘空间和内存。例如，如果可能的话，使用较小的整数类型来获得较小的表。MEDIUMINT通常是比INT更好的选择，因为MEDIUMINT列使用的空间少25%。
+
+如果可能的话，将列设置为NOT NULL。它通过更好地使用索引和消除测试每个值是否为NULL的开销，使SQL操作更快。您还节省了一些存储空间，每列一位。如果你真的需要空值在你的表，使用它们。只要避免允许每列都有NULL值的默认设置即可。
+
+InnoDB表默认使用DYNAMIC行格式创建。要使用DYNAMIC以外的行格式，请配置innodb_default_row_form，或在CREATE TABLE或ALTER TABLE语句中显式指定ROW_FORMAT选项。
+
+要通过以压缩形式存储表数据来进一步最小化空间，请在创建InnoDB表时指定ROW_FORMAT=COMPRESSED，或者在现有的MyISAM表上运行myisampack命令。（InnoDB压缩表是可读和可写的，而MyISAM压缩表是只读的。
+
+表的主索引应尽可能短。这使得每一行的识别变得简单而有效。对于InnoDB表，主键列在每个二级索引条目中是重复的，所以如果有很多二级索引，短主键可以节省相当多的空间。
+
+只创建提高查询性能所需的索引。索引有利于检索，但会降低插入和更新操作的速度。如果您主要通过搜索列的组合来访问表，请在这些列上创建单个复合索引，而不是为每列创建单独的索引。索引的第一部分应该是最常用的列。如果在从表中选择时总是使用许多列，则索引中的第一列应该是具有最多重复项的列，以获得更好的索引压缩。
+
+如果一个长字符串列很可能在第一个字符数上有一个唯一的前缀，那么最好只索引这个前缀，使用MySQL对在列的最左边部分创建索引的支持
+
+在某些情况下，将经常扫描的表分成两部分可能是有益的。如果它是一个动态格式的表，并且可以使用一个较小的静态格式表，以便在扫描表时查找相关行，则尤其如此。
+
+在具有相同数据类型的不同表中删除具有相同信息的列，以加快基于相应列的联接速度。
+
+保持列名称简单，这样您就可以在不同的表中使用相同的名称，并简化连接查询。例如，在名为customer的表中，使用name而不是customer_name的列名。要使您的名称可移植到其他SQL服务器，请考虑将它们保持在18个字符以下。
+
+通常情况下，尽量保持所有数据都是非冗余的（观察数据库理论中所谓的第三范式）。与其重复冗长的值（如名称和地址），不如为它们分配唯一的ID，根据需要在多个较小的表中重复这些ID，并通过引用join子句中的ID在查询中连接表。
+
+如果速度比磁盘空间和保持多个数据副本的维护成本更重要，例如在分析大型表中所有数据的商业智能场景中，您可以放松规范化规则，复制信息或创建汇总表以获得更快的速度。
+
+对于可以表示为字符串或数字的唯一ID或其他值，最好使用数字列而不是字符串列。由于大数值可以存储在比相应字符串更少的字节中，因此传输和比较它们的速度更快，占用的内存更少。
+
+如果您使用的是数值数据，在许多情况下，从数据库（使用实时连接）访问信息比访问文本文件更快。数据库中的信息可能以比文本文件更紧凑的格式存储，因此访问它涉及的磁盘访问较少。还可以在应用程序中保存代码，因为这样可以避免分析文本文件以查找行和列边界。
+
+当不需要特定于语言的排序规则功能时，使用二进制排序规则顺序进行快速比较和排序操作。可以使用BINARY运算符在特定查询中使用二进制排序规则。
+
+当比较来自不同列的值时，尽可能使用相同的字符集和排序规则声明这些列，以避免在运行查询时进行字符串转换。
+
+对于小于8 KB的列值，请使用二进制VARCHAR而不是BLOB。GROUP BY和ORDER BY子句可以生成临时表，如果原始表不包含任何BLOB列，则这些临时表可以使用MEMORY存储引擎。
+
+如果一个表包含字符串列，如名称和地址，但许多查询不检索这些列，请考虑将字符串列拆分到一个单独的表中，并在必要时使用带有外键的联接查询。当MySQL从一行中检索任何值时，它会读取一个包含该行（可能还有其他相邻行）所有列的数据块。保持每一行都很小，只包含最常用的列，这样就可以在每个数据块中容纳更多的行。这样的紧凑表减少了常见查询的磁盘I/O和内存使用。
+
+当你使用一个随机生成的值作为InnoDB表中的主键时，如果可能的话，在它前面加上一个升序值，比如当前的日期和时间。当连续的主值物理上存储在彼此附近时，InnoDB可以更快地插入和检索它们。
+
+#### mysql打开和关闭表
+
+MySQL是多线程的，因此可能有许多客户端同时对给定的表发出查询。为了最大限度地减少多个客户端会话在同一个表上具有不同状态的问题，该表由每个并发会话独立打开。这会使用额外的内存，但通常会提高性能。对于MyISAM表，每个打开表的客户端的数据文件都需要一个额外的文件描述符。(By相反，索引文件描述符在所有会话之间共享。）
+
+table_open_cache和max_connections系统变量影响服务器保持打开状态的最大文件数。如果您增加这两个值中的一个或两个，您可能会遇到操作系统对每个进程打开的文件描述符数量施加的限制。许多操作系统允许您增加打开文件限制，尽管方法因系统而异。请参阅操作系统文档，以确定是否可以增加限制以及如何增加限制。
+
+table_open_cache与max_connections相关。例如，对于200个并发运行的连接，指定表缓存大小至少为200 *N，其中N是您执行的任何查询中每个连接的最大表数。您还必须为临时表和文件保留一些额外的文件描述符。
+
+确保您的操作系统可以处理table_open_cache设置所暗示的打开文件描述符的数量。如果table_open_cache设置得太高，MySQL可能会耗尽文件描述符，并出现拒绝连接或无法执行查询等症状。
+
+打开表的该高速缓存保持在table_open_cache条目的级别。服务器在启动时自动调整该高速缓存的大小。要显式设置大小，请在启动时设置table_open_cache系统变量。MySQL可能会临时打开比这更多的表来执行查询，如本节后面所述。
+
+MySQL在以下情况下关闭未使用的表并将其从表缓存中删除：
+- 当该高速缓存已满并且线程试图打开不在该高速缓存中的表时。
+- 当该高速缓存包含多个table_open_cache条目，并且该高速缓存中的某个表不再被任何线程使用时。
+- 当发生表刷新操作时。当有人发出FLUSH TABLES语句或执行mysqladmin flush-tables或mysqladmin refresh命令时，就会发生这种情况。
+
+当表缓存填满时，服务器使用以下过程来定位要使用的缓存条目：用途：
+- 从最近最少使用的表开始，释放当前未使用的表。
+- 如果必须打开一个新表，但该高速缓存已满，无法释放任何表，则会根据需要临时扩展该高速缓存。当该高速缓存处于临时扩展状态并且表从已使用状态变为未使用状态时，关闭该表并从该高速缓存释放该表。
+
+为每个并发访问打开一个MyISAM表。这意味着如果两个线程访问同一个表，或者如果一个线程在同一个查询中访问该表两次（例如，通过将该表连接到其自身），则需要打开该表两次。每个并发打开都需要表缓存中的一个条目。第一次打开任何MyISAM表都需要两个文件描述符：一个用于数据文件，一个用于索引文件。表的每次额外使用只需要数据文件的一个文件描述符。索引文件描述符在所有线程之间共享。
+
+要确定表缓存是否太小，请检查Opened_tables状态变量，该变量指示自服务器启动以来打开表的操作数：
+
+```
+mysql> SHOW GLOBAL STATUS LIKE 'Opened_tables';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| Opened_tables | 2741  |
++---------------+-------+
+```
+
+如果该值非常大或增加得很快，即使您没有发出很多FLUSH TABLES语句，也要在服务器启动时增加table_open_cache值。
+
+### 优化innodb表
+
+一旦数据达到稳定的大小，或者一个不断增长的表增加了几十或几百兆字节，就可以考虑使用OPTIMIZE TABLE语句来重新组织表并压缩任何浪费的空间。重新组织的表需要更少的磁盘I/O来执行全表扫描。这是一种简单的技术，当其他技术（如提高索引使用率或调优应用程序代码）不实用时，它可以提高性能。
+
+OPTIMIZE TABLE复制表的数据部分并重建索引。好处来自于改进了索引中的数据打包，并减少了表空间和磁盘上的碎片。收益因每个表中的数据而异。您可能会发现，某些表有显著的收益，而另一些表没有，或者收益会随着时间的推移而减少，直到您下一次优化表。如果表很大，或者正在重建的索引不适合缓冲池，则此操作可能会很慢。向表中添加大量数据后的第一次运行通常比以后的运行慢得多。
+
+在InnoDB中，拥有一个长的PRIMARY KEY（一个单独的列和一个很长的值，或者几个列组成一个很长的复合值）会浪费大量的磁盘空间。行的主键值在指向同一行的所有辅助索引记录中重复。
+
+使用VARCHAR数据类型而不是CHAR来存储可变长度字符串或具有许多NULL值的列。CHAR（N）列总是需要N个字符来存储数据，即使字符串更短或其值为NULL。较小的表更适合缓冲池，并减少磁盘I/O。
+
+当使用COMPACT行格式（默认的InnoDB格式）和可变长度字符集（如utf8 mb 4或sjis）时，CHAR（N）列占用的空间量是可变的，但仍然至少是N个字节。
+
+对于较大的表或包含大量重复文本或数值数据的表，请考虑使用COMPRESSED行格式。将数据放入缓冲池或执行全表扫描所需的磁盘I/O更少。在做出永久性决定之前，请测量使用COMPRESSED与COMPACT行格式可以实现的压缩量。
+
+MySQL的默认设置AUTOCOMMIT=1会对忙碌的数据库服务器施加性能限制。在可行的情况下，通过发出SET AUTOCOMMIT=0或START TRANSACTION语句，然后在进行所有更改后发出COMMIT语句，将多个相关的数据更改操作包装到单个事务中。
+
+如果事务对数据库进行了修改，InnoDB必须在每次事务提交时将日志刷新到磁盘。当每次更改后都执行一次提交（与默认的自动提交设置一样）时，存储设备的I/O吞吐量会对每秒的潜在操作数设置上限。
+
+或者，对于仅由单个SELECT语句组成的事务，打开AUTOCOMMIT有助于InnoDB识别只读事务并优化它们。
+
+避免在插入、更新或删除大量行后执行回滚。如果一个大的事务降低了服务器的性能，回滚它会使问题变得更糟，可能需要几倍于原始数据更改操作的时间来执行。终止数据库进程没有帮助，因为回滚在服务器启动时再次开始。
+
+为了尽量减少发生此问题的可能性：
+- 增加缓冲池的大小，以便所有数据更改都可以缓存，而不是立即写入磁盘。
+- 设置innodb_change_buffering=all，以便除了插入操作外，还缓冲更新和删除操作。
+- 考虑在大数据更改操作期间定期发出COMMIT语句，可能会将单个删除或更新分解为多个语句，这些语句对较少的行进行操作。
+
+InnoDB可以避免为已知为只读的事务设置事务ID（TRX_ID字段）的开销。只有可能执行写操作或锁定读取（例如SELECT...for update）的事务才需要事务ID。更新。消除不必要的事务ID可以减少每次查询或数据更改语句构造读视图时所查询的内部数据结构的大小。
+
+InnoDB在以下情况下检测只读事务：
+- 该事务通过 START TRANSACTION READ ONLY 语句开始。在这种情况下，尝试对数据库进行更改（对于InnoDB，MyISAM或其他类型的表）会导致错误，并且事务将继续处于只读状态.您仍然可以在只读事务中对会话特定的临时表进行更改，或者对它们发出锁定查询，因为这些更改和锁定对任何其他事务都不可见。
+- autocommit设置被打开，这样就保证了事务是一个单一的语句，并且组成事务的单一语句是一个“非锁定“的SELECT语句。也就是说，SELECT不使用FOR UPDATE或 SHARED MODE子句。
+- 事务在没有READ ONLY选项的情况下启动，但尚未执行任何更新或显式锁定行的语句。在需要更新或显式锁定之前，事务将保持只读模式。
+因此，对于像报表生成器这样的读取密集型应用程序，您可以通过将InnoDB查询分组到 START TRANSACTION READ ONLY 和COMMIT中，或者在运行SELECT语句之前打开自动提交设置，或者简单地避免任何散布在查询中的数据更改语句来优化InnoDB查询序列。
+
+增加redo log文件的大小。当InnoDB已经写满redo log文件时，它必须在检查点中将缓冲池的修改内容写入磁盘。小的redo log文件会导致许多不必要的磁盘写入。
+
+redo log文件大小由innodb_redo_log_capacity决定。InnoDB尝试维护32个相同大小的重做日志文件，每个文件等于1/32 *innodb_redo_log_capacity。因此，更改innodb_redo_log_capacity设置会更改redo log文件的大小。
+
+考虑增加日志缓冲区的大小。大型日志缓冲区使大型事务能够运行，而无需在事务提交之前将日志写入磁盘。因此，如果您有更新、插入或删除许多行的事务，那么增大日志缓冲区可以节省磁盘I/O。日志缓冲区大小是使用innodb_log_buffer_size配置选项配置的，该选项可以动态配置。
+
+配置innodb_log_write_ahead_size配置选项以避免“写时读“。此选项定义重做日志的预写块大小。设置innodb_log_write_ahead_size以匹配操作系统或文件系统缓存块大小。当由于重做日志的预写块大小与操作系统或文件系统缓存块大小不匹配而导致重做日志块未完全缓存到操作系统或文件系统时，发生写时读。
+
+innodb_log_write_ahead_size的有效值是InnoDB日志文件块大小的倍数（2n）。最小值是InnoDB日志文件块大小（512）。当指定最小值时，不会发生写前操作。最大值等于innodb_page_size值。如果您为innodb_log_write_ahead_size指定的值大于innodb_page_size值，则innodb_log_write_ahead_size设置将被截断为innodb_page_size值。
+
+将innodb_log_write_ahead_size值设置得相对于操作系统或文件系统缓存块大小太低会导致写时读。将该值设置得太高可能会对日志文件写入的fsync性能产生轻微影响，因为会同时写入多个块。
+
+MySQL提供了专用的日志写入器线程，用于将重做日志记录从日志缓冲区写入系统缓冲区，并将系统缓冲区刷新到重做日志文件。您可以使用innodb_log_writer_threads变量启用或禁用日志写入器线程。专用日志写入器线程可以提高高并发系统的性能，但对于低并发系统，禁用专用日志写入器线程可以提供更好的性能。
+
+InnoDB使用Linux上的异步I/O子系统（本地AIO）来执行数据文件页面的预读和写入请求。此行为由innodb_use_native_aio配置选项控制，默认情况下启用该选项。对于本机AIO，I/O调度程序的类型对I/O性能的影响更大。通常，推荐使用noop和deadline I/O编译器。执行基准测试以确定哪个I/O调度程序可为您的工作负载和环境提供最佳结果。有关更多信息
+
+### 查询执行计划
+
+当EXPLAIN与可解释语句一起使用时，MySQL显示来自优化器的有关语句执行计划的信息。也就是说，MySQL解释了它将如何处理语句，包括有关表如何连接以及顺序的信息。
+
+对于SELECT语句，EXPLAIN会生成可使用SHOW WARNINGS显示的其他执行计划信息。
+
+EXPLAIN对于检查涉及分区表的查询很有用。
+
+FORMAT选项可用于选择输出格式。TRADITIONAL以表格格式显示输出。如果不存在FORMAT选项，这是默认值。JSON格式以JSON格式显示信息。
+
+优化器跟踪有时可以提供与EXPLAIN互补的信息。但是，优化器跟踪格式和内容在不同版本之间会发生变化。
+
+如果您认为应该使用索引而没有使用索引，那么运行ANALYZE TABLE来更新表统计信息，例如键的基数，这可能会影响优化器做出的选择。
+
+#### 输出格式
+
+EXPLAIN为SELECT语句中使用的每个表返回一行信息。它按照MySQL在处理语句时读取表的顺序列出输出中的表。这意味着MySQL从第一个表中读取一行，然后在第二个表中找到匹配的行，然后在第三个表中找到匹配的行，依此类推。当所有表都被处理完时，MySQL输出所选的列，并回溯表列表，直到找到一个有更多匹配行的表。从该表中读取下一行，然后处理下一个表。
+
+本节介绍EXPLAIN生成的输出列。后面的部分提供了有关类型和附加列的其他信息。
+
+EXPLAIN的每个输出行提供有关一个表的信息。每一行都包含表10 - 1“EXPLAIN输出列”中总结的值，并在下表中进行了更详细的描述。列名显示在表的第一列中;第二列提供使用FORMAT=JSON时输出中显示的等效属性名。
+- id: SELECT标识符。这是查询中SELECT的序号。如果行引用其他行的联合结果，则该值可以为NULL。在这种情况下，表列显示一个类似<unionM，N>的值，以指示该行引用id值为M和N的行的并集。
+- select type: SELECT的类型，可以是下表中显示的任何类型。JSON格式的EXPLAIN将SELECT类型公开为query_block的属性，除非它是SIMPLE或PRIMARY。JSON名称（如适用）也显示在表中。
+  - SIMPLE: 简单sql，不使用union或子查询
+  - PRIMARY: 最外层查询
+  - UNION: UNION的第二个或以后的select
+  - DEPENDENT UNION: UNION中的第二个或以后的SELECT语句，取决于外部查询
+  - UNION RESULT: UNION的结果
+  - SUBQUERY： 子查询
+  - DEPENDENT SUBQUERY： 子查询的第一个select,取决于外部查询
+  - DERIVED： 派生表
+  - DEPENDENT DERIVED：派生表依赖于另一个表
+  - MATERIALIZED：物化子查询
+  - UNCACHEABLE SUBQUERY： 一个子查询，其结果无法缓存，并且必须为外部查询的每一行重新评估
+  - UNCACHEABLE UNION：属于不可缓存子查询的UNION中的第二个或以后的选择
+- table: 表名称
+- partitions: 查询将从中匹配记录的分区。对于未分区的表，该值为NULL。
+- type: 连接类型
+- possible_keys：possible_keys列表示MySQL可以从中选择查找此表中的行的索引。请注意，该列与EXPLAIN输出中显示的表顺序完全无关。这意味着possible_keys中的某些键在实际中可能无法使用生成的表顺序。如果此列为NULL（或在JSON格式的输出中未定义），则没有相关索引。在这种情况下，您可以通过检查WHERE子句来检查它是否引用了适合索引的某个或某些列，从而提高查询的性能。如果是，请创建一个适当的索引，并再次使用EXPLAIN检查查询。
+- key：key列表示MySQL实际决定使用的键（索引）。如果MySQL决定使用一个可能的_keys索引来查找行，则该索引将作为键值列出。对于InnoDB，即使查询也选择了主键，二级索引也可能覆盖选定的列，因为InnoDB将主键值与每个二级索引一起存储。如果key为NULL，则MySQL找不到可以更有效地执行查询的索引。
+- key_len：key_len列表示MySQL决定使用的键的长度。key_len的值使您能够确定MySQL实际使用了多部分键的多少部分。如果key列显示NULL，key_len列也显示NULL。
+- ref：ref列显示将哪些列或常数与键列中命名的索引进行比较，以从表中选择行。
+- rows: rows列表示MySQL认为执行查询必须检查的行数。对于InnoDB表，这个数字是一个估计值，可能并不总是准确的。
+- filtered:筛选列指示按表条件筛选的表行的估计百分比。最大值为100，这意味着未进行行筛选。值从100减小表示过滤量增加。rows显示检查的估计行数，rows×filtered显示与下表连接的行数。例如，如果行数为1000，筛选为50.00（50%），则要与下表联接的行数为1000 × 50% = 500。
+- Extra:此列包含有关MySQL如何解析查询的其他信息。
+
+连接类型，从最好到最坏排序
+- system: 该表只有一行,const类型的一个特例
+- const: 该表最多有一个匹配行，在查询开始时读取。因为只有一行，所以该行中的列的值可以被优化器的其余部分视为常量。const表非常快，因为它们只被读取一次。
+- eq_ref: 对于前一个表中的每个行组合，从该表中读取一行。除了system和const类型，这是最好的连接类型。当索引的所有部分都被联接使用并且索引是PRIMARY KEY或UNIQUE NOT NULL索引时，使用它。eq_ref可用于使用=运算符进行比较的索引列。比较值可以是常数，也可以是使用在此表之前读取的表中的列的表达式。
+- ref: 对于以前表中的每个行组合，将从此表中读取具有匹配索引值的所有行。如果连接仅使用键的最左边前缀，或者键不是PRIMARY KEY或UNIQUE索引（换句话说，如果连接无法基于键值选择单行），则使用ref。如果所使用的键只匹配几行，则这是一种很好的联接类型。ref可用于使用=或<=>运算符进行比较的索引列。
+- fulltext: 连接是使用FULLTEXT索引执行的。
+- ref_or_null:这种连接类型类似于ref，但MySQL会额外搜索包含NULL值的行。这种连接类型优化最常用于解析子查询。
+- index_merge: 此联接类型指示使用索引合并优化。在这种情况下，输出行中的键列包含所使用的索引的列表，而key_len包含所使用的索引的最长键部分的列表。
+- unique_subquery: 此类型替换以下形式的某些IN子查询的eq_ref：`value IN (SELECT primary_key FROM single_table WHERE some_expr)`
+- index_subquery: 这个连接类型类似于unique_subquery。它取代了IN子查询，但它适用于以下形式的子查询中的非唯一索引
+- range: 只检索给定范围内的行，并使用索引选择行。输出行中的键列指示使用的索引。key_len包含使用的最长密钥部分。此类型的ref列为NULL。当使用=、<>、>、>=、<、<=、IS NULL、< =>、BETWEEN、LIKE或IN（）运算符中的任何一个将键列与常量进行比较时，可以使用range
+- index: 索引连接类型与ALL相同，只是索引树被扫描。
+  - 如果索引是查询的覆盖索引，并且可以用于满足表中所需的所有数据，则只扫描索引树。在本例中，Extra列显示Using index。仅索引扫描通常比ALL扫描快，因为索引的大小通常小于表数据。
+  - 全表扫描是通过从索引中读取数据来执行的，以便按索引顺序查找数据行。使用索引不会出现在“extra”列中。
+- all: 全表扫描 
+
+extra信息,EXPLAIN输出的Extra列包含有关MySQL如何解析查询的其他信息.如果你想让你的查询尽可能快，请注意Using filesort和Using temporary的Extra列值，或者，在JSON格式的EXPLAIN输出中，using_filesort和using_temporary_table属性等于true。
+- Backward index scan: 优化器可以在InnoDB表上使用降序索引。与使用索引一起显示。
+- Child of 'table' pushed join@1: 这个表在一个可以下推到NDB内核的连接中被引用为表的子表。仅在NDB集群中启用下推连接时启用。
+- const row not found: 对于 SELECT ... FROM tbl_name 这样的查询，表为空。
+- Deleting all rows: 对于MySQL，一些存储引擎（如MyISAM）支持一个处理程序方法，该方法以简单快速的方式删除所有表行。如果引擎使用此优化，则会显示此额外值。
+- Distinct: MySQL正在寻找不同的值，所以它在找到第一个匹配的行后停止为当前行组合搜索更多的行。
+- FirstMatch: 半连接FirstMatch连接捷径策略用于tbl_name。
+- Full scan on NULL key: 当优化器无法使用索引查找访问方法时，作为一种回退策略，子查询优化会出现这种情况。
+- Impossible HAVING: HAVING子句始终为false，不能选择任何行。
+- Impossible WHERE: WHERE子句始终为false，不能选择任何行。
+- Impossible WHERE noticed after reading const tables: MySQL已经读取了所有的const（和系统）表，并注意到WHERE子句总是false。
+- LooseScan: 使用半连接LooseScan策略。m和n是关键部件号。
+- No matching min/max row: 没有行满足查询条件，例如 SELECT MIN(...) FROM ... WHERE condition 。
+- no matching row in const table: 对于具有联接的查询，存在空表或没有满足唯一索引条件的行的表。
+- No matching rows after partition pruning: 对于DELETE或UPDATE，优化器在分区修剪后没有发现任何要删除或更新的内容。它的含义类似于SELECT语句的Impossible WHERE。
+- No tables used: 查询没有FROM子句，或者有FROM DUAL子句。
+- Not exists: MySQL能够对查询进行LEFT JOIN优化，并且在找到一个符合LEFT JOIN条件的行后，不会检查此表中的更多行以查找前一行组合。下面是一个可以通过这种方式优化的查询类型的示例：`SELECT * FROM t1 LEFT JOIN t2 ON t1.id=t2.id WHERE t2.id IS NULL;`
+- Plan isn't ready yet: 当优化器尚未完成为在命名连接中执行的语句创建执行计划时，此值与 EXPLAIN FOR CONNECTION 一起出现。如果执行计划输出包含多行，则其中任何一行或所有行都可以具有此Extra值，具体取决于优化器确定完整执行计划的进度。
+- Range checked for each record: MySQL找不到可用的索引，但发现某些索引可能在前面表中的列值已知后使用。对于前面表中的每个行组合，MySQL检查是否可以使用range或index_merge访问方法来检索行。这不是非常快，但比执行没有索引的连接要快。
+- Recursive: 这表示该行应用于递归公用表表达式的递归SELECT部分。
+- Using filesort: MySQL必须执行一个额外的过程来找出如何按排序顺序检索行。排序是通过根据联接类型遍历所有行并为匹配WHERE子句的所有行存储排序键和该行指针来完成的。然后对键进行排序，并按排序顺序检索行。
+- Using index : 只使用索引树中的信息从表中检索列信息，而不必执行额外的查找来读取实际行。当查询仅使用属于单个索引的列时，可以使用此策略。对于具有用户定义的聚集索引的InnoDB表，即使Extra列中没有Using index，也可以使用该索引。如果type是index，key是PRIMARY，就是这种情况。
+- Using index condition: 读取表的方法是访问索引元组并首先测试它们以确定是否读取整个表行。通过这种方式，索引信息用于推迟（“下推“）阅读整个表行，除非必要。
+- Using index for group-by: Using index for group-by表示MySQL找到了一个索引，可以用于检索GROUP BY或DISTINCT查询的所有列，而无需对实际表进行任何额外的磁盘访问。此外，索引以最有效的方式使用，因此对于每个组，仅读取几个索引条目。
+- Using index for skip scan: 指示使用“跳过扫描”访问方法。
+- Using join buffer: 来自早期联接的表被逐部分读入联接缓冲区，然后使用缓冲区中的表行与当前表进行联接。（Block Nested Loop）指示使用Block Nested-Loop算法， (Batched Key Access) 指示使用Batched Key Access算法，（hash join）指示使用hash join。也就是说，EXPLAIN输出的前一行上的表中的键被缓冲，匹配的行从Using join buffer出现的行所表示的表中批量获取。
+- Using MRR: 使用多范围读取优化策略读取表。
+- Using sort_union(...), Using union(...), Using intersect(...) : 这些指示了特定的算法，该算法显示了如何为index_merge连接类型合并索引扫描。
+- Using temporary: 要解析查询，MySQL需要创建一个临时表来保存结果。如果查询包含以不同方式列出列的GROUP BY和ORDER BY子句，则通常会发生这种情况。
+- Using where: WHERE子句用于限制哪些行与下一个表匹配或发送到客户端。除非您特别打算从表中提取或检查所有行，否则如果Extra值不是Using where，并且表连接类型是ALL或index，则查询中可能存在错误。
+- Zero limit: 查询具有LIMIT 0子句，无法选择任何行。
+
+explain输出解释
+
+通过取EXPLAIN输出的rows列中的值的乘积，可以很好地指示连接的好坏。这应该告诉你MySQL执行查询必须检查多少行。如果您使用max_join_size系统变量限制查询，则此行积还用于确定执行哪些多表SELECT语句以及中止哪些多表SELECT语句。
+
+假设您有这里显示的SELECT语句，并且计划使用EXPLAIN检查它：
+```
+EXPLAIN SELECT tt.TicketNumber, tt.TimeIn,
+               tt.ProjectReference, tt.EstimatedShipDate,
+               tt.ActualShipDate, tt.ClientID,
+               tt.ServiceCodes, tt.RepetitiveID,
+               tt.CurrentProcess, tt.CurrentDPPerson,
+               tt.RecordVolume, tt.DPPrinted, et.COUNTRY,
+               et_1.COUNTRY, do.CUSTNAME
+        FROM tt, et, et AS et_1, do
+        WHERE tt.SubmitTime IS NULL
+          AND tt.ActualPC = et.EMPLOYID
+          AND tt.AssignedPC = et_1.EMPLOYID
+          AND tt.ClientID = do.CUSTNMBR;
+```
+
+表具有以下索引
+- tt: ActualPC
+- tt: AssignedPC
+- tt: ClientID
+- et: EMPLOYID (primary key) 
+- do: CUSTNMBR (primary key) 
+
+查询计划如下：
+```
+table type possible_keys key  key_len ref  rows  Extra
+et    ALL  PRIMARY       NULL NULL    NULL 74
+do    ALL  PRIMARY       NULL NULL    NULL 2135
+et_1  ALL  PRIMARY       NULL NULL    NULL 74
+tt    ALL  AssignedPC,   NULL NULL    NULL 3872
+           ClientID,
+           ActualPC
+      Range checked for each record (index map: 0x23)
+```
+
+因为每个表的类型都是ALL，所以这个输出表明MySQL正在生成所有表的笛卡尔积;也就是说，每个行的组合。这需要相当长的时间，因为必须检查每个表中行数的乘积。对于手头的情况，这个乘积是74 × 2135 × 74 × 3872 = 45，268，558，720行。如果表再大一点，你只能想象要花多长时间。
+
+这里的一个问题是，如果列声明为相同的类型和大小，MySQL可以更有效地使用列上的索引。在这种情况下，如果VARCHAR和CHAR声明为相同的大小，则它们被认为是相同的。
+
+设置为相同大小以后，查询计划如下, 可以看到乘积是 74 * 52 = 3848行
+```
+table type   possible_keys key      key_len ref           rows Extra
+et    ALL    PRIMARY       NULL     NULL    NULL          74
+tt    ref    AssignedPC,   ActualPC 15      et.EMPLOYID   52   Using
+             ClientID,                                         where
+             ActualPC
+et_1  eq_ref PRIMARY       PRIMARY  15      tt.AssignedPC 1
+do    eq_ref PRIMARY       PRIMARY  15      tt.ClientID   1
+```
+
+在这一点上，查询几乎是尽可能优化的。剩下的问题是，默认情况下，MySQL假设tt.ActualPC列中的值是均匀分布的，而tt表的情况并非如此。幸运的是，让MySQL分析密钥分布很容易：
+```
+mysql> ANALYZE TABLE tt;
+```
+
+有了额外的索引信息，连接是完美的，EXPLAIN会产生以下结果：
+```
+table type   possible_keys key     key_len ref           rows Extra
+tt    ALL    AssignedPC    NULL    NULL    NULL          3872 Using
+             ClientID,                                        where
+             ActualPC
+et    eq_ref PRIMARY       PRIMARY 15      tt.ActualPC   1
+et_1  eq_ref PRIMARY       PRIMARY 15      tt.AssignedPC 1
+do    eq_ref PRIMARY       PRIMARY 15      tt.ClientID   1
+```
+
+EXPLAIN输出中的rows列是MySQL连接优化器的合理猜测。通过将行积与查询返回的实际行数进行比较，检查这些数字是否更接近真实情况。如果数字相差很大，那么通过在SELECT语句中使用STRAIGHT_JOIN并尝试在FROM子句中以不同的顺序列出表，可能会获得更好的性能。（但是，STRAIGHT_JOIN可能会阻止使用索引，因为它禁用了半连接转换。
+
+### 控制查询计划
+
+查询优化器的任务是找到执行SQL查询的最佳计划。由于“好“和“坏“计划之间的性能差异可能是数量级的（即秒与小时甚至天），大多数查询优化器，包括MySQL的查询优化器，都会在所有可能的查询评估计划中执行或多或少的穷举搜索以找到最佳计划。对于连接查询，MySQL优化器调查的可能计划的数量随着查询中引用的表的数量呈指数级增长。对于少量的表（通常少于7到10个），这不是问题。然而，当提交较大的查询时，查询优化所花费的时间很容易成为服务器性能的主要瓶颈。
+
+更灵活的查询优化方法使用户能够控制优化器在搜索最佳查询评估计划时的详尽程度。一般的想法是，优化器调查的计划越少，编译查询所花费的时间就越少。另一方面，由于优化器跳过了一些计划，它可能会错过寻找最佳计划。
+
+优化器在其评估的计划数量方面的行为可以使用两个系统变量进行控制：
+- optimizer_prune_level变量告诉优化器根据对每个表访问的行数的估计跳过某些计划。我们的经验表明，这种“有根据的猜测”很少会错过最佳计划，并且可以大大减少查询编译时间。这就是为什么这个选项默认为on（optimizer_prune_level = 1）。但是，如果您认为优化器错过了一个更好的查询计划，则可以关闭此选项（optimizer_prune_level = 0），但查询编译可能需要更长的时间。请注意，即使使用这种启发式方法，优化器仍然会探索大约指数数量的计划。
+- optimizer_search_depth变量告诉优化器应该查看每个未完成计划的“未来“多远，以评估是否应该进一步扩展它。optimizer_search_depth的值越小，查询编译时间可能会减少几个数量级。例如，如果optimizer_search_depth接近查询中的表数，则包含12、13或更多表的查询可能很容易需要数小时甚至数天来编译。同时，如果编译时optimizer_search_depth等于3或4，优化器可能会在不到一分钟的时间内编译同一个查询。如果您不确定optimizer_search_depth的合理值是多少，可以将此变量设置为0，以告知优化器自动确定该值。
+
+optimizer_switch系统变量用于控制优化器的行为。它的值是一组标志，每个标志都有一个值on或off，以指示相应的优化器行为是启用还是禁用。该变量具有全局值和会话值，可以在运行时更改。全局默认值可以在服务器启动时设置。
+
+```
+mysql> SELECT @@optimizer_switch\G
+*************************** 1. row ***************************
+@@optimizer_switch: index_merge=on,index_merge_union=on,
+                    index_merge_sort_union=on,index_merge_intersection=on,
+                    engine_condition_pushdown=on,index_condition_pushdown=on,
+                    mrr=on,mrr_cost_based=on,block_nested_loop=on,
+                    batched_key_access=off,materialization=on,semijoin=on,
+                    loosescan=on,firstmatch=on,duplicateweedout=on,
+                    subquery_materialization_cost_based=on,
+                    use_index_extensions=on,condition_fanout_filter=on,
+                    derived_merge=on,use_invisible_indexes=off,skip_scan=on,
+                    hash_join=on,subquery_to_derived=off,
+                    prefer_ordering_index=on,hypergraph_optimizer=off,
+                    derived_condition_pushdown=on,hash_set_operations=on
+1 row in set (0.00 sec)
+```
+
+要更改optimizer_switch的值，请分配一个由逗号分隔的一个或多个命令列表组成的值：
+
+优化器提示: 可以通过注释对优化器进行提示，来使用何种方法执行sql。`SELECT /*+ BKA(t1) NO_BKA(t2) */ * FROM t1 INNER JOIN t2 WHERE ...;`
+
+索引提示：可以控制使用哪个索引，后面指明索引名称。`SELECT * FROM table1 USE INDEX (col1_index,col2_index)WHERE col1=1 AND col2=2 AND col3=3;`
+
+#### 成本模型
+
+为了生成执行计划，优化器使用一个成本模型，该模型基于对查询执行期间发生的各种操作的成本的估计。优化器有一组编译后的默认“成本常量“，可用于制定有关执行计划的决策。
+
+优化器还有一个在执行计划构造期间使用的成本估计数据库。这些估计值存储在mysql系统数据库的server_cost和engine_cost表中，可以随时配置。这些表的目的是使优化器在尝试获得查询执行计划时可以轻松地调整成本估计。
+
+服务器在启动时将成本模型表读入内存，并在运行时使用内存中的值。表中指定的任何非NULL成本估计优先于相应的编译默认成本常量。任何NULL估计值都指示优化器使用编译后的默认值。
+
+在运行时，服务器可以重新读取成本表。当动态加载存储引擎或执行FLUSH OPTIMIZER_COSTS语句时，会发生这种情况。
+
+成本表使服务器管理员能够通过更改表中的条目来轻松调整成本估计。通过将条目的成本设置为NULL，也可以很容易地恢复到默认值。优化器使用内存中的成本值，因此对表的更改应该在FLUSH OPTIMIZER_COSTS之后生效。
+
+当客户端会话开始时，内存中的当前成本估计值将应用于整个会话，直到会话结束。特别是，如果服务器重新读取成本表，任何更改的估计仅适用于随后启动的会话。现有会话不受影响。
+
+成本表特定于给定的服务器实例。服务器不会将成本表更改复制到副本。
+
+优化器成本模型数据库由mysql系统数据库中的两个表组成，它们包含查询执行期间发生的操作的成本估计信息：
+- server_cost：一般服务器操作的优化器成本估计
+- engine_cost：针对特定存储引擎的操作的优化器成本估计
+
+#### 统计信息
+
+column_statistics数据字典表存储有关列值的直方图统计信息，供优化器在构造查询执行计划时使用。要执行直方图管理，请使用ANALYZE TABLE语句。
+- 该表包含除几何类型（空间数据）和JSON之外的所有数据类型的列的统计信息。
+- 该表是持久的，因此不必在每次服务器启动时都创建列统计信息。
+- 服务器对表执行更新;用户不执行。
+
+用户不能直接访问column_statistics表，因为它是数据字典的一部分。直方图信息可使用 INFORMATION_SCHEMA.COLUMN_STATISTICS 获得，它是作为数据字典表上的视图实现的。COLUMN_STATISTICS包含以下列：
+- SCHEMA_NAME、TABLE_NAME、COLUMN_NAME：应用统计信息的模式、表和列的名称。
+- HISTORIO：描述列统计信息的JSON值，存储为直方图。
+
+直方图实例
+```
+{
+  "buckets": [
+    [
+      1,
+      0.3333333333333333
+    ],
+    [
+      2,
+      0.6666666666666666
+    ],
+    [
+      3,
+      1
+    ]
+  ],
+  "null-values": 0,
+  "last-updated": "2017-03-24 13:32:40.000000",
+  "sampling-rate": 1,
+  "histogram-type": "singleton",
+  "number-of-buckets-specified": 128,
+  "data-type": "int",
+  "collation-id": 8
+}
+```
+
+- buckets：直方图桶。桶结构取决于直方图类型。
+- null-values：一个介于0.0和1.0之间的数字，表示SQLNULL值的列值的分数。如果为0，则该列不包含NULL值。
+- last-updated：直方图生成时，以 YYYY-MM-DD hh:mm:ss.uuuuuu 格式的UTC值表示。
+- sampling-rate：0.0到1.0之间的数字，表示为创建直方图而采样的数据比例。值为1表示已读取所有数据（无采样）。
+- histogram-type：直方图类型：
+  - singleton：一个bucket表示列中的一个值。当列中的非重复值数量小于或等于生成直方图的ANALYZE TABLE语句中指定的存储桶数量时，将创建此直方图类型。
+  - equi-height：一个桶表示一个值范围。当列中的非重复值数量大于生成直方图的ANALYZE TABLE语句中指定的存储桶数量时，将创建此直方图类型。
+- number-of-buckets-specified：生成直方图的ANALYZE TABLE语句中指定的桶数。
+- data-type：此直方图包含的数据类型。在将直方图从持久性存储器阅读和解析到内存中时，这是需要的。该值是int、uint（无符号整数）、double、decimal、datetime或string（包括字符和二进制字符串）之一。
+- collation-id：直方图数据的归类ID。当数据类型值是字符串时，它最有意义。值对应于信息架构COLLATIONS表中的ID列值。
+
+直方图统计信息主要用于非索引列。将索引添加到直方图统计信息适用的列还可以帮助优化器进行行估计。
+
+优化器更喜欢范围优化器的行估计，而不是从直方图统计信息中获得的行估计。如果优化器确定范围优化器适用，则不使用直方图统计信息。
+
+对于已建立索引的列，可以使用索引潜水获得行估计值以进行相等比较。
+
+在某些情况下，使用直方图统计信息可能不会改善查询执行（例如，如果统计信息过期）。要检查是否是这种情况，请使用ANALYZE TABLE重新生成直方图统计信息，然后再次运行查询。
+
+### 锁优化
+
+MySQL对InnoDB表使用行级锁定，以支持多个会话的同时写访问，使其适用于多用户，高并发和OLTP应用程序。
+
+为了避免在单个InnoDB表上执行多个并发写操作时出现死锁，请在事务开始时通过为预期要修改的每组行发出 SELECT ... FOR UPDATE 语句来获取必要的锁，即使数据更改语句在事务中稍后出现。如果事务修改或锁定多个表，则在每个事务中以相同的顺序发出适用的语句。死锁会影响性能，而不是代表一个严重的错误，因为InnoDB默认情况下会自动检测死锁条件并回滚其中一个受影响的事务。
+
+在高并发系统中，当多个线程等待同一个锁时，死锁检测可能会导致速度降低。有时，禁用死锁检测并在发生死锁时依赖innodb_lock_wait_timeout设置进行事务回滚可能更有效。可以使用innodb_deadlock_detect配置选项禁用死锁检测。
+
+行级锁定的优点：
+- 当不同的会话访问不同的行时，锁冲突更少。
+- 回滚更改更少。
+- 可以长时间锁定单行。
+
+MySQL对MyISAM、MEMORY和MERGE表使用表级锁定，每次只允许一个会话更新这些表。这种锁定级别使这些存储引擎更适合只读、多读或单用户应用程序。
+
+## innodb优化 
+
+### innodb最佳实践
+
+使用最常查询的列为每个表指定主键，如果没有明显的主键，则指定自动递增值。
+
+只要数据是基于来自多个表的相同ID值从这些表中提取的，就可以使用联接。为了实现快速联接性能，请在联接列上定义外键，并在每个表中用相同的数据类型声明这些列。添加外键可确保对引用的列进行索引，这可以提高性能。外键还将删除和更新传播到所有受影响的表，并且如果父表中不存在对应的ID，则防止在子表中插入数据。
+
+关闭自动提交。每秒提交数百次会限制性能（受存储设备的写入速度限制）。
+
+通过使用START TRANSACTION和COMMIT语句将相关的DML操作集括起来，将它们分组到事务中。虽然您不想提交得太频繁，但也不想发出大量的INSERT、UPDATE或DELETE语句，这些语句会运行数小时而不提交。
+
+不要使用RESTABLES语句。InnoDB可以处理多个会话，所有阅读和写同一个表一次，而不会牺牲可靠性或高性能。要获得对一组行的独占写访问权限，请使用 SELECT ... FOR UPDATE 语法仅锁定要更新的行。
+
+启用innodb_file_per_table变量或使用常规表空间将表的数据和索引放在单独的文件中，而不是系统文件夹中。
+
+评估您的数据和访问模式是否受益于InnoDB表或页面压缩功能。您可以压缩InnoDB表而不牺牲读/写能力。
+
+使用 --sql_mode=NO_ENGINE_SUBSTITUTION 选项运行服务器，以防止使用您不想使用的存储引擎创建表。
+
+### buffer pool 
+
+建议设置内存的50%以上给buffer pool，设置的越多，就越像内存数据库
+
+淘汰算法类似`LRU-K`，缓冲池分为Old和young两段，一开始插入old的头，如果再次访问则插入young。缓冲池的3/8专用于旧的子列表。
+
+默认情况下，查询读取的页面会立即移动到新的子列表中，这意味着它们在缓冲池中停留的时间更长。例如，为mysqldump操作或不带WHERE子句的SELECT语句执行的表扫描可以将大量数据带入缓冲池并驱逐等量的旧数据，即使新数据永远不会再次使用。类似地，由预读后台线程加载且仅访问过一次的页将被移动到新列表的头部。这些情况可能会将经常使用的页面推到旧的子列表中，在那里它们会被驱逐。
+
+在具有足够内存的64位系统上，可以将缓冲池拆分为多个部分，以最小化并发操作之间对内存结构的争用。
+
+您可以控制如何以及何时执行预读请求，以便在预期即将需要页时将页异步预取到缓冲池中。
+
+您可以控制何时发生后台刷新，以及是否根据工作负载动态调整刷新速率。
+
+您可以配置InnoDB如何保留当前缓冲池状态，以避免服务器重启后的漫长预热期。
+
+可以使用`SHOW ENGINE INNODB STATUS `来查看缓冲池状态
+
+```
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total large memory allocated 2198863872
+Dictionary memory allocated 776332
+Buffer pool size   131072
+Free buffers       124908
+Database pages     5720
+Old database pages 2071
+Modified db pages  910
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 4, not young 0
+0.10 youngs/s, 0.00 non-youngs/s
+Pages read 197, created 5523, written 5060
+0.00 reads/s, 190.89 creates/s, 244.94 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not
+0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s, Random read
+ahead 0.00/s
+LRU len: 5720, unzip_LRU len: 0
+I/O sum[0]:cur[0], unzip sum[0]:cur[0]
+```
+
+### change buffer
+
+change buffer 是一种特殊的数据结构，当辅助索引页不在缓冲池中时，它会缓存这些页的更改。缓冲的更改（可能是由DELETE、UPDATE或DML操作引起的）在以后通过其他读取操作将页加载到缓冲池时合并。
+
+与聚集索引不同，辅助索引通常是非唯一的，插入辅助索引的顺序相对随机。同样，删除和更新可能会影响索引树中不相邻的二级索引页。当其他操作将受影响的页读入缓冲池时，在以后合并缓存的更改可以避免将辅助索引页从磁盘读入缓冲池所需的大量随机访问I/O。
+
+在系统大部分空闲时或缓慢关机期间运行的清除操作会定期将更新的索引页写入磁盘。与立即将每个值写入磁盘相比，清除操作可以更高效地写入一系列索引值的磁盘块。
+
+当有许多受影响的行和许多要更新的辅助索引时，更改缓冲区合并可能需要几个小时。在此期间，磁盘I/O会增加，这可能会导致磁盘绑定查询的速度显著降低。更改缓冲区合并也可能在事务提交后继续发生，甚至在服务器关闭并重新启动后也会发生
+
+在内存中，更改缓冲区占用缓冲池的一部分。在磁盘上，更改缓冲区是系统缓存的一部分，当数据库服务器关闭时，索引更改将在其中进行缓冲。
+
+如果索引包含降序索引列，或者如果主键包含降序索引列，则不支持辅助索引的更改缓冲。
+
+当对表执行INSERT, UPDATE和DELETE操作时，索引列的值（特别是辅助键的值）通常是无序的，需要大量的I/O来更新辅助索引。当相关页不在缓冲池中时，更改缓冲区将缓存对辅助索引条目的更改，从而避免了昂贵的I/O操作，因为它不会立即从磁盘阅读页。当页加载到缓冲池中时，将合并缓冲的更改，更新后的页稍后将刷新到磁盘。InnoDB主线程在服务器接近空闲时和缓慢关闭期间合并缓冲的更改。
+
+由于更改缓冲可以减少磁盘读取和写入，因此它对于I/O受限的工作负载最有价值;例如，具有大量DML操作（如批量插入）的应用程序将受益于更改缓冲。
+
+但是，更改缓冲区占用了缓冲池的一部分，从而减少了可用于缓存数据页的内存。如果工作集几乎适合缓冲池，或者表的辅助索引相对较少，则禁用更改缓冲可能很有用。如果工作数据集完全适合缓冲池，则更改缓冲不会产生额外的开销，因为它只应用于不在缓冲池中的页。
+
+innodb_change_buffering变量控制InnoDB执行更改缓冲的程度。您可以为插入、删除操作（当索引记录最初标记为删除时）和清除操作（当索引记录被物理删除时）启用或禁用缓冲。更新操作是插入和删除的组合。默认的innodb_change_buffering值是none
+
+innodb_change_buffer_max_size变量允许将更改缓冲区的最大大小配置为缓冲池总大小的百分比。默认情况下，innodb_change_buffer_max_size设置为25。最大设置为50。
+
+考虑在具有大量插入、更新和删除活动的MySQL服务器上增加innodb_change_buffer_max_size，其中更改缓冲区合并无法跟上新的更改缓冲区条目，导致更改缓冲区达到其最大大小限制。
+
+如果MySQL服务器上的静态数据用于报告，或者如果更改缓冲区占用了太多与缓冲池共享的内存空间，导致页面比预期更快地老化，请考虑减少innodb_change_buffer_max_size。
+
+使用具有代表性的工作负载测试不同的设置以确定最佳配置。innodb_change_buffer_max_size变量是动态的，允许在不重启服务器的情况下修改设置。
+
+要查看监视器数据，请发出SHOW ENGINE INNODB STATUS语句。
+
+```
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 0, seg size 2, 0 merges
+merged operations:
+ insert 0, delete mark 0, delete 0
+discarded operations:
+ insert 0, delete mark 0, delete 0
+Hash table size 4425293, used cells 32, node heap has 1 buffer(s)
+13577.57 hash searches/s, 202.47 non-hash searches/s
+```
+
+### 双写缓冲区
+
+双写缓冲区是一个存储区域，InnoDB在将页面写入InnoDB数据文件中的适当位置之前，将从缓冲池刷新的页面写入其中。如果在页面写入过程中出现操作系统、存储子系统或意外的mysqld进程退出，InnoDB可以在崩溃恢复期间从doublewrite缓冲区中找到页面的良好副本。
+
+虽然数据被写入两次，但双写缓冲区不需要两倍的I/O开销或两倍的I/O操作。数据以一个大的顺序块的形式写入双写缓冲区，并对操作系统进行单个fsync（）调用（除非innodb_flush_method设置为O_DIRECT_NO_FSYNC）。
+
+双写缓冲存储区位于双写文件中。
+
+为双写缓冲区配置提供了以下变量：
+- innodb_doublewrite变量控制是否启用双写缓冲区。它在大多数情况下默认启用。要禁用双写缓冲区，请将innodb_doublewrite设置为OFF。如果您更关心的是性能而不是数据完整性，那么可以考虑禁用双写缓冲区，例如，在执行基准测试时可能就是这种情况。
+- innodb_doublewrite支持DETECT_AND_RECOVER和DETECT_ONLY设置。
+  - DETECT_AND_RECOVER设置与ON设置相同。通过此设置，双写缓冲区将完全启用，数据库页内容将写入双写缓冲区，在恢复期间将访问该缓冲区以修复不完整的页写入。
+  - 使用DETECT_ONLY设置时，仅将元数据写入双写缓冲区。数据库页内容不写入双写缓冲区，恢复不使用双写缓冲区来修复不完整的页写入。此轻量级设置仅用于检测不完整的页写入。
+- innodb_doublewrite_dir变量定义了InnoDB创建doublewrite文件的目录。如果未指定目录，则在innodb_data_home_dir目录中创建双写文件，如果未指定，则默认为data目录。
+- innodb_doublewrite_files变量定义了双写文件的数量，默认值为2。默认情况下，为每个缓冲池实例创建两个双写文件：刷新列表双写文件和LRU列表双写文件。刷新列表双写文件用于从缓冲池刷新列表中刷新的页面。刷新列表双写文件的默认大小是InnoDB页面大小 * 双写页面字节。innodb_doublewrite_files变量用于高级性能调优。默认设置应该适合大多数用户。
+- innodb_doublewrite_pages变量控制每个线程的最大双写页面数。此变量用于高级性能调整。默认值应该适合大多数用户。
+
+### redo log 
+
+重做日志是一种基于磁盘的数据结构，在崩溃恢复期间用于纠正未完成事务写入的数据。在正常操作过程中，重做日志对SQL语句或低级API调用产生的更改表数据的请求进行编码。在意外关闭之前未完成更新数据文件的修改将在初始化期间和接受连接之前自动重播。
+
+重做日志在磁盘上由重做日志文件物理表示。写入重做日志文件的数据按照受影响的记录进行编码，这些数据统称为重做。数据通过重做日志文件的传递由不断增加的LSN值表示。重做日志数据在数据修改时追加，最旧的数据在检查点进行时被截断。
+
+重做日志文件驻留在数据目录中的#innodb_redo目录中，除非innodb_log_group_home_dir变量指定了不同的目录。如果定义了innodb_log_group_home_dir，则重做日志文件驻留在该目录中的#innodb_redo目录中。有两种类型的重做日志文件，普通和备用。普通的重做日志文件是那些正在使用的。备用重做日志文件是那些等待使用的文件。InnoDB尝试总共维护32个重做日志文件，每个文件的大小等于1/32 *innodb_redo_log_capacity;但是，在修改innodb_redo_log_capacity设置后，文件大小可能会在一段时间内有所不同。
+
+每个普通重做日志文件都与特定的LSN值范围相关联;例如，以下查询显示上一示例中列出的活动重做日志文件的START_LSN和END_LSN值：
+```
+mysql> SELECT FILE_NAME, START_LSN, END_LSN FROM performance_schema.innodb_redo_log_files;
++----------------------------+--------------+--------------+
+| FILE_NAME                  | START_LSN    | END_LSN      |
++----------------------------+--------------+--------------+
+| ./#innodb_redo/#ib_redo582 | 117654982144 | 117658256896 |
+| ./#innodb_redo/#ib_redo583 | 117658256896 | 117661531648 |
+| ./#innodb_redo/#ib_redo584 | 117661531648 | 117664806400 |
+| ./#innodb_redo/#ib_redo585 | 117664806400 | 117668081152 |
+| ./#innodb_redo/#ib_redo586 | 117668081152 | 117671355904 |
+| ./#innodb_redo/#ib_redo587 | 117671355904 | 117674630656 |
+| ./#innodb_redo/#ib_redo588 | 117674630656 | 117677905408 |
+| ./#innodb_redo/#ib_redo589 | 117677905408 | 117681180160 |
+| ./#innodb_redo/#ib_redo590 | 117681180160 | 117684454912 |
+| ./#innodb_redo/#ib_redo591 | 117684454912 | 117687729664 |
+| ./#innodb_redo/#ib_redo592 | 117687729664 | 117691004416 |
+| ./#innodb_redo/#ib_redo593 | 117691004416 | 117694279168 |
+| ./#innodb_redo/#ib_redo594 | 117694279168 | 117697553920 |
+| ./#innodb_redo/#ib_redo595 | 117697553920 | 117700828672 |
+| ./#innodb_redo/#ib_redo596 | 117700828672 | 117704103424 |
+| ./#innodb_redo/#ib_redo597 | 117704103424 | 117707378176 |
+| ./#innodb_redo/#ib_redo598 | 117707378176 | 117710652928 |
+| ./#innodb_redo/#ib_redo599 | 117710652928 | 117713927680 |
+| ./#innodb_redo/#ib_redo600 | 117713927680 | 117717202432 |
+| ./#innodb_redo/#ib_redo601 | 117717202432 | 117720477184 |
+| ./#innodb_redo/#ib_redo602 | 117720477184 | 117723751936 |
++----------------------------+--------------+--------------+
+```
+
+当执行检查点时，InnoDB将检查点LSN存储在包含此LSN的文件的头中。在恢复过程中，将检查所有重做日志文件，并从最新的检查点LSN开始恢复。
+
+### undo log 
+
+撤消日志是与单个读写事务相关联的撤消日志记录的集合。撤消日志记录包含有关如何撤消事务对聚集索引记录的最新更改的信息。如果另一个事务需要查看作为一致性读取操作的一部分的原始数据，则从撤消日志记录中检索未修改的数据。撤消日志存在于撤消日志段中，撤消日志段包含在回滚段中。回滚段驻留在撤消表空间和全局临时表空间中。
+
+驻留在全局临时表中的撤消日志用于修改用户定义的临时表中的数据的事务。这些撤消日志不会被重新记录，因为它们不是崩溃恢复所必需的。它们仅用于服务器运行时的回滚。这种类型的撤消日志通过避免重做日志记录I/O来提高性能。
+
+### 锁机制
+
+InnoDB实现了标准的行级锁，其中有两种类型的锁，共享（S）锁和排他（X）锁。
+- 共享（S）锁允许持有锁的事务读取行。
+- 排他（X）锁允许持有锁的事务更新或删除行。
+
+InnoDB支持多粒度锁，允许行锁和表锁共存。例如，一个语句，如可扩展表... WRITE在指定的表上使用排他锁（X锁）。为了实现多粒度级别的锁定，InnoDB使用了意图锁。意图锁是表级锁，它指示事务稍后需要对表中的行使用哪种类型的锁（共享锁或排他锁）。有两种类型的意图锁
+- 意向共享锁（IS）表示事务打算在表中的各个行上设置共享锁。
+- 意向排他锁（IX）表示事务打算在表中的各个行上设置排他锁。
+
+例如，SELECT ... FOR SHARE设置IS锁，SELECT. FOR UPDATE设置一个IX锁。
+
+意图锁定协议如下
+- 在事务可以获取表中某行的共享锁之前，它必须首先获取表中的IS锁或更强锁。
+- 在事务可以获取表中某行的排他锁之前，它必须首先获取表上的IX锁。
+
+表级锁类型兼容性总结在下面的矩阵中。
+
+图片
+
+如果请求事务与现有锁兼容，则将锁授予该事务，但如果与现有锁冲突，则不授予该事务。事务等待，直到冲突的现有锁被释放。如果锁请求与现有锁冲突，并且由于会导致死锁而无法授予，则会发生错误。
+
+记录锁是索引记录上的锁。例如， SELECT c1 FROM t WHERE c1 = 10 FOR UPDATE; 阻止任何其他事务插入、更新或删除t.c1值为10的行。
+
+记录锁始终锁定索引记录，即使定义的表没有索引。对于这种情况，InnoDB会创建一个隐藏的聚集索引并使用该索引进行记录锁定。
+
+记录锁的事务数据在 SHOW ENGINE INNODB STATUS 和InnoDB监视器输出中类似于以下内容：
+```
+RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t`
+trx id 10078 lock_mode X locks rec but not gap
+Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
+ 0: len 4; hex 8000000a; asc     ;;
+ 1: len 6; hex 00000000274f; asc     'O;;
+ 2: len 7; hex b60000019d0110; asc        ;;
+```
+
+间隙锁是对索引记录之间的间隙的锁，或者对第一个索引记录之前或最后一个索引记录之后的差距的锁。例如， SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE; 阻止其他事务将值15插入列t.c1中，无论该列中是否已经有任何这样的值，因为范围中所有现有值之间的间隙被锁定。
+
+间隙可能跨越单个索引值、多个索引值甚至是空的。
+
+间隙锁是性能和并发性之间权衡的一部分，在某些事务隔离级别中使用，而在其他级别中则不使用。
+
+对于使用唯一索引搜索唯一行来锁定行的语句，不需要间隔锁定。(This不包括搜索条件仅包括多列唯一索引的某些列的情况;在这种情况下，确实会发生间隙锁定。)例如，如果id列具有唯一索引，则以下语句仅对id值为100的行使用索引记录锁，并且其他会话是否在前面的间隙中插入行无关紧要：
+```
+SELECT * FROM child WHERE id = 100;
+```
+
+如果id没有索引或者有一个非唯一的索引，语句会锁定前面的间隙。
+
+这里还值得注意的是，不同的事务可以在间隙上持有冲突的锁。例如，事务A可以在间隙上持有共享间隙锁（间隙S锁），而事务B在同一间隙上持有排他间隙锁（间隙X锁）。允许间隙锁冲突的原因是，如果从索引中清除记录，则必须合并不同事务在该记录上持有的差距锁。
+
+InnoDB中的间隙锁是“纯粹禁止性的“，这意味着它们的唯一目的是防止其他事务插入到差距中。间隙锁可以共存。一个事务获取的间隙锁不会阻止另一个事务获取同一间隙上的间隙锁。共享间隙锁和独占间隙锁之间没有区别。它们彼此之间并不冲突，它们的功能是相同的。
+
+Next-Key Locks 是索引记录上的记录锁和索引记录之前的差距上的差距锁的组合。
+
+InnoDB执行行级锁定的方式是，当它搜索或扫描表索引时，它会在遇到的索引记录上设置共享或排他锁。因此，行级锁实际上是索引记录锁。索引记录上的下一个键锁也会影响该索引记录之前的“间隙“。也就是说，下一个键锁是索引记录锁加上索引记录之前的差距上的间隙锁。如果一个会话对索引中的记录R具有共享锁或排他锁，则另一个会话不能在索引顺序中紧接在R之前的差距中插入新的索引记录。
+
+假设索引包含值10、11、13和20。此索引可能的下一个键锁涵盖以下区间，其中圆括号表示排除区间端点，方括号表示包含端点：
+```
+(negative infinity, 10]
+(10, 11]
+(11, 13]
+(13, 20]
+(20, positive infinity)
+```
+
+默认情况下，InnoDB在REPEATABLE READ事务隔离级别下运行。在这种情况下，InnoDB使用下一个键锁进行搜索和索引扫描，这可以防止幻读
+
+插入意图锁是一种在行插入之前由INSERT操作设置的间隙锁。该锁以这样一种方式发出插入意图的信号，即如果插入到同一索引间隙中的多个事务不在差距内的相同位置处插入，则它们不需要等待彼此。假设有值为4和7的索引记录。分别尝试插入值5和6的单独事务，每个事务在获得插入行的排他锁之前，用插入意图锁锁定4和7之间的差距，但不阻止彼此，因为行不冲突。
+
+锁定读取、UPDATE或UPDATE通常在SQL语句处理过程中扫描的每个索引记录上设置记录锁。语句中是否有排除该行的WHERE条件并不重要。InnoDB不记得确切的WHERE条件，只知道扫描了哪些索引范围。这些锁通常是下一个键锁，它也会阻止插入记录之前的“间隙”。但是，可以显式禁用间隙锁定，这将导致不使用下一个键锁定。
+
+如果在搜索中使用了二级索引，并且要设置的索引记录锁是独占的，InnoDB也会检索相应的聚集索引记录并对其设置锁。
+
+如果你没有适合你的语句的索引，MySQL必须扫描整个表来处理语句，那么表的每一行都会被锁定，这反过来会阻止其他用户对表的所有插入。创建良好的索引非常重要，这样查询就不会扫描不必要的行。
+
+SELECT ... FROM是一致读取，即阅读数据库的快照，并且不设置锁，除非事务隔离级别设置为SERIALIZABLE。对于SERIALIZABLE级别，搜索在它遇到的索引记录上设置共享的下一个键锁。但是，对于使用唯一索引搜索唯一行来锁定行的语句，只需要索引记录锁。
+
+使用唯一索引的 SELECT ... FOR UPDATE 和 SELECT ... FOR SHARE 语句为扫描的行获取锁，并为不符合结果集中包含条件的行释放锁（例如，如果它们不满足WHERE子句中给定的条件）。但是，在某些情况下，行可能不会立即解锁，因为结果行与其原始源之间的关系在查询执行期间丢失。例如，在UNION中，表中扫描（和锁定）的行可能会插入到临时表中，然后再评估它们是否符合结果集。在这种情况下，临时表中的行与原始表中的行之间的关系将丢失，并且后面的行直到查询执行结束才被解锁。
+
+对于锁定读取（SELECTwithFOR UPDATE或FOR SHARE）、UPDATE和UPDATE语句，所采用的锁取决于语句使用的是具有唯一搜索条件的唯一索引还是具有范围类型搜索条件的唯一索引。
+- 对于具有唯一搜索条件的唯一索引，InnoDB只锁定找到的索引记录，而不锁定它之前的差距。
+- 对于其他搜索条件以及非唯一索引，InnoDB会锁定扫描的索引范围，使用间隙锁或下一个键锁来阻止其他会话插入该范围覆盖的间隙。
+
+对于搜索遇到的索引记录， SELECT ... FOR UPDATE 阻止其他会话执行 SELECT ... FOR SHARE 或在某些事务隔离级别中进行阅读。一致性读取将忽略在读取视图中存在的记录上设置的任何锁。
+
+UPDATE ... WHERE ... 在搜索遇到的每个记录上设置独占的下一个键锁。但是，对于使用唯一索引搜索唯一行来锁定行的语句，只需要索引记录锁。
+
+DELETE FROM ... WHERE ... 在搜索遇到的每个记录上设置独占的下一个键锁。但是，对于使用唯一索引搜索唯一行来锁定行的语句，只需要索引记录锁。
+
+INSERT 在插入的行上设置独占锁。此锁是索引记录锁，而不是下一个键锁（即没有间隙锁），并且不会阻止其他会话插入到插入行之前的差距中。
+
+在插入行之前，设置一种称为插入意图间隙锁定的间隙锁定。该锁以这样一种方式发出插入意图的信号，即如果插入到同一索引间隙中的多个事务不在差距内的相同位置处插入，则它们不需要等待彼此。假设有值为4和7的索引记录。尝试插入值5和6的单独事务在获得插入行的排他锁之前，每个事务都使用插入意图锁锁定4和7之间的差距，但不会相互阻塞，因为行不冲突。
+
+INSERT INTO T SELECT ... FROM S WHERE ... 在插入到T中的每一行上设置排他索引记录锁（没有间隙锁）。如果事务隔离级别为READ COMMITTED，InnoDB将在S上执行一致性读取（无锁）。否则，InnoDB会对来自S的行设置共享的下一个键锁。InnoDB必须在后一种情况下设置锁：在使用基于语句的二进制日志进行前滚恢复期间，每个SQL语句都必须以与最初完全相同的方式执行。
+
+当启用死锁检测时（默认值），InnoDB会自动检测事务死锁并回滚一个或多个事务以打破死锁。InnoDB尝试选择小事务进行回滚，其中事务的大小由插入、更新或删除的行数决定。
+
+死锁是事务数据库中的一个典型问题，但它们并不危险，除非它们非常频繁，以至于您根本无法运行某些事务。通常，您必须编写应用程序，以便它们始终准备好在事务由于死锁而回滚时重新发出事务。
+
+InnoDB使用自动行级锁定。即使在只插入或删除单行的事务中，也可能出现死锁。这是因为这些操作并不是真正的“原子“操作;它们会自动对插入或删除的行的（可能是多个）索引记录设置锁。
+
+您可以使用以下技术来科普死锁并降低其发生的可能性：
+- 在任何时候，都可以发出 SHOW ENGINE INNODB STATUS 来确定最近一次死锁的原因。这可以帮助您调优应用程序以避免死锁。
+- 如果频繁的死锁警告引起了关注，请通过启用innodb_print_all_deadlocks变量来收集更广泛的调试信息。关于每个死锁的信息，而不仅仅是最新的一个，都记录在MySQL错误日志中。完成调试后禁用此选项。
+- 如果事务由于死锁而失败，请始终准备重新发出事务。死锁并不危险。再试一次
+- 保持事务规模小、持续时间短，以减少冲突。
+- 在进行一组相关更改后立即提交事务，以减少冲突。特别是，不要让一个交互式的mysql会话长时间打开一个未提交的事务。
+- 如果您使用锁定读取（ SELECT ... FOR UPDATE 或 SELECT ... FOR SHARE ），请尝试使用较低的隔离级别，例如READ COMMITTED。
+- 当修改一个事务中的多个表或同一表中的不同行集时，每次都要以一致的顺序执行这些操作。这样，事务就形成了定义良好的队列，不会死锁。例如，将数据库操作组织到应用程序中的函数中，或调用存储的例程，而不是在不同的地方编写多个类似的UPDATE、UPDATE和UPDATE语句序列。
+- 向表中添加精心选择的索引，这样查询扫描的索引记录和设置的锁就更少。使用EXPLAIN SELECT来确定MySQL服务器认为哪些索引最适合您的查询。
+- 使用较少的锁定。如果您可以允许SELECT从旧快照中返回数据，请不要向其添加FOR UPDATE或FOR SHARE子句。在这里使用READ COMMITTED隔离级别是很好的，因为同一事务中的每个一致性读取都从自己的新快照中读取。
+- 如果没有其他帮助，请使用表级锁序列化事务。在事务表（如InnoDB表）中使用UNESTABLES的正确方法是，开始事务时使用 SET autocommit = 0 （不是START TRANSACTION），后跟UNESTABLES，并且在显式提交事务之前不要调用UNESTABLES。
+
+InnoDB使用竞争感知事务调度（CATS）算法来优先处理等待锁的事务。当多个事务等待同一对象上的锁时，CATS算法确定哪个事务首先接收锁。
+
+CATS算法通过分配调度权重来对等待的事务进行优先级排序，调度权重是根据事务阻塞的事务数量计算的。例如，如果两个事务正在等待同一对象上的锁，则阻塞事务最多的事务将被分配更大的调度权重。如果权重相等，则将优先级给予等待时间最长的事务。
+
+### InnoDB压缩表
+
+由于处理器和高速缓存存储器的速度比磁盘存储设备提高得更快，因此许多工作负载都是磁盘绑定的。数据压缩可以减小数据库大小、减少I/O并提高吞吐量，但代价是增加CPU利用率。对于具有足够RAM以将频繁使用的数据保留在内存中的系统上的读取密集型应用程序来说，压缩尤其有价值。
+
+使用ROW_FORMAT=COMPRESSED创建的InnoDB表可以在磁盘上使用比配置的innodb_page_size值更小的页面大小。较小的页面需要较少的I/O来读取和写入磁盘，这对于SSD设备尤其有价值。
+
+压缩页大小通过CREATE TABLE或ALTER TABLEKEY_BLOCK_SIZE参数指定。不同的页大小要求将表放在每个表一个文件的目录中或一般目录中，而不是放在系统目录中，因为系统目录不能存储压缩表。
+
+无论KEY_BLOCK_SIZE值如何，压缩级别都相同。当您为KEY_BLOCK_SIZE指定较小的值时，您将获得越来越小的页面带来的I/O好处。但是，如果指定的值太小，则当数据值无法压缩到足以容纳每页中的多行时，重新组织页会产生额外的开销。根据表中每个索引的键列长度，表的KEY_BLOCK_SIZE大小有一个硬性限制。如果指定的值太小，则CREATE TABLE或ALTER TABLE语句将失败。
+
+在缓冲池中，压缩数据保存在小页面中，页面大小基于KEY_BLOCK_SIZE值。为了提取或更新列值，MySQL还在缓冲池中使用未压缩的数据创建未压缩的页面。在缓冲池中，对未压缩页的任何更新也会重新写回等效的压缩页。您可能需要调整缓冲池的大小，以容纳压缩页和未压缩页的额外数据，尽管未压缩页在需要空间时会从缓冲池中清除，然后在下次访问时再次解压缩。
+
+配置innodb_file_per_table选项后，在CREATE TABLE或ALTER TABLE语句中指定ROW_FORMAT=COMPRESSED子句或KEY_BLOCK_SIZE子句，或同时指定这两个子句，以在每个表一个文件的格式中创建压缩表。
+```
+SET GLOBAL innodb_file_per_table=1;
+CREATE TABLE t1
+ (c1 INT PRIMARY KEY)
+ ROW_FORMAT=COMPRESSED
+ KEY_BLOCK_SIZE=8;
+```
+
+要确定KEY_BLOCK_SIZE的最佳值，通常需要为此子句创建具有不同值的同一表的多个副本，然后测量生成的.ibd文件的大小，并查看每个副本在实际工作负载下的性能。对于一般的表空间，请记住，删除表不会减小一般的.ibd文件的大小，也不会将磁盘空间返回给操作系统。
+
+### innoDB恢复 
+
+InnoDB崩溃恢复包括几个步骤：
+- redo log: 重做日志应用程序在初始化期间执行，然后接受任何连接。如果在关机或崩溃时，所有更改都从缓冲池刷新到表空间（ibdata*和*.ibd文件），则重做日志应用程序将被跳过。InnoDB还跳过重做日志应用程序，如果重做日志文件在启动时丢失。
+  - 当前最大自动递增计数器值在每次值更改时写入重做日志，这使其具有崩溃安全性。在恢复过程中，InnoDB扫描重做日志以收集计数器值更改，并将更改应用于内存中的表对象。
+  - 当遇到索引树损坏时，InnoDB将损坏标志写入重做日志，这使得损坏标志崩溃安全。InnoDB还将内存中的损坏标志数据写入每个检查点上的引擎专用系统表。在恢复过程中，InnoDB从两个位置读取损坏标志，并在将内存中的表和索引对象标记为损坏之前合并结果。
+  - 不建议通过删除重做日志来加快恢复速度，即使可以接受某些数据丢失。只有在干净关机后才应该考虑删除重做日志，并将innodb_fast_shutdown设置为0或1。
+- roll back: 未完成事务的回滚,不完整事务是在意外退出或快速关闭时处于活动状态的任何事务。根据服务器负载的不同，回滚未完成事务所需的时间可能是事务中断前活动时间的三倍或四倍。不能取消正在回滚的事务。在极端情况下，当回滚事务预计需要非常长的时间时，使用3或更大的innodb_force_recovery设置启动InnoDB可能会更快。
+- change buffer: 当索引页被读取到缓冲池时，将更改缓冲区（系统缓存的一部分）中的更改应用于辅助索引的叶页。
+- purge: 删除对活动事务不再可见的已标记为删除的记录。
+
+## 复制 
+
+基于语句复制的优点：
+- 写入日志文件的数据更少。当更新或删除影响许多行时，这会导致日志文件所需的存储空间大大减少。这也意味着可以更快地完成从备份获取和恢复。
+- 日志文件包含进行任何更改的所有语句，因此可用于审核数据库。
+
+缺点
+- 并非所有修改数据的语句（如UPDATE、UPDATE和REPLACE语句）都可以使用基于语句的复制进行复制。使用基于语句的复制时，任何不确定性行为都很难复制。
+- insert ... select 和基于行的复制相比，SELECT需要更多的行级锁。
+- 与基于行的复制相比，需要表扫描的UPDATE语句（因为在WHERE子句中没有使用索引）必须锁定更多的行。
+- 对于InnoDB：一个使用了AUTO_INCREMENT的INCREMENT语句会阻塞其他不冲突的INCREMENT语句。
+- 对于复杂语句，在更新或插入行之前，必须在副本上计算和执行该语句。对于基于行的复制，副本只需修改受影响的行，而不必执行完整的语句。
+- 如果在对副本进行评估时出现错误，特别是在执行复杂语句时，基于语句的复制可能会随着时间的推移慢慢增加受影响行的误差幅度。
+- 必须在副本上应用确定性函数。
+- 源和副本上的表定义必须（几乎）相同。
+
+基于行的复制的优点
+- 所有更改都可以复制。这是最安全的复制方式。
+- 对于任何UPDATE、UPDATE或UPDATE语句，副本上所需的行锁较少。
+
+缺点
+- 要复制DML语句（如UPDATE或DELETE语句），基于语句的复制只将语句写入二进制日志。相比之下，基于行的复制将每个更改的行写入二进制日志。如果语句更改了许多行，则基于行的复制可能会向二进制日志写入更多的数据;即使对于回滚的语句也是如此。这也意味着制作和恢复备份可能需要更多的时间。此外，二进制日志被锁定较长时间以写入数据，这可能会导致并发问题。使用binlog_row_image=minimal可以大大减少这个缺点。
+- 与基于语句的复制相比，使用基于行的复制复制生成大BLOB值的确定性NULL函数所需的时间更长。这是因为记录的是BLOB列值，而不是生成数据的语句。
+- 您无法在副本上看到从源接收并执行了哪些语句。但是，您可以使用带有选项--base64-output=DECODE-ROWS和--verbose的mysqlbinlog查看更改了哪些数据。
+- 对于使用MyISAM存储引擎的表，将SQL语句作为基于行的事件应用于二进制日志时，其副本上需要比将其作为语句应用时更强的锁。这意味着在使用基于行的复制时，不支持MyISAM表上的并发插入。
+
+MySQL使用基于语句的日志记录（SBL），基于行的日志记录（RBL）或混合格式的日志记录。使用的二进制日志类型影响日志记录的大小和效率。因此，基于行的复制（RBR）或基于语句的复制（SBR）之间的选择取决于您的应用程序和环境。
+
+使用基于行的格式或混合格式时，不复制临时表，因为没有必要。此外，由于临时表只能从创建它们的线程读取，因此即使使用基于语句的格式，复制它们也很少有好处。当使用binlog_format=ROW时，只要受语句影响的任何非事务性表都是临时表，就允许涉及临时表的非事务性DML语句。
+
+当许多行受到影响时，更改集被拆分为多个事件;当语句提交时，所有这些事件都被写入二进制日志。在副本上执行时，对所有涉及的表都采用表锁，然后以批处理模式应用行。这可能有效，也可能无效，具体取决于用于复制表副本的引擎。
+
+RBL将每一行的更改写入二进制日志，因此其大小可以快速增加。这会显著增加在复制副本上进行与源上的更改相匹配的更改所需的时间。你应该意识到这种延迟在你的应用程序的可能性。
+
+
+
+
+

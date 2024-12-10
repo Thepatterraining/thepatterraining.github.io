@@ -1,9 +1,9 @@
 ---
-title: 算法导论
-date: 2024-04-15 10:12:47
-tags: ['算法']
-category: 算法
-article: 算法导论
+title: JVM原理
+date: 2024-11-27 14:02:52
+tags: ['java','JVM']
+category: java
+article: JVM原理
 ---
 
 # java
@@ -420,3 +420,4 @@ Mixed GC
 1. 如果系统考虑吞吐优先，CPU资源用来处理业务，用Parallel GC
 2. 如果系统考虑低延迟优先，每次GC时间尽量短，用CMS GC
 3. 如果系统内存堆大，平均GC时间可控，使用G1 GC
+
