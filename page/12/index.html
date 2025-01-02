@@ -196,6 +196,245 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-title-link" itemprop="url">深入理解计算机系统一--Amdahl定律</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-20 16:56:17" itemprop="dateModified" datetime="2023-06-20T16:56:17+08:00">2023-06-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--Amdahl定律" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Amdahl定律"><a href="#Amdahl定律" class="headerlink" title="Amdahl定律"></a>Amdahl定律</h1><p>Gene Amdal，计算领域的早期先锋之一，对提升系统某一部分性能所带来的效果做出了简单却有见地的观察。</p>
+<p>这个观察被称为<code>Amdahl定律</code>。该定律的主要思想是，当我们对系统的某个部分加速时，其对系统整体性能的影响取决于该部分的重要性和加速程度。</p>
+<p>若系统执行某应用程序需要时间为<code>T</code><sub><code>old</code></sub>。假设系统某部分执行所需时间与该时间的比例为<code>a</code>，而该部分性能提升比例为<code>k</code>。即该部分初始所需执行时间为<code>aT</code><sub><code>old</code></sub>，现在所需时间为(<code>aT</code><sub><code>old</code></sub>)&#x2F;<code>k</code>。因此，总的执行时间应为：</p>
+<blockquote>
+<p>T<sub>new</sub> &#x3D; (1 - a)T<sub>old</sub> + (aT<sub>old</sub>)&#x2F;k &#x3D; T<sub>old</sub> [(1 - a) + a&#x2F;k]</p>
+</blockquote>
+<p>由此，可以计算加速比 S &#x3D; T<sub>old</sub> &#x2F; T<sub>new</sub> 为</p>
+<blockquote>
+<p>S &#x3D; 1 &#x2F; [(1 - a) + a&#x2F;k]</p>
+</blockquote>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>考虑这样一种情况，系统的某个部分初始耗时比例为60%（a &#x3D; 0.6），其加速比例因子为3，也就是性能提升了300%。则我们可以获得的整体系统加速比为：</p>
+<blockquote>
+<p>1 &#x2F; [(1 - 0.6) + 0.6 &#x2F; 3] &#x3D; 1 &#x2F; (0.4 + 0.2) &#x3D; 1 &#x2F; 0.6 &#x3D; 1.66666666 约等于 1.67倍</p>
+</blockquote>
+<p>可以看到虽然我们优化的部分提升了3倍性能，但是整体性能只提升了1.67倍。</p>
+<p>虽然我们对系统的一个主要部分做了重大改进，但是获得的加速比却明显小于这部分的加速比。这就是<code>Amdahl</code>定律的主要观点–<code>要想显著加速整个系统，必须提升系统中相当大的部分的速度</code>。</p>
+<h2 id="练习题1-1"><a href="#练习题1-1" class="headerlink" title="练习题1.1"></a>练习题1.1</h2><p>假设你要把土豆从爱达荷州送到明尼苏达州，全程2500公里。在限速范围内，你估计平均速度为100公里&#x2F;小时，整个行程需要25个小时。</p>
+<blockquote>
+<p>A:新闻说蒙大拿州取消了限速，这使得行程有1500公里速度可以达到150公里&#x2F;小时，那么加速比是多少？</p>
+</blockquote>
+<p>答：根据题目可知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a = 1500 / 2500 = 0.6 k = 1.5 求S</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line"></span><br><span class="line">S = 1 / (0.4 + 0.4)</span><br><span class="line">S = 1 / 0.8</span><br><span class="line">S = 1.25</span><br></pre></td></tr></table></figure>
+<p>加速比是 1.25倍</p>
+<blockquote>
+<p>B:你可以购买道具，想让加速比达到1.67倍，那么你必须以多快的速度通过蒙大拿州？</p>
+</blockquote>
+<p>答：根据题目可知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">S = 1.67 a = 0.6 求k</span><br><span class="line"></span><br><span class="line">1.67 = 1 / (0.4 + 0.6 / k)</span><br><span class="line">1.67 * (0.4 + 0.6 / k) = 1</span><br><span class="line">0.668 + 1.002 / k = 1</span><br><span class="line">1.002 / k = 0.332</span><br><span class="line">k = 1.002 / 0.332</span><br><span class="line">k = 3.02</span><br></pre></td></tr></table></figure>
+<p>也就是蒙大拿州的速度必须达到 100 * 3.02 &#x3D; 302公里&#x2F;小时才行。</p>
+<h2 id="练习题1-2"><a href="#练习题1-2" class="headerlink" title="练习题1.2"></a>练习题1.2</h2><p>公司说下个版本的软件性能将提升2倍。这个任务分配给你，你已经确认只有80%的系统可以进行改进，那么，这部分需要改进多少才可以达到要求？</p>
+<p>根据题目可以知道:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a = 0.8, S = 2,求k</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line">2 = 1/ [(1 - 0.8) + 0.8/k]</span><br><span class="line">2 = 1 / (0.2 + 0.8 / k)</span><br><span class="line">2 (0.2 + 0.8 / k) = 1</span><br><span class="line">0.4 + 1.6 / k = 1</span><br><span class="line">1.6 / k = 0.6</span><br><span class="line">1.6 = 0.6k</span><br><span class="line">16 / 6 = k</span><br><span class="line">k = 2.67</span><br></pre></td></tr></table></figure>
+<p>所以我们需要改进这部分至少2.67倍才能达到要求。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-title-link" itemprop="url">深入理解计算机系统一--c程序发生了什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-20 16:56:20" itemprop="dateModified" datetime="2023-06-20T16:56:20+08:00">2023-06-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--c程序发生了什么" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><p>计算机系统是由硬件和系统软件组成的，它们共同工作来运行应用程序。。虽然系统的 具体实现方式随着时间不断变化，但是系统内在的概念却没有改变。所有计算机系统都有 相似的硬件和软件组件，它们又执行着相似的功能。</p>
+<h2 id="第一个c程序"><a href="#第一个c程序" class="headerlink" title="第一个c程序"></a>第一个c程序</h2><p>一般第一个程序都是输出<code>hello world</code>，这里我们使用c语言输出一个<code>hello world</code>。后面在来讲这里面都发生了什么。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终程序都会被转成2进制代码，一般都根据ASCII码来转换，下图是上面的代码根据ASCII码转换成的二进制代码。</p>
+<p><img src="/../images/csapp1-1.png" alt="coursera"></p>
+<h2 id="程序被翻译成不同格式"><a href="#程序被翻译成不同格式" class="headerlink" title="程序被翻译成不同格式"></a>程序被翻译成不同格式</h2><p>计算机最后能执行的是二进制文件，所以需要把c文件转换成二进制文件，这是经过几个步骤的转换，而不是一次性转换成的。当然了，我们使用gcc编译的时候他是一下子执行了所有步骤的。</p>
+<p>分为4个阶段</p>
+<ul>
+<li>hello.c 经过 预处理器(cpp) 输出 hello.i (修改了的源程序)</li>
+<li>hello.i 经过 编译器(ccl) 输出 hello.s (汇编程序)</li>
+<li>hello.s 经过 汇编器(as) 输出 hello.o (可重定位目标程序)</li>
+<li>hello.o 和 引入的其他库的文件 经过 连接器(ld) 输出 hello.exe (可执行程序)</li>
+</ul>
+<h4 id="预处理阶段"><a href="#预处理阶段" class="headerlink" title="预处理阶段"></a>预处理阶段</h4><p>预处理器根据以字符<code>#</code>开头的命令，修改原始的c程序。把你引入的文件插入到原始文件中。生成新的hello.i文件。</p>
+<h4 id="编译阶段"><a href="#编译阶段" class="headerlink" title="编译阶段"></a>编译阶段</h4><p>编译器把hello.i这个c程序文件编译成汇编程序文件。生成新的hello.s文件。</p>
+<h4 id="汇编阶段"><a href="#汇编阶段" class="headerlink" title="汇编阶段"></a>汇编阶段</h4><p>汇编器把hello.s这个汇编程序翻译成机器语言指令，把这些指令打包成可重定位目标程序。生成新的hello.o文件，它包含的17个字节是函数main的指令编码。</p>
+<h4 id="链接阶段"><a href="#链接阶段" class="headerlink" title="链接阶段"></a>链接阶段</h4><p>我们的c程序调用了别的函数，调用了printf这个输出函数，这个函数是标准c库里面的函数，这个函数存在于printf.o这个预先编译好的文件里面，而我们要把这两个文件合并到一起，链接器就负责这种合并。最后得到一个可执行程序 hello.exe</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1018,6 +1257,265 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html" class="post-title-link" itemprop="url">如何用AI打造一个爆款视频，涨粉1000+</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-23 15:42:49" itemprop="dateModified" datetime="2024-12-23T15:42:49+08:00">2024-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html" class="post-meta-item leancloud_visitors" data-flag-title="如何用AI打造一个爆款视频，涨粉1000+" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="如何用AI打造一个爆款视频，涨粉1000"><a href="#如何用AI打造一个爆款视频，涨粉1000" class="headerlink" title="如何用AI打造一个爆款视频，涨粉1000+"></a>如何用AI打造一个爆款视频，涨粉1000+</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在数字化时代，视频内容已成为最有力的传播媒介之一，它以其直观和生动的特性吸引着全球观众的注意力。对于程序员和其他希望通过副业赚钱的群体来说，视频平台不仅提供了一个展示技能、分享知识和创造收入的绝佳机会，而且随着技术的进步，视频创作不再是专业人士的专利，普通用户也能通过简单的工具创作出高质量的视频内容。</p>
+<p>AI技术的发展为视频创作带来了革命性的变化。AI不仅可以帮助自动化视频编辑过程，还能在内容创作、市场分析和用户互动等方面提供支持。对于目标画像中的程序员来说，AI技术的应用不仅能提高创作效率，还能帮助他们更好地理解观众需求，创作出更受欢迎的视频内容。</p>
+<p>程序员通常具有强大的逻辑思维和问题解决能力，但在视频创作方面可能缺乏经验和技能。他们面临的挑战包括如何创作吸引人的内容、如何有效推广视频以及如何将视频转化为收入。此外，他们可能还需要在繁忙的工作之余找到时间来管理副业。本文将探讨如何利用AI技术帮助这一群体克服这些挑战，实现他们的目标。</p>
+<p>AI如何帮助提升视频编辑效率？</p>
+<ul>
+<li><p>自动化视频编辑：<br>AI能够自动识别视频中的关键帧、场景变换和语音内容，帮助自动剪辑视频，减少人工编辑的时间和精力。例如，通过AI分析音频波形和视频内容，可以自动将视频剪辑成用户设定的长度，自动匹配背景音乐的节奏。</p>
+</li>
+<li><p>内容创意生成：<br>AI可以基于已有的数据和趋势，生成创意内容建议，包括视频主题、故事板和视觉效果等。利用AI的生成性对抗网络(GANs)，可以创建逼真的视频背景、人物。</p>
+</li>
+<li><p>智能剪辑工具：<br>如Filmora和Descript这样的工具，它们提供基于文本的编辑、自动转录、AI辅助编辑功能，如自动填充词删除、录音室音效增强、眼神接触校正和自动剪辑创建，简化编辑过程。</p>
+</li>
+<li><p>一键包装和AI封面生成：<br>一些AI工具允许用户一键添加字幕、特效、贴纸等，快速制作出具有综艺感的口播视频。同时，AI技术能智能分析视频内容，一键生成吸引眼球的视频封面。</p>
+</li>
+<li><p>画质修复和AI消除：<br>AI技术能高清修复渣糊画质的视频，提升视频的整体观感。同时，提供批量去除视频中的字幕和水印的功能，帮助用户获得干净的视频画面。</p>
+</li>
+<li><p>视频转录和翻译：<br>AI视频编辑工具如Descript，可以自动转录音频和视频文件，轻松添加字幕以提高可访问性和参与度。Vozo则是一款AI驱动的短视频工具，能够一键重写视频脚本并重新配音，保留原说话者的音色、语气和口型同步。</p>
+</li>
+<li><p>智能分析和音频视频创作：<br>一站式AI智能分析和音频视频创作神器可以大幅提高创作效率，例如通过智能分析技术，在视频中添加精准的视觉效果和动态元素。</p>
+</li>
+<li><p>全自动的内容生成与剪辑：<br>未来的AI技术将能够根据预设的风格和情感要求，自动生成并剪辑完整的视频内容，极大提升视频制作的效率。</p>
+</li>
+</ul>
+<p>通过这些方式，AI技术帮助视频编辑工作变得更加高效和精准，降低了专业技能的门槛，使得视频创作更加便捷和快速。这对于程序员和其他对AI感兴趣的创作者来说，是一个巨大的优势，他们可以利用自己的技术背景，结合AI工具，快速提升视频创作能力，实现内容的快速产出和传播。</p>
+<h2 id="理解目标受众"><a href="#理解目标受众" class="headerlink" title="理解目标受众"></a>理解目标受众</h2><h3 id="程序员的背景和技能"><a href="#程序员的背景和技能" class="headerlink" title="程序员的背景和技能"></a>程序员的背景和技能</h3><p>程序员，作为技术行业的中坚力量，通常具备扎实的编程技能和对新技术的敏感度。他们习惯于解决问题，并且能够快速适应和学习新工具。在视频创作领域，程序员可以利用他们的技术背景来掌握AI视频编辑工具，这为他们提供了一个独特的优势。他们对逻辑和结构化思维的倾向也有助于在视频内容的组织和叙事上做出清晰的规划。</p>
+<h3 id="副业赚钱的动机和目标"><a href="#副业赚钱的动机和目标" class="headerlink" title="副业赚钱的动机和目标"></a>副业赚钱的动机和目标</h3><p>许多程序员寻求副业来增加收入，提高生活质量，或者是为了追求个人兴趣和激情。视频创作作为一个灵活的副业选择，允许他们在业余时间进行创作，同时也有可能带来可观的收益。他们的目标可能包括建立个人品牌、增加被动收入、提升专业技能或者仅仅是为了娱乐和创造性的表达。</p>
+<h3 id="对AI的兴趣和应用场景"><a href="#对AI的兴趣和应用场景" class="headerlink" title="对AI的兴趣和应用场景"></a>对AI的兴趣和应用场景</h3><p>程序员通常对AI技术有着浓厚的兴趣，他们可能会探索AI在视频创作中的应用，以提高效率和创造力。AI的应用场景在视频创作中非常广泛，从自动化剪辑到内容创意生成，再到视频推广和分析，AI技术都能提供强大的支持。程序员可以利用这些工具来减少重复性工作，专注于创意和策略规划。</p>
+<h3 id="不同短视频平台的受众"><a href="#不同短视频平台的受众" class="headerlink" title="不同短视频平台的受众"></a>不同短视频平台的受众</h3><p>短视频平台众多，但是每个平台都有它的受众，有常用它的人群，这些人群有不同的喜好。根据我发视频的结果来看，也是同样的。</p>
+<p>同样的一个视频，同样的标题和简介，同样的标签，他们的播放量都是有区别的。</p>
+<p>我发了不同类型的视频，在这里给大家做个参考。这里仅仅是播放量的参考。</p>
+<ul>
+<li>抖音：技术类视频还可以。影视类视频也还可以。可爱治愈系视频和AI诗词视频比较惨淡。</li>
+<li>微信视频号：可爱治愈系视频最好。AI诗词类和技术类视频一般。</li>
+<li>小红书：影视类视频最好，可爱治愈系和技术类视频一般。</li>
+<li>B站：技术类视频最好，其他视频一般。</li>
+</ul>
+<p>总体而言微信视频号的流量最大，但是转化最好的是B站，小红书和抖音。</p>
+<p>如果大家做的是技术类视频，那么推荐B站和抖音。</p>
+<h3 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h3><p>程序员在视频创作中可能会遇到以下技术挑战：</p>
+<p>非线性编辑的复杂性：<br>视频编辑通常涉及非线性编辑系统（NLE），这对于习惯于线性编程思维的程序员来说可能是一个挑战。他们需要适应在时间线上进行剪辑、添加效果和调整音频等操作。</p>
+<p>视频和音频同步：<br>确保视频和音频的精确同步是视频制作中的一个常见问题。程序员可能需要学习如何使用专业软件来处理音频和视频的同步问题。</p>
+<p>视频格式和编码：<br>视频文件有多种格式和编码标准，程序员需要了解这些格式之间的区别以及如何转换它们，以确保视频在不同平台和设备上的兼容性。</p>
+<p>色彩校正和分级：<br>视频的色彩校正和分级是一个专业领域，程序员可能需要学习如何调整色彩平衡、对比度和饱和度，以达到视觉上的吸引力。</p>
+<p>特效和动画：<br>在视频中添加特效和动画可能需要使用复杂的软件和插件，程序员可能需要掌握这些工具的使用，以及如何编程实现自定义效果。</p>
+<p>视频压缩和优化：<br>为了在保持视频质量的同时减少文件大小，程序员需要了解视频压缩技术，包括选择合适的编码器和设置压缩参数。</p>
+<p>跨平台兼容性：<br>不同的社交媒体平台和视频分享网站可能有不同的视频规格要求，程序员需要确保他们的作品能够适应这些不同的平台。</p>
+<p>版权和法律问题：<br>使用音乐、图片和其他版权材料时，程序员需要了解版权法律，避免侵犯他人版权，这可能需要额外的法律知识。</p>
+<p>硬件性能要求：<br>高质量的视频编辑需要较强的硬件支持，程序员可能需要升级他们的计算机硬件，以满足视频编辑软件的性能要求。</p>
+<p>用户界面和用户体验设计：<br>程序员可能习惯于编写代码，但在视频创作中，他们还需要关注用户界面（UI）和用户体验（UX）的设计，以确保视频内容对观众友好。</p>
+<p>内容创意和叙事结构：<br>虽然程序员在技术实现方面可能很强，但内容创意和叙事结构的构建可能是他们的弱项，这需要他们开发新的思维模式和技能。</p>
+<p>视频推广和SEO：<br>为了让视频获得更多的观看和分享，程序员需要学习视频推广和搜索引擎优化（SEO）的策略，以提高视频在搜索结果中的排名。</p>
+<p>程序员在视频创作中遇到的技术挑战是多方面的，需要他们不断学习和适应。随着AI技术的发展，许多挑战可以通过智能工具和自动化流程来解决，这为程序员提供了新的解决方案和创作可能性。</p>
+<h3 id="AI工具准备"><a href="#AI工具准备" class="headerlink" title="AI工具准备"></a>AI工具准备</h3><p>通过下面的工具，可以解决我们大部分的问题，但是还有一些问题需要我们自己来解决，比如上面的推广、剪辑、创意性、选题等。</p>
+<p>想做AI视频，那么AI视频需要以下的一些步骤和对应的工具：</p>
+<ul>
+<li>剧本创作：可以使用Kimi或者豆包或者GPT都可以。</li>
+<li>分镜创作：同样的，Kimi或者豆包或者GPT都可以。</li>
+<li>图片生成：可以使用一些图片生成AI。包括可灵，即梦，midjourney等。</li>
+<li>影视生成：可以使用可灵，即梦，RunWay等。</li>
+<li>音频生成：可以使用ttsmaker，魔音工坊等。</li>
+<li>视频剪辑：即梦，IMovie, 剪映等。</li>
+<li>去除水印：腾讯智影。</li>
+</ul>
+<h2 id="AI技术在视频创作中的应用"><a href="#AI技术在视频创作中的应用" class="headerlink" title="AI技术在视频创作中的应用"></a>AI技术在视频创作中的应用</h2><p>AI技术在视频创作中的应用为程序员和其他创作者提供了强大的工具，以克服技术挑战并提升创作效率。以下是AI技术在视频创作中的一些关键应用：</p>
+<h3 id="视频内容生成"><a href="#视频内容生成" class="headerlink" title="视频内容生成"></a>视频内容生成</h3><p>脚本编写：<br>AI可以辅助编写视频脚本，通过分析流行视频的内容和结构，提供创意点子和叙事框架。这不仅节省了时间，还能确保内容的吸引力和观众的参与度。</p>
+<p>场景设计：<br>利用AI生成的场景设计工具，程序员可以快速创建视频背景和动画，无需手动绘制每一帧。AI可以根据视频主题自动推荐配色方案和设计风格，使视频更具视觉冲击力。</p>
+<h3 id="视频编辑和优化"><a href="#视频编辑和优化" class="headerlink" title="视频编辑和优化"></a>视频编辑和优化</h3><p>视频剪辑：<br>AI视频编辑工具能够自动识别视频中的最佳时刻，如表情、动作和对话，自动剪辑视频，节省了大量的手动剪辑工作。这些工具还可以预测剪辑点，使视频流畅自然。</p>
+<p>色彩校正：<br>AI可以分析视频的色彩分布，并自动调整色彩平衡、对比度和饱和度，以达到专业级别的视觉效果。这种智能色彩校正功能使得即使没有专业经验的程序员也能制作出高质量的视频。</p>
+<p>音频处理：<br>AI技术可以自动分离和增强视频中的音频，消除背景噪音，增强人声，甚至自动添加背景音乐。这使得视频的音频质量得到提升，增强了观看体验。</p>
+<h3 id="视频发布和推广"><a href="#视频发布和推广" class="headerlink" title="视频发布和推广"></a>视频发布和推广</h3><p>关键词优化：<br>AI可以帮助分析视频内容和观众反馈，自动生成和优化视频标题、描述和标签，提高视频在搜索引擎中的排名，增加视频的曝光率。</p>
+<p>社交媒体分析：<br>AI工具可以分析社交媒体趋势和用户行为，为视频发布提供最佳时间和策略建议。这些工具还可以预测哪些内容更有可能获得观众的喜爱，帮助程序员制定更有效的内容计划。</p>
+<p>通过这些AI技术的应用，程序员可以更专注于创意和策略，而不是技术细节。AI技术不仅提高了视频创作的效率，还降低了进入视频创作领域的门槛，使得程序员能够利用自己的技术背景，快速适应并掌握视频创作的过程。</p>
+<h2 id="爆款视频的创作策略"><a href="#爆款视频的创作策略" class="headerlink" title="爆款视频的创作策略"></a>爆款视频的创作策略</h2><h3 id="确定视频主题和风格"><a href="#确定视频主题和风格" class="headerlink" title="确定视频主题和风格"></a>确定视频主题和风格</h3><p>市场调研与趋势分析：<br>利用AI工具进行市场调研，分析当前流行趋势和观众偏好。例如，通过分析社交媒体上的热门话题和视频，AI可以帮助确定哪些主题和风格更受欢迎。这有助于创作者选择能够引起共鸣和关注的题材。</p>
+<p>目标受众定位：<br>明确视频的目标受众，并根据受众的特点定制内容。AI可以帮助分析特定受众群体的行为和偏好，从而制作出更有针对性的视频内容。</p>
+<p>内容差异化：<br>在众多视频中脱颖而出的关键在于差异化。AI可以帮助分析竞争对手的内容，找出差异化的切入点，如独特的视角、新颖的故事讲述方式或者创新的视频风格。</p>
+<h3 id="利用AI进行市场调研"><a href="#利用AI进行市场调研" class="headerlink" title="利用AI进行市场调研"></a>利用AI进行市场调研</h3><p>关键词分析：<br>使用AI工具进行关键词分析，找出与视频主题相关的热门搜索词，这些关键词可以用于视频的标题、描述和标签，以提高视频在搜索引擎中的排名。</p>
+<p>情感分析：<br>AI情感分析工具可以评估社交媒体上对特定话题的公众情绪，帮助创作者理解观众的情感反应，从而调整内容以更好地满足观众的情感需求。</p>
+<p>竞品分析：<br>AI可以分析竞争对手的视频内容，提供关于他们成功元素的洞察，如视频长度、编辑风格、使用的音效等，从而为创作者提供灵感。</p>
+<h3 id="创作引人入胜的内容"><a href="#创作引人入胜的内容" class="headerlink" title="创作引人入胜的内容"></a>创作引人入胜的内容</h3><p>故事叙述：<br>好的故事叙述是吸引观众的关键。AI可以帮助创作者构建引人入胜的叙事结构，通过分析成功的视频案例，提供故事发展的建议。</p>
+<p>视觉效果优化：<br>AI工具可以提供关于视频视觉效果的优化建议，如色彩搭配、场景转换等，以增强视频的视觉冲击力。</p>
+<p>互动性增强：<br>AI可以帮助创作者在视频中加入互动元素，如问答、投票等，以提高观众的参与度和互动性。</p>
+<h3 id="视频制作的技术细节"><a href="#视频制作的技术细节" class="headerlink" title="视频制作的技术细节"></a>视频制作的技术细节</h3><p>视频格式和编码选择：<br>根据目标平台和受众设备，AI可以建议最合适的视频格式和编码设置，以确保视频在不同设备上都能流畅播放。</p>
+<p>音频优化：<br>AI音频分析工具可以帮助创作者优化音频质量，包括音量平衡、噪音消除和音质增强，以提供更好的听觉体验。</p>
+<p>特效和动画：<br>AI驱动的特效和动画工具可以简化这些复杂元素的添加过程，使创作者能够快速实现创意视觉效果。</p>
+<h2 id="视频内容的优化和迭代"><a href="#视频内容的优化和迭代" class="headerlink" title="视频内容的优化和迭代"></a>视频内容的优化和迭代</h2><h3 id="利用AI分析观众反馈"><a href="#利用AI分析观众反馈" class="headerlink" title="利用AI分析观众反馈"></a>利用AI分析观众反馈</h3><p>评论分析：<br>AI可以分析视频下的评论，识别出观众的正面和负面反馈，以及他们对视频内容的具体建议。这些数据可以帮助创作者了解观众的需求和期望，从而调整内容策略。</p>
+<p>观看行为分析：<br>通过分析观众的观看行为，如观看完成率、跳过率和重复观看次数，AI可以提供关于视频哪些部分最吸引人、哪些部分需要改进的洞察。</p>
+<p>情感识别：<br>利用AI的情感识别技术，可以从观众的面部表情和语音语调中分析出他们的情感反应，这对于理解观众的真实感受非常有用。</p>
+<h3 id="调整内容策略"><a href="#调整内容策略" class="headerlink" title="调整内容策略"></a>调整内容策略</h3><p>内容优化：<br>根据AI分析的结果，创作者可以对视频内容进行优化，比如增强那些观众反应积极的内容元素，减少或修改那些反应消极的部分。</p>
+<p>风格调整：<br>如果AI分析显示观众对某种风格或类型的视频更感兴趣，创作者可以调整自己的视频风格，以更好地吸引目标受众。</p>
+<p>发布时间优化：<br>AI可以帮助分析不同发布时间对视频表现的影响，从而找到最佳的发布时间，以提高视频的曝光率和观看量。</p>
+<h3 id="持续优化视频质量"><a href="#持续优化视频质量" class="headerlink" title="持续优化视频质量"></a>持续优化视频质量</h3><p>技术升级：<br>随着AI技术的进步，创作者可以利用最新的AI工具来提升视频质量，比如使用更先进的自动剪辑工具、更高质量的自动字幕生成器等。</p>
+<p>创意迭代：<br>AI可以提供创意迭代的建议，比如通过分析流行趋势和观众反馈，帮助创作者不断更新和创新视频内容。</p>
+<p>互动和社区建设：<br>AI可以帮助创作者设计更有效的观众互动策略，比如通过分析观众的互动数据来设计问答环节、投票和挑战等，以增强观众的参与感和社区归属感。</p>
+<p>通过这些方法，创作者可以不断优化和迭代自己的视频内容，以适应不断变化的观众需求和市场趋势。这不仅有助于提升视频的吸引力和观看量，还能增强观众的忠诚度，为创作者带来长期的成功。</p>
+<h2 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h2><p>首先准备上面的AI工具。开始实战，大胖橘的一天。</p>
+<h3 id="剧本制作"><a href="#剧本制作" class="headerlink" title="剧本制作"></a>剧本制作</h3><p>剧本制作我们使用豆包就可以。提示词如下。我们让豆包给出5份剧本，可以从里面选出自己想要的，如果没有的话就再让它生成一份。每个分镜是5s，因为大部分AI视频都是5s。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#背景：我是一个短视频爱好者。 </span><br><span class="line">#角色：你是一个专业的影视导演。擅长制作电影镜头，分镜，每个分镜5s，请合理安排镜头和画面音频运镜方式。</span><br><span class="line">#技能：</span><br><span class="line">    1. 根据用户输入的信息可以生成专业的影视剧本。</span><br><span class="line">    2. 根据剧本生成分镜，每一个分镜是5s </span><br><span class="line">    3. 合理安排分镜的画面音频和运镜。</span><br><span class="line">    4. 根据用户的需求继续完善剧本和镜头。  </span><br><span class="line"># 工作流： </span><br><span class="line">    1. 引导用户输入 角色，时间，地点，事件。</span><br><span class="line">    2.接收到信息以后开始生成剧本和分镜。</span><br><span class="line">    3.输出分镜内容，以表格形式，每一个分镜镜头是5s，还要包括运镜方式、画面、音频、音效。</span><br><span class="line">    4. 总共输出5份内容 </span><br><span class="line">    5. 输出以后给出最佳实践</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们给出一些信息。如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">角色：可爱的大胖橘。</span><br><span class="line">时间：早上，地点：家里。事件：起床洗漱准备出门。</span><br><span class="line">时间：早上。地点：上班路上。事件：骑上心爱的小摩托上班。</span><br><span class="line">时间：上午。地点：办公室。事件：上班。</span><br><span class="line">时间：下午。地点：办公室。事件：做错事被老板骂。</span><br><span class="line">时间：晚上。地点：卧室。事件：疲惫的躺在床上</span><br></pre></td></tr></table></figure>
+
+<p>接下来等待豆包给出剧本和分镜信息。</p>
+<p><img src="/../images/AI/AI-vedio-1.jpg" alt="1"></p>
+<h3 id="图片制作"><a href="#图片制作" class="headerlink" title="图片制作"></a>图片制作</h3><p>接下来使用即梦AI来生成图片。</p>
+<p>我们只需要把画面信息粘贴过去就可以了。比列选择<code>9:16</code>。模型可以自己对比，我选择的是图片2.1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">大胖橘慵懒地窝在柔软的被窝里，眼睛慢慢睁开，伸着懒腰，被子被拱起.</span><br></pre></td></tr></table></figure>
+
+<p>生成内容如下：</p>
+<p><img src="/../images/AI/AI-vedio-2.jpeg" alt="2"></p>
+<p>接下来把每一个镜头都生成图片就可以了。</p>
+<h3 id="分镜制作"><a href="#分镜制作" class="headerlink" title="分镜制作"></a>分镜制作</h3><p>现在图片已经生成好了，接下来准备生成5s的分镜。同样用即梦AI就可以了。</p>
+<ul>
+<li>选择视频生成</li>
+<li>选择图片生视频</li>
+<li>上传图片</li>
+<li>选择视频模型：我用的默认的S2.0，也可以用其他的试试效果。</li>
+</ul>
+<p>接下来生成每一个镜头就可以了。</p>
+<h3 id="音频制作"><a href="#音频制作" class="headerlink" title="音频制作"></a>音频制作</h3><p>这里我使用的是ttsmaker音频生成。</p>
+<p>把我们要生成的语音文字和停顿信息，速度选择好，然后点击生成就可以了。</p>
+<p>我这里的文字和停顿。我选择的是<code>1.1倍速</code>，每个段落停顿时间<code>200ms</code>。声音我选择的是<code>1518大鹏</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">大胖橘闹钟在床边响起，爪子从被窝伸出按掉闹钟。</span><br><span class="line">走进浴室，打开淋浴喷头，水洒下来，开始享受。</span><br><span class="line">洗漱完毕，在镜子前整理自己的仪表，左看看右看看。((⏱️=500))</span><br><span class="line">走到门口鞋柜处，叼起钥匙，回头看一眼屋子。((⏱️=700))</span><br><span class="line">骑着小摩托在路上，穿梭在车流中，旁边车辆呼啸而过。</span><br><span class="line">坐在办公桌前，对着电脑屏幕愁眉苦脸，文档上满是修改标记。</span><br><span class="line">晚上趴在卧室床上，四肢摊开，眼神空洞地望着天花板。</span><br></pre></td></tr></table></figure>
+
+<p>点击开始转换，接着可以试听，然后下载文件到本地。</p>
+<p><img src="/../images/AI/AI-vedio-3.jpg" alt="3"></p>
+<h3 id="视频剪辑"><a href="#视频剪辑" class="headerlink" title="视频剪辑"></a>视频剪辑</h3><p>当每一个镜头都制作好了以后，就可以通过视频剪辑工具，把镜头放到一起了。</p>
+<ul>
+<li>下载剪映：<a target="_blank" rel="noopener" href="https://www.capcut.cn/">https://www.capcut.cn/</a></li>
+<li>打开剪映</li>
+<li>登陆</li>
+<li>选择素材，导入分镜视频和音频</li>
+</ul>
+<p><img src="/../images/AI/AI-vedio-4.jpg" alt="4"></p>
+<p>把视频放到下面，把音频也放到下面。</p>
+<p><img src="/../images/AI/AI-vedio-5.jpg" alt="5"></p>
+<p>添加自己喜欢的转场动画，然后点击导出就可以了。</p>
+<h3 id="去水印"><a href="#去水印" class="headerlink" title="去水印"></a>去水印</h3><p>接下来使用腾讯智影去掉视频里面的水印。</p>
+<ul>
+<li>选择智能抹除</li>
+<li>本地上传</li>
+<li>将水印框住: 注意绿色的是水印框。</li>
+</ul>
+<p><img src="/../images/AI/AI-vedio-6.jpg" alt="6"></p>
+<p>点击确定，等待完成。接下来在下面的最近作品里面点击下载即可。</p>
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>一个好的题目可以让视频更加火爆，题目可以自己取也可以让AI帮你取。</p>
+<p>比如我让豆包给我取一个。我输入的提示词：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">赛道领域：可爱小猫治愈系视频 </span><br><span class="line">产品类型：大胖橘猫的一天 </span><br><span class="line">目标用户画像：性别：不限，可根据不同性别定制化。年龄段：不限。地域：不限。职业：工作劳累的上班族和大学生，需要放松的人。收入：收入在5万-30万之间的。</span><br></pre></td></tr></table></figure>
+
+<p>豆包给我输出的。</p>
+<p><img src="/../images/AI/AI-vedio-7.jpg" alt="7"></p>
+<p>从里面选择一个就可以了。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>简介也可以让AI生成。同样使用豆包。</p>
+<p>输入提示词。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">赛道领域：可爱小猫治愈系视频 </span><br><span class="line">产品类型：大胖橘猫的一天 </span><br><span class="line">目标用户画像：性别：不限，可根据不同性别定制化。年龄段：不限。地域：不限。职业：工作劳累的上班族和大学生，需要放松的人。收入：收入在5万-30万之间的。</span><br></pre></td></tr></table></figure>
+
+<p>豆包给我输出的。</p>
+<p><img src="/../images/AI/AI-vedio-8.jpg" alt="7"></p>
+<blockquote>
+<p>接下来就可以发出去啦</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先要进行选择题目，选择短视频平台受众。</p>
+<p>接下来利用AI生成剧本、分镜、图片、视频、音频。</p>
+<p>然后通过剪辑软件进行合并成一个视频。</p>
+<p>最后在去除水印。</p>
+<p>还可以通过AI生成标题和简介。</p>
+<p>就可以去发布啦！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E6%9D%A5%E8%8A%82%E7%9C%81%E7%A9%BA%E9%97%B4.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1360,400 +1858,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" class="post-title-link" itemprop="url">设计模式之适配器模式--不兼容变兼容接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-05 17:54:30" itemprop="dateCreated datePublished" datetime="2020-05-05T17:54:30+08:00">2020-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之适配器模式--不兼容变兼容接口" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计模式之适配器模式–不兼容变兼容接口"><a href="#设计模式之适配器模式–不兼容变兼容接口" class="headerlink" title="设计模式之适配器模式–不兼容变兼容接口"></a>设计模式之适配器模式–不兼容变兼容接口</h1><p><code>适配器模式</code>可以增加接口的易用性，使得不兼容的接口变得兼容。</p>
-<blockquote>
-<p>将一个接口转换成另外的接口，使得原本不兼容的接口变得兼容。</p>
-</blockquote>
-<h2 id="为什么要使用适配器模式"><a href="#为什么要使用适配器模式" class="headerlink" title="为什么要使用适配器模式"></a>为什么要使用适配器模式</h2><p>比如你的接口设计存在缺点，不够易用，不能复用但又希望复用的时候。</p>
-<p>比如你要对接多个平台的接口他们互不兼容的时候。</p>
-<p>现实中也有很多适配器，比如安卓苹果的转换头，比如usb到type-c的转换头，都是因为两边的接口不同，不兼容所以需要一个适配器。</p>
-<p>下面是一个手机类，现在需要充电，但是手机的充电需要typec接口。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 手机类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mobile</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 给手机充电操作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">charge</span>(<span class="params">ITypec <span class="variable">$typec</span></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;使用typec接口给手机充电&#x27;</span>);</span><br><span class="line">        <span class="variable">$typec</span>-&gt;<span class="title function_ invoke__">typec</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在只有一个usb接口可以充电。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 需要适配的类</span></span><br><span class="line"><span class="comment"> * usb接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">usb</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">usb</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;电脑usb接口&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们增加一个适配器，也就是typec转usb的头。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器接口</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器类，typec转换usb的适配器</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">typec</span> <span class="keyword">implements</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$usb</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;usb = <span class="keyword">new</span> usb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;接口适配器&#x27;</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;usb-&gt;<span class="title function_ invoke__">usb</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们的客户端就可以使用这个适配器了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$mobile</span> = <span class="keyword">new</span> <span class="title class_">mobile</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable">$mobile</span>-&gt;<span class="title function_ invoke__">charge</span>(<span class="keyword">new</span> typec);</span><br></pre></td></tr></table></figure>
-
-<p>这是<code>对象适配器</code>，还有类适配器，类适配器的话需要继承要适配的类。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器类，typec转换usb的适配器</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">typec</span> <span class="keyword">extends</span> <span class="title">usb</span> <span class="keyword">implements</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//不再需要存储对象，直接继承了</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;接口适配器&#x27;</span>);</span><br><span class="line">        <span class="comment">//$this-&gt;usb-&gt;usb();</span></span><br><span class="line">        <span class="comment">//这里改成使用父类的usb方法。</span></span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">usb</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="适配器和代理模式还有装饰器模式的区别"><a href="#适配器和代理模式还有装饰器模式的区别" class="headerlink" title="适配器和代理模式还有装饰器模式的区别"></a>适配器和代理模式还有装饰器模式的区别</h3><p>这几个设计模式其实都差不多，你也可以说使用了typec代理了usb。只是角度不同所以名字不同罢了。</p>
-<ul>
-<li>代理模式 更注重代理，代理了原有类。</li>
-<li>装饰器模式 比代理模式更加灵活多样。</li>
-<li>适配器模式 更注重兼容性，为了兼容别的类，而不是代理和装饰功能。</li>
-</ul>
-<p>虽然角度不同，但是我觉得核心都差不多。<strong>这几个设计模式都是需要修改原有类的时候，没有选择修改，而是套了壳子，来扩展功能</strong>。这是一种好的思想，灵活运用思想更重要。</p>
-<p>代码放在了我的github上面。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" class="post-title-link" itemprop="url">设计模式之装饰器模式--各种功能随意扩展</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-05 17:22:45" itemprop="dateCreated datePublished" datetime="2020-05-05T17:22:45+08:00">2020-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之装饰器模式--各种功能随意扩展" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计模式之装饰器模式–各种功能随意扩展"><a href="#设计模式之装饰器模式–各种功能随意扩展" class="headerlink" title="设计模式之装饰器模式–各种功能随意扩展"></a>设计模式之装饰器模式–各种功能随意扩展</h1><p><code>装饰器模式</code>是灵活给原有类装饰新功能。</p>
-<blockquote>
-<p>动态的给对象添加额外职责，就增加功能来说，装饰模式比生成子类更为灵活。</p>
-</blockquote>
-<h2 id="为什么要使用装饰器模式"><a href="#为什么要使用装饰器模式" class="headerlink" title="为什么要使用装饰器模式"></a>为什么要使用装饰器模式</h2><p>如果你需要添加一些额外的功能，再不修改原有类的基础上，给原有类套个壳。并且可以套多个壳，我觉得装饰器模式有点像中间件。</p>
-<p>比如你现在有一个登录的功能。</p>
-<p>你现在需要给登录加一个权限控制。然后还要增加一个登录日志。还要增加登录微信通知。如果修改原有类可能引起未知bug。</p>
-<p>可以使用装饰器模式。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 装饰器父类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$compent</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;compent = <span class="variable">$compent</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;compent-&gt;<span class="title function_ invoke__">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 权限装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginAuth</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;判断登录权限&#x27;</span>);</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 登录日志装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginLog</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;记录登录日志&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 微信通知装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginWechat</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;发送微信登录通知&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是原来的登录功能</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 核心代码</span></span><br><span class="line"><span class="comment"> * 登录功能</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">login</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;用户登录&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>原来的客户端直接调用login，只有登录功能。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">login</span>();</span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p>增加了装饰器以后可以把登录功能放入装饰器。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> login;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用权限装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginAuth</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用登录日志装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginLog</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用微信通知装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginWechat</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/decorator1.png" alt="decorate"></p>
-<p>还可以任意调换装饰器的位置，可以先发送微信通知在记录登录日志。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> login;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用微信通知装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginWechat</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用登录日志装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginLog</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用权限装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginAuth</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/decorator2.png" alt="decorate"></p>
-<p>这个模式就非常灵活，可以任意组装自己的装饰，比如购买支付的时候，需要装饰积分发放，账单通知这些。而且每个装饰器的职责单一，方便插拔，如果不需要一个装饰器的时候把这个装饰器去掉就可以了。</p>
-<p>代码放在了我的github上面。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF%E7%9A%84%E4%BD%93%E7%8E%B0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF%E7%9A%84%E4%BD%93%E7%8E%B0.html" class="post-title-link" itemprop="url">设计模式之桥接模式--组合优于继承的体现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-05 15:44:39" itemprop="dateCreated datePublished" datetime="2020-05-05T15:44:39+08:00">2020-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-31 20:10:36" itemprop="dateModified" datetime="2022-12-31T20:10:36+08:00">2022-12-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF%E7%9A%84%E4%BD%93%E7%8E%B0.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之桥接模式--组合优于继承的体现" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF%E7%9A%84%E4%BD%93%E7%8E%B0.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F-%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF%E7%9A%84%E4%BD%93%E7%8E%B0.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计模式之桥接模式–组合优于继承的体现"><a href="#设计模式之桥接模式–组合优于继承的体现" class="headerlink" title="设计模式之桥接模式–组合优于继承的体现"></a>设计模式之桥接模式–组合优于继承的体现</h1><p><code>桥接模式</code>是灵活运用组合对象而不是继承类来实现功能。</p>
-<blockquote>
-<p>将抽象与实现部分分离，使他们都可以独立变化。</p>
-</blockquote>
-<h2 id="为什么要使用桥接模式"><a href="#为什么要使用桥接模式" class="headerlink" title="为什么要使用桥接模式"></a>为什么要使用桥接模式</h2><p><code>继承</code>这个面向对象的特性使得我们继承父类可以继承父类的功能，在使用多态特性可以自由修改子类，使得我们的设计很好用。</p>
-<p>但是<code>继承</code>有一个问题，就是<code>强耦合</code>。继承一个父类代表拥有这个父类的能力，但这个父类的很多能力你可能并不需要。</p>
-<p>还有如果继承关系很复杂的时候，使用继承会导致关系复杂到破裂，无法继承。</p>
-<p>比如<code>华为</code>手机和<code>小米</code>手机都具有玩游戏，听音乐等功能。按照继承设计就会有下面4个类，如果再实现拍照功能又需要增加2个类。这个继承关系太过复杂。</p>
-<ul>
-<li><p>手机父类</p>
-</li>
-<li><p>软件父类</p>
-</li>
-<li><p>华为游戏手机</p>
-</li>
-<li><p>华为音乐手机</p>
-</li>
-<li><p>小米游戏手机</p>
-</li>
-<li><p>小米音乐手机</p>
-</li>
-</ul>
-<p>如果使用组合的方式，只有4个类。</p>
-<ul>
-<li>华为手机类</li>
-<li>小米手机类</li>
-<li>游戏类</li>
-<li>音乐类</li>
-</ul>
-<p>让这4个类互相组合就可以了。如果增加个拍照，只需要增加拍照类。这就是抽象和实现分离。手机类就是手机类，软件类就是软件类，互相组合实现功能而不是互相继承。</p>
-<p>桥接模式可以理解成连接两个部分，比如连接手机和软件两个部分。像一座桥一样。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 桥的一端</span></span><br><span class="line"><span class="comment"> * 手机类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Mobile</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$soft</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行手机功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 设置相应的软件</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setSoft</span>(<span class="params">Soft <span class="variable">$soft</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;soft = <span class="variable">$soft</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 桥的一端</span></span><br><span class="line"><span class="comment"> * 软件类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Soft</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行软件功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下面是手机类的具体实现和软件的具体实现。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 桥的一端</span></span><br><span class="line"><span class="comment"> * 华为手机类</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HuaWei</span> <span class="keyword">extends</span> <span class="title">Mobile</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行手机功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;华为手机&#x27;</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;soft-&gt;<span class="title function_ invoke__">run</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 桥的一端</span></span><br><span class="line"><span class="comment"> * 小米手机类</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XiaoMi</span> <span class="keyword">extends</span> <span class="title">Mobile</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行手机功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;小米手机&#x27;</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;soft-&gt;<span class="title function_ invoke__">run</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 游戏软件类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Game</span> <span class="keyword">extends</span> <span class="title">Soft</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行软件功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;玩王者荣耀&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 桥接模式</span></span><br><span class="line"><span class="comment"> * 音乐软件类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Music</span> <span class="keyword">extends</span> <span class="title">Soft</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 运行软件功能</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;打开网易云音乐&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>客户端调用根据需要注入不同的软件就可以实现不同的软件功能而不再需要增加新的类来实现。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$obj1</span> = <span class="keyword">new</span> HuaWei;</span><br><span class="line"><span class="variable">$obj1</span>-&gt;<span class="title function_ invoke__">setSoft</span>(<span class="keyword">new</span> Game);</span><br><span class="line"><span class="variable">$obj1</span>-&gt;<span class="title function_ invoke__">run</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable">$obj1</span>-&gt;<span class="title function_ invoke__">setSoft</span>(<span class="keyword">new</span> Music);</span><br><span class="line"><span class="variable">$obj1</span>-&gt;<span class="title function_ invoke__">run</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/bridge.png" alt="bridge"></p>
-<p>桥接模式解决了继承过于复杂的问题，体现了组合优于继承的思想。</p>
-<p>代码放在了我的github上面。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1821,7 +1930,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">169</span>
+          <span class="site-state-item-count">172</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1834,7 +1943,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1872,7 +1981,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

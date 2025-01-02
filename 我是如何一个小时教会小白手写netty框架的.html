@@ -64,7 +64,7 @@
 <meta property="og:image" content="https://thepatterraining.github.io/images/java/netty22.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/java/netty31.png">
 <meta property="article:published_time" content="2024-12-15T02:12:47.000Z">
-<meta property="article:modified_time" content="2024-12-15T07:10:03.725Z">
+<meta property="article:modified_time" content="2025-01-02T07:57:08.608Z">
 <meta property="article:author" content="Thepatter">
 <meta property="article:tag" content="java">
 <meta name="twitter:card" content="summary">
@@ -256,10 +256,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-12-15 10:12:47 / 修改时间：15:10:03" itemprop="dateCreated datePublished" datetime="2024-12-15T10:12:47+08:00">2024-12-15</time>
+              <time title="创建时间：2024-12-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-12-15T10:12:47+08:00">2024-12-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-02 15:57:08" itemprop="dateModified" datetime="2025-01-02T15:57:08+08:00">2025-01-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -325,7 +331,6 @@
 
 <p>上面能看到调用了<code>bind</code>方法。再看看<code>bind</code>里面呢。能看到这个里面有<code>getImpl().bind</code>和<code>getImpl().listen</code>。这就是上面说的<code>bind</code>和<code>listen</code>函数了。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将服务器Socket绑定到指定的端点地址并设置监听队列长度</span></span><br><span class="line"><span class="comment"> * 此方法确保Socket未关闭且未绑定，并验证端点地址和backlog参数的合法性</span></span><br><span class="line"><span class="comment"> * 如果满足所有条件，则进行绑定和监听设置</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> endpoint 要绑定的端点地址，如果为null，则创建一个未指定端口的InetSocketAddress实例</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> backlog 监听队列的长度，如果小于1，则使用默认值50</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IOException 如果绑定或监听过程中发生I/O错误</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> SocketException 如果Socket已关闭、已绑定、地址未解析或不支持的地址类型</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalArgumentException 如果端点地址类型不受支持</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">bind</span><span class="params">(SocketAddress endpoint, <span class="type">int</span> backlog)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="comment">// 检查Socket是否已关闭</span></span><br><span class="line">    <span class="keyword">if</span> (isClosed())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Socket is closed&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查Socket是否已绑定</span></span><br><span class="line">    <span class="keyword">if</span> (isBound())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Already bound&quot;</span>);</span><br><span class="line">    <span class="comment">// 如果未指定端点地址，则创建一个未指定端口的InetSocketAddress实例</span></span><br><span class="line">    <span class="keyword">if</span> (endpoint == <span class="literal">null</span>)</span><br><span class="line">        endpoint = <span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 检查端点地址是否为InetSocketAddress类型</span></span><br><span class="line">    <span class="keyword">if</span> (!(endpoint <span class="keyword">instanceof</span> InetSocketAddress epoint))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Unsupported address type&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查端点地址是否已解析</span></span><br><span class="line">    <span class="keyword">if</span> (epoint.isUnresolved())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Unresolved address&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查backlog参数是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (backlog &lt; <span class="number">1</span>)</span><br><span class="line">        backlog = <span class="number">50</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 安全检查，确保有权限监听指定端口</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;removal&quot;)</span></span><br><span class="line">    <span class="type">SecurityManager</span> <span class="variable">security</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (security != <span class="literal">null</span>)</span><br><span class="line">        security.checkListen(epoint.getPort());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 同步块，确保线程安全</span></span><br><span class="line">    <span class="keyword">synchronized</span> (stateLock) &#123;</span><br><span class="line">        <span class="comment">// 再次检查Socket是否已关闭或绑定</span></span><br><span class="line">        <span class="keyword">if</span> (closed)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Socket is closed&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (bound)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Already bound&quot;</span>);</span><br><span class="line">        <span class="comment">// 调用实现类的方法进行实际的绑定和监听设置</span></span><br><span class="line">        getImpl().bind(epoint.getAddress(), epoint.getPort());</span><br><span class="line">        getImpl().listen(backlog);</span><br><span class="line">        <span class="comment">// 设置绑定状态为true</span></span><br><span class="line">        bound = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 
 <p><img src="/../images/java/netty6.png" alt="第一版socket"></p>
 <p><img src="/../images/java/netty7.png" alt="第一版socket"></p>
@@ -536,8 +541,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/gc%E6%AF%94%E8%BE%83.html" rel="prev" title="java gc 横向对比">
-      <i class="fa fa-chevron-left"></i> java gc 横向对比
+    <a href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" rel="prev" title="我是如何一个小时教会小白手写网关的">
+      <i class="fa fa-chevron-left"></i> 我是如何一个小时教会小白手写网关的
     </a></div>
       <div class="post-nav-item"></div>
     </div>
@@ -616,7 +621,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">169</span>
+          <span class="site-state-item-count">172</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -629,7 +634,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -667,7 +672,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

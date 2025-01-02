@@ -17773,7 +17773,6 @@ client_secret: 刚刚的 Client Secret
 <p>上面能看到调用了<code>bind</code>方法。再看看<code>bind</code>里面呢。能看到这个里面有<code>getImpl().bind</code>和<code>getImpl().listen</code>。这就是上面说的<code>bind</code>和<code>listen</code>函数了。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将服务器Socket绑定到指定的端点地址并设置监听队列长度</span></span><br><span class="line"><span class="comment"> * 此方法确保Socket未关闭且未绑定，并验证端点地址和backlog参数的合法性</span></span><br><span class="line"><span class="comment"> * 如果满足所有条件，则进行绑定和监听设置</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> endpoint 要绑定的端点地址，如果为null，则创建一个未指定端口的InetSocketAddress实例</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> backlog 监听队列的长度，如果小于1，则使用默认值50</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IOException 如果绑定或监听过程中发生I/O错误</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> SocketException 如果Socket已关闭、已绑定、地址未解析或不支持的地址类型</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalArgumentException 如果端点地址类型不受支持</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">bind</span><span class="params">(SocketAddress endpoint, <span class="type">int</span> backlog)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="comment">// 检查Socket是否已关闭</span></span><br><span class="line">    <span class="keyword">if</span> (isClosed())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Socket is closed&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查Socket是否已绑定</span></span><br><span class="line">    <span class="keyword">if</span> (isBound())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Already bound&quot;</span>);</span><br><span class="line">    <span class="comment">// 如果未指定端点地址，则创建一个未指定端口的InetSocketAddress实例</span></span><br><span class="line">    <span class="keyword">if</span> (endpoint == <span class="literal">null</span>)</span><br><span class="line">        endpoint = <span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 检查端点地址是否为InetSocketAddress类型</span></span><br><span class="line">    <span class="keyword">if</span> (!(endpoint <span class="keyword">instanceof</span> InetSocketAddress epoint))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Unsupported address type&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查端点地址是否已解析</span></span><br><span class="line">    <span class="keyword">if</span> (epoint.isUnresolved())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Unresolved address&quot;</span>);</span><br><span class="line">    <span class="comment">// 检查backlog参数是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (backlog &lt; <span class="number">1</span>)</span><br><span class="line">        backlog = <span class="number">50</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 安全检查，确保有权限监听指定端口</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;removal&quot;)</span></span><br><span class="line">    <span class="type">SecurityManager</span> <span class="variable">security</span> <span class="operator">=</span> System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (security != <span class="literal">null</span>)</span><br><span class="line">        security.checkListen(epoint.getPort());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 同步块，确保线程安全</span></span><br><span class="line">    <span class="keyword">synchronized</span> (stateLock) &#123;</span><br><span class="line">        <span class="comment">// 再次检查Socket是否已关闭或绑定</span></span><br><span class="line">        <span class="keyword">if</span> (closed)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Socket is closed&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (bound)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SocketException</span>(<span class="string">&quot;Already bound&quot;</span>);</span><br><span class="line">        <span class="comment">// 调用实现类的方法进行实际的绑定和监听设置</span></span><br><span class="line">        getImpl().bind(epoint.getAddress(), epoint.getPort());</span><br><span class="line">        getImpl().listen(backlog);</span><br><span class="line">        <span class="comment">// 设置绑定状态为true</span></span><br><span class="line">        bound = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-
 <p><img src="/../images/java/netty6.png" alt="第一版socket"></p>
 <p><img src="/../images/java/netty7.png" alt="第一版socket"></p>
 <p>让我们用<code>wrk</code>压测一下。可以发现很垃圾。仅仅处理了4个请求，虽然响应时间很快。可是吞吐量太低了。</p>
@@ -17978,6 +17977,7 @@ client_secret: 刚刚的 Client Secret
     <url>/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html</url>
     <content><![CDATA[<h1 id="算法导论"><a href="#算法导论" class="headerlink" title="算法导论"></a>算法导论</h1><p>目标一：解决计算问题，除此之外还有更多。more than that<br>目标二：证明正确性<br>目标三：证明更高效<br>目标四：可以和其他人讲明白为什么正确且高效</p>
 <h2 id="算法基础"><a href="#算法基础" class="headerlink" title="算法基础"></a>算法基础</h2><p>算法就是用来求解问题的，我们想求解一组通用的问题，而不是固定的问题。算法的实现就是一个函数，给定一组输入，得到一个正确的输出。</p>
+<p>数学归纳法证明算法的正确性。</p>
 <p><code>循环不变式</code>主要用来帮助我们理解算法的正确性。我们必须证明三条性质</p>
 <ol>
 <li>初始化：循环的第一次迭代之前它为真</li>
@@ -17994,6 +17994,81 @@ client_secret: 刚刚的 Client Secret
 <p>练习1.重新insert_sort，使排序变成降序</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">insert_sort(A)</span><br><span class="line">    <span class="keyword">for</span> j = <span class="number">2</span> to A.length</span><br><span class="line">        key = A[j]</span><br><span class="line">        i = j - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &gt; <span class="number">0</span> and A[i] &lt; key</span><br><span class="line">            A[i+<span class="number">1</span>] = A[i]</span><br><span class="line">            i--</span><br><span class="line">        A[i+<span class="number">1</span>] = key</span><br></pre></td></tr></table></figure>
 
+<h2 id="数据结构和动态数组"><a href="#数据结构和动态数组" class="headerlink" title="数据结构和动态数组"></a>数据结构和动态数组</h2><ul>
+<li>Interface(API&#x2F;ADT): 你想做什么？是一种规范，定义了支持哪些操作。可以理解为问题。</li>
+<li>Data Structure: 实际怎么做，数据实际的表示形式。算法对于操作的支持。可以理解为解决方案。</li>
+</ul>
+<p>接口：</p>
+<ul>
+<li>Sequence<ul>
+<li>Static Sequence Interface: 静态的，数量不可变的。<ul>
+<li>build(x): 新建一个Static Sequence。</li>
+<li>len(): 返回数量</li>
+<li>iter_seq(): 迭代器</li>
+<li>get_at(i): 获取i下标的元素</li>
+<li>set_at(i, x): 设置i下标的元素为x</li>
+<li>get_first()</li>
+<li>get_last()</li>
+<li>set_first()</li>
+<li>set_last()</li>
+</ul>
+</li>
+<li>Dynamic Sequence Interface: 动态的，数量可变的<ul>
+<li>支持上面所有</li>
+<li>insert_at(i, x): 插入某一个位置</li>
+<li>delete_at(i): 删除某一个位置的元素</li>
+<li>insert_first()</li>
+<li>insert_last()</li>
+<li>delete_fist()</li>
+<li>delete_last()</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>数据结构：</p>
+<ul>
+<li>Linked List</li>
+</ul>
+<h2 id="Set-And-Sorting"><a href="#Set-And-Sorting" class="headerlink" title="Set And Sorting"></a>Set And Sorting</h2><p>接口</p>
+<ul>
+<li>Set<ul>
+<li>Container<ul>
+<li>build(A): 根据一个iterable的A,创建</li>
+<li>len(): 返回数量</li>
+</ul>
+</li>
+<li>Static <ul>
+<li>find(k): 返回一个set中的元素</li>
+</ul>
+</li>
+<li>Dynamic <ul>
+<li>insert(k): 插入一个元素到set</li>
+<li>delete(k): 从set中删除一个元素</li>
+</ul>
+</li>
+<li>Order <ul>
+<li>iter_ord(): 迭代器</li>
+<li>find_min(): 获取最小的key</li>
+<li>find_max(): 获取最大的key</li>
+<li>find_next(k): 获取比k大的下一个key</li>
+<li>find_pre(k): 获取比k小的上一个key</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>数据结构</p>
+<ul>
+<li>Array</li>
+<li>Sorted Array</li>
+</ul>
+<p>排序</p>
+<ul>
+<li>破坏性：用一个新的排序后的数组B覆盖数组A</li>
+<li>原地排序：仅仅用O(1)空间来排序</li>
+</ul>
+<p>permutation Sort</p>
 ]]></content>
       <categories>
         <category>算法</category>
@@ -18288,6 +18363,754 @@ client_secret: 刚刚的 Client Secret
 </ol>
 <p>通过以上的对比可以发现，堆的大小不能设置的太小导致OOM，同样当堆设置的过大对于性能也并没有什么提升，比如2g对比1g内存，就没什么提升。从512m和1g内存对比上来看，ZGC最优，不仅减少了GC次数，性能也很好。而G1GC的优化最好，因为它的GC次数最多，但是性能同样强大。</p>
 <p>从结果来看最好的是ZGC，其次可以选择G1GC或者并行GC。</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法导论</title>
+    <url>/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html</url>
+    <content><![CDATA[<h2 id="数组数据结构"><a href="#数组数据结构" class="headerlink" title="数组数据结构"></a>数组数据结构</h2><h3 id="什么是接口"><a href="#什么是接口" class="headerlink" title="什么是接口"></a>什么是接口</h3><p>接口就是Interface，也可以是ADT(Abstract Data Tructure), 当定义一个接口的时候，实际上是一种规范，一种约束。</p>
+<p>接口定义了一些方法，也就是支持哪些操作。</p>
+<p>这里拿Java的List接口举个例子。</p>
+<p>List<E></p>
+<ul>
+<li>add(E element): 表示List接口支持add操作，将一个元素添加到list中，至于如何实现，不重要。</li>
+<li>remove(E element): 表示List接口支持remove操作，将一个元素从list中移除，至于如何实现，不重要。</li>
+<li>size(): 表示List接口支持size操作，返回list中有多少个元素，如何实现，不重要。</li>
+</ul>
+<p>接口还可以想象成提出了一些问题，比如说，我现在有List这个接口，我提出了三个问题。</p>
+<ul>
+<li>我要将一个元素添加到list中，如何实现？</li>
+<li>我要将一个元素从list中移除，如何实现?</li>
+<li>我要计算list中元素的数量，如何实现？</li>
+</ul>
+<h3 id="什么是数据结构"><a href="#什么是数据结构" class="headerlink" title="什么是数据结构"></a>什么是数据结构</h3><p>那么什么是数据结构呢？就是一种接口的具体实现方案。</p>
+<p>它是数据实际的表示形式。它有一些方法，或者说使用一些算法，来实现上面接口提出的操作。</p>
+<p>同样可以理解为对于上面提出的三个问题的解答。</p>
+<p>以Java中ArrayList和LinkedList来举例。</p>
+<p>ArrayList: 使用数组实现了List接口</p>
+<ul>
+<li>add(E element): 表示ArrayList这种数据结构，实现了List接口，支持add操作，使用了适合ArrayList这种数据结构的算法来实现add，解决了上面的第一个问题。</li>
+<li>remove(E element): 表示ArrayList这种数据结构，实现了List接口，支持remove操作，使用了适合ArrayList这种数据结构的算法来实现remove，解决了上面的第二个问题。</li>
+<li>len(): 表示ArrayList这种数据结构，实现了List接口，支持len操作，使用了适合ArrayList这种数据结构的算法来实现len，解决了上面的第三个问题。</li>
+</ul>
+<p>LinkedList：使用链表实现了List接口</p>
+<ul>
+<li>add(E element): 表示LinkedList这种数据结构，实现了List接口，支持add操作，使用了适合LinkedList这种数据结构的算法来实现add，解决了上面的第一个问题。</li>
+<li>remove(E element): 表示LinkedList这种数据结构，实现了List接口，支持remove操作，使用了适合LinkedList这种数据结构的算法来实现remove，解决了上面的第二个问题。</li>
+<li>len(): 表示LinkedList这种数据结构，实现了List接口，支持len操作，使用了适合LinkedList这种数据结构的算法来实现len，解决了上面的第三个问题。</li>
+</ul>
+<h2 id="静态数组实现"><a href="#静态数组实现" class="headerlink" title="静态数组实现"></a>静态数组实现</h2><p>静态数组可以实现List的功能吗？当然可以了。那么我们看一下静态数组的实现，有哪些好处和坏处。</p>
+<p>我们现在定义一个接口，List，下面是接口支持的操作。</p>
+<ul>
+<li>build(x): 新建一个List。</li>
+<li>len(): 返回数量</li>
+<li>get_at(i): 获取i下标的元素</li>
+<li>set_at(i, x): 设置i下标的元素为x</li>
+<li>insert_at(i, x): 插入某一个位置</li>
+<li>delete_at(i): 删除某一个位置的元素</li>
+<li>insert_first(x): 将一个元素插入到第一个位置</li>
+<li>insert_last(x)：将一个元素插入到最后一个位置</li>
+<li>delete_fist()：删除第一个位置的元素</li>
+<li>delete_last()：删除最后一个位置的元素</li>
+</ul>
+<p>通过静态数组来实现这个接口，也就是数组长度一旦确定就不可以改变了。</p>
+<p>先看build，可以通过for去构建一个静态数组。其时间复杂度为O(n)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">build</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="type">int</span>[] array = <span class="keyword">new</span> <span class="title class_">Int</span>[x.length];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; x.length; i++) &#123;</span><br><span class="line">        array[i] = x[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录静态数组的长度</span></span><br><span class="line">    len = array.lenght;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为上面在构建的时候已经记录了长度，因此，可以直接返回。len的时间复杂度就是O(1)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">len</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于数组来说，我们知道它是内存中一段连续的空间，因此这个时候，我们的内存里面是这样的。假设x里面是1,2,3,4,5,6</p>
+<p><img src="/../images/DataStructure/list1.png" alt="list1.png"></p>
+<p>我们还知道一个int等于32位，4个字节，因此，假设元素1的地址是0，那么其余的地址如下图所示。</p>
+<p><img src="/../images/DataStructure/list2.png" alt="list1.png"></p>
+<p>因此，<code>get_at(i)</code>这个操作的时间复杂度同样是O(1)，因为可以直接计算出对应位置的地址，计算公式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">第i个元素的地址 = 首地址 + （4 * i）</span><br><span class="line">i = 0的地址 = 0 + 0 = 0</span><br><span class="line">i = 1的地址 = 0 + 4 = 4</span><br></pre></td></tr></table></figure>
+
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 因为java语言会自动计算i这个下标对应的地址</span></span><br><span class="line">    <span class="keyword">return</span> array[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>set_at(i,x)</code>这个操作来说，同样的O(1)复杂度。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的操作都很快，但是如果我们想插入或者删除一个元素，对于<code>静态数组</code>这个数据结构来说，就很慢了。因为要移动元素。我们看一下操作<code>delete_at(i)</code>的执行过程。</p>
+<p>假设delete_at(0)：表示删除第0个元素，也就是首个元素。</p>
+<p>第一步，删除，我们可以看到地址0指向的首个元素的内容变成<code>null</code>了</p>
+<p><img src="/../images/DataStructure/list3.png" alt="list1.png"></p>
+<p>第二步，移动后面的元素到前面的位置。</p>
+<p><img src="/../images/DataStructure/list4.png" alt="list1.png"></p>
+<p>删除完成，这个时候肯定有人问了，不对啊，你这最后两个元素一样啊，是的，不用管它。</p>
+<p>因为我们的len减少了，而获取的时候需要判断大小，如果获取的下标长度超过len了，应该返回空或错误。这个在上面的伪代码里面省略了。</p>
+<blockquote>
+<p>完整的代码做为课后作业，希望大家可以自己完成，只有自己实践了，知识才是自己的，你光看我写的内容，过一会就忘了，如果你觉得实现有困难，那么我的内容可以帮助你解决困难，帮助你自己实现它。</p>
+</blockquote>
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">//第一步 删除 这一步其实可以省略，这里是希望大家明白原理</span></span><br><span class="line">    array[i] = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">//第二步，移动后面的元素过来</span></span><br><span class="line">    <span class="keyword">for</span> (j = i + <span class="number">1</span>; j &lt; len; j++) &#123;</span><br><span class="line">        array[j - <span class="number">1</span>] = array[j];</span><br><span class="line">    &#125;</span><br><span class="line">    len--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>insert_at(i,x)</code>操作来说，和上面的原理几乎一样，分为两个步骤。</p>
+<p>第一步，将i元素及后面的元素往后移动一步，把i这个位置腾出来。我们拿<code>insert(0,1)</code>来举例。</p>
+<p>可以看到几乎是上方delete操作的一个逆序过程。</p>
+<p><img src="/../images/DataStructure/list5.png" alt="list1.png"></p>
+<p>现在可以看到0的位置已经空出来了，虽然里面还有一个2，但是我们可以覆盖它。</p>
+<p>第二步，将1插入0的位置。</p>
+<p><img src="/../images/DataStructure/list6.png" alt="list6.png"></p>
+<p>如此，就完成了整个insert操作。伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 移动元素 注意从后往前移动</span></span><br><span class="line">    <span class="keyword">for</span> (j = len - <span class="number">1</span>; j &gt;= i; j--) &#123;</span><br><span class="line">        array[j + <span class="number">1</span>] = array[j];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步 插入</span></span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>细心的你，一定发现了上面的代码缺少边界检查，这些都留给你的具体实现了，都是比较简单的东西。</p>
+<p>那么，对于<code>delete_at(i)</code>和<code>insert_at(i,x)</code>来说，我们的时间复杂度相当于O(n).</p>
+<p>而剩下的<code>delete_first()</code>和<code>delete_last()</code>，以及<code>insert_first(x)</code>和<code>insert_last(x)</code>都是上方的一个真子集，所以时间复杂度同样是O(n)。就不再重复演示了。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<h2 id="链表的实现"><a href="#链表的实现" class="headerlink" title="链表的实现"></a>链表的实现</h2><p>除了直接用一个<code>Array</code>去实现以外，还可以用<code>链表</code>这个数据结构去实现List接口。也就是Java中的<code>LinkedList</code>实现。</p>
+<p>我们首先看一下链表是如何实现build的。可以通过for去构建一个链表。其时间复杂度为O(n)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">build</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x[x.length - <span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> x.length - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">current</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x[i]);</span><br><span class="line">        current.next = node;</span><br><span class="line">        node = current;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录链表的长度</span></span><br><span class="line">    len = x.lenght;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为上面在构建的时候已经记录了长度，因此，可以直接返回。len的时间复杂度就是O(1)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">len</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下链表这个数据结构的逻辑形式，如下图所示。一个一个指针把数据连接起来</p>
+<ul>
+<li>优点：不用连续的空间，长度不固定</li>
+<li>缺点：查询慢</li>
+</ul>
+<p>val代表具体的内容，Next代表下一个节点的指针，内容是下一个节点的地址。最后一个节点的Next指针是null。<br><img src="/../images/DataStructure/list7.png" alt="list7.png"></p>
+<p>而在实际内存中的表现形式则是下图所示。这里是连续的，仅仅是巧合，也可能是不连续的。在这里我们忽略class头的占用，this指针的占用空间，val占据空间是4个字节，next做为指针是64位，占用8个字节。<br><img src="/../images/DataStructure/list8.png" alt="list7.png"></p>
+<p>由于链表的地址不连续，所以没办法通过首地址直接计算出每个元素的地址，而需要通过<code>next</code>属性来获取下一个元素的地址。</p>
+<p>整个<code>get_at(i)</code>的获取步骤如下</p>
+<ol>
+<li>获取首个元素的地址</li>
+<li>获取该元素的next属性</li>
+<li>重复第2步，直到重复了i次</li>
+<li>返回该元素内容</li>
+</ol>
+<p>整个步骤如图所示。假设是<code>get_at(2)</code>，代表获取第三个元素。也就是3这个内容。因为是从0开始。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> node.val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，因为每次都要从头找，所以时间复杂度是O(n)</p>
+<p>再看一下<code>set_at(i, x)</code>。也基本上是同样的步骤，找到这个元素，然后更新它的val属性内容。步骤图和上面是一样的。所以时间复杂度同样是O(n)。直接看一下伪代码吧。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i, x)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (node != <span class="literal">null</span>) &#123;</span><br><span class="line">        node.val = x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到几乎是一样的。</p>
+<p>再来看一下<code>insert_at(i, x)</code>和<code>delete_at(i)</code>。首先看一下<code>delete_at(i)</code>。</p>
+<p>比如<code>delete_at(2)</code> 分为两步，第一步查询，和上面的步骤是一样的。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>第二步是删除。删除分为2步</p>
+<ol>
+<li>将上一个指针的next指向第i+1个元素。可以看到图里更新成36了</li>
+<li>将第i个元素的next指针更新成null</li>
+</ol>
+<p><img src="/../images/DataStructure/list10.png" alt="list7.png"></p>
+<p>整个伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步删除</span></span><br><span class="line">    <span class="comment">// 2.1 将i-1个元素的next指向i+1</span></span><br><span class="line">    inode = node.next;</span><br><span class="line">    node.next = node.next.next;</span><br><span class="line">    <span class="comment">// 2.2 将第i个元素的next指针更新成null</span></span><br><span class="line">    inode.next = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大家在想一想，如果是<code>delete(x)</code>的话，该如何实现呢？</p>
+<blockquote>
+<p>提示：仅仅修改获取元素即可，修改成x &#x3D;&#x3D; node.val，就是找到了。可以使用双向链表实现。</p>
+</blockquote>
+<p>再看一下<code>insert_at(i,x)</code>的执行步骤，分为两步。</p>
+<p>第一步是查询，和上面也是一样的。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>第二步是插入，插入分为两步</p>
+<ol>
+<li>修改插入节点的next指向当前i节点的next</li>
+<li>修改当前i-1节点的next指向插入节点</li>
+</ol>
+<p>我们以<code>insert_at(2,3)</code>为例。首先找到i&#x3D;0，再找到i&#x3D;1的位置就是要插入的位置，因为要插入的位置是2，所以我们要把i&#x3D;1的元素的next指向插入的节点。所以找到i&#x3D;1的元素就可以停止了。</p>
+<p><img src="/../images/DataStructure/list11.png" alt="list7.png"></p>
+<p>整个伪代码实现</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步插入</span></span><br><span class="line">    <span class="comment">// 2.1 修改插入节点的next指向当前i节点的next</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">insertNode</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x);</span><br><span class="line">    insertNode.next = node.next;</span><br><span class="line">    <span class="comment">// 2.2 修改当前i-1节点的next指向插入节点</span></span><br><span class="line">    node.next = insertNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述两个操作对于<code>链表</code>数据结构来说，实现的时间复杂度都是O(n)。</p>
+<p>但是链表相对于静态数组来说，其优势再于剩下的操作的实现。</p>
+<p>比如<code>insert_first(x)</code>和<code>delete_first()</code>。对于这两个来说，不需要查找，因为删除的是第一个元素。所以省去了查找时间，插入和删除时间仅仅是O(1)。</p>
+<p>看一下<code>insert_first(10)</code>。</p>
+<ul>
+<li>创建插入节点insertNode</li>
+<li>修改插入节点的next指向当前head节点的next:insertNode.next &#x3D; head.next;</li>
+<li>修改当前head节点的next指向插入节点</li>
+</ul>
+<p>从伪代码也能看出来，完全就是上面伪代码的第二步插入。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_first</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第二步插入</span></span><br><span class="line">    <span class="comment">// 2.1 修改插入节点的next指向当前i节点的next</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">insertNode</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x);</span><br><span class="line">    insertNode.next = head.next;</span><br><span class="line">    <span class="comment">// 2.2 修改当前i-1节点的next指向插入节点</span></span><br><span class="line">    head.next = insertNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>delete_first()</code>来说，是一样的，就是第二步删除。这里是从0开始，head原来是指向元素0，删除元素0，就是指向元素1.</p>
+<ol>
+<li>将head指针的next指向第1个元素。</li>
+<li>将第0个元素的next指针更新成null</li>
+</ol>
+<p>伪代码。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_first</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 第二步删除</span></span><br><span class="line">    <span class="comment">// 2.1 将head指针的next指向第1个元素。</span></span><br><span class="line">    inode = head;</span><br><span class="line">    head = head.next;</span><br><span class="line">    <span class="comment">// 2.2 将第0个元素的next指针更新成null</span></span><br><span class="line">    inode.next = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们还记录了<code>tail</code>指针来指向链表的尾部，那么<code>delete_last()</code>和<code>insert_last(x)</code>也是O(1)复杂度。</p>
+<p>如果没有的话，那么就是O(n)复杂度。这里不再赘述。</p>
+<p>整个链表数据结构，也就是常说的<code>LinkedList</code>实现，复杂度表如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>链表的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+<h2 id="动态数组的实现"><a href="#动态数组的实现" class="headerlink" title="动态数组的实现"></a>动态数组的实现</h2><p>什么是动态数组呢？</p>
+<ul>
+<li>融合了上面两个的优点</li>
+<li>既保证了查询的高效，也保证了插入和删除的高效。</li>
+</ul>
+<p>如何做到的呢？这也就是JAVA中<code>ArrayList</code>做到的事情。一起来看一下吧。</p>
+<p>对于build和len，就不再重复了，可以直接参考静态数组的实现。</p>
+<p>这里主要看一下其余的操作。</p>
+<p>对于<code>get_at(i)</code>来说，由于使用的是数组，所以同样的O(1)复杂度，ArrayList数据结构也是一块连续的内存空间，可以通过公式直接计算出i元素的内存位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">第i个元素的地址 = 首地址 + （4 * i）</span><br><span class="line">i = 0的地址 = 0 + 0 = 0</span><br><span class="line">i = 1的地址 = 0 + 4 = 4</span><br></pre></td></tr></table></figure>
+
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 因为java语言会自动计算i这个下标对应的地址</span></span><br><span class="line">    <span class="keyword">return</span> array[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>set_at(i,x)</code>这个操作来说，同样的O(1)复杂度。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点在接下来。敲黑板了！！！</p>
+<p>对于<code>insert_last(x)</code>和<code>delete_at(i)</code>来说。我们看一下实现。</p>
+<p>以<code>insert_last(1)</code>来说吧。由于是动态数组，是可以扩容的。假设当前内存是空.然后我们插入1.</p>
+<p><img src="/../images/DataStructure/list12.png" alt="list7.png"></p>
+<p>在接下来我们要插入2.也就是<code>insert_last(2)</code>。但是这个数组没有空间了，我们需要扩容，比如我们扩容一倍，也就是申请两个内存，现在的内存首地址就不是1了，可能是10-17.</p>
+<p>然后再把原来数组的内容复制过去，在插入新的元素2.</p>
+<p><img src="/../images/DataStructure/list13.png" alt="list7.png"></p>
+<p>接下来又插入了元素3.再次扩容，内存地址是20-35。同样把内容复制过去，在插入元素3.</p>
+<p><img src="/../images/DataStructure/list14.png" alt="list7.png"></p>
+<p>至于原来那些不用的数组的内存空间，会被JAVA的内存垃圾回收机制，给回收掉。所以不用管。</p>
+<p>接下来计算一下它的时间复杂度吧。</p>
+<p>因为我们是每次扩容一倍，所以分别是在1、2、4、8、…、n的时候扩容。<br>因此，当我们插入n个元素的时候，时间复杂度是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">O(1+2+4+8...+n)</span><br></pre></td></tr></table></figure>
+
+<p>它可以看成是一个级数。i&#x3D;i 到 i&#x3D;n，2的i次方相加。</p>
+<p>这个结果，基本上是O(n)的一个复杂度。</p>
+<p>这个时候有人说了，这个复杂度不还是O(n)吗，可是我们插入了n个元素，复杂度是O(n)，平均下来，插入1个元素的复杂度就是O(1)了啊。</p>
+<p>对于<code>delete_last</code>来说，和上面是一样的。</p>
+<p>因此动态数组，<code>ArrayList</code>。的复杂度如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>动态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以看到最常用的几个操作里面，ArrayList这个数据结构的复杂度是最低的。</p>
+<p>因此，ArrayList几乎一直都比LinkedList好用。</p>
+<p>整体的复杂度表格如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>链表的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>动态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<p>get_at就是List接口中常用的get()，insert_last就是List接口中常用的add操作，而delete_at就是List接口中常用的remove操作。</p>
+<p>来看一下LinkedList和ArrayList的对比吧。可以看到，对于LinkedList来说，get和remove都是O(n)，而ArrayList来说，只有remove是O(n)。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>get</th>
+<th>remove</th>
+<th>add</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LinkedList的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>ArrayList的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何用AI打造一个爆款视频，涨粉1000+</title>
+    <url>/%E5%A6%82%E4%BD%95%E7%94%A8AI%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%88%86%E6%AC%BE%E8%A7%86%E9%A2%91%EF%BC%8C%E6%B6%A8%E7%B2%891000.html</url>
+    <content><![CDATA[<h1 id="如何用AI打造一个爆款视频，涨粉1000"><a href="#如何用AI打造一个爆款视频，涨粉1000" class="headerlink" title="如何用AI打造一个爆款视频，涨粉1000+"></a>如何用AI打造一个爆款视频，涨粉1000+</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在数字化时代，视频内容已成为最有力的传播媒介之一，它以其直观和生动的特性吸引着全球观众的注意力。对于程序员和其他希望通过副业赚钱的群体来说，视频平台不仅提供了一个展示技能、分享知识和创造收入的绝佳机会，而且随着技术的进步，视频创作不再是专业人士的专利，普通用户也能通过简单的工具创作出高质量的视频内容。</p>
+<p>AI技术的发展为视频创作带来了革命性的变化。AI不仅可以帮助自动化视频编辑过程，还能在内容创作、市场分析和用户互动等方面提供支持。对于目标画像中的程序员来说，AI技术的应用不仅能提高创作效率，还能帮助他们更好地理解观众需求，创作出更受欢迎的视频内容。</p>
+<p>程序员通常具有强大的逻辑思维和问题解决能力，但在视频创作方面可能缺乏经验和技能。他们面临的挑战包括如何创作吸引人的内容、如何有效推广视频以及如何将视频转化为收入。此外，他们可能还需要在繁忙的工作之余找到时间来管理副业。本文将探讨如何利用AI技术帮助这一群体克服这些挑战，实现他们的目标。</p>
+<p>AI如何帮助提升视频编辑效率？</p>
+<ul>
+<li><p>自动化视频编辑：<br>AI能够自动识别视频中的关键帧、场景变换和语音内容，帮助自动剪辑视频，减少人工编辑的时间和精力。例如，通过AI分析音频波形和视频内容，可以自动将视频剪辑成用户设定的长度，自动匹配背景音乐的节奏。</p>
+</li>
+<li><p>内容创意生成：<br>AI可以基于已有的数据和趋势，生成创意内容建议，包括视频主题、故事板和视觉效果等。利用AI的生成性对抗网络(GANs)，可以创建逼真的视频背景、人物。</p>
+</li>
+<li><p>智能剪辑工具：<br>如Filmora和Descript这样的工具，它们提供基于文本的编辑、自动转录、AI辅助编辑功能，如自动填充词删除、录音室音效增强、眼神接触校正和自动剪辑创建，简化编辑过程。</p>
+</li>
+<li><p>一键包装和AI封面生成：<br>一些AI工具允许用户一键添加字幕、特效、贴纸等，快速制作出具有综艺感的口播视频。同时，AI技术能智能分析视频内容，一键生成吸引眼球的视频封面。</p>
+</li>
+<li><p>画质修复和AI消除：<br>AI技术能高清修复渣糊画质的视频，提升视频的整体观感。同时，提供批量去除视频中的字幕和水印的功能，帮助用户获得干净的视频画面。</p>
+</li>
+<li><p>视频转录和翻译：<br>AI视频编辑工具如Descript，可以自动转录音频和视频文件，轻松添加字幕以提高可访问性和参与度。Vozo则是一款AI驱动的短视频工具，能够一键重写视频脚本并重新配音，保留原说话者的音色、语气和口型同步。</p>
+</li>
+<li><p>智能分析和音频视频创作：<br>一站式AI智能分析和音频视频创作神器可以大幅提高创作效率，例如通过智能分析技术，在视频中添加精准的视觉效果和动态元素。</p>
+</li>
+<li><p>全自动的内容生成与剪辑：<br>未来的AI技术将能够根据预设的风格和情感要求，自动生成并剪辑完整的视频内容，极大提升视频制作的效率。</p>
+</li>
+</ul>
+<p>通过这些方式，AI技术帮助视频编辑工作变得更加高效和精准，降低了专业技能的门槛，使得视频创作更加便捷和快速。这对于程序员和其他对AI感兴趣的创作者来说，是一个巨大的优势，他们可以利用自己的技术背景，结合AI工具，快速提升视频创作能力，实现内容的快速产出和传播。</p>
+<h2 id="理解目标受众"><a href="#理解目标受众" class="headerlink" title="理解目标受众"></a>理解目标受众</h2><h3 id="程序员的背景和技能"><a href="#程序员的背景和技能" class="headerlink" title="程序员的背景和技能"></a>程序员的背景和技能</h3><p>程序员，作为技术行业的中坚力量，通常具备扎实的编程技能和对新技术的敏感度。他们习惯于解决问题，并且能够快速适应和学习新工具。在视频创作领域，程序员可以利用他们的技术背景来掌握AI视频编辑工具，这为他们提供了一个独特的优势。他们对逻辑和结构化思维的倾向也有助于在视频内容的组织和叙事上做出清晰的规划。</p>
+<h3 id="副业赚钱的动机和目标"><a href="#副业赚钱的动机和目标" class="headerlink" title="副业赚钱的动机和目标"></a>副业赚钱的动机和目标</h3><p>许多程序员寻求副业来增加收入，提高生活质量，或者是为了追求个人兴趣和激情。视频创作作为一个灵活的副业选择，允许他们在业余时间进行创作，同时也有可能带来可观的收益。他们的目标可能包括建立个人品牌、增加被动收入、提升专业技能或者仅仅是为了娱乐和创造性的表达。</p>
+<h3 id="对AI的兴趣和应用场景"><a href="#对AI的兴趣和应用场景" class="headerlink" title="对AI的兴趣和应用场景"></a>对AI的兴趣和应用场景</h3><p>程序员通常对AI技术有着浓厚的兴趣，他们可能会探索AI在视频创作中的应用，以提高效率和创造力。AI的应用场景在视频创作中非常广泛，从自动化剪辑到内容创意生成，再到视频推广和分析，AI技术都能提供强大的支持。程序员可以利用这些工具来减少重复性工作，专注于创意和策略规划。</p>
+<h3 id="不同短视频平台的受众"><a href="#不同短视频平台的受众" class="headerlink" title="不同短视频平台的受众"></a>不同短视频平台的受众</h3><p>短视频平台众多，但是每个平台都有它的受众，有常用它的人群，这些人群有不同的喜好。根据我发视频的结果来看，也是同样的。</p>
+<p>同样的一个视频，同样的标题和简介，同样的标签，他们的播放量都是有区别的。</p>
+<p>我发了不同类型的视频，在这里给大家做个参考。这里仅仅是播放量的参考。</p>
+<ul>
+<li>抖音：技术类视频还可以。影视类视频也还可以。可爱治愈系视频和AI诗词视频比较惨淡。</li>
+<li>微信视频号：可爱治愈系视频最好。AI诗词类和技术类视频一般。</li>
+<li>小红书：影视类视频最好，可爱治愈系和技术类视频一般。</li>
+<li>B站：技术类视频最好，其他视频一般。</li>
+</ul>
+<p>总体而言微信视频号的流量最大，但是转化最好的是B站，小红书和抖音。</p>
+<p>如果大家做的是技术类视频，那么推荐B站和抖音。</p>
+<h3 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h3><p>程序员在视频创作中可能会遇到以下技术挑战：</p>
+<p>非线性编辑的复杂性：<br>视频编辑通常涉及非线性编辑系统（NLE），这对于习惯于线性编程思维的程序员来说可能是一个挑战。他们需要适应在时间线上进行剪辑、添加效果和调整音频等操作。</p>
+<p>视频和音频同步：<br>确保视频和音频的精确同步是视频制作中的一个常见问题。程序员可能需要学习如何使用专业软件来处理音频和视频的同步问题。</p>
+<p>视频格式和编码：<br>视频文件有多种格式和编码标准，程序员需要了解这些格式之间的区别以及如何转换它们，以确保视频在不同平台和设备上的兼容性。</p>
+<p>色彩校正和分级：<br>视频的色彩校正和分级是一个专业领域，程序员可能需要学习如何调整色彩平衡、对比度和饱和度，以达到视觉上的吸引力。</p>
+<p>特效和动画：<br>在视频中添加特效和动画可能需要使用复杂的软件和插件，程序员可能需要掌握这些工具的使用，以及如何编程实现自定义效果。</p>
+<p>视频压缩和优化：<br>为了在保持视频质量的同时减少文件大小，程序员需要了解视频压缩技术，包括选择合适的编码器和设置压缩参数。</p>
+<p>跨平台兼容性：<br>不同的社交媒体平台和视频分享网站可能有不同的视频规格要求，程序员需要确保他们的作品能够适应这些不同的平台。</p>
+<p>版权和法律问题：<br>使用音乐、图片和其他版权材料时，程序员需要了解版权法律，避免侵犯他人版权，这可能需要额外的法律知识。</p>
+<p>硬件性能要求：<br>高质量的视频编辑需要较强的硬件支持，程序员可能需要升级他们的计算机硬件，以满足视频编辑软件的性能要求。</p>
+<p>用户界面和用户体验设计：<br>程序员可能习惯于编写代码，但在视频创作中，他们还需要关注用户界面（UI）和用户体验（UX）的设计，以确保视频内容对观众友好。</p>
+<p>内容创意和叙事结构：<br>虽然程序员在技术实现方面可能很强，但内容创意和叙事结构的构建可能是他们的弱项，这需要他们开发新的思维模式和技能。</p>
+<p>视频推广和SEO：<br>为了让视频获得更多的观看和分享，程序员需要学习视频推广和搜索引擎优化（SEO）的策略，以提高视频在搜索结果中的排名。</p>
+<p>程序员在视频创作中遇到的技术挑战是多方面的，需要他们不断学习和适应。随着AI技术的发展，许多挑战可以通过智能工具和自动化流程来解决，这为程序员提供了新的解决方案和创作可能性。</p>
+<h3 id="AI工具准备"><a href="#AI工具准备" class="headerlink" title="AI工具准备"></a>AI工具准备</h3><p>通过下面的工具，可以解决我们大部分的问题，但是还有一些问题需要我们自己来解决，比如上面的推广、剪辑、创意性、选题等。</p>
+<p>想做AI视频，那么AI视频需要以下的一些步骤和对应的工具：</p>
+<ul>
+<li>剧本创作：可以使用Kimi或者豆包或者GPT都可以。</li>
+<li>分镜创作：同样的，Kimi或者豆包或者GPT都可以。</li>
+<li>图片生成：可以使用一些图片生成AI。包括可灵，即梦，midjourney等。</li>
+<li>影视生成：可以使用可灵，即梦，RunWay等。</li>
+<li>音频生成：可以使用ttsmaker，魔音工坊等。</li>
+<li>视频剪辑：即梦，IMovie, 剪映等。</li>
+<li>去除水印：腾讯智影。</li>
+</ul>
+<h2 id="AI技术在视频创作中的应用"><a href="#AI技术在视频创作中的应用" class="headerlink" title="AI技术在视频创作中的应用"></a>AI技术在视频创作中的应用</h2><p>AI技术在视频创作中的应用为程序员和其他创作者提供了强大的工具，以克服技术挑战并提升创作效率。以下是AI技术在视频创作中的一些关键应用：</p>
+<h3 id="视频内容生成"><a href="#视频内容生成" class="headerlink" title="视频内容生成"></a>视频内容生成</h3><p>脚本编写：<br>AI可以辅助编写视频脚本，通过分析流行视频的内容和结构，提供创意点子和叙事框架。这不仅节省了时间，还能确保内容的吸引力和观众的参与度。</p>
+<p>场景设计：<br>利用AI生成的场景设计工具，程序员可以快速创建视频背景和动画，无需手动绘制每一帧。AI可以根据视频主题自动推荐配色方案和设计风格，使视频更具视觉冲击力。</p>
+<h3 id="视频编辑和优化"><a href="#视频编辑和优化" class="headerlink" title="视频编辑和优化"></a>视频编辑和优化</h3><p>视频剪辑：<br>AI视频编辑工具能够自动识别视频中的最佳时刻，如表情、动作和对话，自动剪辑视频，节省了大量的手动剪辑工作。这些工具还可以预测剪辑点，使视频流畅自然。</p>
+<p>色彩校正：<br>AI可以分析视频的色彩分布，并自动调整色彩平衡、对比度和饱和度，以达到专业级别的视觉效果。这种智能色彩校正功能使得即使没有专业经验的程序员也能制作出高质量的视频。</p>
+<p>音频处理：<br>AI技术可以自动分离和增强视频中的音频，消除背景噪音，增强人声，甚至自动添加背景音乐。这使得视频的音频质量得到提升，增强了观看体验。</p>
+<h3 id="视频发布和推广"><a href="#视频发布和推广" class="headerlink" title="视频发布和推广"></a>视频发布和推广</h3><p>关键词优化：<br>AI可以帮助分析视频内容和观众反馈，自动生成和优化视频标题、描述和标签，提高视频在搜索引擎中的排名，增加视频的曝光率。</p>
+<p>社交媒体分析：<br>AI工具可以分析社交媒体趋势和用户行为，为视频发布提供最佳时间和策略建议。这些工具还可以预测哪些内容更有可能获得观众的喜爱，帮助程序员制定更有效的内容计划。</p>
+<p>通过这些AI技术的应用，程序员可以更专注于创意和策略，而不是技术细节。AI技术不仅提高了视频创作的效率，还降低了进入视频创作领域的门槛，使得程序员能够利用自己的技术背景，快速适应并掌握视频创作的过程。</p>
+<h2 id="爆款视频的创作策略"><a href="#爆款视频的创作策略" class="headerlink" title="爆款视频的创作策略"></a>爆款视频的创作策略</h2><h3 id="确定视频主题和风格"><a href="#确定视频主题和风格" class="headerlink" title="确定视频主题和风格"></a>确定视频主题和风格</h3><p>市场调研与趋势分析：<br>利用AI工具进行市场调研，分析当前流行趋势和观众偏好。例如，通过分析社交媒体上的热门话题和视频，AI可以帮助确定哪些主题和风格更受欢迎。这有助于创作者选择能够引起共鸣和关注的题材。</p>
+<p>目标受众定位：<br>明确视频的目标受众，并根据受众的特点定制内容。AI可以帮助分析特定受众群体的行为和偏好，从而制作出更有针对性的视频内容。</p>
+<p>内容差异化：<br>在众多视频中脱颖而出的关键在于差异化。AI可以帮助分析竞争对手的内容，找出差异化的切入点，如独特的视角、新颖的故事讲述方式或者创新的视频风格。</p>
+<h3 id="利用AI进行市场调研"><a href="#利用AI进行市场调研" class="headerlink" title="利用AI进行市场调研"></a>利用AI进行市场调研</h3><p>关键词分析：<br>使用AI工具进行关键词分析，找出与视频主题相关的热门搜索词，这些关键词可以用于视频的标题、描述和标签，以提高视频在搜索引擎中的排名。</p>
+<p>情感分析：<br>AI情感分析工具可以评估社交媒体上对特定话题的公众情绪，帮助创作者理解观众的情感反应，从而调整内容以更好地满足观众的情感需求。</p>
+<p>竞品分析：<br>AI可以分析竞争对手的视频内容，提供关于他们成功元素的洞察，如视频长度、编辑风格、使用的音效等，从而为创作者提供灵感。</p>
+<h3 id="创作引人入胜的内容"><a href="#创作引人入胜的内容" class="headerlink" title="创作引人入胜的内容"></a>创作引人入胜的内容</h3><p>故事叙述：<br>好的故事叙述是吸引观众的关键。AI可以帮助创作者构建引人入胜的叙事结构，通过分析成功的视频案例，提供故事发展的建议。</p>
+<p>视觉效果优化：<br>AI工具可以提供关于视频视觉效果的优化建议，如色彩搭配、场景转换等，以增强视频的视觉冲击力。</p>
+<p>互动性增强：<br>AI可以帮助创作者在视频中加入互动元素，如问答、投票等，以提高观众的参与度和互动性。</p>
+<h3 id="视频制作的技术细节"><a href="#视频制作的技术细节" class="headerlink" title="视频制作的技术细节"></a>视频制作的技术细节</h3><p>视频格式和编码选择：<br>根据目标平台和受众设备，AI可以建议最合适的视频格式和编码设置，以确保视频在不同设备上都能流畅播放。</p>
+<p>音频优化：<br>AI音频分析工具可以帮助创作者优化音频质量，包括音量平衡、噪音消除和音质增强，以提供更好的听觉体验。</p>
+<p>特效和动画：<br>AI驱动的特效和动画工具可以简化这些复杂元素的添加过程，使创作者能够快速实现创意视觉效果。</p>
+<h2 id="视频内容的优化和迭代"><a href="#视频内容的优化和迭代" class="headerlink" title="视频内容的优化和迭代"></a>视频内容的优化和迭代</h2><h3 id="利用AI分析观众反馈"><a href="#利用AI分析观众反馈" class="headerlink" title="利用AI分析观众反馈"></a>利用AI分析观众反馈</h3><p>评论分析：<br>AI可以分析视频下的评论，识别出观众的正面和负面反馈，以及他们对视频内容的具体建议。这些数据可以帮助创作者了解观众的需求和期望，从而调整内容策略。</p>
+<p>观看行为分析：<br>通过分析观众的观看行为，如观看完成率、跳过率和重复观看次数，AI可以提供关于视频哪些部分最吸引人、哪些部分需要改进的洞察。</p>
+<p>情感识别：<br>利用AI的情感识别技术，可以从观众的面部表情和语音语调中分析出他们的情感反应，这对于理解观众的真实感受非常有用。</p>
+<h3 id="调整内容策略"><a href="#调整内容策略" class="headerlink" title="调整内容策略"></a>调整内容策略</h3><p>内容优化：<br>根据AI分析的结果，创作者可以对视频内容进行优化，比如增强那些观众反应积极的内容元素，减少或修改那些反应消极的部分。</p>
+<p>风格调整：<br>如果AI分析显示观众对某种风格或类型的视频更感兴趣，创作者可以调整自己的视频风格，以更好地吸引目标受众。</p>
+<p>发布时间优化：<br>AI可以帮助分析不同发布时间对视频表现的影响，从而找到最佳的发布时间，以提高视频的曝光率和观看量。</p>
+<h3 id="持续优化视频质量"><a href="#持续优化视频质量" class="headerlink" title="持续优化视频质量"></a>持续优化视频质量</h3><p>技术升级：<br>随着AI技术的进步，创作者可以利用最新的AI工具来提升视频质量，比如使用更先进的自动剪辑工具、更高质量的自动字幕生成器等。</p>
+<p>创意迭代：<br>AI可以提供创意迭代的建议，比如通过分析流行趋势和观众反馈，帮助创作者不断更新和创新视频内容。</p>
+<p>互动和社区建设：<br>AI可以帮助创作者设计更有效的观众互动策略，比如通过分析观众的互动数据来设计问答环节、投票和挑战等，以增强观众的参与感和社区归属感。</p>
+<p>通过这些方法，创作者可以不断优化和迭代自己的视频内容，以适应不断变化的观众需求和市场趋势。这不仅有助于提升视频的吸引力和观看量，还能增强观众的忠诚度，为创作者带来长期的成功。</p>
+<h2 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h2><p>首先准备上面的AI工具。开始实战，大胖橘的一天。</p>
+<h3 id="剧本制作"><a href="#剧本制作" class="headerlink" title="剧本制作"></a>剧本制作</h3><p>剧本制作我们使用豆包就可以。提示词如下。我们让豆包给出5份剧本，可以从里面选出自己想要的，如果没有的话就再让它生成一份。每个分镜是5s，因为大部分AI视频都是5s。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#背景：我是一个短视频爱好者。 </span><br><span class="line">#角色：你是一个专业的影视导演。擅长制作电影镜头，分镜，每个分镜5s，请合理安排镜头和画面音频运镜方式。</span><br><span class="line">#技能：</span><br><span class="line">    1. 根据用户输入的信息可以生成专业的影视剧本。</span><br><span class="line">    2. 根据剧本生成分镜，每一个分镜是5s </span><br><span class="line">    3. 合理安排分镜的画面音频和运镜。</span><br><span class="line">    4. 根据用户的需求继续完善剧本和镜头。  </span><br><span class="line"># 工作流： </span><br><span class="line">    1. 引导用户输入 角色，时间，地点，事件。</span><br><span class="line">    2.接收到信息以后开始生成剧本和分镜。</span><br><span class="line">    3.输出分镜内容，以表格形式，每一个分镜镜头是5s，还要包括运镜方式、画面、音频、音效。</span><br><span class="line">    4. 总共输出5份内容 </span><br><span class="line">    5. 输出以后给出最佳实践</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们给出一些信息。如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">角色：可爱的大胖橘。</span><br><span class="line">时间：早上，地点：家里。事件：起床洗漱准备出门。</span><br><span class="line">时间：早上。地点：上班路上。事件：骑上心爱的小摩托上班。</span><br><span class="line">时间：上午。地点：办公室。事件：上班。</span><br><span class="line">时间：下午。地点：办公室。事件：做错事被老板骂。</span><br><span class="line">时间：晚上。地点：卧室。事件：疲惫的躺在床上</span><br></pre></td></tr></table></figure>
+
+<p>接下来等待豆包给出剧本和分镜信息。</p>
+<p><img src="/../images/AI/AI-vedio-1.jpg" alt="1"></p>
+<h3 id="图片制作"><a href="#图片制作" class="headerlink" title="图片制作"></a>图片制作</h3><p>接下来使用即梦AI来生成图片。</p>
+<p>我们只需要把画面信息粘贴过去就可以了。比列选择<code>9:16</code>。模型可以自己对比，我选择的是图片2.1</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">大胖橘慵懒地窝在柔软的被窝里，眼睛慢慢睁开，伸着懒腰，被子被拱起.</span><br></pre></td></tr></table></figure>
+
+<p>生成内容如下：</p>
+<p><img src="/../images/AI/AI-vedio-2.jpeg" alt="2"></p>
+<p>接下来把每一个镜头都生成图片就可以了。</p>
+<h3 id="分镜制作"><a href="#分镜制作" class="headerlink" title="分镜制作"></a>分镜制作</h3><p>现在图片已经生成好了，接下来准备生成5s的分镜。同样用即梦AI就可以了。</p>
+<ul>
+<li>选择视频生成</li>
+<li>选择图片生视频</li>
+<li>上传图片</li>
+<li>选择视频模型：我用的默认的S2.0，也可以用其他的试试效果。</li>
+</ul>
+<p>接下来生成每一个镜头就可以了。</p>
+<h3 id="音频制作"><a href="#音频制作" class="headerlink" title="音频制作"></a>音频制作</h3><p>这里我使用的是ttsmaker音频生成。</p>
+<p>把我们要生成的语音文字和停顿信息，速度选择好，然后点击生成就可以了。</p>
+<p>我这里的文字和停顿。我选择的是<code>1.1倍速</code>，每个段落停顿时间<code>200ms</code>。声音我选择的是<code>1518大鹏</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">大胖橘闹钟在床边响起，爪子从被窝伸出按掉闹钟。</span><br><span class="line">走进浴室，打开淋浴喷头，水洒下来，开始享受。</span><br><span class="line">洗漱完毕，在镜子前整理自己的仪表，左看看右看看。((⏱️=500))</span><br><span class="line">走到门口鞋柜处，叼起钥匙，回头看一眼屋子。((⏱️=700))</span><br><span class="line">骑着小摩托在路上，穿梭在车流中，旁边车辆呼啸而过。</span><br><span class="line">坐在办公桌前，对着电脑屏幕愁眉苦脸，文档上满是修改标记。</span><br><span class="line">晚上趴在卧室床上，四肢摊开，眼神空洞地望着天花板。</span><br></pre></td></tr></table></figure>
+
+<p>点击开始转换，接着可以试听，然后下载文件到本地。</p>
+<p><img src="/../images/AI/AI-vedio-3.jpg" alt="3"></p>
+<h3 id="视频剪辑"><a href="#视频剪辑" class="headerlink" title="视频剪辑"></a>视频剪辑</h3><p>当每一个镜头都制作好了以后，就可以通过视频剪辑工具，把镜头放到一起了。</p>
+<ul>
+<li>下载剪映：<a href="https://www.capcut.cn/">https://www.capcut.cn/</a></li>
+<li>打开剪映</li>
+<li>登陆</li>
+<li>选择素材，导入分镜视频和音频</li>
+</ul>
+<p><img src="/../images/AI/AI-vedio-4.jpg" alt="4"></p>
+<p>把视频放到下面，把音频也放到下面。</p>
+<p><img src="/../images/AI/AI-vedio-5.jpg" alt="5"></p>
+<p>添加自己喜欢的转场动画，然后点击导出就可以了。</p>
+<h3 id="去水印"><a href="#去水印" class="headerlink" title="去水印"></a>去水印</h3><p>接下来使用腾讯智影去掉视频里面的水印。</p>
+<ul>
+<li>选择智能抹除</li>
+<li>本地上传</li>
+<li>将水印框住: 注意绿色的是水印框。</li>
+</ul>
+<p><img src="/../images/AI/AI-vedio-6.jpg" alt="6"></p>
+<p>点击确定，等待完成。接下来在下面的最近作品里面点击下载即可。</p>
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>一个好的题目可以让视频更加火爆，题目可以自己取也可以让AI帮你取。</p>
+<p>比如我让豆包给我取一个。我输入的提示词：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">赛道领域：可爱小猫治愈系视频 </span><br><span class="line">产品类型：大胖橘猫的一天 </span><br><span class="line">目标用户画像：性别：不限，可根据不同性别定制化。年龄段：不限。地域：不限。职业：工作劳累的上班族和大学生，需要放松的人。收入：收入在5万-30万之间的。</span><br></pre></td></tr></table></figure>
+
+<p>豆包给我输出的。</p>
+<p><img src="/../images/AI/AI-vedio-7.jpg" alt="7"></p>
+<p>从里面选择一个就可以了。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>简介也可以让AI生成。同样使用豆包。</p>
+<p>输入提示词。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">赛道领域：可爱小猫治愈系视频 </span><br><span class="line">产品类型：大胖橘猫的一天 </span><br><span class="line">目标用户画像：性别：不限，可根据不同性别定制化。年龄段：不限。地域：不限。职业：工作劳累的上班族和大学生，需要放松的人。收入：收入在5万-30万之间的。</span><br></pre></td></tr></table></figure>
+
+<p>豆包给我输出的。</p>
+<p><img src="/../images/AI/AI-vedio-8.jpg" alt="7"></p>
+<blockquote>
+<p>接下来就可以发出去啦</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先要进行选择题目，选择短视频平台受众。</p>
+<p>接下来利用AI生成剧本、分镜、图片、视频、音频。</p>
+<p>然后通过剪辑软件进行合并成一个视频。</p>
+<p>最后在去除水印。</p>
+<p>还可以通过AI生成标题和简介。</p>
+<p>就可以去发布啦！</p>
+]]></content>
+      <categories>
+        <category>计算机</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我是如何一个小时教会小白手写网关的</title>
+    <url>/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html</url>
+    <content><![CDATA[<h1 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h1><p>今天，小白的老师让小白写一个网关，小白学艺不精，过来向大头求救了。</p>
+<p><img src="/../images/java/gateway/gateway1.jpg" alt="netty服务器"></p>
+<p><img src="/../images/java/gateway/gateway2.jpg" alt="netty服务器"></p>
+<p><img src="/../images/java/gateway/gateway3.jpg" alt="netty服务器"></p>
+<p>网关是什么？看图说话，很明显，她是介于<code>客户端</code>和<code>服务器</code>之间的一个中间层。</p>
+<p>那么为什么要有网关？</p>
+<ul>
+<li>网关可以承接更多的流量</li>
+<li>网关可以对流量做减法</li>
+<li>网关可以添加其他和业务无关的能力，和业务解藕</li>
+<li>网关可以实现负载均衡</li>
+</ul>
+<h2 id="网关可以承接更多的流量"><a href="#网关可以承接更多的流量" class="headerlink" title="网关可以承接更多的流量"></a>网关可以承接更多的流量</h2><p>服务器的逻辑通常是来一个请求A,出现一个A线程进行处理。来一个请求B，出现一个B线程进行处理。</p>
+<p>而有了网关就变成了</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器A线程</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器B线程</li>
+</ul>
+<p>为什么能承接更多的流量，因为承接流量的线程，实在Main线程上面，而Main线程，仅仅负责<code>分发请求</code>。所以它很快。</p>
+<h2 id="网关可以对流量做减法"><a href="#网关可以对流量做减法" class="headerlink" title="网关可以对流量做减法"></a>网关可以对流量做减法</h2><p>网关就如同一个漏斗，可以对流量做减法。</p>
+<p>比如实现限流、权限检查、缓存处理。那么进来的10个请求，可能只有1个请求到达服务器，减轻了服务器的压力。</p>
+<p>请求流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 网关权限检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器A线程</li>
+</ul>
+<h2 id="网关可以添加其他和业务无关的能力，和业务解藕"><a href="#网关可以添加其他和业务无关的能力，和业务解藕" class="headerlink" title="网关可以添加其他和业务无关的能力，和业务解藕"></a>网关可以添加其他和业务无关的能力，和业务解藕</h2><p>如同上面说的，网关可以实现一些和业务无关的能力，比如现限流、权限检查、缓存处理。</p>
+<p>目前用的最多的网关应该是<code>nginx</code>。nginx可以通过<code>lua</code>来扩展实现一些功能。比如上面说的这些。</p>
+<p>还有一些比如像<code>OpenResty</code>这种，也就是基于<code>nginx</code>和<code>lua</code>来进行扩展。</p>
+<h2 id="网关可以实现负载均衡"><a href="#网关可以实现负载均衡" class="headerlink" title="网关可以实现负载均衡"></a>网关可以实现负载均衡</h2><p>什么是负载均衡？简单来说就是后端有多个服务器，通过负载均衡可以把请求流量转发给不同的服务器去处理。</p>
+<p>这个具体后面会实操讲解。</p>
+<h1 id="第一版网关实现"><a href="#第一版网关实现" class="headerlink" title="第一版网关实现"></a>第一版网关实现</h1><p><img src="/../images/java/gateway/gateway4.jpg" alt="netty服务器"></p>
+<p><img src="/../images/java/gateway/gateway5.jpg" alt="netty服务器"></p>
+<p>第一版网关的基本原理如上面说的，仅仅是实现了<code>服务器端，也就是Main线程</code>和<code>客户端，也就是Worker线程</code>。</p>
+<p>执行流程如下：</p>
+<ol>
+<li>通过Netty实现一个服务器，接收真正客户端的请求</li>
+<li>然后把请求给Worker线程</li>
+<li>Worker线程启动一个客户端请求真正的服务器。</li>
+<li>Worker线程接收到真正服务器的返回数据。</li>
+<li>Worker线程将数据返回给真正的客户端。</li>
+</ol>
+<p>部分代码如下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个netty服务端，接收客户端的请求</span></span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">bossGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">1</span>);</span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">workerGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 一些参数 初始化</span></span><br><span class="line">    <span class="type">ServerBootstrap</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerBootstrap</span>();</span><br><span class="line">    b.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">            .childOption(ChannelOption.TCP_NODELAY, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_KEEPALIVE, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_REUSEADDR, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_RCVBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_SNDBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);</span><br><span class="line"></span><br><span class="line">    b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)</span><br><span class="line">            .handler(<span class="keyword">new</span> <span class="title class_">LoggingHandler</span>(LogLevel.DEBUG))</span><br><span class="line">            .childHandler(<span class="keyword">new</span> <span class="title class_">HttpInboundInitializer</span>(<span class="built_in">this</span>.proxyServers));</span><br><span class="line"></span><br><span class="line">    <span class="type">Channel</span> <span class="variable">ch</span> <span class="operator">=</span> b.bind(port).sync().channel();</span><br><span class="line">    System.out.println(<span class="string">&quot;开启netty http服务器，监听地址和端口为 http://127.0.0.1:&quot;</span> + port + <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">    ch.closeFuture().sync();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    bossGroup.shutdownGracefully();</span><br><span class="line">    workerGroup.shutdownGracefully();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端处理代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">fetchGet</span><span class="params">(<span class="keyword">final</span> FullHttpRequest inbound, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> String url)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">HttpGet</span> <span class="variable">httpGet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpGet</span>(url);</span><br><span class="line">    httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);</span><br><span class="line"></span><br><span class="line">    httpclient.execute(httpGet, <span class="keyword">new</span> <span class="title class_">FutureCallback</span>&lt;HttpResponse&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">completed</span><span class="params">(<span class="keyword">final</span> HttpResponse endpointResponse)</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                handleResponse(inbound, ctx, endpointResponse);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">failed</span><span class="params">(<span class="keyword">final</span> Exception ex)</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cancelled</span><span class="params">()</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>来看一下有网关和没网关的服务器请求架构图吧。</p>
+<p><img src="/../images/java/gateway/gateway6.jpg" alt="netty服务器"></p>
+<h1 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h1><p>完成以后小白很高兴</p>
+<p><img src="/../images/java/gateway/gateway7.jpg" alt="netty服务器"></p>
+<p><img src="/../images/java/gateway/gateway8.jpg" alt="netty服务器"></p>
+<p>接下来再给简陋的网关加点装饰，实现一些业务外的功能，给服务器减减压。</p>
+<p>filter可以做什么，看一下下面filter的架构图。</p>
+<p><img src="/../images/java/gateway/gateway9.jpg" alt="netty服务器"></p>
+<p><code>Req Filter</code>在每次请求执行之前运行。那么它能干什么呢？它可以实现权限检查。流程如下</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter: 权限检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
+</ul>
+<p>Filter可以是链式的，也就是可以增加多个Filter.实现不同的功能。比如在权限检查以外还要做跨域支持。</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查不通过，返回错误</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
+</ul>
+<p><code>Res Filter</code>在每次请求执行之后运行，那么它能干什么呢？它可以配合<code>Req Filter</code>实现缓存处理。</p>
+<p>比如每次请求回来以后放入缓存，每次请求之前判断缓存是否存在，有的话直接返回。</p>
+<p>处理流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存不存在，继续请求 -&gt; 服务器A线程 -&gt; Res Filter1: 请求成功，结果放到缓存</li>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存存在，获取缓存并返回。</li>
+</ul>
+<p>开始代码改造，增加Req filter</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> <span class="built_in">this</span>.backendUrls.get(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续增加Res Filter</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line">        <span class="comment">// res filter 请求结束执行</span></span><br><span class="line">        filter.filter(response);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Filter的具体实现，应该先有两个接口</p>
+<ul>
+<li>Req Filter</li>
+<li>Res Filter</li>
+</ul>
+<p>在有具体的实现类，可以通过配置文件，配置使用不同的Filter。</p>
+<p>比如实现一个权限检查的Req Filter</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheRequestFilter</span> <span class="keyword">implements</span> <span class="title class_">HttpRequestFilter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">filter</span><span class="params">(FullHttpRequest fullRequest, ChannelHandlerContext ctx)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取token</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> fullRequest.headers().get(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">        <span class="comment">// 处理token</span></span><br><span class="line">        <span class="keyword">if</span> (!jwt.check(token)) &#123;</span><br><span class="line">            <span class="comment">// 返回错误</span></span><br><span class="line">            <span class="type">byte</span>[] body;</span><br><span class="line">            <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HttpResponseStatus.HTTP_1_1, HttpResponseStatus.FORBIDDEN, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">            response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">            response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, <span class="number">0</span>);</span><br><span class="line">            ctx.write(response);</span><br><span class="line">            ctx.flush();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p><img src="/../images/java/gateway/gateway10.jpg" alt="netty服务器"></p>
+<p><img src="/../images/java/gateway/gateway11.jpg" alt="netty服务器"></p>
+<p>负载均衡（Load Balancing）是一种计算机技术，用于在多个计算资源（如服务器、网络链路等）之间分配工作负载，以提高系统的整体性能、可靠性和可扩展性。</p>
+<p>负载均衡的基本原理</p>
+<ul>
+<li>资源分配：将用户的请求按照一定的算法和规则，均匀地分配到多个后端服务器上。这样可以避免单点服务器因承受过多请求而过载，同时充分利用所有可用服务器的资源。</li>
+<li>健康检查：负载均衡器会定期检查后端服务器的健康状态。例如，通过发送心跳包或尝试建立连接等方式，来确定服务器是否正常运行。如果发现某台服务器出现故障，负载均衡器会自动停止将请求分配到该服务器，直到其恢复正常。</li>
+</ul>
+<p>利用软件程序来实现负载均衡。软件负载均衡器可以安装在通用的服务器上，通过软件代码来处理请求的分发。这种方式相对硬件负载均衡成本较低，并且具有更好的灵活性，方便进行定制化和扩展。</p>
+<p>看一下<code>Nginx</code>的实现吧。</p>
+<p>Nginx：这是一个非常流行的开源软件负载均衡器。它可以作为反向代理服务器，将客户端请求转发到后端服务器。Nginx 支持多种负载均衡算法，如轮询（Round - Robin）、加权轮询（Weighted Round - Robin）、IP 哈希（IP - Hash）等。例如，在轮询算法中，Nginx 会按照顺序依次将请求分配到后端服务器列表中的每一台服务器上。假设后端有服务器 A、服务器 B 和服务器 C，第一个请求会被发送到服务器 A，第二个请求发送到服务器 B，第三个请求发送到服务器 C，然后再从服务器 A 开始循环。</p>
+<p>负载均衡的优势</p>
+<ul>
+<li>提高性能：通过将负载均匀分布在多个服务器上，可以充分利用服务器的资源，避免单点出现性能瓶颈。例如，在一个网站流量高峰期，如果只有一台服务器处理请求，可能会因为 CPU、内存或网络带宽等资源耗尽而导致响应速度变慢。而使用负载均衡将请求分散到多台服务器后，每台服务器处理的请求数量减少，响应时间可以得到有效缩短。</li>
+<li>增强可靠性：当某一台后端服务器出现故障时，负载均衡器可以将请求自动切换到其他正常的服务器，从而保证服务的连续性。这对于需要高可用性的应用（如电子商务网站、金融服务等）至关重要。例如，一个在线购物网站，如果没有负载均衡和容错机制，当一台服务器宕机时，可能会导致部分用户无法访问商品信息或进行购物操作，而有了负载均衡后，即使一台服务器出现问题，其他服务器仍可以继续处理请求，用户可能只是感觉到短暂的延迟，而不会出现服务完全中断的情况。</li>
+<li>便于扩展：随着业务的增长，可以方便地添加新的服务器到负载均衡池中，以应对不断增加的请求量。例如，一个新兴的互联网公司，其网站的用户访问量逐月增加。通过负载均衡，公司可以根据流量增长情况逐步添加服务器，而不需要对整个系统架构进行大规模的重新设计。负载均衡器可以自动将新添加的服务器纳入请求分配的范围，实现无缝的系统扩展。</li>
+</ul>
+<p>在看一下实现负载均衡以后的网关架构吧。</p>
+<p><img src="/../images/java/gateway/gateway12.jpg" alt="netty服务器"></p>
+<h2 id="负载均衡的算法"><a href="#负载均衡的算法" class="headerlink" title="负载均衡的算法"></a>负载均衡的算法</h2><p>那负载均衡具体是如何实现呢？看大头怎么说。</p>
+<p><img src="/../images/java/gateway/gateway13.jpg" alt="netty服务器"></p>
+<h3 id="轮询算法"><a href="#轮询算法" class="headerlink" title="轮询算法"></a>轮询算法</h3><p><img src="/../images/java/gateway/gateway14.jpg" alt="netty服务器"></p>
+<p>下面是轮询算法的时序图。</p>
+<p><img src="/../images/java/gateway/gateway15.jpg" alt="netty服务器"></p>
+<ul>
+<li>原理：按照顺序依次将请求分配到后端服务的各个实例上。例如，有三个后端服务实例 A、B、C，第一个请求被路由到 A，第二个请求路由到 B，第三个请求路由到 C，然后又从 A 开始循环分配。这种算法简单公平，能均匀地分配请求负载。</li>
+<li>适用场景：适用于后端服务实例性能相近，处理能力相对均衡的情况。例如，多个相同配置的 Web 服务器提供相同的静态网页服务，使用轮询算法可以很好地平衡请求流量。</li>
+</ul>
+<p>轮询的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
+<li>请求E -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
+<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
+</ul>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> urls.get(current);</span><br><span class="line">        current++;</span><br><span class="line">        current = current % urls.size();</span><br><span class="line">        <span class="keyword">return</span> url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="加权轮询算法"><a href="#加权轮询算法" class="headerlink" title="加权轮询算法"></a>加权轮询算法</h3><p><img src="/../images/java/gateway/gateway16.jpg" alt="netty服务器"></p>
+<p>下面是加权轮询算法的时序图。</p>
+<p><img src="/../images/java/gateway/gateway17.jpg" alt="netty服务器"></p>
+<ul>
+<li>原理：为每个后端服务实例分配一个权重值，权重表示该实例相对处理能力的大小。在分配请求时，按照权重比例来分配。例如，服务实例 A 的权重为 5，服务实例 B 的权重为 3，服务实例 C 的权重为 2，那么在总共 10 次请求分配中，A 会被分配 5 次，B 会被分配 3 次，C 会被分配 2 次。</li>
+<li>适用场景：当后端服务实例的性能不同，比如部分实例配置更高、处理能力更强时，通过加权轮询可以让性能强的实例处理更多的请求。例如，有新老两代服务器，新服务器性能是老服务器的两倍，就可以给新服务器分配更高的权重，让其承担更多的请求负载。</li>
+</ul>
+<p>加设3个服务器权重是5，3，2.</p>
+<p>加权轮询的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 3 2 因此选择服务器1   PS:当前服务器权重为-5 3 2</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 6 4 因此选择服务器2   PS:当前服务器权重为0 -4 4</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 -1 6 因此选择服务器3  PS:当前服务器权重为5 -1 -4</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为10 2 -2 因此选择服务器1   PS:当前服务器权重为0 2 -2</li>
+<li>请求E -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 5 0 因此选择服务器1   PS:当前服务器权重为-5 5 0</li>
+<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 8 2 因此选择服务器2   PS:当前服务器权重为0 -2 2</li>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 1 4 因此选择服务器1  PS:当前服务器权重为-5 1 4</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为0 4 6 因此选择服务器3   PS:当前服务器权重为0 4 -4</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 7 -2 因此选择服务器2   PS:当前服务器权重为5 -3 -2</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为10 0 0 因此选择服务器1   PS:当前服务器权重为0 0 0</li>
+</ul>
+<p>可以看到上面10次请求结果，服务器1分配了5次请求，服务器2分配了3次请求，服务器3分配了2次请求。</p>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightedRoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;BackendServer&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        BackendServer selectedServer;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一步：计算总权重，并更新每个服务器的当前权重</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            totalWeight += server.weight;</span><br><span class="line">            server.currentWeight += server.weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第二步：找出当前权重最大的服务器作为本次选择的服务器</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            <span class="keyword">if</span> (server.currentWeight &gt; selectedServer.currentWeight) &#123;</span><br><span class="line">                selectedServer = server;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三步：将选中的服务器的当前权重减去总权重，用于下一轮的权重计算和比较</span></span><br><span class="line">        selectedServer.currentWeight -= totalWeight;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> selectedServer.url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p><img src="/../images/java/gateway/gateway18.jpg" alt="netty服务器"></p>
+<p>下面是哈希算法的时序图。</p>
+<p><img src="/../images/java/gateway/gateway19.jpg" alt="netty服务器"></p>
+<p>使用IP进行哈希算法</p>
+<ul>
+<li>原理：根据请求客户端的 IP 地址计算一个哈希值，然后通过这个哈希值来确定将请求路由到后端服务的哪个实例。相同 IP 地址的请求会始终被路由到同一个后端实例，除非后端实例的数量发生变化。</li>
+<li>适用场景：适用于需要保证特定客户端的请求始终由同一个后端实例处理的场景。例如，在一些有状态的服务中，如需要保持用户会话状态（如购物车信息等），通过 IP 哈希可以确保用户的每次请求都能路由到保存其会话状态的后端服务器。</li>
+</ul>
+<p>哈希算法的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; hash(ip) % 3 结果是0，因此选择服务器1</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; hash(ip) % 3 结果是1，因此选择服务器2</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; hash(ip) % 3 结果是2，因此选择服务器3</li>
+</ul>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HashRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls, ip)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> hash(ip) % urls.size();</span><br><span class="line">        <span class="keyword">return</span> urls.get(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="随机算法"><a href="#随机算法" class="headerlink" title="随机算法"></a>随机算法</h3><p><img src="/../images/java/gateway/gateway20.jpg" alt="netty服务器"></p>
+<p>随机算法的时序图，原理啥的就不放了，因为太简单了，就是取一个(0,2)开区间的一个随机数。是0就服务器1，1就服务器2，2就服务器3.</p>
+<p>简单的代码实现。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RandomRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> urls.size();</span><br><span class="line">        <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>(System.currentTimeMillis());</span><br><span class="line">        <span class="keyword">return</span> urls.get(random.nextInt(size));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来只要修改一下获取请求url的代码就可以了。改成从负载均衡获取请求的url，而不是固定取第一个。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="comment">// 这里通过负载均衡的路由获取请求的url</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> router.route(<span class="built_in">this</span>.backendUrls);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h2><p>当实现这些以后，小白很高兴。</p>
+<p><img src="/../images/java/gateway/gateway21.jpg" alt="netty服务器"></p>
+<p>小白想知道当后端多个服务器，一个挂了怎么办呢？网关又不知道它挂了，把流量请求过去了，结果服务器挂了，那不就请求失败了吗？</p>
+<p><img src="/../images/java/gateway/gateway22.jpg" alt="netty服务器"></p>
+<p>我们可以通过<code>健康检查机制</code>来解决，添加<code>Zookeeper</code>作为健康检查机制，服务器向Zookeeper注册服务，如果服务器挂了那么Zookeeper就会知道。网关通过Zookeeper来获取现在的服务器列表，然后再通过负载均衡选择服务器。</p>
+<p>一般最常用的就是<code>心跳检测</code>。</p>
+<p>什么是心跳检测呢？</p>
+<p>就是每隔一段时间，发送一个请求，看是否正常返回，如果是，那么服务器就正常，如果不是，比如超时之类的就认为服务器挂了，那么接下来的请求流量就不分给这个服务器了，从服务器列表中移除，啥时候发送心跳检测，发现服务器正常返回了，那么就再放到服务器列表中。</p>
+<p>也可以直接通过<code>Zookeeper</code>这种额外的组件来实现。服务器跟<code>Zookeeper</code>通信，服务器列表通过<code>Zookeeper</code>获取。</p>
+<p>具体的时序图如下。<br><img src="/../images/java/gateway/gateway23.jpg" alt="netty服务器"></p>
+<p>健康检查的代码就不放了，就当作作业了哈哈，有兴趣的小伙伴可以自己实现一个放到评论区哦～</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>小白又自己实现了一个网关程序，可以开心的回去交差啦。</p>
+<p><img src="/../images/java/gateway/gateway24.jpg" alt="netty服务器"></p>
+<p>一个基本的单体网关就实现完成了。</p>
+<p>其实还有一些其他的问题，比如网关挂了怎么办？那么可以部署多个网关节点，组成集群。</p>
+<p>那么集群的话就需要引入<code>Raft</code>这种分布式共识协议来进行leader节点选择，信息同步。</p>
+<p>那么多个网关节点的元信息放在哪里呢？当然也可以放在<code>Zookeeper</code>里面啦～</p>
+<p>更多知识下期介绍～</p>
 ]]></content>
       <categories>
         <category>java</category>
