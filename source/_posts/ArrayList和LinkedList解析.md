@@ -85,7 +85,7 @@ public int len() {
 
 对于数组来说，我们知道它是内存中一段连续的空间，因此这个时候，我们的内存里面是这样的。假设x里面是1,2,3,4,5,6
 
-![list1.png](../images/DataStructure/list1.png)
+![list1.png](https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png)
 
 我们还知道一个int等于32位，4个字节，因此，假设元素1的地址是0，那么其余的地址如下图所示。
 
