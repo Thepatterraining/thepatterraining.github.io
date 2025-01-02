@@ -197,7 +197,6 @@ public void bind(SocketAddress endpoint, int backlog) throws IOException {
 
 ```
 
-
 ![第一版socket](../images/java/netty6.png)
 
 ![第一版socket](../images/java/netty7.png)
