@@ -85,11 +85,11 @@ public int len() {
 
 对于数组来说，我们知道它是内存中一段连续的空间，因此这个时候，我们的内存里面是这样的。假设x里面是1,2,3,4,5,6
 
-![list1.png](https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png)
+![list1.png](https://thepatterraining.github.io/images/DataStructure/list1.png)
 
 我们还知道一个int等于32位，4个字节，因此，假设元素1的地址是0，那么其余的地址如下图所示。
 
-![list1.png](../images/DataStructure/list2.png)
+![list1.png](https://thepatterraining.github.io/images/DataStructure/list2.png)
 
 因此，`get_at(i)`这个操作的时间复杂度同样是O(1)，因为可以直接计算出对应位置的地址，计算公式如下
 ```
@@ -119,11 +119,11 @@ public void set_at(i,x) {
 
 第一步，删除，我们可以看到地址0指向的首个元素的内容变成`null`了
 
-![list1.png](../images/DataStructure/list3.png)
+![list1.png](https://thepatterraining.github.io/images/DataStructure/list3.png)
 
 第二步，移动后面的元素到前面的位置。
 
-![list1.png](../images/DataStructure/list4.png)
+![list1.png](https://thepatterraining.github.io/images/DataStructure/list4.png)
 
 删除完成，这个时候肯定有人问了，不对啊，你这最后两个元素一样啊，是的，不用管它。
 
@@ -150,13 +150,13 @@ public void delete_at(i) {
 
 可以看到几乎是上方delete操作的一个逆序过程。
 
-![list1.png](../images/DataStructure/list5.png)
+![list1.png](https://thepatterraining.github.io/images/DataStructure/list5.png)
 
 现在可以看到0的位置已经空出来了，虽然里面还有一个2，但是我们可以覆盖它。
 
 第二步，将1插入0的位置。
 
-![list6.png](../images/DataStructure/list6.png)
+![list6.png](https://thepatterraining.github.io/images/DataStructure/list6.png)
 
 如此，就完成了整个insert操作。伪代码如下
 
@@ -212,10 +212,10 @@ public int len() {
 - 缺点：查询慢
 
 val代表具体的内容，Next代表下一个节点的指针，内容是下一个节点的地址。最后一个节点的Next指针是null。
-![list7.png](../images/DataStructure/list7.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list7.png)
 
 而在实际内存中的表现形式则是下图所示。这里是连续的，仅仅是巧合，也可能是不连续的。在这里我们忽略class头的占用，this指针的占用空间，val占据空间是4个字节，next做为指针是64位，占用8个字节。
-![list7.png](../images/DataStructure/list8.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list8.png)
 
 由于链表的地址不连续，所以没办法通过首地址直接计算出每个元素的地址，而需要通过`next`属性来获取下一个元素的地址。
 
@@ -227,7 +227,7 @@ val代表具体的内容，Next代表下一个节点的指针，内容是下一�
 
 整个步骤如图所示。假设是`get_at(2)`，代表获取第三个元素。也就是3这个内容。因为是从0开始。
 
-![list7.png](../images/DataStructure/list9.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list9.png)
 
 伪代码如下
 ```java
@@ -266,13 +266,13 @@ public void set_at(i, x) {
 
 比如`delete_at(2)` 分为两步，第一步查询，和上面的步骤是一样的。
 
-![list7.png](../images/DataStructure/list9.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list9.png)
 
 第二步是删除。删除分为2步
 1. 将上一个指针的next指向第i+1个元素。可以看到图里更新成36了
 2. 将第i个元素的next指针更新成null
 
-![list7.png](../images/DataStructure/list10.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list10.png)
 
 整个伪代码如下：
 ```java
@@ -300,7 +300,7 @@ public void delete_at(i) {
 
 第一步是查询，和上面也是一样的。
 
-![list7.png](../images/DataStructure/list9.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list9.png)
 
 第二步是插入，插入分为两步
 1. 修改插入节点的next指向当前i节点的next
@@ -308,7 +308,7 @@ public void delete_at(i) {
 
 我们以`insert_at(2,3)`为例。首先找到i=0，再找到i=1的位置就是要插入的位置，因为要插入的位置是2，所以我们要把i=1的元素的next指向插入的节点。所以找到i=1的元素就可以停止了。
 
-![list7.png](../images/DataStructure/list11.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list11.png)
 
 整个伪代码实现
 
@@ -418,17 +418,17 @@ public void set_at(i,x) {
 
 以`insert_last(1)`来说吧。由于是动态数组，是可以扩容的。假设当前内存是空.然后我们插入1.
 
-![list7.png](../images/DataStructure/list12.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list12.png)
 
 在接下来我们要插入2.也就是`insert_last(2)`。但是这个数组没有空间了，我们需要扩容，比如我们扩容一倍，也就是申请两个内存，现在的内存首地址就不是1了，可能是10-17.
 
 然后再把原来数组的内容复制过去，在插入新的元素2.
 
-![list7.png](../images/DataStructure/list13.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list13.png)
 
 接下来又插入了元素3.再次扩容，内存地址是20-35。同样把内容复制过去，在插入元素3.
 
-![list7.png](../images/DataStructure/list14.png)
+![list7.png](https://thepatterraining.github.io/images/DataStructure/list14.png)
 
 至于原来那些不用的数组的内存空间，会被JAVA的内存垃圾回收机制，给回收掉。所以不用管。
 
