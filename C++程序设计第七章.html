@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学堂在线C++程序设计第七章学习笔记数组的定义与初始化数组是具有一定顺序关系的若干相同类型变量的集合体，组成数组的变量称为该数组的元素 数组的定义 类型说明符 数组名[常量表达式] [常量表达式]…数组名的构成方法与一般变量名相同 例如：  int a[10] int a[5][3]  数组的使用  数组必须先定义，后使用 可以逐个引用数组元素 例如：a[0] &#x3D; a[5] + a[7]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学堂在线C++程序设计第七章学习笔记">
+<meta property="og:url" content="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="学堂在线C++程序设计第七章学习笔记数组的定义与初始化数组是具有一定顺序关系的若干相同类型变量的集合体，组成数组的变量称为该数组的元素 数组的定义 类型说明符 数组名[常量表达式] [常量表达式]…数组名的构成方法与一般变量名相同 例如：  int a[10] int a[5][3]  数组的使用  数组必须先定义，后使用 可以逐个引用数组元素 例如：a[0] &#x3D; a[5] + a[7]">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-02T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.818Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学堂在线C++程序设计第七章学习笔记 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学堂在线C++程序设计第七章学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-02 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-02T10:12:47+08:00">2021-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第七章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学堂在线C-程序设计第七章学习笔记"><a href="#学堂在线C-程序设计第七章学习笔记" class="headerlink" title="学堂在线C++程序设计第七章学习笔记"></a>学堂在线C++程序设计第七章学习笔记</h1><h2 id="数组的定义与初始化"><a href="#数组的定义与初始化" class="headerlink" title="数组的定义与初始化"></a>数组的定义与初始化</h2><p>数组是具有一定顺序关系的若干相同类型变量的集合体，组成数组的变量称为该数组的元素</p>
+<p>数组的定义</p>
+<p>类型说明符 数组名[常量表达式] [常量表达式]…<br>数组名的构成方法与一般变量名相同</p>
+<p>例如：</p>
+<ul>
+<li>int a[10]</li>
+<li>int a[5][3]</li>
+</ul>
+<p>数组的使用</p>
+<ul>
+<li>数组必须先定义，后使用</li>
+<li>可以逐个引用数组元素</li>
+<li>例如：<br>a[0] &#x3D; a[5] + a[7]</li>
+</ul>
+<h3 id="数组的存储和初始化"><a href="#数组的存储和初始化" class="headerlink" title="数组的存储和初始化"></a>数组的存储和初始化</h3><p>一位数组的存储</p>
+<p><code>数组元素</code>在内存中顺次存放，它们的<code>地址是连续</code>的。元素间物理地址上的相邻，对应着逻辑次序上的相邻</p>
+<p><code>数组名字</code>是数组<code>首元素</code>的内存地址</p>
+<p><code>数组名字</code>是一个常量，不能被赋值</p>
+<p>一维数组初始化</p>
+<ul>
+<li>列出全部值<ul>
+<li>static int a[5] &#x3D; {0,1,2,3,4}</li>
+</ul>
+</li>
+<li>可以只给一部分元素初始化<ul>
+<li>static int a[5] &#x3D; {0,1,2}</li>
+</ul>
+</li>
+<li>列出全部值时，可以不指定长度<ul>
+<li>static int a[] &#x3D; {0,1,2,3,4}</li>
+</ul>
+</li>
+</ul>
+<p>二维数组的存储</p>
+<ul>
+<li>按行存放</li>
+</ul>
+<p>二维数组的初始化</p>
+<ul>
+<li>列出全部值，按照顺序初始化<ul>
+<li>static int a[3][2] &#x3D; {0,1,2,3,4,5}</li>
+</ul>
+</li>
+<li>分行列出二维数组元素的初值<ul>
+<li>static int a[3][2] &#x3D; { {0,1},{2,3},{4,5} }</li>
+</ul>
+</li>
+<li>可以只对部分元素初始化<ul>
+<li>static int a[3][2] &#x3D; { {0},{1,2},{3} }</li>
+</ul>
+</li>
+<li>列出全部初始值，第一维下标可以省略<ul>
+<li>static int a[][2] &#x3D; {0,1,2,3,4,5}</li>
+<li>static int a[][2] &#x3D; { {0,1},{2,3},{4,5} }</li>
+</ul>
+</li>
+<li>如果不做任何初始化，局部作用域非静态数组中会存在垃圾数据，static 数组中的数据默认初始化为0</li>
+<li>如果只对部分元素初始化，剩下的将自动被初始化为0</li>
+</ul>
+<h3 id="对象数组"><a href="#对象数组" class="headerlink" title="对象数组"></a>对象数组</h3><p>对象数组的定义和访问</p>
+<ul>
+<li>定义对象数组<ul>
+<li>类名 数组名[元素个数]</li>
+</ul>
+</li>
+<li>访问对象数组<ul>
+<li>通过下标访问 数组名[下标].成员名</li>
+</ul>
+</li>
+</ul>
+<p>对象数组初始化</p>
+<ul>
+<li>数组中每一个元素对象被创建时，系统都会调用类构造函数初始化该对象</li>
+<li>通过初始化列表赋值<ul>
+<li>例如：Point a[2] &#x3D; {Point{1,2}, Point{3,4}}</li>
+</ul>
+</li>
+<li>如果没有为数组元素指定显式初始值，数组元素便使用默认值初始化（调用默认构造函数）</li>
+</ul>
+<p>数组元素的构造和析构</p>
+<ul>
+<li>构造数组时，元素所属的类未声明构造函数，则采用默认构造函数</li>
+<li>各元素对象的初值要求为相同的值时，可以声明具有默认形参值得构造函数</li>
+<li>各元素对象的初值要求为不同的值时，需要声明带形参的构造函数</li>
+<li>当数组中每一个对象被删除时，系统需要调用一次析构函数</li>
+</ul>
+<h3 id="基于范围的for循环"><a href="#基于范围的for循环" class="headerlink" title="基于范围的for循环"></a>基于范围的for循环</h3><p>C++11 提供的</p>
+<p>自动遍历整个容器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">3</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line">    <span class="type">int</span> *p;</span><br><span class="line">    <span class="keyword">for</span> (p = array;p &lt; array + <span class="built_in">sizeof</span>(array) / <span class="built_in">sizeof</span>(<span class="type">int</span>); ++p) &#123;</span><br><span class="line">        *p += <span class="number">2</span>;</span><br><span class="line">        std::cout &lt;&lt; *p &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果用基于范围的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">3</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> &amp; e : array) &#123;</span><br><span class="line">        e+=<span class="number">2</span>;</span><br><span class="line">        std::cout &lt;&lt;e &lt;&lt;std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="指针的定义和运算"><a href="#指针的定义和运算" class="headerlink" title="指针的定义和运算"></a>指针的定义和运算</h3><p>内存空间的访问形式：</p>
+<ul>
+<li>通过变量名访问</li>
+<li>通过地址访问</li>
+</ul>
+<p>指针的概念：</p>
+<ul>
+<li>指针：内存地址，用于间接访问内存单元</li>
+<li>指针变量：用于存放地址的变量</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> i;</span><br><span class="line"><span class="type">static</span> <span class="type">int</span>* ptr = &amp;i; <span class="comment">//指向int变量的指针</span></span><br></pre></td></tr></table></figure>
+
+<p>指针运算符 *：表示该变量内存里存储的是地址，并操作存储地址对应的内存空间</p>
+<p>地址运算符 &amp;: 表示该变量的地址</p>
+<h3 id="指针的初始化和赋值"><a href="#指针的初始化和赋值" class="headerlink" title="指针的初始化和赋值"></a>指针的初始化和赋值</h3><p>指针变量的初始化</p>
+<ul>
+<li>语法形式<ul>
+<li>存储类型 数据类型 *指针名 &#x3D; 初始地址</li>
+<li>例如：int *pa &#x3D; &amp;a</li>
+</ul>
+</li>
+<li>注意事项<ul>
+<li>用变量地址作为初始值时，该变量必须在指针初始化之前已声明过，且变量类型应与指针类型一致</li>
+<li>可以用一个已有合法值的指针去初始化另一个指针变量</li>
+<li>不要用一个内部非静态变量去初始化 static 指针</li>
+</ul>
+</li>
+</ul>
+<p>指针变量的赋值运算</p>
+<ul>
+<li>语法形式 指针名 &#x3D; 地址</li>
+<li>注意：<ul>
+<li><code>地址</code> 中存放的数据类型与指针类型必须相符</li>
+<li>向指针变量赋值必须是地址常量或变量，不能是普通整数</li>
+</ul>
+</li>
+<li>例如：<ul>
+<li>通过地址运算 <code>&amp;</code> 求得已定义的变量和对象的起始地址</li>
+<li>动态内存分配成功时返回的地址</li>
+</ul>
+</li>
+<li>例外：整数0可以赋值给指针，表示空指针</li>
+<li>允许定义或声明指向 void 类型的指针。该指针可以被赋予任何类型对象的地址<ul>
+<li>void *general;</li>
+</ul>
+</li>
+</ul>
+<p>指向常量的指针</p>
+<ul>
+<li>const 指针</li>
+<li>不能通过指向常量的指针改变所指对象的值，但指针本身可以改变，可以指向另外的对象</li>
+<li>例如：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> *p = &amp;a;</span><br><span class="line"><span class="type">int</span> b;</span><br><span class="line">p = &amp;b</span><br><span class="line">*p = <span class="number">2</span>; <span class="comment">//编译出错</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>指针类型的常量</p>
+<ul>
+<li>声明指针常量，则指针本身的值不能被改变</li>
+<li>例如：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a;</span><br><span class="line"><span class="type">int</span> * <span class="type">const</span> p2 = *a;</span><br><span class="line">p2 = &amp;b; <span class="comment">//错误</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="指针的运算"><a href="#指针的运算" class="headerlink" title="指针的运算"></a>指针的运算</h3><p>指针的算术运算</p>
+<ul>
+<li>指针与整数的加减运算<ul>
+<li>指针p 加上或减去 n：指针当前指向位置的前方或后方第n个数据的起始位置</li>
+</ul>
+</li>
+<li>指针++，–运算<ul>
+<li>指向下一个或前一个完整数据的起始位置</li>
+</ul>
+</li>
+<li>运算的结果值取决于指针指向的数据类型，总是指向一个完整数据的起始位置</li>
+<li>当指针指向连续存储的同类型数据时，指针与整数的加减运算和自增自减才有意义</li>
+</ul>
+<p>指针的关系运算</p>
+<ul>
+<li>指向相同类型数据的指针之间可以进行各种关系运算</li>
+<li>指向不同数据类型的指针，以及指针与一般整形变量之间的关系运算是无意义的</li>
+<li>指针可以和零之间进行等于或不等于的关系运算，判断空指针</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%BA%94%E8%8A%82.html" rel="prev" title="数据库系统原理第五节">
+      <i class="fa fa-chevron-left"></i> 数据库系统原理第五节
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html" rel="next" title="学堂在线C++程序设计第八章学习笔记">
+      学堂在线C++程序设计第八章学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E5%A0%82%E5%9C%A8%E7%BA%BFC-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">学堂在线C++程序设计第七章学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">数组的定义与初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E7%9A%84%E5%AD%98%E5%82%A8%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.1.1.</span> <span class="nav-text">数组的存储和初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">对象数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%8C%83%E5%9B%B4%E7%9A%84for%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.1.3.</span> <span class="nav-text">基于范围的for循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E8%BF%90%E7%AE%97"><span class="nav-number">1.1.4.</span> <span class="nav-text">指针的定义和运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E8%B5%8B%E5%80%BC"><span class="nav-number">1.1.5.</span> <span class="nav-text">指针的初始化和赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E8%BF%90%E7%AE%97"><span class="nav-number">1.1.6.</span> <span class="nav-text">指针的运算</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="streamstream是java8新增的非常重要的一个特性。并且非常的常用。它实现了函数式编程。具体函数式编程的概念已经很久了，比如js中的箭头函数。java中也通过stream做出了支持。想深入理解的可以参考cmu的课程15-150或者stanford的CS 95SI。 它可以帮助我们方便的处理很多东西。处理分为两种，中间态和结果态。  下面是一些中间态操作。他们位于链式操作的中间，当调用他们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA-stream创建原理和数据结构操作">
+<meta property="og:url" content="https://thepatterraining.github.io/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="streamstream是java8新增的非常重要的一个特性。并且非常的常用。它实现了函数式编程。具体函数式编程的概念已经很久了，比如js中的箭头函数。java中也通过stream做出了支持。想深入理解的可以参考cmu的课程15-150或者stanford的CS 95SI。 它可以帮助我们方便的处理很多东西。处理分为两种，中间态和结果态。  下面是一些中间态操作。他们位于链式操作的中间，当调用他们">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream10.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream11.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream12.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/stream6.png">
+<meta property="article:published_time" content="2023-02-16T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.841Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="‘stream&#39;">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/stream1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JAVA-stream创建原理和数据结构操作 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JAVA-stream创建原理和数据结构操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-16 10:12:47" itemprop="dateCreated datePublished" datetime="2023-02-16T10:12:47+08:00">2023-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html" class="post-meta-item leancloud_visitors" data-flag-title="JAVA-stream创建原理和数据结构操作" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="stream"><a href="#stream" class="headerlink" title="stream"></a>stream</h1><p>stream是java8新增的非常重要的一个特性。并且非常的常用。它实现了<code>函数式编程</code>。具体函数式编程的概念已经很久了，比如js中的<code>箭头函数</code>。java中也通过stream做出了支持。想深入理解的可以参考cmu的课程<a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~./15150/index.html">15-150</a>或者stanford的<a href="">CS 95SI</a>。</p>
+<p>它可以帮助我们方便的处理很多东西。处理分为两种，中间态和结果态。</p>
+<p><img src="/../images/stream1.png" alt="streamImg"></p>
+<p>下面是一些中间态操作。他们位于链式操作的中间，当调用他们的时候并没有真正执行。只有当调用结果态的方法的时候才会真正的执行操作，也就是所谓的<code>延迟执行</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">map</td>
+<td align="left">循环。可以简单理解为foreach</td>
+</tr>
+<tr>
+<td align="left">flatMap</td>
+<td align="left">将二维数据展开成一维</td>
+</tr>
+<tr>
+<td align="left">filter</td>
+<td align="left">过滤数据</td>
+</tr>
+<tr>
+<td align="left">distinct</td>
+<td align="left">去重</td>
+</tr>
+<tr>
+<td align="left">sorted</td>
+<td align="left">排序</td>
+</tr>
+<tr>
+<td align="left">limit</td>
+<td align="left">限制只取n个元素</td>
+</tr>
+<tr>
+<td align="left">skip</td>
+<td align="left">跳过n个元素</td>
+</tr>
+</tbody></table>
+<h3 id="stream的初始化"><a href="#stream的初始化" class="headerlink" title="stream的初始化"></a>stream的初始化</h3><p>看一个例子，假设我们有一个需求。输出大于5的所有数。</p>
+<ul>
+<li>期望输入：2，5，7，1，3，2，8</li>
+<li>期望输出：7，8</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//首先初始化输入列表</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;5&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;7&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;3&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;8&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//开始执行操作</span></span><br><span class="line">List&lt;Integer&gt; list2 = list.stream().map(Integer::valueOf).filter(x -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> x &gt; <span class="number">5</span>;</span><br><span class="line">        &#125;).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line">System.out.println(list2);</span><br></pre></td></tr></table></figure>
+
+<p>接下来看一下stream是如何执行的。下面是stream的一个类图。可以看到初始化需要使用到一个接口和6个类。主要分为三大类。</p>
+<p><img src="/../images/stream8.png" alt="stream8.png"></p>
+<h4 id="类介绍"><a href="#类介绍" class="headerlink" title="类介绍"></a>类介绍</h4><p>第一类是<code>ArrayList</code>类和<code>ArrayListSpliterator</code>类。这两个类是核心类。毕竟我们输入类型是ArrayList，这个就不用说了。</p>
+<p>主要在于<code>ArrayListSpliterator</code>这个类，这个类是ArrayList的一个内部类。最主要的操作方法和数据都在里面。看一下几个属性</p>
+<ul>
+<li>list 我们要进行stream操作的list</li>
+<li>fence 大小</li>
+<li>expectedModCount 期望的处理数量</li>
+<li>index</li>
+</ul>
+<p>最主要的循环处理方法同样在这个类里面。处理逻辑全部在<code>forEachRemaining</code>这个方法中。</p>
+<p>第二大类是<code>StreamSupport</code>流的支持类，算是一个单独的类，提供了对stream的一些操作方法，比如初始化一个stream。</p>
+<p>第三大类是<code>AbstractPipeline</code>抽象类为主的3个类，还有两个是继承自<code>AbstractPipeline</code>的<code>ReferencePipeline</code>类，主要负责处理引用类的流。和继承<code>ReferencePipeline</code>的<code>Head</code>类，实现了双向链表的头节点。他们的主要功能就是构造为流的双向链表数据结构。</p>
+<p><img src="/../images/stream9.png" alt="stream9.png"></p>
+<h4 id="执行流程介绍"><a href="#执行流程介绍" class="headerlink" title="执行流程介绍"></a>执行流程介绍</h4><p>这几个类的执行时序图如下。</p>
+<p><img src="/../images/stream7.png" alt="stream7.png"></p>
+<p>可以清晰的看到，通过<code>Collection</code>类的stream方法调用到了<code>ArrayList</code>的方法然后调用到了<code>ArrayListSpliterator</code>的方法，来初始化了<code>ArrayListSpliterator</code>对象，并存储到流中。</p>
+<p>接下来<code>Collection</code>类将初始化好的<code>ArrayListSpliterator</code>对象传递给了<code>StreamSupport</code>类用来初始化stream。</p>
+<p>StreamSupport将会创建一个双向链表的头节点。并将<code>ArrayListSpliterator</code>对象放入头节点。初始化以后的流如下图所示：</p>
+<p><img src="/../images/stream2.png" alt="stream2.png"></p>
+<h4 id="流介绍"><a href="#流介绍" class="headerlink" title="流介绍"></a>流介绍</h4><p>流分为两种，顺序流和并行流。</p>
+<h5 id="顺序流"><a href="#顺序流" class="headerlink" title="顺序流"></a>顺序流</h5><p>顺序流顾名思义就是按照顺序执行。可以直接的类比为for循环。如下图，如果1，2，3三个元素，进入流以后，依然是1,2,3三个元素。</p>
+<p><img src="/../images/stream10.png" alt="stream10.png"></p>
+<h5 id="并行流"><a href="#并行流" class="headerlink" title="并行流"></a>并行流</h5><p>并行流是充分的利用现代多核计算机的性能而出的。它可以把流分散到各个进程&#x2F;线程中去执行。来达到并行执行的效果。如下图，1，2，3三个元素，可能会进入2个流中。</p>
+<p><img src="/../images/stream11.png" alt="stream11.png"></p>
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><p>list的stream方法调用的是Collection类的stream方法。所以首先来看这个方法，该方法返回一个顺序流，顺序流中包含了list中的所有元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//该方法返回一个顺序流，顺序流中包含了list中的所有元素。</span></span><br><span class="line"><span class="keyword">default</span> Stream&lt;E&gt; <span class="title function_">stream</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//调用了StreamSupport.stream方法，传入了一个分割迭代器，第二个参数false代表是顺序流，true是平行流。</span></span><br><span class="line">    <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//生成一个分割迭代器，该方法是ArrayList类中的方法。</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Spliterator&lt;E&gt; <span class="title function_">spliterator</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//返回一个ArrayListSpliterator类的实例。</span></span><br><span class="line">    <span class="comment">//实例中包含4个属性</span></span><br><span class="line">    <span class="comment">//list = list</span></span><br><span class="line">    <span class="comment">//index = 0</span></span><br><span class="line">    <span class="comment">//fence = -1</span></span><br><span class="line">    <span class="comment">//expectedModCount = 0</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ArrayListSpliterator</span>&lt;&gt;(<span class="built_in">this</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>接下来来到StreamSupport类的stream方法。通过spliterator来创建一个顺序流。只有当结果态操作开始后，spliterator才会真正开始运行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*  通过spliterator来创建一个顺序流或者并行流，如果parallel=1就是并行流</span></span><br><span class="line"><span class="comment">*  只有当结果态操作开始后，spliterator才会真正开始运行</span></span><br><span class="line"><span class="comment">*  spliterator需要具有不可变性，并发性或延迟绑定性。</span></span><br><span class="line"><span class="comment">*  当前的spliterator就是上面生成的ArrayListSpliterator对象。且包含上面说的4个属性。</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Stream&lt;T&gt; <span class="title function_">stream</span><span class="params">(Spliterator&lt;T&gt; spliterator, <span class="type">boolean</span> parallel)</span> &#123;</span><br><span class="line">    <span class="comment">//参数校验</span></span><br><span class="line">    Objects.requireNonNull(spliterator);</span><br><span class="line">    <span class="comment">//返回一个ReferencePipeline.Head类型的头节点</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ReferencePipeline</span>.Head&lt;&gt;(spliterator,</span><br><span class="line">                                        StreamOpFlag.fromCharacteristics(spliterator),</span><br><span class="line">                                        parallel);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在生成Head对象的时候，第二个参数调用了<code>StreamOpFlag</code>类的<code>fromCharacteristics</code>方法。来看一下这个方法。<br>可以看到有一个判断是否是自然排序的，如果不是自然排序就会走到if里面，也就是不会将spliterator标记为已排序状态。<br>最终返回结果为80</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将spliterator的characteristic bit转换为stream flags</span></span><br><span class="line"><span class="comment">//当前的spliterator就是上面生成的 ArrayListSpliterator 对象。且包含上面说的4个属性。</span></span><br><span class="line"><span class="keyword">static</span> <span class="type">int</span> <span class="title function_">fromCharacteristics</span><span class="params">(Spliterator&lt;?&gt; spliterator)</span> &#123;</span><br><span class="line">    <span class="comment">//调用spliterator对象的characteristics方法。具体看下面 返回的characteristics = 16464</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">characteristics</span> <span class="operator">=</span> spliterator.characteristics();</span><br><span class="line">    <span class="comment">// 16464和4做按位与，即两个都是1才是1，100 0000 0101 0000 &amp; 100 = 000 0000 0000 0000 = 0说明不满足第一个条件，触发短路，走else</span></span><br><span class="line">    <span class="keyword">if</span> ((characteristics &amp; Spliterator.SORTED) != <span class="number">0</span> &amp;&amp; spliterator.getComparator() != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// Do not propagate the SORTED characteristic if it does not correspond</span></span><br><span class="line">        <span class="comment">// to a natural sort order</span></span><br><span class="line">        <span class="comment">// 如果不是自然排序的，则不传播有序状态。</span></span><br><span class="line">        <span class="keyword">return</span> characteristics &amp; SPLITERATOR_CHARACTERISTICS_MASK &amp; ~Spliterator.SORTED;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//将16464和85做按位与，100 0000 0101 0000 &amp; 0101 0101 = 000 0000 0101 0000 = 80</span></span><br><span class="line">        <span class="comment">//返回80</span></span><br><span class="line">        <span class="keyword">return</span> characteristics &amp; SPLITERATOR_CHARACTERISTICS_MASK;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ArrayListSpliterator类的characteristics方法。</span></span><br><span class="line"><span class="comment">//三个数做按位或，即有1就是1，结果是 100 0000 0101 0000 = 16464</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">characteristics</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//Spliterator.ORDERED = 16 = 1 0000</span></span><br><span class="line">    <span class="comment">//Spliterator.SIZED = 64 = 100 0000</span></span><br><span class="line">    <span class="comment">//Spliterator.SUBSIZED = 16384 = 100 0000 0000 0000</span></span><br><span class="line">    <span class="keyword">return</span> Spliterator.ORDERED | Spliterator.SIZED | Spliterator.SUBSIZED;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>接下来看<code>Head</code>类，它是<code>ReferencePipeline</code>类的一个内部类。主要作用是头节点的一些属性和操作。包括生成头节点等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Head</span>&lt;E_IN, E_OUT&gt; <span class="keyword">extends</span> <span class="title class_">ReferencePipeline</span>&lt;E_IN, E_OUT&gt; &#123;</span><br><span class="line">    <span class="comment">//这个是双向链表的头节点。也就是把最先创建的初始流作为头节点。</span></span><br><span class="line">    <span class="comment">//三个参数，第一个参数source = ArrayListSpliterator对象</span></span><br><span class="line">    <span class="comment">//第二个参数是流的标志，80</span></span><br><span class="line">    <span class="comment">//第三个参数是否并行流 0</span></span><br><span class="line">    Head(Spliterator&lt;?&gt; source,</span><br><span class="line">            <span class="type">int</span> sourceFlags, <span class="type">boolean</span> parallel) &#123;</span><br><span class="line">        <span class="comment">//调用了父类的构造函数，就是ReferencePipeline的构造方法。在下面。</span></span><br><span class="line">        <span class="built_in">super</span>(source, sourceFlags, parallel);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//ReferencePipeline的构造方法。参数同上，不再描述。</span></span><br><span class="line">ReferencePipeline(Spliterator&lt;?&gt; source,</span><br><span class="line">                    <span class="type">int</span> sourceFlags, <span class="type">boolean</span> parallel) &#123;</span><br><span class="line">    <span class="comment">//再次调用了父类的构造方法。ReferencePipeline的父类是AbstractPipeline类，放在下面了。</span></span><br><span class="line">    <span class="built_in">super</span>(source, sourceFlags, parallel);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//AbstractPipeline类的构造方法。构造一个stream的头节点。</span></span><br><span class="line">AbstractPipeline(Spliterator&lt;?&gt; source,</span><br><span class="line">                     <span class="type">int</span> sourceFlags, <span class="type">boolean</span> parallel) &#123;</span><br><span class="line">    <span class="comment">//头节点的头指针为空。</span></span><br><span class="line">    <span class="built_in">this</span>.previousStage = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">//数据 = ArrayListSpliterator对象</span></span><br><span class="line">    <span class="built_in">this</span>.sourceSpliterator = source;</span><br><span class="line">    <span class="comment">//头节点的数据 指向自己。</span></span><br><span class="line">    <span class="built_in">this</span>.sourceStage = <span class="built_in">this</span>;</span><br><span class="line">    <span class="comment">//标志位 = 80 &amp; 85 = 80 二进制 0101 0000 &amp; 0101 0101 = 0101 0000 = 80</span></span><br><span class="line">    <span class="built_in">this</span>.sourceOrOpFlags = sourceFlags &amp; StreamOpFlag.STREAM_MASK;</span><br><span class="line">    <span class="comment">// The following is an optimization of:</span></span><br><span class="line">    <span class="comment">// StreamOpFlag.combineOpFlags(sourceOrOpFlags, StreamOpFlag.INITIAL_OPS_VALUE);</span></span><br><span class="line">    <span class="comment">//sourceOrOpFlags &lt;&lt; 1 = 160  左移一位就是 * 2</span></span><br><span class="line">    <span class="comment">//～160 = -161  按位去反</span></span><br><span class="line">    <span class="comment">// -161 &amp; 255 = 95</span></span><br><span class="line">    <span class="comment">// combinedFlags = 95</span></span><br><span class="line">    <span class="built_in">this</span>.combinedFlags = (~(sourceOrOpFlags &lt;&lt; <span class="number">1</span>)) &amp; StreamOpFlag.INITIAL_OPS_VALUE;</span><br><span class="line">    <span class="comment">// 双向链表深度 = 0 ，因为现在只有头节点。</span></span><br><span class="line">    <span class="built_in">this</span>.depth = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 是否并行流 = 0 不是</span></span><br><span class="line">    <span class="built_in">this</span>.parallel = parallel;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>list.stream()函数的源码就完了。主要调用了构造函数，构造了一个含有list数据的头节点，头指针指向空，next指针指向自己。完成了流的初始化。当前数据结构如下。</p>
+<p><img src="/../images/stream2.png" alt="stream2.png"></p>
+<h3 id="stream的中间态"><a href="#stream的中间态" class="headerlink" title="stream的中间态"></a>stream的中间态</h3><p>中间态的具体源码和流程在后面介绍，这里只介绍中间态的作用。</p>
+<p>中间态的主要作用是构建双向链表的中间节点。一个操作对应一个节点。比如map，就会创建一个节点。其中pre指针指向前一个节点也就是头节点。而头节点的next指针指向map节点。</p>
+<p>filter操作的时候同样创建一个节点，pre指针指向上一个操作也就是map节点。map节点的next指针指向filter节点。</p>
+<p>每个中间态节点中都存储了操作，也就是中间态的时候传入的函数。而数据则全部在头节点中。</p>
+<p>比如下面这样：</p>
+<p><img src="/../images/stream4.png" alt="strem"></p>
+<p>每个中间态节点其实又分成两种</p>
+<ul>
+<li>有状态节点</li>
+<li>无状态节点</li>
+</ul>
+<p>类图如下：</p>
+<p><img src="/../images/stream12.png" alt="stream12"></p>
+<h3 id="stream的结果态"><a href="#stream的结果态" class="headerlink" title="stream的结果态"></a>stream的结果态</h3><p>结果态的具体源码和流程在后面介绍，这里只介绍结果态的作用。</p>
+<p>结果态的主要作用有三个</p>
+<ol>
+<li>构造结果态节点</li>
+<li>构造sink链表</li>
+<li>执行流。</li>
+</ol>
+<p>先说第一个，结果态节点是<code>ReduceOp</code>对象。这个结果态节点中包含了一个<code>makeSink</code>方法，用来构建结果态的sink节点。结果态的sink节点是一个<code>ReducingSink</code>对象。</p>
+<p>第二个，当结果态节点和结果态的sink节点构造完成以后。接下来会根据之前构建好的双向链表来生成对应的sink链表。</p>
+<p>一开始的双向链表我们知道是这样的</p>
+<p><img src="/../images/stream4.png" alt="strem"></p>
+<p>而sink链表则是反过来了，根据双向链表从后向前通过pre指针不断向前，把每个节点包裹在sink节点中并通过<code>downstream</code>指针来指向下个节点。这里因为在第一步的时候把源数据取出来了，所以sink中不包含头节点。创建完后如图所示：</p>
+<p><img src="/../images/stream6.png" alt="strem"></p>
+<p>第三步才是真正的执行流。根据sink链表来执行，每次把元素传递给第一个sink也就是map操作，当第一个sink节点处理完以后通过downstream流动到下一个sink节点执行。不断通过downsteram流动，直到最后到结果态的sink执行完以后。再次把第二个元素进行流动执行。直至所有元素执行完毕。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>因为是通过自顶向下的方式来了解stream。所以这里主要介绍了stream的执行流程和初始化的源码分析。中间态和结果态的源码分析放在了后面。</p>
+<p>在执行流程中可以看到。首先创建了一个双向链表，然后在根据双向链表创建了sink链表。最后通过sink链表进行执行流的操作。也可以看出来确实是流动，传播，充满了stream的味道。</p>
+<p>从这里也能看出来为何一开始是双向链表而不是单向的，因为要通过pre指针构造sink链表。</p>
+<p>但是这里就有一个问题了，为什么不直接用一开始的双向链表，而要在创建一个sink链表呢？</p>
+<p>我个人觉得有几个原因：</p>
+<ol>
+<li>因为当前处于结果态节点，想从头流动执行，需要当前指针先指向头节点，所以必须遍历一遍。</li>
+<li>重新构建一个纯净的sink链表，来达到<code>不变性</code>的性质。保持之前的数据和节点等不可变。</li>
+<li>双向链表只负责存储数据和操作。真正的执行通过sink链表来执行，达到<code>单一职责</code>和<code>分层清晰</code>。</li>
+<li>其中或许还有并行流并发的问题。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E2%80%98stream/" rel="tag"># ‘stream'</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html" rel="prev" title="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析">
+      <i class="fa fa-chevron-left"></i> JAVA-LocalDateTime时间格式化，转换时间戳和源码分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/JAVA-stream%E4%B8%AD%E9%97%B4%E6%80%81%E5%8E%9F%E7%90%86.html" rel="next" title="JAVA-stream中间态原理">
+      JAVA-stream中间态原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#stream"><span class="nav-number">1.</span> <span class="nav-text">stream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stream%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.0.1.</span> <span class="nav-text">stream的初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">类介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">执行流程介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">流介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E6%B5%81"><span class="nav-number">1.0.1.3.1.</span> <span class="nav-text">顺序流</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E6%B5%81"><span class="nav-number">1.0.1.3.2.</span> <span class="nav-text">并行流</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stream%E7%9A%84%E4%B8%AD%E9%97%B4%E6%80%81"><span class="nav-number">1.0.2.</span> <span class="nav-text">stream的中间态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stream%E7%9A%84%E7%BB%93%E6%9E%9C%E6%80%81"><span class="nav-number">1.0.3.</span> <span class="nav-text">stream的结果态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

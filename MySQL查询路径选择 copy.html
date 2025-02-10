@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL索引失效大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 什么是MySQL索引失效？MySQL 索引失效是指尽管表中已经建立了索引，但在某些查询操作中，MySQL 的查询优化器选择">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL学习路线">
+<meta property="og:url" content="https://thepatterraining.github.io/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="MySQL索引失效大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 什么是MySQL索引失效？MySQL 索引失效是指尽管表中已经建立了索引，但在某些查询操作中，MySQL 的查询优化器选择">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-6.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-7.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql2-8.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2023-04-26T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T03:26:16.733Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql2-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL学习路线 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL学习路线
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-26 10:12:47" itemprop="dateCreated datePublished" datetime="2023-04-26T10:12:47+08:00">2023-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 11:26:16" itemprop="dateModified" datetime="2025-01-26T11:26:16+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CMU15445/" itemprop="url" rel="index"><span itemprop="name">CMU15445</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL学习路线" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="MySQL索引失效"><a href="#MySQL索引失效" class="headerlink" title="MySQL索引失效"></a>MySQL索引失效</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
+<p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
+<p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
+<p>关注我一起学习！文末有惊喜哦！</p>
+<h2 id="什么是MySQL索引失效？"><a href="#什么是MySQL索引失效？" class="headerlink" title="什么是MySQL索引失效？"></a>什么是MySQL索引失效？</h2><p>MySQL 索引失效是指尽管表中已经建立了索引，但在某些查询操作中，MySQL 的查询优化器选择不使用这些索引，而是采用全表扫描（Full Table Scan）或其他非索引扫描方式来执行查询。这种情况通常会导致查询性能下降，因为全表扫描需要扫描表中的每一行数据，而不是利用索引快速定位数据。</p>
+<p>这里就要介绍一下MySQL的整体架构了。</p>
+<p><img src="/../images/mysql/mysql2-1.png" alt="架构"></p>
+<ul>
+<li>连接器：MySQL连接器（MySQL Connector）是用于连接MySQL数据库的客户端库，它允许应用程序与MySQL数据库进行通信。这些连接器提供了API（应用程序编程接口），使得开发者可以在各种编程语言中轻松地执行SQL语句、管理数据库连接、处理查询结果等。</li>
+<li>分析器：MySQL分析器才算真正进入了MySQL里面。它会分析词法和语法，如果你的SQL语句不对，就会看到一些报错，例如语法错误。</li>
+<li>优化器：MySQL优化器是本文的重点内容，因为这里涉及了MySQL的一些优化，其中就包括了索引选择，也是导致索引失效的重要原因。在这一步也就确定了查询计划。</li>
+<li>执行器：MySQL执行器会根据优化器输出的查询计划来执行这个查询计划，会调用底层的存储引擎进行执行。</li>
+<li>存储引擎：MySQL支持多种存储引擎，每个存储引擎有不同的特点。其中InnoDB引擎因为支持事务等优点，现在是MySQL的默认存储引擎。</li>
+</ul>
+<h3 id="连接器"><a href="#连接器" class="headerlink" title="连接器"></a>连接器</h3><p>MySQL连接器（MySQL Connector）是用于连接MySQL数据库的客户端库，它允许应用程序与MySQL数据库进行通信。这些连接器提供了API（应用程序编程接口），使得开发者可以在各种编程语言中轻松地执行SQL语句、管理数据库连接、处理查询结果等。</p>
+<p>当我们最开始连接数据库实例的时候，我们要输入用户名密码，这时候连接器会从数据库的用户信息中判断你是否有权限连接数据库进行操作，有哪些权限。</p>
+<p>如果你输入的用户名密码错误或者没有权限，那么你会收到下面的报错信息。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access denied <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>(<span class="keyword">using</span> password: YES)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/mysql/mysql2-2.png" alt="架构"></p>
+<h3 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h3><p>连接成功以后。分析器会分析这个语句的词法，语法，语义这些信息。</p>
+<p>通俗来讲就是看到select,update这些关键字，知道你要来干啥，看看你是不是来搞破坏的，来捣蛋的。</p>
+<p>看看你是查询哪个表啊，有什么条件啊，这些玩意。</p>
+<p>最后会输出一个词法树。</p>
+<p>当然了这一步还会分析你的语法有没有错误，比如你把select打错试试。打成elect，会出现下面的报错信息</p>
+<blockquote>
+<p>You have an error in your SQL syntax: check the maual that corresponds to your MySQL server version for the right syntax to use near ‘elect * from users’ at line 1</p>
+</blockquote>
+<p><img src="/../images/mysql/mysql2-3.png" alt="架构"></p>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器负责几个事情</p>
+<ul>
+<li>优化SQL：比如你写了一个很不友好的SQL，如<code>select * from a where 1 =1</code>,优化器会将1&#x3D;1去掉。还有比如括号的删除，如<code>select * from a where ((a AND b) AND c OR (((a AND b) AND (c AND d))))</code>改写成<code>select * from a where (a AND b AND c) OR (a AND b AND c AND d)</code>。等等。</li>
+<li>一些内部的优化器：下面列出的是部分，更多的可以参考<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.4/en/optimization.html">MySQL官方文档优化器部分</a><ul>
+<li>谓词下推：即where条件下推到扫描表的时候执行，而不是扫描表之后执行。</li>
+<li>范围优化：对于BTREE和HASH索引，当使用&#x3D;、&lt;&#x3D;&gt;、IN（）、IS NULL或IS NOT NULL运算符时，键部分与常量值的比较是范围条件。此外，对于BTREE索引，当使用&gt;，&lt;，&gt;&#x3D;，&lt;&#x3D;，BETWEEN，！&#x3D; 、或&lt;&gt;运算符，或者LIKE比较（如果LIKE的参数是不以小写字符开头的常量字符串）。对于所有索引类型，多个范围条件与OR或AND组合形成范围条件。</li>
+<li>index merge优化：index merge就是多个索引并发扫描，再将扫描结果合并。</li>
+<li>hash join优化：使用hash join来代替Nested Loop Join算法，能大幅度提升join速度。</li>
+<li>Is Null优化：可以对<code>where a is null</code>这种条件进行优化，比如该字段设置了<code>not null</code>，那么这个条件就会被删除。</li>
+<li>order by + limit优化：使用<code>Top N</code>排序</li>
+<li>group by 优化：优化group by语句。</li>
+<li>子查询物化：将子查询的内容物化保存起来。</li>
+</ul>
+</li>
+<li>通过成本模型、直方图等信息生成不同的执行路径。</li>
+<li>对比执行路径的内容，如取样等，进行选择最终的执行路径。生成查询计划。</li>
+</ul>
+<p>这里简单的介绍一些mysql内部的优化器，以了解mysql内部做了哪些优化手段。</p>
+<p>最后会介绍mysql的成本模型、直方图信息等。结合实际的例子来给大家展示索引选择的问题。</p>
+<h4 id="谓词下推优化"><a href="#谓词下推优化" class="headerlink" title="谓词下推优化"></a>谓词下推优化</h4><p>谓词下推优化（Predicate Pushdown Optimization）是一种查询优化技术，它将查询中的过滤条件（谓词）尽可能地推送到数据访问的早期阶段，以减少数据扫描的范围，从而提高查询性能。<br>在数据库查询中，谓词通常是指WHERE子句中的条件。谓词下推优化的目的是让这些条件在数据被读取或处理的早期阶段就发挥作用，避免不必要的数据处理和传输。</p>
+<p>在没有谓词下推优化的情况下，数据库会先读取所有数据，然后在内存中应用过滤条件。这可能导致大量的数据被加载到内存中，增加了I&#x2F;O操作和内存使用。<br>通过谓词下推优化，数据库会在数据读取阶段就应用过滤条件，只加载满足条件的数据，从而减少数据的读取量和处理量。</p>
+<p>假设存在<code>table_a</code>表，表里面有10条数据，<code>a = 1</code>的数据有一个，具体什么意思呢，我们来看一个SQL语句。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a,b <span class="keyword">from</span> table_a <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如果没有谓词下推优化的话，执行树如下。</p>
+<p><img src="/../images/mysql/mysql2-4.png" alt="架构"></p>
+<p>其执行顺序如下：</p>
+<ol>
+<li>扫描<code>table_a</code>表的10条数据，将10条数据传递给where过滤节点。</li>
+<li>where过滤操作进行过滤，过滤出<code>a = 1</code>条件的1条数据，将这个数据传递给列选择节点。</li>
+<li>列选择节点选择这条数据的2列，将结果返回。</li>
+</ol>
+<p>其内存中要存储10条数据。</p>
+<p>而有了谓词下推优化以后，执行树如下。</p>
+<p><img src="/../images/mysql/mysql2-5.png" alt="架构"></p>
+<p>执行顺序如下：</p>
+<ol>
+<li>扫描<code>table_a</code>表的10条数据，过滤出符合<code>a = 1</code>条件的这一个数据。将这个数据传给列选择节点。</li>
+<li>列选择节点选择这条数据的2列，将结果返回。</li>
+</ol>
+<h4 id="范围优化"><a href="#范围优化" class="headerlink" title="范围优化"></a>范围优化</h4><p>对于BTREE和HASH索引，当使用&#x3D;、&lt;&#x3D;&gt;、IN（）、IS NULL或IS NOT NULL运算符时，键部分与常量值的比较是范围条件。此外，对于BTREE索引，当使用&gt;，&lt;，&gt;&#x3D;，&lt;&#x3D;，BETWEEN，！&#x3D; 、或&lt;&gt;运算符，或者LIKE比较（如果LIKE的参数是不以小写字符开头的常量字符串）。对于所有索引类型，多个范围条件与OR或AND组合形成范围条件。</p>
+<p>给定数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">key_part1  key_part2  key_part3</span><br><span class="line">  NULL       1          &#x27;abc&#x27;</span><br><span class="line">  NULL       1          &#x27;xyz&#x27;</span><br><span class="line">  NULL       2          &#x27;foo&#x27;</span><br><span class="line">   1         1          &#x27;abc&#x27;</span><br><span class="line">   1         1          &#x27;xyz&#x27;</span><br><span class="line">   1         2          &#x27;abc&#x27;</span><br><span class="line">   2         1          &#x27;aaa&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>执行where key_part1&#x3D; 1，其扫描范围为 1,负无穷，负无穷到 1,正无穷，正无穷</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(1,-inf,-inf) &lt;= (key_part1,key_part2,key_part3) &lt; (1,+inf,+inf)</span><br></pre></td></tr></table></figure>
+<p>即覆盖了这三行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1         1          &#x27;abc&#x27;</span><br><span class="line">1         1          &#x27;xyz&#x27;</span><br><span class="line">1         2          &#x27;abc&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>index dives，优化器在范围的两端进行dives, 可以帮助优化器更准确的评估扫描的行数，index dives提供了更准确的行估计，但是随着比较值数量的增加，更加耗时，使用统计信息的准确性不如index dives，但允许对大值列表进行更快的行估计。</p>
+<p>eq_range_index_dive_limit系统变量使您能够配置优化器从一个行估计策略切换到另一个行估计策略时的值数量。要允许使用索引潜水来比较最多N个相等范围，请将eq_range_index_dive_limit设置为N+ 1。要禁用统计信息并始终使用索引潜水而不管N，请将eq_range_index_dive_limit设置为0。</p>
+<p>若要更新表索引统计信息以获得最佳估计值，请使用ANALYZE TABLE。</p>
+<p>skip scan,比如有索引(f1,f2)，都知道最左前缀原则，所以一般where f2 &gt; 40是不走索引的，skip scan可以让他走索引，通过构造f1 &#x3D; 1 and f2 &gt; 40，扫描完以后再扫描 f1 &#x3D; 2 and f2 &gt; 40，以此类推，可以通过explain来看extra列是否有skip scan</p>
+<p>in优化，in查询可以用如下形式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT ... FROM t1 WHERE ( col_1, col_2 ) IN (( &#x27;a&#x27;, &#x27;b&#x27; ), ( &#x27;c&#x27;, &#x27;d&#x27; ));</span><br></pre></td></tr></table></figure>
+
+<p>range_optimizer_max_size_size系统变量可以设置优化器使用的内存</p>
+<h4 id="index-merge-优化"><a href="#index-merge-优化" class="headerlink" title="index merge 优化"></a>index merge 优化</h4><p>index merge就是多个索引并发扫描，再将扫描结果合并</p>
+<p>索引合并不适用于全文索引。</p>
+<p>索引合并访问方法检索具有多个范围扫描的行，并将其结果合并为一个。此访问方法只合并单个表的索引扫描，而不合并多个表的扫描。合并可以产生其底层扫描的并集、交集或交集的并集。</p>
+<p>可以使用索引合并的查询示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl_name WHERE key1 = 10 OR key2 = 20;</span><br><span class="line"></span><br><span class="line">SELECT * FROM tbl_name</span><br><span class="line">  WHERE (key1 = 10 OR key2 = 20) AND non_key = 30;</span><br><span class="line"></span><br><span class="line">SELECT * FROM t1, t2</span><br><span class="line">  WHERE (t1.key1 IN (1,2) OR t1.key2 LIKE &#x27;value%&#x27;)</span><br><span class="line">  AND t2.key1 = t1.some_col;</span><br><span class="line"></span><br><span class="line">SELECT * FROM t1, t2</span><br><span class="line">  WHERE t1.key1 = 1</span><br><span class="line">  AND (t2.key1 = t1.some_col OR t2.key2 = t1.some_col2);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果你的查询有一个带有深度AND&#x2F;OR嵌套的复杂WHERE子句，并且MySQL没有选择最佳计划，请尝试使用以下恒等转换来分发术语：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(x AND y) OR z =&gt; (x OR z) AND (y OR z)</span><br><span class="line">(x OR y) AND z =&gt; (x AND z) OR (y AND z)</span><br></pre></td></tr></table></figure>
+
+<p>在EXPLAIN输出中，Index Merge方法在type列中显示为index_merge。在本例中，key列包含使用的索引列表，key_len包含这些索引的最长键部分列表。</p>
+<p>索引合并访问方法有几种算法，它们显示在EXPLAIN输出的Extra字段中：</p>
+<ul>
+<li>intersect：对多个and条件生效</li>
+<li>union：对多个or条件生效</li>
+<li>sort_union：sort-union算法和union算法之间的区别在于，sort-union算法必须首先获取所有行的行ID，并在返回任何行之前对其进行排序。</li>
+</ul>
+<p>索引合并的使用取决于optimizer_switch系统变量的index_merge、index_merge_intersection、index_merge_union和index_merge_sort_union标志的值。默认情况下，所有这些标志都是打开的。</p>
+<h4 id="hash-join"><a href="#hash-join" class="headerlink" title="hash join"></a>hash join</h4><p>默认情况下，MySQL尽可能使用哈希连接。可以使用BNL和NO_BNL优化器提示之一来控制是否使用散列连接。</p>
+<p>hash join比嵌套join快的多，首先创建hash表，在循环另一个表进行hash，判断是否相等</p>
+<p>可以使用join_buffer_size系统变量控制哈希连接的内存使用量;哈希连接使用的内存量不能超过此值。当哈希连接所需的内存超过可用量时，MySQL会使用磁盘上的文件来处理。如果发生这种情况，您应该注意，如果哈希连接无法容纳内存并且它创建的文件比为open_files_limit设置的文件多，则连接可能不会成功。要避免此类问题，请进行以下更改之一：</p>
+<ul>
+<li>增加join_buffer_size，使哈希连接不会溢出到磁盘。</li>
+<li>增加open_files_limit。</li>
+</ul>
+<h4 id="成本模型"><a href="#成本模型" class="headerlink" title="成本模型"></a>成本模型</h4><p>MySQL成本模型（Cost Model）是MySQL查询优化器（Query Optimizer）用来评估不同查询执行计划的成本（Cost）的一种机制。成本模型通过估算每种执行计划所需的资源（如CPU、I&#x2F;O、内存等）来选择最优的执行计划。</p>
+<p>MySQL的成本模型主要考虑以下几个方面：</p>
+<ol>
+<li>CPU成本：<ul>
+<li>评估执行计划中每个操作（如比较、计算、排序等）所需的CPU时间。</li>
+<li>例如，WHERE子句中的条件计算、JOIN操作中的匹配等。</li>
+</ul>
+</li>
+<li>I&#x2F;O成本：<ul>
+<li>评估执行计划中每个操作所需的磁盘I&#x2F;O操作次数。</li>
+<li>例如，全表扫描、索引扫描、数据页的读取等。</li>
+<li>I&#x2F;O成本通常是最主要的成本因素之一，因为磁盘I&#x2F;O操作相对较慢。</li>
+</ul>
+</li>
+<li>内存成本：<ul>
+<li>评估执行计划中每个操作所需的内存使用量。</li>
+<li>例如，排序操作、临时表的创建等。</li>
+</ul>
+</li>
+<li>网络成本：<ul>
+<li>评估执行计划中每个操作所需的网络传输量。</li>
+<li>例如，分布式查询中跨节点的数据传输。</li>
+</ul>
+</li>
+<li>数据分布：<ul>
+<li>评估数据的分布情况，如表的大小、索引的覆盖率等。</li>
+<li>数据分布会影响I&#x2F;O操作的次数和效率。</li>
+</ul>
+</li>
+</ol>
+<p>其中大部分的成本都是固定的，比如CPU成本、IO成本、内存成本。这个是根据你服务器的配置决定的。</p>
+<p>所以，主要关注的是数据分布。</p>
+<p>MySQL的数据分布使用<code>直方图</code>来记录。</p>
+<h4 id="直方图"><a href="#直方图" class="headerlink" title="直方图"></a>直方图</h4><p><code>column_statistics数据字典表</code>存储有关列值的<code>直方图</code>统计信息，供优化器在构造查询执行计划时使用。要执行直方图管理，请使用<code>ANALYZE TABLE</code>语句。</p>
+<ul>
+<li>该表包含除几何类型（空间数据）和JSON之外的所有数据类型的列的统计信息。</li>
+<li>该表是持久的，因此不必在每次服务器启动时都创建列统计信息。</li>
+<li>服务器对表执行更新，用户不执行。</li>
+</ul>
+<p>用户不能直接访问<code>column_statistics</code>表，因为它是<code>数据字典</code>的一部分。直方图信息可使用 <code>INFORMATION_SCHEMA.COLUMN_STATISTICS</code> 获得，它是作为数据字典表上的视图实现的。<code>COLUMN_STATISTICS</code>包含以下列：</p>
+<ul>
+<li>SCHEMA_NAME、TABLE_NAME、COLUMN_NAME：应用统计信息的模式、表和列的名称。</li>
+<li>HISTORIO：描述列统计信息的JSON值，存储为直方图。</li>
+</ul>
+<p>直方图实例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;buckets&quot;: [</span><br><span class="line">    [</span><br><span class="line">      1,</span><br><span class="line">      0.3333333333333333</span><br><span class="line">    ],</span><br><span class="line">    [</span><br><span class="line">      2,</span><br><span class="line">      0.6666666666666666</span><br><span class="line">    ],</span><br><span class="line">    [</span><br><span class="line">      3,</span><br><span class="line">      1</span><br><span class="line">    ]</span><br><span class="line">  ],</span><br><span class="line">  &quot;null-values&quot;: 0,</span><br><span class="line">  &quot;last-updated&quot;: &quot;2017-03-24 13:32:40.000000&quot;,</span><br><span class="line">  &quot;sampling-rate&quot;: 1,</span><br><span class="line">  &quot;histogram-type&quot;: &quot;singleton&quot;,</span><br><span class="line">  &quot;number-of-buckets-specified&quot;: 128,</span><br><span class="line">  &quot;data-type&quot;: &quot;int&quot;,</span><br><span class="line">  &quot;collation-id&quot;: 8</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>buckets：直方图桶。桶结构取决于直方图类型。</li>
+<li>null-values：一个介于0.0和1.0之间的数字，表示<code>SQL NULL</code>值的列值的分数。如果为0，则该列不包含NULL值。</li>
+<li>last-updated：直方图生成时，以 <code>YYYY-MM-DD hh:mm:ss.uuuuuu</code> 格式的UTC值表示。</li>
+<li>sampling-rate：0.0到1.0之间的数字，表示为创建直方图而采样的数据比例。值为1表示已读取所有数据（无采样）。</li>
+<li>histogram-type：直方图类型：<ul>
+<li>singleton：一个bucket表示列中的一个值。当列中的非重复值数量小于或等于生成直方图的<code>ANALYZE TABLE</code>语句中指定的存储桶数量时，将创建此直方图类型。</li>
+<li>equi-height：一个桶表示一个值范围。当列中的非重复值数量大于生成直方图的<code>ANALYZE TABLE</code>语句中指定的存储桶数量时，将创建此直方图类型。</li>
+</ul>
+</li>
+<li>number-of-buckets-specified：生成直方图的<code>ANALYZE TABLE</code>语句中指定的<code>桶数</code>。</li>
+<li>data-type：此直方图包含的数据类型。在将直方图从持久性存储器阅读和解析到内存中时，这是需要的。该值是int、uint（无符号整数）、double、decimal、datetime或string（包括字符和二进制字符串）之一。</li>
+<li>collation-id：直方图数据的归类ID。当数据类型值是字符串时，它最有意义。值对应于信息架构<code>COLLATIONS</code>表中的ID列值。</li>
+</ul>
+<p>直方图统计信息主要用于非索引列。将索引添加到直方图统计信息适用的列还可以帮助优化器进行行估计。</p>
+<p>优化器更喜欢范围优化器的行估计，而不是从直方图统计信息中获得的行估计。如果优化器确定范围优化器适用，则不使用直方图统计信息。</p>
+<p>对于已建立索引的列，可以使用索引潜水(index dives)获得行估计值以进行相等比较。</p>
+<p>在某些情况下，使用直方图统计信息可能不会改善查询执行（例如，如果统计信息过期）。要检查是否是这种情况，请使用<code>ANALYZE TABLE</code>重新生成直方图统计信息，然后再次运行查询。</p>
+<p>这么看这些概念内容，可能很难理解直方图到底是干啥的，下面给出一个例子方便理解。</p>
+<h5 id="直方图示例"><a href="#直方图示例" class="headerlink" title="直方图示例"></a>直方图示例</h5><h2 id="虽然直方图的字段很多，但其核心的字段只有几个"><a href="#虽然直方图的字段很多，但其核心的字段只有几个" class="headerlink" title="虽然直方图的字段很多，但其核心的字段只有几个"></a>虽然直方图的字段很多，但其核心的字段只有几个</h2><p>创建一个测试表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_a(id <span class="type">int</span> auto_increment,a <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="number">0</span>, b <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="string">&#x27;&#x27;</span>, <span class="keyword">primary</span> key(id));</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们插入几个数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> test_a (a, b) <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;A1&#x27;</span>),</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;B2&#x27;</span>),</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;C3&#x27;</span>),</span><br><span class="line">(<span class="number">4</span>, <span class="string">&#x27;D4&#x27;</span>),</span><br><span class="line">(<span class="number">5</span>, <span class="string">&#x27;E5&#x27;</span>),</span><br><span class="line">(<span class="number">6</span>, <span class="string">&#x27;F6&#x27;</span>),</span><br><span class="line">(<span class="number">7</span>, <span class="string">&#x27;G7&#x27;</span>),</span><br><span class="line">(<span class="number">8</span>, <span class="string">&#x27;H8&#x27;</span>),</span><br><span class="line">(<span class="number">9</span>, <span class="string">&#x27;I9&#x27;</span>),</span><br><span class="line">(<span class="number">10</span>, <span class="string">&#x27;J10&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接下来生成直方图信息。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ANALYZE <span class="keyword">TABLE</span> test_a <span class="keyword">update</span>  HISTOGRAM <span class="keyword">ON</span> a <span class="keyword">WITH</span> <span class="number">5</span> BUCKETS;</span><br></pre></td></tr></table></figure>
+
+<p>查询直方图信息。这里的<code>SCHEMA_NAME</code>是数据库的名称，TABLE_NAME是数据表的名称。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> INFORMATION_SCHEMA.COLUMN_STATISTICS <span class="keyword">where</span> SCHEMA_NAME <span class="operator">=</span> <span class="string">&#x27;test1&#x27;</span> <span class="keyword">and</span> TABLE_NAME <span class="operator">=</span> <span class="string">&#x27;test_a&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>查询结果：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">+</span><span class="comment">-------------+------------+-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> SCHEMA_NAME <span class="operator">|</span> TABLE_NAME <span class="operator">|</span> COLUMN_NAME <span class="operator">|</span> HISTOGRAM</span><br><span class="line">                                                                                                                                                   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+------------+-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> test1       <span class="operator">|</span> test_a     <span class="operator">|</span> a           <span class="operator">|</span> &#123;&quot;buckets&quot;: [[<span class="number">1</span>, <span class="number">2</span>, <span class="number">0.2</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">0.4</span>, <span class="number">2</span>], [<span class="number">5</span>, <span class="number">6</span>, <span class="number">0.6</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">0.8</span>, <span class="number">2</span>], [<span class="number">9</span>, <span class="number">10</span>, <span class="number">1.0</span>, <span class="number">2</span>]], &quot;data-type&quot;: &quot;int&quot;, &quot;auto-update&quot;: <span class="literal">false</span>, &quot;null-values&quot;: <span class="number">0.0</span>, &quot;collation-id&quot;: <span class="number">8</span>, &quot;last-updated&quot;: &quot;2025-01-25 13:01:57.129967&quot;, &quot;sampling-rate&quot;: <span class="number">1.0</span>, &quot;histogram-type&quot;: &quot;equi-height&quot;, &quot;number-of-buckets-specified&quot;: <span class="number">5</span>&#125; <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------+------------+-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+<p>我们来看一下直方图的信息。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;buckets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">[</span><span class="number">1</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">,</span> <span class="number">0.2</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="number">3</span><span class="punctuation">,</span> <span class="number">4</span><span class="punctuation">,</span> <span class="number">0.4</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="number">5</span><span class="punctuation">,</span> <span class="number">6</span><span class="punctuation">,</span> <span class="number">0.6</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="number">7</span><span class="punctuation">,</span> <span class="number">8</span><span class="punctuation">,</span> <span class="number">0.8</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">]</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="number">9</span><span class="punctuation">,</span> <span class="number">10</span><span class="punctuation">,</span> <span class="number">1.0</span><span class="punctuation">,</span> <span class="number">2</span><span class="punctuation">]</span><span class="punctuation">]</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;data-type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;int&quot;</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;auto-update&quot;</span><span class="punctuation">:</span> <span class="keyword">false</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;null-values&quot;</span><span class="punctuation">:</span> <span class="number">0.0</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;collation-id&quot;</span><span class="punctuation">:</span> <span class="number">8</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;last-updated&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-01-25 13:01:57.129967&quot;</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;sampling-rate&quot;</span><span class="punctuation">:</span> <span class="number">1.0</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;histogram-type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;equi-height&quot;</span><span class="punctuation">,</span> </span><br><span class="line"><span class="attr">&quot;number-of-buckets-specified&quot;</span><span class="punctuation">:</span> <span class="number">5</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>buckets：直方图桶。桶结构取决于直方图类型。</li>
+<li>null-values：0.0,表示没有null值，这是因为我们使用了<code>not null</code>声明字段。</li>
+<li>last-updated：更新时间，没啥好说的。</li>
+<li>sampling-rate：1.0 获取了所有数据，因为我们只有10条数据，很少。</li>
+<li>histogram-type：直方图类型：equi-height，因为<code>a</code>列有10个值，都不重复，而桶数量我们用的是5，所以生成了这个类型。</li>
+<li>number-of-buckets-specified：生成直方图的<code>ANALYZE TABLE</code>语句中指定的<code>桶数</code>。</li>
+<li>data-type：列a是int类型</li>
+<li>collation-id：直方图数据的归类ID。当数据类型值是字符串时，它最有意义。值对应于信息架构<code>COLLATIONS</code>表中的ID列值。</li>
+</ul>
+<p>桶里面有4个数据</p>
+<ul>
+<li>最小值</li>
+<li>最大值</li>
+<li>密度</li>
+<li>高度</li>
+</ul>
+<p>比如，查询语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test_a <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p><code>a = 5</code>的数据在第三个桶里面，最小值5，最大值6，密度0.6，高度2.</p>
+<p>根据计算公式<code>预估行数 = 密度 * 高度</code>来计算0.6 * 2，预估行数就是1.2，也就是1-2行。</p>
+<p><img src="/../images/mysql/mysql2-6.jpg" alt="架构"></p>
+<p>可以看到查询计划里面的rows是10行，这是因为类型是全表扫描，但是后面的<code>filtered</code>字段是10，表示的意思是会过滤出来 <code>10 * 10% = 10 * 0.1 = 1</code>行。</p>
+<p>也就是最终会查出1行结果。</p>
+<p>通常来说，对于没有索引的列，MySQL就是这样来预估行数的，并且通过这个结果来进行选择执行路线。</p>
+<h3 id="执行路线选择"><a href="#执行路线选择" class="headerlink" title="执行路线选择"></a>执行路线选择</h3><p>什么叫路线选择呢，还是上面那个表，我们现在有如下SQL语句。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a,b <span class="keyword">from</span> test_a <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">1</span> <span class="keyword">and</span> b <span class="operator">=</span> <span class="string">&#x27;A1&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>根据表数据，其实我们知道，查出来的结果还是1条。但是对于mysql来说，却有不同的执行方式。</p>
+<p>第一种执行方式，先查<code>a=1</code>在查询<code>b=&#39;A1&#39;</code>的数据。执行树如下。</p>
+<p><img src="/../images/mysql/mysql2-7.jpg" alt="架构"></p>
+<p>第二种执行方式，先查<code>b=&#39;A1&#39;</code>在查询 <code>a=1</code>。执行树如下。</p>
+<p><img src="/../images/mysql/mysql2-8.jpg" alt="架构"></p>
+<p>目前看着这两种方式都没啥问题。</p>
+<p>但是，我们再插入一条数据呢？</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> test_a (a, b) <span class="keyword">VALUES</span></span><br><span class="line">(<span class="number">11</span>, <span class="string">&#x27;A1&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就知道了，方案1， 会直接过滤出1行数据，然后在过滤，这样显然比方案2更好。</p>
+<p>因为方案2会先查出2条数据，再次过滤。</p>
+<p>这就是不同的执行路线带来的性能区别。当然了，我们这里的例子只是打个比方，实际上<code>谓词下推</code>优化以后，这两个条件都是和扫描表一起执行的。</p>
+<p>这个例子只是让你明白不同的路线选择而已。</p>
+<p>对于<code>join</code>查询来说，会有更多的选择。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><p>以上就是今天的内容了，大家有任何疑问可以打在评论区，一起交流～</p>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
+<p>发送“电子书”即可领取价值上千的电子书资源。</p>
+<p>部分电子书如图所示。</p>
+<p><img src="/../images/bottom1.png" alt="概念学习"></p>
+<p><img src="/../images/bottom2.png" alt="概念学习"></p>
+<p><img src="/../images/bottom3.png" alt="概念学习"></p>
+<p><img src="/../images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9.html" rel="prev" title="MySQL查询路径选择">
+      <i class="fa fa-chevron-left"></i> MySQL查询路径选择
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/MySQL%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF.html" rel="next" title="MySQL学习路线">
+      MySQL学习路线 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="nav-number">1.</span> <span class="nav-text">MySQL索引失效</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMySQL%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是MySQL索引失效？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%93%E8%AF%8D%E4%B8%8B%E6%8E%A8%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">谓词下推优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8C%83%E5%9B%B4%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">范围优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#index-merge-%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">index merge 优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hash-join"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">hash join</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">成本模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">1.1.3.6.</span> <span class="nav-text">直方图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.1.3.6.1.</span> <span class="nav-text">直方图示例</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%BD%E7%84%B6%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%9A%84%E5%AD%97%E6%AE%B5%E5%BE%88%E5%A4%9A%EF%BC%8C%E4%BD%86%E5%85%B6%E6%A0%B8%E5%BF%83%E7%9A%84%E5%AD%97%E6%AE%B5%E5%8F%AA%E6%9C%89%E5%87%A0%E4%B8%AA"><span class="nav-number">1.2.</span> <span class="nav-text">虽然直方图的字段很多，但其核心的字段只有几个</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%B7%AF%E7%BA%BF%E9%80%89%E6%8B%A9"><span class="nav-number">1.2.1.</span> <span class="nav-text">执行路线选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

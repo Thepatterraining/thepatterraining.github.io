@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="应用层应用层协议原理两种架构  C&#x2F;S 客户-服务器架构 P2P 对等架构  P2P的自扩展性：尽管每个对等方都请求文件产生工作量，但每个对等方也向其他对等方分发文件增加系统服务能力。 未来P2P面临的三大挑战：  ISP友好。大多数ISP都是下载比上传快。但是P2P加大了上传流量，给ISP带来了压力。需要设计对ISP友好的P2P。 安全性。因为高度分布和开放特性。给安全带来了挑战。 激">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络原理-自顶向下二">
+<meta property="og:url" content="https://thepatterraining.github.io/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="应用层应用层协议原理两种架构  C&#x2F;S 客户-服务器架构 P2P 对等架构  P2P的自扩展性：尽管每个对等方都请求文件产生工作量，但每个对等方也向其他对等方分发文件增加系统服务能力。 未来P2P面临的三大挑战：  ISP友好。大多数ISP都是下载比上传快。但是P2P加大了上传流量，给ISP带来了压力。需要设计对ISP友好的P2P。 安全性。因为高度分布和开放特性。给安全带来了挑战。 激">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-21T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.909Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="计算机网络原理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机网络原理-自顶向下二 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络原理-自顶向下二
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">计算机</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络原理-自顶向下二" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%8C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h1><h2 id="应用层协议原理"><a href="#应用层协议原理" class="headerlink" title="应用层协议原理"></a>应用层协议原理</h2><p>两种架构</p>
+<ul>
+<li>C&#x2F;S 客户-服务器架构</li>
+<li>P2P 对等架构</li>
+</ul>
+<p>P2P的<code>自扩展性</code>：尽管每个对等方都请求文件产生工作量，但每个对等方也向其他对等方分发文件增加系统服务能力。</p>
+<p>未来P2P面临的三大挑战：</p>
+<ul>
+<li>ISP友好。<br>大多数ISP都是下载比上传快。但是P2P加大了上传流量，给ISP带来了压力。需要设计对ISP友好的P2P。</li>
+<li>安全性。<br>因为高度分布和开放特性。给安全带来了挑战。</li>
+<li>激励<br>未来P2P的成功也取决于说服用户自愿向应用提供带宽，存储和计算资源。这对激励设计带来挑战。</li>
+</ul>
+<h3 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h3><p>实际通信的是计算机上面的进程。<br>通过IP地址确定一个主机。通过端口号确定一个进程。<br>计算机提供了一套socket套接字。</p>
+<h3 id="使用的运输层服务"><a href="#使用的运输层服务" class="headerlink" title="使用的运输层服务"></a>使用的运输层服务</h3><p>看几个方面：</p>
+<ul>
+<li>可靠数据传输</li>
+<li>吞吐量 带宽敏感</li>
+<li>时延</li>
+<li>安全</li>
+</ul>
+<h3 id="因特网提供的运输服务"><a href="#因特网提供的运输服务" class="headerlink" title="因特网提供的运输服务"></a>因特网提供的运输服务</h3><h4 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h4><ul>
+<li>建立连接</li>
+<li>可靠数据传输</li>
+<li>流量控制</li>
+<li>拥塞控制</li>
+</ul>
+<h4 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h4><p>轻量级，全部由应用层实现</p>
+<h3 id="应用层协议"><a href="#应用层协议" class="headerlink" title="应用层协议"></a>应用层协议</h3><ul>
+<li>交换的报文类型， 例如请求报文和响应报文</li>
+<li>各种报文类型的语法，如报文的各个字段及这些字段是如何描述的。</li>
+<li>字段的语义，这些字段中包含的信息的含义。</li>
+<li>一个进程何时以及如何发送报文，对报文进行响应的规则。</li>
+</ul>
+<h2 id="Web和HTTP"><a href="#Web和HTTP" class="headerlink" title="Web和HTTP"></a>Web和HTTP</h2><p>HTTP的RFC文档</p>
+<ul>
+<li>RFC 1945</li>
+<li>RFC 2616</li>
+</ul>
+<h3 id="报文格式"><a href="#报文格式" class="headerlink" title="报文格式"></a>报文格式</h3><p>请求报文</p>
+<ul>
+<li>请求行</li>
+<li>首部行</li>
+<li>空行</li>
+<li>请求体</li>
+</ul>
+<p>响应报文</p>
+<ul>
+<li>状态行</li>
+<li>首部行</li>
+<li>响应体</li>
+</ul>
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>HTTP本身是无状态的，通过cookie可以实现身份记录。</p>
+<p>cookie技术有4个组件</p>
+<ul>
+<li>HTTP响应报文中的一个cookie首部行</li>
+<li>HTTP请求报文中的一个cookie首部行</li>
+<li>用户端系统有一个cookie文件</li>
+<li>WEB站点的一个后端数据库</li>
+</ul>
+<h3 id="WEB缓存"><a href="#WEB缓存" class="headerlink" title="WEB缓存"></a>WEB缓存</h3><p>WEB缓存器也叫代理服务器，它是能代表初始WEB服务器来满足HTTP请求的实体。WEB缓存服务器有自己的磁盘空间，保存最近请求过的对象的副本。</p>
+<p>CDN就是一种WEB缓存。</p>
+<h3 id="条件GET方法"><a href="#条件GET方法" class="headerlink" title="条件GET方法"></a>条件GET方法</h3><p>尽管高速缓存能快速响应，但是存储的副本可能是陈旧的，过期的。</p>
+<p>HTTP协议有一种机制，允许缓存器证实它是最新的。这种机制就是<code>条件GET方法</code></p>
+<ul>
+<li>请求报文使用GET方法</li>
+<li>请求报文中包含一个“if-Modified-Since”首部行，内容是上次服务器返回的最新修改时间</li>
+</ul>
+<p>WEB服务器会检查如果没有修改就返回一个304状态码，缓存就知道还是最新的。</p>
+<h2 id="文件传输FTP"><a href="#文件传输FTP" class="headerlink" title="文件传输FTP"></a>文件传输FTP</h2><p>HTTP和FTP都是文件传输协议。(RFC959)</p>
+<p>一些重要的区别，最显著的是<code>FTP</code>使用两个并行的TCP连接来传输文件，一个是<code>控制连接</code>，一个是<code>数据连接</code>。</p>
+<p>控制连接用于在俩主机之间传输控制信息，如用户标识、口令、改变远程目录的命令以及<code>存放</code>和<code>获取</code>文件的命令。</p>
+<p>数据连接用于实际发送一个文件。</p>
+<p>因为FTP使用一个独立的控制连接，所以我们也称FTP的控制信息是<code>带外传送</code>的。</p>
+<p>FTP首先在21端口建立一个<code>控制连接</code>。<br>FTP的客户端通过控制连接发送用户标识和口令，命令。<br>FTP的服务端收到传输文件的命令后，建立数据连接用来传输文件。<br>每个数据连接传输一个文件后关闭。</p>
+<h3 id="FTP命令和回答"><a href="#FTP命令和回答" class="headerlink" title="FTP命令和回答"></a>FTP命令和回答</h3><p>命令和回答都是以<code>7比特的ASCII格式</code>在控制连接上发送的。为了区分连续的命令，每个命令后跟回车换行符。</p>
+<ul>
+<li>USER username: 用于向服务器发送用户标识</li>
+<li>PASS password: 用于向服务器发送用户口令</li>
+<li>LIST ：用于请求服务器回送当前远程目录中的所有文件列表。该文件列表是一个数据连接发送的。</li>
+<li>RETR filename: 用于从远程主机当前目录检索文件。该命令引起远程主机发起数据连接传输该文件到本地客户端。</li>
+<li>STOR filename: 用于在远程主机当前目录存放文件。就是往远程主机传输文件。</li>
+</ul>
+<p>一些典型回答：</p>
+<ul>
+<li>331 Username OK, Password required(用户名Ok，需要口令)</li>
+<li>125 Data connection already open: transfer starting (数据连接已经打开，开始传送)</li>
+<li>425 Can’t open data connection (无法打开数据连接)</li>
+<li>452 Error Writing File (写文件出错)</li>
+</ul>
+<h2 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h2><p>邮件有三部分</p>
+<ul>
+<li>用户代理</li>
+<li>邮件服务器</li>
+<li>简单邮件传输协议</li>
+</ul>
+<p>发送邮件过程</p>
+<ul>
+<li>发送方的用户代理 到 发送方的邮件服务器</li>
+<li>发送方的邮件服务器 到 接收方的邮件服务器</li>
+<li>接收方的邮件服务器 到 接收方的用户代理邮箱</li>
+</ul>
+<h3 id="SMTP"><a href="#SMTP" class="headerlink" title="SMTP"></a>SMTP</h3><p>RFC 5321 给出了SMTP的定义。SMTP使用TCP协议。只能传输7比特的ASCII表示。</p>
+<p>发送过程：</p>
+<ul>
+<li>客户端建立连接</li>
+<li>S:220 hamburger.edu</li>
+<li>C:HELO crepes.fr</li>
+<li>S:250 Hello crepes.fr,pleased to meet you</li>
+<li>C:MAIL FROM: <a href="mailto:&#97;&#x6c;&#105;&#x63;&#101;&#64;&#x63;&#x72;&#x65;&#x70;&#x65;&#x73;&#46;&#102;&#x72;">&#97;&#x6c;&#105;&#x63;&#101;&#64;&#x63;&#x72;&#x65;&#x70;&#x65;&#x73;&#46;&#102;&#x72;</a></li>
+<li>S:250 <a href="mailto:&#97;&#108;&#105;&#99;&#101;&#x40;&#x63;&#114;&#x65;&#x70;&#101;&#115;&#x2e;&#102;&#x72;">&#97;&#108;&#105;&#99;&#101;&#x40;&#x63;&#114;&#x65;&#x70;&#101;&#115;&#x2e;&#102;&#x72;</a> … sender ok</li>
+<li>C:RCPT TO: <a href="mailto:&#98;&#111;&#98;&#x40;&#104;&#117;&#x6d;&#98;&#x75;&#x72;&#103;&#x65;&#114;&#46;&#101;&#x64;&#x75;">&#98;&#111;&#98;&#x40;&#104;&#117;&#x6d;&#98;&#x75;&#x72;&#103;&#x65;&#114;&#46;&#101;&#x64;&#x75;</a></li>
+<li>S:250 <a href="mailto:&#x62;&#111;&#x62;&#x40;&#104;&#x75;&#x6d;&#x62;&#117;&#114;&#x67;&#101;&#x72;&#46;&#x65;&#x64;&#x75;">&#x62;&#111;&#x62;&#x40;&#104;&#x75;&#x6d;&#x62;&#117;&#114;&#x67;&#101;&#x72;&#46;&#x65;&#x64;&#x75;</a> …. Recipient ok</li>
+<li>C:DATA</li>
+<li>S:354 Enter mail, end with “.” on a line by itself</li>
+<li>C:Do you like ketchup?</li>
+<li>C:How about you pickets?</li>
+<li>C:.</li>
+<li>S:250 Message accepted for delivery</li>
+<li>C:QUIT</li>
+<li>S:221 hamburger.edu closeing connection</li>
+</ul>
+<h3 id="和HTTP对比"><a href="#和HTTP对比" class="headerlink" title="和HTTP对比"></a>和HTTP对比</h3><p>HTTP 是一个拉协议，从服务器拉取数据。<br>SMTP 是一个推协议，往服务器推送邮件。</p>
+<p>HTTP 可以任意表示<br>SMTP 只能7比特ASCII表示。</p>
+<p>HTTP 每个对象一个响应<br>SMTP 一个邮件多个对象</p>
+<h3 id="SMTP典型的首部报文"><a href="#SMTP典型的首部报文" class="headerlink" title="SMTP典型的首部报文"></a>SMTP典型的首部报文</h3><p>FROM:<br>TO:<br>Subject:</p>
+<h3 id="获取邮件协议"><a href="#获取邮件协议" class="headerlink" title="获取邮件协议"></a>获取邮件协议</h3><p>POP3 和 IMAP</p>
+<h4 id="POP3"><a href="#POP3" class="headerlink" title="POP3"></a>POP3</h4><p>pop3分为3个阶段</p>
+<ul>
+<li>特许：用户代理发送用户名和口令（明文）</li>
+<li>事务处理：用户代理取回报文，做删除报文的标记，取消删除标记，获取邮件的统计信息。</li>
+<li>更新阶段：发生在客户端QUIT指令后，结束会话，删除那些标记的报文。</li>
+</ul>
+<p>特许阶段有两个主要命令</p>
+<ul>
+<li>user <username></li>
+<li>pass <password></li>
+</ul>
+<p>事务处理阶段有4个主要命令</p>
+<ul>
+<li>list 列出邮件列表</li>
+<li>retr id 读取邮件内容</li>
+<li>delete 删除邮件</li>
+<li>quit 退出</li>
+</ul>
+<h4 id="IMAP"><a href="#IMAP" class="headerlink" title="IMAP"></a>IMAP</h4><p>imap比pop3更加复杂，增加了远程文件夹功能。imap支持用户读取报文的一部分，比如只读取首部，或多部分MIME的一部分。当宽度低的时候非常有用。</p>
+<h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><p>DNS使用UDP协议。</p>
+<p>DNS完成域名和ip地址的转换。</p>
+<p>域名分为</p>
+<ul>
+<li>根DNS服务器</li>
+<li>顶级DNS服务器 com,org,edu,cn</li>
+<li>权威DNS服务器</li>
+</ul>
+<h3 id="请求"><a href="#请求" class="headerlink" title="请求"></a>请求</h3><p>迭代请求</p>
+<ul>
+<li>请求根服务器</li>
+<li>根服务器返回</li>
+<li>请求顶级服务器</li>
+<li>顶级服务器返回</li>
+<li>请求权威</li>
+<li>权威返回</li>
+</ul>
+<p>递归请求</p>
+<ul>
+<li>请求根</li>
+<li>根请求顶级</li>
+<li>顶级请求权威</li>
+<li>权威返回顶级</li>
+<li>顶级返回根</li>
+<li>根返回</li>
+</ul>
+<h2 id="TCP套接字"><a href="#TCP套接字" class="headerlink" title="TCP套接字"></a>TCP套接字</h2><p>遵守RFC协议文档的应用程序是“开放”的。不遵循RFC文档中的协议的应用程序是“专用”的。</p>
+<h3 id="UDP套接字"><a href="#UDP套接字" class="headerlink" title="UDP套接字"></a>UDP套接字</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86/" rel="tag"># 计算机网络原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E6%9D%A5%E8%8A%82%E7%9C%81%E7%A9%BA%E9%97%B4.html" rel="prev" title="设计模式之享元模式--共享内存来节省空间">
+      <i class="fa fa-chevron-left"></i> 设计模式之享元模式--共享内存来节省空间
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%80%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A%E8%A7%A3%E6%9E%90.html" rel="next" title="计算机网络原理-自顶向下一课后作业解析">
+      计算机网络原理-自顶向下一课后作业解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">1.</span> <span class="nav-text">应用层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">应用层协议原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.</span> <span class="nav-text">进程通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%9A%84%E8%BF%90%E8%BE%93%E5%B1%82%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.2.</span> <span class="nav-text">使用的运输层服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E6%8F%90%E4%BE%9B%E7%9A%84%E8%BF%90%E8%BE%93%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.3.</span> <span class="nav-text">因特网提供的运输服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">TCP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UDP"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">UDP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.4.</span> <span class="nav-text">应用层协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web%E5%92%8CHTTP"><span class="nav-number">1.2.</span> <span class="nav-text">Web和HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E6%96%87%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">1.2.2.</span> <span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WEB%E7%BC%93%E5%AD%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">WEB缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6GET%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">条件GET方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93FTP"><span class="nav-number">1.3.</span> <span class="nav-text">文件传输FTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FTP%E5%91%BD%E4%BB%A4%E5%92%8C%E5%9B%9E%E7%AD%94"><span class="nav-number">1.3.1.</span> <span class="nav-text">FTP命令和回答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">电子邮件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMTP"><span class="nav-number">1.4.1.</span> <span class="nav-text">SMTP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%92%8CHTTP%E5%AF%B9%E6%AF%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">和HTTP对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SMTP%E5%85%B8%E5%9E%8B%E7%9A%84%E9%A6%96%E9%83%A8%E6%8A%A5%E6%96%87"><span class="nav-number">1.4.3.</span> <span class="nav-text">SMTP典型的首部报文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%82%AE%E4%BB%B6%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.4.4.</span> <span class="nav-text">获取邮件协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#POP3"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">POP3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IMAP"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">IMAP</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS"><span class="nav-number">1.5.</span> <span class="nav-text">DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82"><span class="nav-number">1.5.1.</span> <span class="nav-text">请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">1.6.</span> <span class="nav-text">TCP套接字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">1.6.1.</span> <span class="nav-text">UDP套接字</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

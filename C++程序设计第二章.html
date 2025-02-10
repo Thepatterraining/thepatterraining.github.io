@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="C++程序设计第二章C++简单程序设计C++的基本数据类型  整数类型 实数类型 字符类型 布尔类型  C++的基本运算  算术运算 逻辑运算  程序要能输入数据，输出数据 C++的输入输出可以调用预定义的功能模块实现 程序的执行流程不总是顺序的因此程序要能够  对执行流程进行选择（选择&#x2F;开关语句） 反复用同一算法依次处理大批量数据（循环语句）  基本数据类型能表示的有限  程序员要能够">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++程序设计第二章">
+<meta property="og:url" content="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="C++程序设计第二章C++简单程序设计C++的基本数据类型  整数类型 实数类型 字符类型 布尔类型  C++的基本运算  算术运算 逻辑运算  程序要能输入数据，输出数据 C++的输入输出可以调用预定义的功能模块实现 程序的执行流程不总是顺序的因此程序要能够  对执行流程进行选择（选择&#x2F;开关语句） 反复用同一算法依次处理大批量数据（循环语句）  基本数据类型能表示的有限  程序员要能够">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-18T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.819Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C++程序设计第二章 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++程序设计第二章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-18 10:12:47" itemprop="dateCreated datePublished" datetime="2021-07-18T10:12:47+08:00">2021-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="C++程序设计第二章" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="C-程序设计第二章"><a href="#C-程序设计第二章" class="headerlink" title="C++程序设计第二章"></a>C++程序设计第二章</h1><h2 id="C-简单程序设计"><a href="#C-简单程序设计" class="headerlink" title="C++简单程序设计"></a>C++简单程序设计</h2><p>C++的基本数据类型</p>
+<ul>
+<li>整数类型</li>
+<li>实数类型</li>
+<li>字符类型</li>
+<li>布尔类型</li>
+</ul>
+<p>C++的基本运算</p>
+<ul>
+<li>算术运算</li>
+<li>逻辑运算</li>
+</ul>
+<p>程序要能输入数据，输出数据</p>
+<p>C++的输入输出可以调用预定义的功能模块实现</p>
+<p>程序的执行流程不总是顺序的因此程序要能够</p>
+<ul>
+<li>对执行流程进行选择（选择&#x2F;开关语句）</li>
+<li>反复用同一算法依次处理大批量数据（循环语句）</li>
+</ul>
+<p>基本数据类型能表示的有限 </p>
+<p>程序员要能够自定义类型</p>
+<p>枚举类型</p>
+<ul>
+<li>通过列出所有可取值来定义一种新类型</li>
+</ul>
+<h2 id="C-特点和程序实例"><a href="#C-特点和程序实例" class="headerlink" title="C++特点和程序实例"></a>C++特点和程序实例</h2><ul>
+<li>从C语言发展而来，最初称为<code>带类的C</code></li>
+<li>1983年正式取名为C++；</li>
+<li>1998年11月被国际标准化组织（ISO）批准为国际标准；</li>
+<li>2003年10月15日发布第2版C++标准ISO&#x2F;IEC 14882:2003；</li>
+<li>2011年8月12日ISO公布了第三版C++标准C++11，包含核心语言的新机能、扩展C++标准程序库。</li>
+<li>2014年8月18日ISO公布了C++14，其正式名称为”International Standard ISO&#x2F;IEC 14882:2014(E) Programming Language C++”。</li>
+<li>C++14作为C++11的一个小扩展，主要提供漏洞修复和小的改进。</li>
+</ul>
+<p>C++的特点</p>
+<ul>
+<li>兼容C,支持面向过程的程序设计</li>
+<li>支持面向对象的方法</li>
+<li>支持泛型程序设计方法</li>
+</ul>
+<p>命名空间</p>
+<ul>
+<li>避免命名冲突</li>
+<li>std是C++标准库的命名空间名</li>
+<li>using namespace std 表示打开std命名空间</li>
+</ul>
+<p>输出Hello</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Hello!&quot;</span> &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Welcome to C++!&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="C-字符集和词法记号"><a href="#C-字符集和词法记号" class="headerlink" title="C++字符集和词法记号"></a>C++字符集和词法记号</h2><p>词法记号</p>
+<ul>
+<li>关键字<br>  C++预定义的单词</li>
+<li>标志符<br>  程序员声明的单词，它命名程序正文中的一些实体</li>
+<li>文字<br>  在程序中直接使用符号表示的数据</li>
+<li>分隔符<br>  （）{}；：，用于分隔各个词法记号或程序正文</li>
+<li>运算符（操作符）<br>  用于实现各种运算的符号</li>
+<li>空白符<br>  空格， 制表符,垂直制表符，换行符，回车符和注释的总称</li>
+</ul>
+<p>标识符的构成规则</p>
+<ul>
+<li>以大写字母，小写字母或下划线开始</li>
+<li>可以由大写字母，小写字母，下划线或数字组成</li>
+<li>大写字母和小写字母代表不同的标识符</li>
+<li>不能是C++关键字或操作符</li>
+</ul>
+<h2 id="基本数据类型，常量，变量"><a href="#基本数据类型，常量，变量" class="headerlink" title="基本数据类型，常量，变量"></a>基本数据类型，常量，变量</h2><p>程序中的数据</p>
+<ul>
+<li>常量<br>  在源程序中直接写明的数据<br>  其值在整个程序运行期间不可改变</li>
+<li>变量<br>  在程序运行过程中可以改变</li>
+</ul>
+<p>整数类型</p>
+<ul>
+<li>基本的INT型 </li>
+<li>按照符号分<ul>
+<li>有符号</li>
+<li>无符号</li>
+</ul>
+</li>
+<li>按照数据范围分<ul>
+<li>短整数 short</li>
+<li>长整数 long</li>
+<li>长长整数 longlong</li>
+</ul>
+</li>
+</ul>
+<p>字符类型</p>
+<ul>
+<li>字符容纳单个字符的编码</li>
+<li>实质上存储的也是整数</li>
+</ul>
+<p>浮点数类型</p>
+<ul>
+<li>单精度 float</li>
+<li>双精度 double</li>
+<li>扩展精度 long double</li>
+</ul>
+<p>字符串类型</p>
+<ul>
+<li>有字符串常量</li>
+<li>基本类型中没有字符串变量</li>
+<li>采用字符数组存储字符串</li>
+<li>标准C++库中的String类</li>
+</ul>
+<p>布尔类型</p>
+<ul>
+<li>只有两个值，真 true 假 false</li>
+</ul>
+<h3 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h3><ul>
+<li>在程序运行中不可改变的量</li>
+<li>直接使用符号（文字）表示的值</li>
+<li>例如：12,3.5，’A’都是常量</li>
+</ul>
+<p>整数常量</p>
+<ul>
+<li>十进制</li>
+<li>八进制</li>
+<li>十六进制</li>
+</ul>
+<p>后缀</p>
+<ul>
+<li>L &#x3D; long</li>
+<li>LL &#x3D; longlong </li>
+<li>U &#x3D; 无符号</li>
+</ul>
+<p>浮点数常量</p>
+<ul>
+<li>以文字形式出现的实数</li>
+<li>默认double ，如果后缀F可以指定成float</li>
+</ul>
+<p>C风格字符串</p>
+<ul>
+<li>一对双引号的字符</li>
+<li>在内存中按串中字符的排列次序顺序存放，每个字符占一个字节</li>
+<li>在末尾添加’\0’作为结尾标记</li>
+</ul>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>在程序运行过程中可改变的量</p>
+<p>变量定义</p>
+<ul>
+<li>类型 变量名</li>
+</ul>
+<p>在定义变量的同时可以初始化</p>
+<p>C++多种初始化</p>
+<ul>
+<li>int a &#x3D; 0;</li>
+<li>int a(0)</li>
+<li>int a &#x3D; {0}</li>
+<li>int a{0}</li>
+</ul>
+<p>列表初始化</p>
+<ul>
+<li>使用大括号的初始化方式</li>
+<li>不允许信息的丢失</li>
+</ul>
+<h3 id="符号常量"><a href="#符号常量" class="headerlink" title="符号常量"></a>符号常量</h3><p>常量定义语句的形式：</p>
+<ul>
+<li>const 数据类型说明符 常量名 &#x3D; 值</li>
+<li>数据类型说明符 const 常量名 &#x3D; 值</li>
+</ul>
+<p>符号常量定义一定需要初始化，在程序中不能改变值</p>
+<h3 id="程序举例"><a href="#程序举例" class="headerlink" title="程序举例"></a>程序举例</h3><h4 id="读入并显示整数"><a href="#读入并显示整数" class="headerlink" title="读入并显示整数"></a>读入并显示整数</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> radius;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Please enter the radius\n&quot;</span>;</span><br><span class="line">    cin &gt;&gt; radius;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;The radius is:&quot;</span> &lt;&lt; radius &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;PI is:&quot;</span> &lt;&lt; <span class="number">3.14</span> &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Please enter a different radius\n&quot;</span>;</span><br><span class="line">    cin &gt;&gt; radius;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Now the radius is changed to:&quot;</span> &lt;&lt; radius &lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="运算与表达式"><a href="#运算与表达式" class="headerlink" title="运算与表达式"></a>运算与表达式</h2><h3 id="算术运算与赋值运算"><a href="#算术运算与赋值运算" class="headerlink" title="算术运算与赋值运算"></a>算术运算与赋值运算</h3><p>基本算术运算</p>
+<ul>
+<li>+-*&#x2F;（整数相除，结果为整数）</li>
+<li>%取余运算（结果为整数）</li>
+</ul>
+<p>优先级与结合性</p>
+<ul>
+<li>先乘除，后加减，同级自左至右</li>
+</ul>
+<p>自增自减操作</p>
+<p>赋值操作<br>通过赋值运算符&#x3D;赋值给变量</p>
+<p>复合赋值运算符有10种</p>
+<ul>
+<li>+&#x3D;， -&#x3D;， *&#x3D;， &#x2F;&#x3D;， &lt;&lt;&#x3D;, &gt;&gt;&#x3D;, &amp;&#x3D;, ^&#x3D;, |&#x3D;</li>
+</ul>
+<h3 id="符号运算，关系运算，逻辑运算和条件运算"><a href="#符号运算，关系运算，逻辑运算和条件运算" class="headerlink" title="符号运算，关系运算，逻辑运算和条件运算"></a>符号运算，关系运算，逻辑运算和条件运算</h3><p>逗号运算和逗号表达式</p>
+<ul>
+<li>格式<br>  表达式1，表达式2</li>
+<li>求解顺序及结果<br>  先求解表达式1，在求解表达式2<br>  用表达式2的结果作为结果</li>
+<li>例子<br>  a &#x3D; 3 * 5, a * 4 最终结果为60</li>
+</ul>
+<p>赋值运算符优先级比逗号低</p>
+<p>关系运算</p>
+<ul>
+<li>优先级<br>  高的：&lt; &lt;&#x3D; &gt;&#x3D; &gt;<br>  低的：&#x3D;&#x3D; !&#x3D;</li>
+<li>关系表达式是一种最简单的逻辑表达式</li>
+<li>结果是布尔类型，true or false</li>
+</ul>
+<p>逻辑运算符</p>
+<ul>
+<li>优先级从高到低：！ &amp;&amp; ||</li>
+<li>结果是布尔类型</li>
+<li>&amp;&amp; 的运算规则<ul>
+<li>两侧表达式都为真，结果为真</li>
+<li>有一侧表达式为假，结果为假</li>
+</ul>
+</li>
+<li>|| 的运算规则<ul>
+<li>两侧表达式都为假，结果为假</li>
+<li>有一侧表达式为真，结果为真</li>
+</ul>
+</li>
+</ul>
+<p>&amp;&amp; 的<code>短路</code>特性</p>
+<ul>
+<li>先求解表达式1,</li>
+<li>若表达式1的值为false,则最终结果为false,不再求解表达式2</li>
+<li>若表达式1的值为true,则求解表达式2，以表达式2的结果作为最终结果</li>
+</ul>
+<p>|| 的<code>短路</code>特性</p>
+<ul>
+<li>先求解表达式1</li>
+<li>若表达式1的值为true,则最终结果为true,不在求解表达式2</li>
+<li>若表达式1的值为false,则求解表达式2，以表达式2的结果作为最终结果</li>
+</ul>
+<p>条件运算符</p>
+<ul>
+<li>一般形式<ul>
+<li>表达式1 ？ 表达式2 ： 表达式3</li>
+<li>表达式1必须是bool类型</li>
+</ul>
+</li>
+<li>执行顺序<ul>
+<li>先求解表达式1</li>
+<li>若表达式1的值为true,则求解表达式2，表达式2的结果作为最终结果</li>
+<li>若表达式1的值为false，则求解表达式3，表达式3的结果作为最终结果</li>
+</ul>
+</li>
+<li>条件运算符优先级高于赋值运算符，低于逻辑运算符</li>
+</ul>
+<h3 id="sizeof运算，位运算"><a href="#sizeof运算，位运算" class="headerlink" title="sizeof运算，位运算"></a>sizeof运算，位运算</h3><p>sizeof运算符</p>
+<ul>
+<li>语法形式<br>  sizeof(类型名) 或 sizeof 表达式</li>
+<li>结果值<br>  类型名 所指定的类型，或 表达式 的结果类型所占的字节数</li>
+</ul>
+<p>按位与</p>
+<ul>
+<li>运算规则<br>  将两个运算量的每一个位进行逻辑与操作</li>
+<li>例子<br>  计算 3 &amp; 5<br>  0000 0011<br>  0000 0101<br>  结果0000 0001</li>
+<li>用途，将某一位置0，取出某一位</li>
+</ul>
+<p>按位或</p>
+<ul>
+<li>运算规则<br>  将两个运算量的每一个位进行逻辑或操作</li>
+<li>用途，将某一位置1</li>
+</ul>
+<p>按位异或</p>
+<ul>
+<li>运算规则<br>  两个操作数进行异或<br>  若对应位相同，结果为0<br>  若对应位不同，结果为1</li>
+<li>计算 071 ^ 052<br>      0011 1001<br>      0010 1010<br>  结果    0001 0011</li>
+<li>用途，特定位翻转</li>
+</ul>
+<p>按位取反</p>
+<ul>
+<li>运算规则<br>  0 变 1， 1 变 0</li>
+</ul>
+<p>移位操作</p>
+<ul>
+<li>左移后，低位补0，高位舍弃</li>
+<li>右移后，低位舍弃，高位无符号数补0，有符号为补符号位</li>
+</ul>
+<h3 id="运算优先级，类型转换"><a href="#运算优先级，类型转换" class="headerlink" title="运算优先级，类型转换"></a>运算优先级，类型转换</h3><p>一些运算符要求数据类型一致<br>隐含转换的基本原则是低类型转换到高类型</p>
+<p>浮点数换成整数，小数部分直接丢弃<br>整数换成浮点数，小数为0，可能丢失精度</p>
+<p>显示转换</p>
+<ul>
+<li>类型说明符（表达式）</li>
+<li>（类型说明符）表达式</li>
+<li>类型转换操作符 &lt;类型说明符&gt; （表达式） C++的转换方式<ul>
+<li>类型转换操作符：const_cast,dynamic_cast ,reinterpret_cast,static_cast</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html" rel="prev" title="软件工程第一章">
+      <i class="fa fa-chevron-left"></i> 软件工程第一章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%89%E7%AB%A0.html" rel="next" title="C++程序设计第三章">
+      C++程序设计第三章 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">C++程序设计第二章</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%AE%80%E5%8D%95%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.1.</span> <span class="nav-text">C++简单程序设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%89%B9%E7%82%B9%E5%92%8C%E7%A8%8B%E5%BA%8F%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">C++特点和程序实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E8%AF%8D%E6%B3%95%E8%AE%B0%E5%8F%B7"><span class="nav-number">1.3.</span> <span class="nav-text">C++字符集和词法记号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%8C%E5%B8%B8%E9%87%8F%EF%BC%8C%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">基本数据类型，常量，变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E5%B8%B8%E9%87%8F"><span class="nav-number">1.4.3.</span> <span class="nav-text">符号常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.4.4.</span> <span class="nav-text">程序举例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%85%A5%E5%B9%B6%E6%98%BE%E7%A4%BA%E6%95%B4%E6%95%B0"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">读入并显示整数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E4%B8%8E%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">运算与表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E4%B8%8E%E8%B5%8B%E5%80%BC%E8%BF%90%E7%AE%97"><span class="nav-number">1.5.1.</span> <span class="nav-text">算术运算与赋值运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%BF%90%E7%AE%97%EF%BC%8C%E5%85%B3%E7%B3%BB%E8%BF%90%E7%AE%97%EF%BC%8C%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E5%92%8C%E6%9D%A1%E4%BB%B6%E8%BF%90%E7%AE%97"><span class="nav-number">1.5.2.</span> <span class="nav-text">符号运算，关系运算，逻辑运算和条件运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sizeof%E8%BF%90%E7%AE%97%EF%BC%8C%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="nav-number">1.5.3.</span> <span class="nav-text">sizeof运算，位运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%8C%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.5.4.</span> <span class="nav-text">运算优先级，类型转换</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

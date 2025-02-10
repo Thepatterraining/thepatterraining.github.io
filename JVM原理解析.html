@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="javaJVMjvm基础知识什么是JVM,这个大家应该都知道，就是java虚拟机，全称java vitual mechainm。 既然是虚拟机，自然要仿照正常电脑运行，要有内存模型，就跟电脑虚拟内存一样，要有指令集，也就是字节码。 java字节码Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码  栈操作指令 程序流程控制指令 对象操作指令 算术运算以及类型转换">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM原理">
+<meta property="og:url" content="https://thepatterraining.github.io/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="javaJVMjvm基础知识什么是JVM,这个大家应该都知道，就是java虚拟机，全称java vitual mechainm。 既然是虚拟机，自然要仿照正常电脑运行，要有内存模型，就跟电脑虚拟内存一样，要有指令集，也就是字节码。 java字节码Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码  栈操作指令 程序流程控制指令 对象操作指令 算术运算以及类型转换">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/jvm10.png">
+<meta property="article:published_time" content="2024-11-27T06:02:52.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.844Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/java/jvm1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM原理 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-27 14:02:52" itemprop="dateCreated datePublished" datetime="2024-11-27T14:02:52+08:00">2024-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html" class="post-meta-item leancloud_visitors" data-flag-title="JVM原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/JVM%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="java"><a href="#java" class="headerlink" title="java"></a>java</h1><h2 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h2><h3 id="jvm基础知识"><a href="#jvm基础知识" class="headerlink" title="jvm基础知识"></a>jvm基础知识</h3><p>什么是JVM,这个大家应该都知道，就是java虚拟机，全称<code>java vitual mechainm</code>。</p>
+<p>既然是虚拟机，自然要仿照正常电脑运行，要有内存模型，就跟电脑虚拟内存一样，要有指令集，也就是字节码。</p>
+<h3 id="java字节码"><a href="#java字节码" class="headerlink" title="java字节码"></a>java字节码</h3><p>Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码</p>
+<ul>
+<li>栈操作指令</li>
+<li>程序流程控制指令</li>
+<li>对象操作指令</li>
+<li>算术运算以及类型转换指令</li>
+</ul>
+<p>javap可以看到字节码文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c -verbose ...</span><br></pre></td></tr></table></figure>
+
+<p>astore_1 代表store 本地变量表的slot 1，a代表引用类型。istore代表int store。</p>
+<p>算数操作</p>
+<ul>
+<li>iadd：栈顶两个int类型数值相加，并将结果压入栈顶。</li>
+<li>isub：栈顶两个int类型数值相减。</li>
+<li>imul：栈顶两个int类型数值相乘。</li>
+<li>idiv：栈顶两个int类型数值相除。</li>
+<li>iinc：对局部变量表中的int类型变量自增或自减。</li>
+</ul>
+<p>类型转换</p>
+<ul>
+<li>i2f：将int类型转换为float类型。</li>
+<li>f2i：将float类型转换为int类型。</li>
+<li>i2b：将int类型转换为byte类型。</li>
+<li>i2c：将int类型转换为char类型。</li>
+</ul>
+<p>方法调用指令</p>
+<ul>
+<li>invokestatic: 调用静态方法</li>
+<li>invokespecial: 用来调用构造函数，或同一个类中的private方法，以及超类方法</li>
+<li>invokevirtual: 调用公共，受保护和package级的私有方法类似c的虚函数</li>
+<li>invokeinterface: 调用接口方法</li>
+<li>invokedynamic: lambda实现基础</li>
+<li>new 创建对象</li>
+<li>getfield: 获取对象的实例字段</li>
+<li>putfield: 设置对象的实例字段</li>
+</ul>
+<p>栈操作指令</p>
+<ul>
+<li>pop：将栈顶的一个数值弹出（丢弃）。</li>
+<li>dup：复制栈顶的一个数值。</li>
+<li>swap：交换栈顶的两个数值。</li>
+</ul>
+<p>条件跳转指令</p>
+<ul>
+<li>if_icmpeq：如果栈顶两个int值相等，则跳转。</li>
+<li>if_icmpne：如果栈顶两个int值不相等，则跳转。</li>
+<li>goto：无条件跳转到指定位置。</li>
+<li>tableswitch：根据值选择跳转位置，用于switch语句。</li>
+</ul>
+<p>同步指令</p>
+<ul>
+<li>monitorenter：进入同步代码块。</li>
+<li>monitorexit：退出同步代码块。</li>
+</ul>
+<h3 id="JVM类加载器"><a href="#JVM类加载器" class="headerlink" title="JVM类加载器"></a>JVM类加载器</h3><p>引导类加载器</p>
+<ul>
+<li>引导类加载器是最顶层的类加载器，负责加载 Java 核心库中的类（例如 java.lang.* 包中的类）。这些类一般位于 JRE 目录下的 rt.jar 文件中。</li>
+<li>它是由 C++ 编写的，直接由操作系统加载，因此没有 Java 类的实现。</li>
+<li>它默认从 JRE&#x2F;lib 路径下加载类。</li>
+</ul>
+<p>扩展类加载器</p>
+<ul>
+<li>扩展类加载器负责加载 Java 扩展库中的类。这些类通常位于 JRE&#x2F;lib&#x2F;ext 目录下，或者由 java.ext.dirs 系统属性指定的其他路径。</li>
+<li>它是由 Java 编写的，属于标准的类加载器。</li>
+<li>它默认从 JRE&#x2F;lib&#x2F;ext 目录和 java.ext.dirs 属性指定的路径加载类</li>
+</ul>
+<p>系统类加载器</p>
+<ul>
+<li>系统类加载器负责加载应用程序的类，也就是由用户编写的类。它通常从类路径（classpath）中加载类。</li>
+<li>它是由 Java 编写的，通常是 ClassLoader 类的一个实例。用户可以指定 classpath 来告诉系统类加载器从哪里加载类。</li>
+<li>它根据环境变量 CLASSPATH 或 -cp 命令行参数指定的路径加载类。</li>
+</ul>
+<p>自定义类加载器</p>
+<ul>
+<li>Java 还允许程序员创建自定义类加载器，来自定义类加载的行为。自定义类加载器可以扩展 ClassLoader 类并重写其 findClass() 方法，来实现从不同的数据源加载类，比如从数据库、网络等加载类。</li>
+<li>自定义类加载器在很多场景中有用，比如在应用服务器中动态加载插件，或者从不常规的源（如数据库、网络等）加载类。</li>
+</ul>
+<p>类的生命周期</p>
+<ul>
+<li>加载： 找class文件，类加载器通过 findClass() 方法从指定的位置查找 .class 文件。加载器会将 .class 文件转化为二进制字节流。</li>
+<li>验证： 验证格式，依赖。验证阶段确保加载的 .class 文件格式正确，并且不包含任何有可能危害虚拟机安全的代码。</li>
+<li>准备： 静态字段，方法表。准备阶段分配内存并为类变量（静态字段）设置默认值（如 0、null 等）。</li>
+<li>解析： 符号解析为引用。解析阶段将类中的符号引用（例如字段、方法、类的名字等）解析为实际的内存地址或方法引用。</li>
+<li>初始化： 构造器，静态变量赋值，静态代码块。初始化阶段是类加载过程的最后一步，它会执行类的静态初始化块（static 块）和静态字段的初始化。</li>
+<li>使用</li>
+<li>卸载</li>
+</ul>
+<p>JVM 中的类加载器采用了父子委托机制（Parent Delegation Model）。当一个类加载器收到加载某个类的请求时，它不会直接去加载类，而是首先将请求委托给父类加载器。如果父类加载器无法加载，则再由当前加载器进行加载。这种机制的好处是可以保证 Java 核心类库不会被用户定义的类覆盖。</p>
+<h3 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h3><p>内存模型，这里是重点，如何理解内存模型。内存模型主要其实就是栈、堆、方法区。</p>
+<ul>
+<li>栈：包括java线程栈，每个线程有自己的栈，主要存储局部变量。本地方法栈，就是调用一些c++代码之类的，非java代码用的。所谓的调用栈其实就是栈的一个使用列表。</li>
+<li>堆：堆里面存放的是动态数据，通常就是<code>new</code>出来的就放在堆里。</li>
+<li>方法区：既不是局部变量，也不是new出来的动态数据，就是存储常量，静态变量，全局变量之类的。</li>
+</ul>
+<p>java栈</p>
+<ul>
+<li>线程私有：存储线程的本地变量信息等</li>
+<li>每个线程在执行方法时，都会在栈中创建一个栈帧（stack frame）。栈帧包含方法的局部变量、操作数栈、动态链接、方法返回地址等信息。栈的大小通常由 -Xss 参数进行控制。</li>
+<li>局部变量的作用范围仅限于当前方法，存储在栈帧中。</li>
+</ul>
+<p>本地方法栈</p>
+<ul>
+<li>用于执行本地方法（即通过 JNI 调用的 C&#x2F;C++ 等语言编写的代码）。和 Java 栈类似，本地方法栈也包含栈帧，但栈帧里存储的是本地方法的相关信息。</li>
+<li>每个线程有自己的本地方法栈。</li>
+</ul>
+<p>java堆</p>
+<ul>
+<li>共有</li>
+<li>存储动态信息，如对象数据，包括对象的成员变量，成员函数，静态变量。因此多线程访问堆中的数据时需要进行同步，以保证数据的一致性和可见性。</li>
+<li>堆是垃圾回收的主要区域。</li>
+<li>垃圾回收器负责堆内存的管理，通过标记清除、复制回收、分代回收等算法来回收无用对象的内存。</li>
+</ul>
+<p>方法区</p>
+<ul>
+<li>方法区用于存储类信息、常量、静态变量、即时编译器（JIT）编译后的代码等数据。在 Java 7 之前，方法区和永久代（PermGen）是一个概念，但在 Java 8 中，永久代被 Metaspace（元空间）替代，Metaspace 位于本地内存中，而非堆中。</li>
+<li>方法区是所有线程共享的，因此多线程访问时也需要注意同步。</li>
+<li>存储类的元数据（类的结构、常量池等）、静态变量、方法等。</li>
+</ul>
+<p>运行时常量池</p>
+<ul>
+<li>运行时常量池是方法区的一部分，用于存储编译期间生成的字面量和符号引用（例如字符串常量和类、方法、字段的引用）。</li>
+<li>常量池是所有线程共享的，所有类共享相同的常量池。</li>
+</ul>
+<p>直接内存</p>
+<ul>
+<li>直接内存并不是 JVM 内存模型的一部分，但它是通过 java.nio 包提供的 ByteBuffer 类实现的内存区域。直接内存可以绕过 JVM 的堆和垃圾回收机制，直接与操作系统的内存交互，用于提高 I&#x2F;O 性能。</li>
+<li>直接内存可以由多个线程共享，但需要开发者手动管理。</li>
+</ul>
+<p>那么这些都是逻辑上的，如何映射到内存中呢？首先，内存可以理解为一个巨大的连续的数组空间。看下图。栈在最顶上，往下增长，堆在最下面，往上增长，中间是本地方法栈，如果堆增长到本地方法栈了，那么堆就满了，栈也一样。</p>
+<p><img src="/../images/java/jvm1.png" alt="jvm内存.png"></p>
+<p>堆内存。堆里的东西都是new出来的，放在c++里面就是需要手动delete的，当然了，现代c++也可以通过其他的来自动delete。而java则是通过垃圾回收来自动delete。所以java为了方便自动回收，就在堆里面又划分了年轻代，老年代，年轻代里面还细分了新生代，存活区。</p>
+<ul>
+<li>年轻代：占1&#x2F;3<ul>
+<li>新生代：占年轻代的8&#x2F;10</li>
+<li>存活区： 一般有两个，每个占1&#x2F;10</li>
+</ul>
+</li>
+<li>老年代：占2&#x2F;3</li>
+</ul>
+<p>示例代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Main</span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> function <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">A</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">    Thread.Sleep(<span class="number">10000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>一开始，老年代和存活区全部是空的，当第一个对象a创建的时候，会出现在年轻代。如下图</p>
+<p><img src="/../images/java/jvm2.png" alt="jvm内存.png"></p>
+<p>接下来对象b创建，对象b也进入年轻代。如下图</p>
+<p><img src="/../images/java/jvm3.png" alt="jvm内存.png"></p>
+<p>从内存上看，则如图所示，栈中存储变量a和变量b，内容分别是0F00,0F0C，指向堆中两个对象的地址。堆中对象里面有一个隐含的this变量和一个变量i。</p>
+<p><img src="/../images/java/jvm4.png" alt="jvm内存.png"></p>
+<p>接下来执行第一次GC，也可以说是yongGC。首先标记存活对象b，对象a将别回收，因此不标记。</p>
+<p><img src="/../images/java/jvm5.png" alt="jvm内存.png"></p>
+<p>接下来将对象b复制到存活区0。</p>
+<p><img src="/../images/java/jvm6.png" alt="jvm内存.png"></p>
+<p>最后删除新生代和存活区1的内容。这个时候对象a也就被删除了。</p>
+<p><img src="/../images/java/jvm7.png" alt="jvm内存.png"></p>
+<p>第二次GC，假设对象b还可以存活，那么对象b将移动到存活区1，然后清空新生代和存活区0。</p>
+<p><img src="/../images/java/jvm8.png" alt="jvm内存.png"></p>
+<p>如果经过多次GC,默认是15次，那么对象b就会移动到老年代。</p>
+<p><img src="/../images/java/jvm9.png" alt="jvm内存.png"></p>
+<p>接下来在进行yongGC就和对象b没有关系了，只有进行oldGC或者FullGC才有关系。</p>
+<p>非堆</p>
+<ul>
+<li>元数据：以前是永久代</li>
+<li>CCS: 存放class信息，和元数据有交叉</li>
+<li>code cache: 存放JIT编译后的本地机器代码</li>
+</ul>
+<p>可见性</p>
+<ul>
+<li>当多个线程访问同一个共享变量时，一个线程对变量的修改可能对其他线程不可见。JMM 规定了变量的可见性，确保一个线程对共享变量的修改能够及时地被其他线程看到。</li>
+<li>通过 volatile 关键字、锁（如 synchronized 或 ReentrantLock）以及 final 关键字来保证变量的可见性。</li>
+</ul>
+<p>原子性</p>
+<ul>
+<li>原子性保证某些操作在执行时不被中断。JMM 的目标之一是确保对某些变量的操作是原子的。例如，增加操作（i++）并不是原子操作。</li>
+<li>JMM 通过锁、synchronized 块、java.util.concurrent 包中的并发类（如 AtomicInteger）来保证原子性。</li>
+</ul>
+<p>有序性</p>
+<ul>
+<li>指令重排序可能导致执行顺序和程序代码中的顺序不一致，尤其是在多核 CPU 环境中。JMM 规定了操作的执行顺序。</li>
+<li>Java 提供了 volatile 关键字来防止指令重排序，在同步块中通过 synchronized 保证指令的顺序性。此外，java.util.concurrent 包中的类（如 CountDownLatch、CyclicBarrier 等）也帮助确保线程间的顺序性。</li>
+</ul>
+<p>Happens-Before 原则。JMM 使用 happens-before 规则来确保内存操作的有序性。它描述了操作之间的相对顺序，确保前一个操作对后一个操作的可见性和顺序性。常见的 happens-before 规则有：</p>
+<ul>
+<li>在同一个线程中，代码的执行顺序是按程序顺序进行的。</li>
+<li>对于 volatile 变量的写操作，发生在后续对该变量的读操作之前。</li>
+<li>在 synchronized 代码块的释放锁之前的所有操作，都会发生在锁被获得之后。</li>
+</ul>
+<h3 id="JVM启动参数"><a href="#JVM启动参数" class="headerlink" title="JVM启动参数"></a>JVM启动参数</h3><p>-开头是标准参数，如-server<br>-D设置系统属性，如-Dfile.encoding&#x3D;UTF-8<br>-X开头是非标准参数，基本都传给JVM的，默认JVM实现这些参数的功能。可以jvm -X查看支持的参数。如-Xmx8g<br>-XX开头是非稳定参数，专门控制jvm的行为，根具体的jvm实现有关</p>
+<ul>
+<li>-XX:+-Flags形式，+-是对布尔值进行开关。+代表开，-代表关。如-XX:_UseG1GC</li>
+<li>-XX:key&#x3D;value形式，指定某个选项的值.如-XX:MaxPermSize&#x3D;256m</li>
+</ul>
+<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><p>分代假设：大部分新生对象很快无用，存活较长时间的对象，可能存活更长时间。经历了15次GC还存在的就放在老年代.新生代80%，S0,S1各10%新生代到存活区是复制，到老年代是移动。</p>
+<p>-XX: +MaxTenuringThreshold&#x3D;15 表示15次后放到老年代。</p>
+<p>可以做为GC ROOT的对象</p>
+<ol>
+<li>当前正在执行的方法里的局部变量和输入参数</li>
+<li>活动线程</li>
+<li>所有类的静态字段</li>
+<li>JNI引用</li>
+</ol>
+<h4 id="Serial-GC-x2F-ParNewGC"><a href="#Serial-GC-x2F-ParNewGC" class="headerlink" title="Serial GC&#x2F;ParNewGC"></a>Serial GC&#x2F;ParNewGC</h4><p>-XX: +UseSerialGC开启</p>
+<p>对年轻代使用mark-copy算法，对老年代使用mark-sweep-compact算法</p>
+<p>串行GC不能并行处理，所以触发全部暂停(STW)</p>
+<p>ParNewGC可以配合CMSGC使用</p>
+<p>适用场景：</p>
+<ul>
+<li>单线程应用或资源有限的环境（如嵌入式系统）。</li>
+<li>小型应用，不需要频繁的垃圾回收。</li>
+</ul>
+<h4 id="Parallel-GC"><a href="#Parallel-GC" class="headerlink" title="Parallel GC"></a>Parallel GC</h4><p>目标是最大化应用程序运行时间（吞吐量），最小化 GC 时间。还是会短暂的暂停业务。需要业务能接受短暂的暂停。</p>
+<p>-XX: +UseParallelGC<br>-XX: +UseParallelOldGC</p>
+<p>年轻代和老年代GC都会触发STW事件。</p>
+<p>对年轻代使用mark-copy算法，对老年代使用mark-sweep-compact算法</p>
+<p>-XX: ParallelGCThreads&#x3D;N 来指定GC线程数，默认值为CPU核心数。</p>
+<p>优点：</p>
+<ul>
+<li>多线程回收显著提高了回收效率，适合多核环境。</li>
+<li>停顿时间较 Serial GC 短。</li>
+<li>两次GC之间不消耗系统资源。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>GC 停顿仍然是全暂停（STW）。</li>
+<li>不适合对延迟要求苛刻的场景。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>需要高吞吐量的大型后台任务（如批处理、数据分析）。</li>
+<li>多核 CPU 环境。</li>
+</ul>
+<h4 id="CMS-GC"><a href="#CMS-GC" class="headerlink" title="CMS GC"></a>CMS GC</h4><p>-XX: +UseConcMarkSweepGC</p>
+<p>对年轻代使用STW的mark-copy算法，对老年代主要使用并发的mark-sweep算法</p>
+<p>设计目标:专为老年代设计，目标是最小化 GC 停顿时间。</p>
+<ol>
+<li>不对老年代进行整理，而是使用空闲列表来管理内存空间的回收</li>
+<li>在mark-and-sweep的工作和业务线程并发执行。</li>
+</ol>
+<p>默认并发线程数等于CPU核心数的1&#x2F;4</p>
+<p>6个阶段</p>
+<ol>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>并发预清理</li>
+<li>最终标记</li>
+<li>并发清楚</li>
+<li>并发重制</li>
+</ol>
+<p>MaxHeapSize是系统的1&#x2F;4内存<br>MaxNewSize是MaxHeapSize的1&#x2F;3<br>NewSize是系统的1&#x2F;64</p>
+<p>优点：</p>
+<ul>
+<li>只有yongGC暂停业务。GC 停顿时间短，适合延迟敏感的应用。</li>
+<li>并发回收利用多核资源减少 STW 时间。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>内存碎片化：CMS 不会整理内存，可能导致分配大对象失败（触发 Full GC）。</li>
+<li>CPU 开销较高：并发阶段可能与用户线程争抢资源。</li>
+<li>容易产生 “Concurrent Mode Failure”：若老年代空间不足，回退到 Serial GC。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的应用（如 Web 服务、在线交易系统）。</li>
+<li>多核环境下的中大型应用。</li>
+</ul>
+<h4 id="G1-GC"><a href="#G1-GC" class="headerlink" title="G1 GC"></a>G1 GC</h4><p>分区堆内存：将堆划分为若干独立的固定大小的区域（Region），每个 Region 可充当年轻代、老年代或其他用途。混合回收：通过优先回收包含最多垃圾的 Region（Garbage-First）。并行和并发回收：减少 STW 时间。内置碎片整理机制，避免了 CMS 的碎片化问题。一般一个Region是1M。一部分 Region 保留为 Humongous（H） 区，用于存储超过单个 Region 大小一半的巨型对象。</p>
+<p>-XX: +UseG1GC -XX: MaxGCPauseMillis&#x3D;50</p>
+<p>将STW的时间和分布变成可预期和可配置的，可设置某项特定的性能指标，为了达成可预期的指标，有独特的实现。增量方式，每次处理一部分，称为回收集合，每次处理所有的年轻代和部分老年代。能看到哪个块的垃圾多，优先回收他们</p>
+<p>处理步骤</p>
+<ol>
+<li>年轻代模式转移暂停</li>
+<li>并发标记</li>
+<li>转移暂停：混合模式</li>
+</ol>
+<p>G1GC可能退化成串行GC</p>
+<ol>
+<li>并发模式失败：增加堆大小</li>
+<li>晋升失败：</li>
+<li>巨型对象分配失败：增加内存或增大Region大小</li>
+</ol>
+<p>优点：</p>
+<ul>
+<li>减少内存碎片化。</li>
+<li>更好地控制 GC 停顿时间，可通过 -XX:MaxGCPauseMillis 调整。</li>
+<li>自动调节年轻代和老年代的大小。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>实现复杂，配置选项多。</li>
+<li>内存占用较高，CPU 开销大。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>需要低延迟的中大型应用。</li>
+<li>堆内存较大的环境（如 &gt;4GB）。</li>
+<li>替代 CMS 的推荐选择。</li>
+</ul>
+<p>Mixed GC</p>
+<ul>
+<li>老年代内存使用率达到一定阈值（默认 45%，可通过 -XX:InitiatingHeapOccupancyPercent 调整）。</li>
+<li>同时回收年轻代和部分老年代。</li>
+<li>执行<ul>
+<li>标记 GC Roots 直接引用的对象。</li>
+<li>并发扫描老年代，标记存活对象。</li>
+<li>处理标记期间新产生的引用变化。</li>
+</ul>
+</li>
+<li>根据垃圾优先（Garbage-First）的原则，优先选择包含最多垃圾的 Region。</li>
+</ul>
+<h4 id="ZGC"><a href="#ZGC" class="headerlink" title="ZGC"></a>ZGC</h4><p>专注于低延迟，目标是将 GC 停顿时间控制在 10ms 以下。支持非常大的堆内存（TB 级）。使用多线程并发回收，避免长时间的 STW。基于标记-整理算法，避免内存碎片化。使用指针染色（Pointer Coloring）来实现并发标记和引用更新。</p>
+<p>-XX: +UnlockExpermentalVMOptions<br>-XX: +UseZGC<br>-XX: -Xmx16g</p>
+<p>优点：</p>
+<ul>
+<li>极低的 GC 停顿时间。</li>
+<li>支持超大堆，扩展性好。</li>
+<li>减少内存碎片。</li>
+<li>与G1相比，应用吞吐量下降不超过15%</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>内存占用较高：由于需要染色指针和写屏障。</li>
+<li>不适合资源紧张的环境。</li>
+</ul>
+<p>-XX: +UseShenandoahGC</p>
+<p>立项比ZGC早，暂停时间与堆大小无关</p>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的大型应用（如金融交易、高并发系统）。</li>
+<li>超大堆应用（TB 级别内存）。</li>
+</ul>
+<h4 id="Shenandoah-GC"><a href="#Shenandoah-GC" class="headerlink" title="Shenandoah GC"></a>Shenandoah GC</h4><p>目标是极低延迟，尽可能减少 STW 时间。采用并发压缩技术（Concurrent Compaction），避免碎片化问题。大部分回收工作与应用线程并发执行。</p>
+<p>优点：</p>
+<ul>
+<li>GC 停顿时间低。</li>
+<li>内存整理避免碎片化。</li>
+<li>对堆内存的需求比 ZGC 更低。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>较新的 GC，生态和调优支持可能不如 G1 和 ZGC。</li>
+<li>CPU 开销高。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的应用。</li>
+<li>中大型堆内存的场景。</li>
+</ul>
+<h4 id="GC总结"><a href="#GC总结" class="headerlink" title="GC总结"></a>GC总结</h4><p>从GC的发展历史来看，目标是两个</p>
+<ol>
+<li>尽可能减少停顿时间，不影响业务。</li>
+<li>尽可能减少GC时间，让GC更快。</li>
+</ol>
+<p>基本上G1 GC是通用的，如果条件允许上ZGC或Shenandoah。JDK8的默认GC是Parallel GC，JDK9后一直都是G1 GC。从这里也能看出G1 GC性能更好。更通用。</p>
+<p><img src="/../images/java/jvm10.png" alt="jvm内存.png"></p>
+<ol>
+<li>如果系统考虑吞吐优先，CPU资源用来处理业务，用Parallel GC</li>
+<li>如果系统考虑低延迟优先，每次GC时间尽量短，用CMS GC</li>
+<li>如果系统内存堆大，平均GC时间可控，使用G1 GC</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mysql%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97.html" rel="prev" title="mysql优化指南">
+      <i class="fa fa-chevron-left"></i> mysql优化指南
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/gc%E6%AF%94%E8%BE%83.html" rel="next" title="java gc 横向对比">
+      java gc 横向对比 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#java"><span class="nav-number">1.</span> <span class="nav-text">java</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM"><span class="nav-number">1.1.</span> <span class="nav-text">JVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.1.</span> <span class="nav-text">jvm基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java%E5%AD%97%E8%8A%82%E7%A0%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">java字节码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">JVM类加载器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.4.</span> <span class="nav-text">JVM内存模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.5.</span> <span class="nav-text">JVM启动参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC"><span class="nav-number">1.1.6.</span> <span class="nav-text">GC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Serial-GC-x2F-ParNewGC"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">Serial GC&#x2F;ParNewGC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-GC"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">Parallel GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS-GC"><span class="nav-number">1.1.6.3.</span> <span class="nav-text">CMS GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G1-GC"><span class="nav-number">1.1.6.4.</span> <span class="nav-text">G1 GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZGC"><span class="nav-number">1.1.6.5.</span> <span class="nav-text">ZGC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shenandoah-GC"><span class="nav-number">1.1.6.6.</span> <span class="nav-text">Shenandoah GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E6%80%BB%E7%BB%93"><span class="nav-number">1.1.6.7.</span> <span class="nav-text">GC总结</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数组数据结构什么是接口接口就是Interface，也可以是ADT(Abstract Data Tructure), 当定义一个接口的时候，实际上是一种规范，一种约束。 接口定义了一些方法，也就是支持哪些操作。 这里拿Java的List接口举个例子。 List  add(E element): 表示List接口支持add操作，将一个元素添加到list中，至于如何实现，不重要。 remove(E el">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ArrayList和LinkedList解析">
+<meta property="og:url" content="https://thepatterraining.github.io/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="数组数据结构什么是接口接口就是Interface，也可以是ADT(Abstract Data Tructure), 当定义一个接口的时候，实际上是一种规范，一种约束。 接口定义了一些方法，也就是支持哪些操作。 这里拿Java的List接口举个例子。 List  add(E element): 表示List接口支持add操作，将一个元素添加到list中，至于如何实现，不重要。 remove(E el">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list10.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list11.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list12.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list13.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list14.png">
+<meta property="article:published_time" content="2024-04-15T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.815Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ArrayList和LinkedList解析 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ArrayList和LinkedList解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-04-15T10:12:47+08:00">2024-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html" class="post-meta-item leancloud_visitors" data-flag-title="ArrayList和LinkedList解析" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="数组数据结构"><a href="#数组数据结构" class="headerlink" title="数组数据结构"></a>数组数据结构</h2><h3 id="什么是接口"><a href="#什么是接口" class="headerlink" title="什么是接口"></a>什么是接口</h3><p>接口就是Interface，也可以是ADT(Abstract Data Tructure), 当定义一个接口的时候，实际上是一种规范，一种约束。</p>
+<p>接口定义了一些方法，也就是支持哪些操作。</p>
+<p>这里拿Java的List接口举个例子。</p>
+<p>List<E></p>
+<ul>
+<li>add(E element): 表示List接口支持add操作，将一个元素添加到list中，至于如何实现，不重要。</li>
+<li>remove(E element): 表示List接口支持remove操作，将一个元素从list中移除，至于如何实现，不重要。</li>
+<li>size(): 表示List接口支持size操作，返回list中有多少个元素，如何实现，不重要。</li>
+</ul>
+<p>接口还可以想象成提出了一些问题，比如说，我现在有List这个接口，我提出了三个问题。</p>
+<ul>
+<li>我要将一个元素添加到list中，如何实现？</li>
+<li>我要将一个元素从list中移除，如何实现?</li>
+<li>我要计算list中元素的数量，如何实现？</li>
+</ul>
+<h3 id="什么是数据结构"><a href="#什么是数据结构" class="headerlink" title="什么是数据结构"></a>什么是数据结构</h3><p>那么什么是数据结构呢？就是一种接口的具体实现方案。</p>
+<p>它是数据实际的表示形式。它有一些方法，或者说使用一些算法，来实现上面接口提出的操作。</p>
+<p>同样可以理解为对于上面提出的三个问题的解答。</p>
+<p>以Java中ArrayList和LinkedList来举例。</p>
+<p>ArrayList: 使用数组实现了List接口</p>
+<ul>
+<li>add(E element): 表示ArrayList这种数据结构，实现了List接口，支持add操作，使用了适合ArrayList这种数据结构的算法来实现add，解决了上面的第一个问题。</li>
+<li>remove(E element): 表示ArrayList这种数据结构，实现了List接口，支持remove操作，使用了适合ArrayList这种数据结构的算法来实现remove，解决了上面的第二个问题。</li>
+<li>len(): 表示ArrayList这种数据结构，实现了List接口，支持len操作，使用了适合ArrayList这种数据结构的算法来实现len，解决了上面的第三个问题。</li>
+</ul>
+<p>LinkedList：使用链表实现了List接口</p>
+<ul>
+<li>add(E element): 表示LinkedList这种数据结构，实现了List接口，支持add操作，使用了适合LinkedList这种数据结构的算法来实现add，解决了上面的第一个问题。</li>
+<li>remove(E element): 表示LinkedList这种数据结构，实现了List接口，支持remove操作，使用了适合LinkedList这种数据结构的算法来实现remove，解决了上面的第二个问题。</li>
+<li>len(): 表示LinkedList这种数据结构，实现了List接口，支持len操作，使用了适合LinkedList这种数据结构的算法来实现len，解决了上面的第三个问题。</li>
+</ul>
+<h2 id="静态数组实现"><a href="#静态数组实现" class="headerlink" title="静态数组实现"></a>静态数组实现</h2><p>静态数组可以实现List的功能吗？当然可以了。那么我们看一下静态数组的实现，有哪些好处和坏处。</p>
+<p>我们现在定义一个接口，List，下面是接口支持的操作。</p>
+<ul>
+<li>build(x): 新建一个List。</li>
+<li>len(): 返回数量</li>
+<li>get_at(i): 获取i下标的元素</li>
+<li>set_at(i, x): 设置i下标的元素为x</li>
+<li>insert_at(i, x): 插入某一个位置</li>
+<li>delete_at(i): 删除某一个位置的元素</li>
+<li>insert_first(x): 将一个元素插入到第一个位置</li>
+<li>insert_last(x)：将一个元素插入到最后一个位置</li>
+<li>delete_fist()：删除第一个位置的元素</li>
+<li>delete_last()：删除最后一个位置的元素</li>
+</ul>
+<p>通过静态数组来实现这个接口，也就是数组长度一旦确定就不可以改变了。</p>
+<p>先看build，可以通过for去构建一个静态数组。其时间复杂度为O(n)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">build</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="type">int</span>[] array = <span class="keyword">new</span> <span class="title class_">Int</span>[x.length];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; x.length; i++) &#123;</span><br><span class="line">        array[i] = x[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录静态数组的长度</span></span><br><span class="line">    len = array.lenght;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为上面在构建的时候已经记录了长度，因此，可以直接返回。len的时间复杂度就是O(1)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">len</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于数组来说，我们知道它是内存中一段连续的空间，因此这个时候，我们的内存里面是这样的。假设x里面是1,2,3,4,5,6</p>
+<p><img src="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png" alt="list1.png"></p>
+<p>我们还知道一个int等于32位，4个字节，因此，假设元素1的地址是0，那么其余的地址如下图所示。</p>
+<p><img src="/../images/DataStructure/list2.png" alt="list1.png"></p>
+<p>因此，<code>get_at(i)</code>这个操作的时间复杂度同样是O(1)，因为可以直接计算出对应位置的地址，计算公式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">第i个元素的地址 = 首地址 + （4 * i）</span><br><span class="line">i = 0的地址 = 0 + 0 = 0</span><br><span class="line">i = 1的地址 = 0 + 4 = 4</span><br></pre></td></tr></table></figure>
+
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 因为java语言会自动计算i这个下标对应的地址</span></span><br><span class="line">    <span class="keyword">return</span> array[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>set_at(i,x)</code>这个操作来说，同样的O(1)复杂度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的操作都很快，但是如果我们想插入或者删除一个元素，对于<code>静态数组</code>这个数据结构来说，就很慢了。因为要移动元素。我们看一下操作<code>delete_at(i)</code>的执行过程。</p>
+<p>假设delete_at(0)：表示删除第0个元素，也就是首个元素。</p>
+<p>第一步，删除，我们可以看到地址0指向的首个元素的内容变成<code>null</code>了</p>
+<p><img src="/../images/DataStructure/list3.png" alt="list1.png"></p>
+<p>第二步，移动后面的元素到前面的位置。</p>
+<p><img src="/../images/DataStructure/list4.png" alt="list1.png"></p>
+<p>删除完成，这个时候肯定有人问了，不对啊，你这最后两个元素一样啊，是的，不用管它。</p>
+<p>因为我们的len减少了，而获取的时候需要判断大小，如果获取的下标长度超过len了，应该返回空或错误。这个在上面的伪代码里面省略了。</p>
+<blockquote>
+<p>完整的代码做为课后作业，希望大家可以自己完成，只有自己实践了，知识才是自己的，你光看我写的内容，过一会就忘了，如果你觉得实现有困难，那么我的内容可以帮助你解决困难，帮助你自己实现它。</p>
+</blockquote>
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">//第一步 删除 这一步其实可以省略，这里是希望大家明白原理</span></span><br><span class="line">    array[i] = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">//第二步，移动后面的元素过来</span></span><br><span class="line">    <span class="keyword">for</span> (j = i + <span class="number">1</span>; j &lt; len; j++) &#123;</span><br><span class="line">        array[j - <span class="number">1</span>] = array[j];</span><br><span class="line">    &#125;</span><br><span class="line">    len--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>insert_at(i,x)</code>操作来说，和上面的原理几乎一样，分为两个步骤。</p>
+<p>第一步，将i元素及后面的元素往后移动一步，把i这个位置腾出来。我们拿<code>insert(0,1)</code>来举例。</p>
+<p>可以看到几乎是上方delete操作的一个逆序过程。</p>
+<p><img src="/../images/DataStructure/list5.png" alt="list1.png"></p>
+<p>现在可以看到0的位置已经空出来了，虽然里面还有一个2，但是我们可以覆盖它。</p>
+<p>第二步，将1插入0的位置。</p>
+<p><img src="/../images/DataStructure/list6.png" alt="list6.png"></p>
+<p>如此，就完成了整个insert操作。伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 移动元素 注意从后往前移动</span></span><br><span class="line">    <span class="keyword">for</span> (j = len - <span class="number">1</span>; j &gt;= i; j--) &#123;</span><br><span class="line">        array[j + <span class="number">1</span>] = array[j];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步 插入</span></span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>细心的你，一定发现了上面的代码缺少边界检查，这些都留给你的具体实现了，都是比较简单的东西。</p>
+<p>那么，对于<code>delete_at(i)</code>和<code>insert_at(i,x)</code>来说，我们的时间复杂度相当于O(n).</p>
+<p>而剩下的<code>delete_first()</code>和<code>delete_last()</code>，以及<code>insert_first(x)</code>和<code>insert_last(x)</code>都是上方的一个真子集，所以时间复杂度同样是O(n)。就不再重复演示了。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<h2 id="链表的实现"><a href="#链表的实现" class="headerlink" title="链表的实现"></a>链表的实现</h2><p>除了直接用一个<code>Array</code>去实现以外，还可以用<code>链表</code>这个数据结构去实现List接口。也就是Java中的<code>LinkedList</code>实现。</p>
+<p>我们首先看一下链表是如何实现build的。可以通过for去构建一个链表。其时间复杂度为O(n)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">build</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x[x.length - <span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> x.length - <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">current</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x[i]);</span><br><span class="line">        current.next = node;</span><br><span class="line">        node = current;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录链表的长度</span></span><br><span class="line">    len = x.lenght;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为上面在构建的时候已经记录了长度，因此，可以直接返回。len的时间复杂度就是O(1)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">len</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下链表这个数据结构的逻辑形式，如下图所示。一个一个指针把数据连接起来</p>
+<ul>
+<li>优点：不用连续的空间，长度不固定</li>
+<li>缺点：查询慢</li>
+</ul>
+<p>val代表具体的内容，Next代表下一个节点的指针，内容是下一个节点的地址。最后一个节点的Next指针是null。<br><img src="/../images/DataStructure/list7.png" alt="list7.png"></p>
+<p>而在实际内存中的表现形式则是下图所示。这里是连续的，仅仅是巧合，也可能是不连续的。在这里我们忽略class头的占用，this指针的占用空间，val占据空间是4个字节，next做为指针是64位，占用8个字节。<br><img src="/../images/DataStructure/list8.png" alt="list7.png"></p>
+<p>由于链表的地址不连续，所以没办法通过首地址直接计算出每个元素的地址，而需要通过<code>next</code>属性来获取下一个元素的地址。</p>
+<p>整个<code>get_at(i)</code>的获取步骤如下</p>
+<ol>
+<li>获取首个元素的地址</li>
+<li>获取该元素的next属性</li>
+<li>重复第2步，直到重复了i次</li>
+<li>返回该元素内容</li>
+</ol>
+<p>整个步骤如图所示。假设是<code>get_at(2)</code>，代表获取第三个元素。也就是3这个内容。因为是从0开始。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> node.val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，因为每次都要从头找，所以时间复杂度是O(n)</p>
+<p>再看一下<code>set_at(i, x)</code>。也基本上是同样的步骤，找到这个元素，然后更新它的val属性内容。步骤图和上面是一样的。所以时间复杂度同样是O(n)。直接看一下伪代码吧。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i, x)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (node != <span class="literal">null</span>) &#123;</span><br><span class="line">        node.val = x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到几乎是一样的。</p>
+<p>再来看一下<code>insert_at(i, x)</code>和<code>delete_at(i)</code>。首先看一下<code>delete_at(i)</code>。</p>
+<p>比如<code>delete_at(2)</code> 分为两步，第一步查询，和上面的步骤是一样的。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>第二步是删除。删除分为2步</p>
+<ol>
+<li>将上一个指针的next指向第i+1个元素。可以看到图里更新成36了</li>
+<li>将第i个元素的next指针更新成null</li>
+</ol>
+<p><img src="/../images/DataStructure/list10.png" alt="list7.png"></p>
+<p>整个伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步删除</span></span><br><span class="line">    <span class="comment">// 2.1 将i-1个元素的next指向i+1</span></span><br><span class="line">    inode = node.next;</span><br><span class="line">    node.next = node.next.next;</span><br><span class="line">    <span class="comment">// 2.2 将第i个元素的next指针更新成null</span></span><br><span class="line">    inode.next = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大家在想一想，如果是<code>delete(x)</code>的话，该如何实现呢？</p>
+<blockquote>
+<p>提示：仅仅修改获取元素即可，修改成x &#x3D;&#x3D; node.val，就是找到了。可以使用双向链表实现。</p>
+</blockquote>
+<p>再看一下<code>insert_at(i,x)</code>的执行步骤，分为两步。</p>
+<p>第一步是查询，和上面也是一样的。</p>
+<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p>第二步是插入，插入分为两步</p>
+<ol>
+<li>修改插入节点的next指向当前i节点的next</li>
+<li>修改当前i-1节点的next指向插入节点</li>
+</ol>
+<p>我们以<code>insert_at(2,3)</code>为例。首先找到i&#x3D;0，再找到i&#x3D;1的位置就是要插入的位置，因为要插入的位置是2，所以我们要把i&#x3D;1的元素的next指向插入的节点。所以找到i&#x3D;1的元素就可以停止了。</p>
+<p><img src="/../images/DataStructure/list11.png" alt="list7.png"></p>
+<p>整个伪代码实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步插入</span></span><br><span class="line">    <span class="comment">// 2.1 修改插入节点的next指向当前i节点的next</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">insertNode</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x);</span><br><span class="line">    insertNode.next = node.next;</span><br><span class="line">    <span class="comment">// 2.2 修改当前i-1节点的next指向插入节点</span></span><br><span class="line">    node.next = insertNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述两个操作对于<code>链表</code>数据结构来说，实现的时间复杂度都是O(n)。</p>
+<p>但是链表相对于静态数组来说，其优势再于剩下的操作的实现。</p>
+<p>比如<code>insert_first(x)</code>和<code>delete_first()</code>。对于这两个来说，不需要查找，因为删除的是第一个元素。所以省去了查找时间，插入和删除时间仅仅是O(1)。</p>
+<p>看一下<code>insert_first(10)</code>。</p>
+<ul>
+<li>创建插入节点insertNode</li>
+<li>修改插入节点的next指向当前head节点的next:insertNode.next &#x3D; head.next;</li>
+<li>修改当前head节点的next指向插入节点</li>
+</ul>
+<p>从伪代码也能看出来，完全就是上面伪代码的第二步插入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_first</span><span class="params">(x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第二步插入</span></span><br><span class="line">    <span class="comment">// 2.1 修改插入节点的next指向当前i节点的next</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">insertNode</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x);</span><br><span class="line">    insertNode.next = head.next;</span><br><span class="line">    <span class="comment">// 2.2 修改当前i-1节点的next指向插入节点</span></span><br><span class="line">    head.next = insertNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>delete_first()</code>来说，是一样的，就是第二步删除。这里是从0开始，head原来是指向元素0，删除元素0，就是指向元素1.</p>
+<ol>
+<li>将head指针的next指向第1个元素。</li>
+<li>将第0个元素的next指针更新成null</li>
+</ol>
+<p>伪代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_first</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 第二步删除</span></span><br><span class="line">    <span class="comment">// 2.1 将head指针的next指向第1个元素。</span></span><br><span class="line">    inode = head;</span><br><span class="line">    head = head.next;</span><br><span class="line">    <span class="comment">// 2.2 将第0个元素的next指针更新成null</span></span><br><span class="line">    inode.next = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们还记录了<code>tail</code>指针来指向链表的尾部，那么<code>delete_last()</code>和<code>insert_last(x)</code>也是O(1)复杂度。</p>
+<p>如果没有的话，那么就是O(n)复杂度。这里不再赘述。</p>
+<p>整个链表数据结构，也就是常说的<code>LinkedList</code>实现，复杂度表如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>链表的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+<h2 id="动态数组的实现"><a href="#动态数组的实现" class="headerlink" title="动态数组的实现"></a>动态数组的实现</h2><p>什么是动态数组呢？</p>
+<ul>
+<li>融合了上面两个的优点</li>
+<li>既保证了查询的高效，也保证了插入和删除的高效。</li>
+</ul>
+<p>如何做到的呢？这也就是JAVA中<code>ArrayList</code>做到的事情。一起来看一下吧。</p>
+<p>对于build和len，就不再重复了，可以直接参考静态数组的实现。</p>
+<p>这里主要看一下其余的操作。</p>
+<p>对于<code>get_at(i)</code>来说，由于使用的是数组，所以同样的O(1)复杂度，ArrayList数据结构也是一块连续的内存空间，可以通过公式直接计算出i元素的内存位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">第i个元素的地址 = 首地址 + （4 * i）</span><br><span class="line">i = 0的地址 = 0 + 0 = 0</span><br><span class="line">i = 1的地址 = 0 + 4 = 4</span><br></pre></td></tr></table></figure>
+
+<p>伪代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 因为java语言会自动计算i这个下标对应的地址</span></span><br><span class="line">    <span class="keyword">return</span> array[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>set_at(i,x)</code>这个操作来说，同样的O(1)复杂度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点在接下来。敲黑板了！！！</p>
+<p>对于<code>insert_last(x)</code>和<code>delete_at(i)</code>来说。我们看一下实现。</p>
+<p>以<code>insert_last(1)</code>来说吧。由于是动态数组，是可以扩容的。假设当前内存是空.然后我们插入1.</p>
+<p><img src="/../images/DataStructure/list12.png" alt="list7.png"></p>
+<p>在接下来我们要插入2.也就是<code>insert_last(2)</code>。但是这个数组没有空间了，我们需要扩容，比如我们扩容一倍，也就是申请两个内存，现在的内存首地址就不是1了，可能是10-17.</p>
+<p>然后再把原来数组的内容复制过去，在插入新的元素2.</p>
+<p><img src="/../images/DataStructure/list13.png" alt="list7.png"></p>
+<p>接下来又插入了元素3.再次扩容，内存地址是20-35。同样把内容复制过去，在插入元素3.</p>
+<p><img src="/../images/DataStructure/list14.png" alt="list7.png"></p>
+<p>至于原来那些不用的数组的内存空间，会被JAVA的内存垃圾回收机制，给回收掉。所以不用管。</p>
+<p>接下来计算一下它的时间复杂度吧。</p>
+<p>因为我们是每次扩容一倍，所以分别是在1、2、4、8、…、n的时候扩容。<br>因此，当我们插入n个元素的时候，时间复杂度是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O(1+2+4+8...+n)</span><br></pre></td></tr></table></figure>
+
+<p>它可以看成是一个级数。i&#x3D;i 到 i&#x3D;n，2的i次方相加。</p>
+<p>这个结果，基本上是O(n)的一个复杂度。</p>
+<p>这个时候有人说了，这个复杂度不还是O(n)吗，可是我们插入了n个元素，复杂度是O(n)，平均下来，插入1个元素的复杂度就是O(1)了啊。</p>
+<p>对于<code>delete_last</code>来说，和上面是一样的。</p>
+<p>因此动态数组，<code>ArrayList</code>。的复杂度如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>动态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以看到最常用的几个操作里面，ArrayList这个数据结构的复杂度是最低的。</p>
+<p>因此，ArrayList几乎一直都比LinkedList好用。</p>
+<p>整体的复杂度表格如下。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>Get_at、Set_at</th>
+<th>delete_at、insert_at</th>
+<th>delete_last、insert_last</th>
+<th>delete_first、insert_first</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>静态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>链表的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>动态数组的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+</tbody></table>
+<p>get_at就是List接口中常用的get()，insert_last就是List接口中常用的add操作，而delete_at就是List接口中常用的remove操作。</p>
+<p>来看一下LinkedList和ArrayList的对比吧。可以看到，对于LinkedList来说，get和remove都是O(n)，而ArrayList来说，只有remove是O(n)。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>Build</th>
+<th>Len</th>
+<th>get</th>
+<th>remove</th>
+<th>add</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LinkedList的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>ArrayList的复杂度</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/java%E6%A0%B8%E5%BF%83.html" rel="prev" title="算法导论">
+      <i class="fa fa-chevron-left"></i> 算法导论
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/mysql%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97.html" rel="next" title="mysql优化指南">
+      mysql优化指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">数组数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.1.</span> <span class="nav-text">什么是接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">什么是数据结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%95%B0%E7%BB%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">静态数组实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">链表的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">动态数组的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="mysql索引详解-你的数据库用对索引了嘛mysql的索引一般分为主键索引，唯一索引，普通索引，联合索引，覆盖索引等。 索引这么多，到底该怎么用，用哪个索引适合，需不需要索引呢？ innoDB的索引innoDB里面一般采用b+树索引模型，当然还有其它比如哈希索引，全文索引，空间索引。但是常用的还是b+树索引。 B+树是一个N叉平衡树。为什么不用二叉平衡树呢，因为二叉平衡树高度太高了，n叉平衡树可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql索引详解-你的数据库用对索引了嘛">
+<meta property="og:url" content="https://thepatterraining.github.io/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="mysql索引详解-你的数据库用对索引了嘛mysql的索引一般分为主键索引，唯一索引，普通索引，联合索引，覆盖索引等。 索引这么多，到底该怎么用，用哪个索引适合，需不需要索引呢？ innoDB的索引innoDB里面一般采用b+树索引模型，当然还有其它比如哈希索引，全文索引，空间索引。但是常用的还是b+树索引。 B+树是一个N叉平衡树。为什么不用二叉平衡树呢，因为二叉平衡树高度太高了，n叉平衡树可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql03.png">
+<meta property="article:published_time" content="2020-04-23T04:30:39.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.866Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql03.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mysql索引详解-你的数据库用对索引了嘛 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql索引详解-你的数据库用对索引了嘛
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-23 12:30:39" itemprop="dateCreated datePublished" datetime="2020-04-23T12:30:39+08:00">2020-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html" class="post-meta-item leancloud_visitors" data-flag-title="mysql索引详解-你的数据库用对索引了嘛" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="mysql索引详解-你的数据库用对索引了嘛"><a href="#mysql索引详解-你的数据库用对索引了嘛" class="headerlink" title="mysql索引详解-你的数据库用对索引了嘛"></a>mysql索引详解-你的数据库用对索引了嘛</h1><p>mysql的索引一般分为主键索引，唯一索引，普通索引，联合索引，覆盖索引等。</p>
+<p>索引这么多，到底该怎么用，用哪个索引适合，需不需要索引呢？</p>
+<h2 id="innoDB的索引"><a href="#innoDB的索引" class="headerlink" title="innoDB的索引"></a>innoDB的索引</h2><p>innoDB里面一般采用b+树索引模型，当然还有其它比如哈希索引，全文索引，空间索引。但是常用的还是b+树索引。</p>
+<p>B+树是一个N叉平衡树。为什么不用二叉平衡树呢，因为二叉平衡树高度太高了，n叉平衡树可以控制树的高度，大概在3-4的高度，而树的根节点一般存在内存中，这样只需要做2-3次磁盘操作就可以了。大量的减少了磁盘操作。</p>
+<h4 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h4><p><code>主键索引</code>是一种聚簇索引，什么是<code>聚簇索引</code>呢，就是和数据放在一起的。b+树的叶子节点存放的是页，每个页的默认大小是16kb。主键索引树的叶子节点存放的是主键id和数据。一般我们都会用id做为主键。如果一个表不指定主键，Innodb会使用row id作为主键。</p>
+<p>我们使用主键查询数据，来看一下执行计划。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> auth_users <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/mysql03.png" alt="执行计划"></p>
+<p>可以看到里面key列显示的是primary，表示使用了主键索引。row列是1，表示扫描了一行。通过树搜索的方式快速定位了主键id的位置并且取出数据进行了返回。</p>
+<p>为什么主键推荐使用<code>递增id</code>呢，这是因为对索引树的增删改查要更加快速。所以一般使用自增主键。也避免了插入引起的<code>页分裂</code>和删除引起的<code>页合并</code>。</p>
+<p>如果现在表里有id&#x3D;4,5,6的数据，你插入了一条id&#x3D;3的数据。这时候存放id&#x3D;4,5,6数据的数据页满了，就需要页分裂，变成两个数据页。</p>
+<p>页合并就是相邻的两个数据页的数据都挺少的，可以合并到一起，那么就会页合并。</p>
+<p>使用自增主键则只需要不断往后写入就可以了，不需要担心中间的插入。而且自增主键占用的空间同样相对较小。</p>
+<h4 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h4><p><code>二级索引</code>也是<code>非聚簇索引</code>。包括<code>唯一索引</code>和<code>普通索引</code>。他们同样是b+树的方式存放，只是他们的叶子节点中存放的并不是真正的数据，而是主键id。那么通过这种索引怎么找到数据呢，其实是先找到对应的主键id，再去主键索引树中通过主键id找到对应的数据，也叫<code>回表</code>。</p>
+<p>唯一索引和普通索引的区别在于查询的时候，唯一索引查询到条件对应的数据后不会接着查询了，而普通索引会接着查询，直到不满足条件为止。</p>
+<h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p><code>覆盖索引</code>是一种优化的手段。覆盖索引也是一种<code>联合索引</code>。</p>
+<p>比如我们查询用户信息的时候，如果需要根据用户名查询用户名和密码。我们在用户名字段创建了一个索引。那么查询的时候就会走索引，但是查到的是id，还需要再去主键中找到数据，取出用户名和密码两个字段。</p>
+<p>如果我们在用户名的索引树中不仅存了id，还存了我们需要的密码字段，不就不需要再去回表了吗？那我们就需要创建一个<code>用户名和密码的联合索引</code>。这样我们就不需要再回表了，这也就是覆盖索引。覆盖了我们要查询的字段。当然，你通过索引查询的时候，执行计划显示的行数还是1.这是因为回表这个操作是在innoDB里面做的，mysql是感觉不到的。</p>
+<h4 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h4><p>索引下推也是一种优化。比如我们要查询<code>用户名是张三</code>，<code>密码是123456</code>的用户。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span> <span class="keyword">and</span> pwd <span class="operator">=</span> <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在mysql5.6以前，只能查询到张三这个数据以后回表找到数据在判断密码。</p>
+<p>而mysqll5.6增加索引下推的优化之后，可以在索引遍历过程中，对name和pwd两个字段同时做判断。</p>
+<h2 id="唯一索引和普通索引"><a href="#唯一索引和普通索引" class="headerlink" title="唯一索引和普通索引"></a>唯一索引和普通索引</h2><p>这两个索引到底该怎么选择，比如用户名字段，用户名当然是不能重复的了。那么它应该使用唯一索引还是普通索引呢？</p>
+<p>一般用户注册的时候我们会判断用户名是否重复。所以用户名字段加唯一索引的价值并不大，我们的业务已经能保证它不重复了。</p>
+<p>我们在上面说过，查询的时候，唯一索引查询到数据直接就返回了，显然要比普通索引快一些。</p>
+<p>但是真的也就快了那么一点，因为InnoDB引擎在读取的时候，是读取一个数据页的数据。它会先把一个数据页读取到内存中，然后查询，那么在内存中多查一次其实没啥感觉。</p>
+<p>在看一下更新的时候。</p>
+<h4 id="数据在内存里面"><a href="#数据在内存里面" class="headerlink" title="数据在内存里面"></a>数据在内存里面</h4><p>如果数据在内存中，那么唯一索引会判断更新后是否会破坏唯一性，如果不破坏则更新。</p>
+<p>普通索引则直接更新。</p>
+<p>这里显示普通索引更好，不用判断。但是这个影响页很小，和上面一样，在内存中操作的。</p>
+<h4 id="数据不在内存中"><a href="#数据不在内存中" class="headerlink" title="数据不在内存中"></a>数据不在内存中</h4><p>如果数据不在内存中，那么唯一索引就需要从磁盘读取数据，然后判断，更新。</p>
+<p>普通索引则直接写入<code>change buffer</code>，然后就完成了，而change buffer则是在内存中，内存操作，少了磁盘操作。</p>
+<p>整体来看，普通索引貌似比唯一索引更友好，唯一索引为了唯一性牺牲了插入和修改的性能。</p>
+<h4 id="change-buffer"><a href="#change-buffer" class="headerlink" title="change buffer"></a>change buffer</h4><p>这个是一块内存中的空间，顾名思义，他就是为了修改而生的，如果你修改了数据，不需要直接更新磁盘，而是放入change buffer.change buffer满了，或者一定时间，或者当出现查询操作的时候，会merge数据，比如你更新了手机号，然后要查询这个用户的手机号。那么这时候内存中没有这个数据，从磁盘查询，磁盘查询到的是以前的手机号，因为数据没有更新到磁盘。这时候change buffer就会把更新数据合并到内存中的数据，使得查询到的是最新数据。</p>
+<p>那么为什么唯一索引不适用change buffer，因为他需要判断唯一性。</p>
+<p>但是向刚才举得例子，更新完立即查询，其实和唯一索引的更新没有啥区别了，反而因为change buffer还麻烦了。所以，change buffer更适合更新完不立即查询的场景。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html" rel="prev" title="mysql事务详解-4种事务隔离界别该怎么选择">
+      <i class="fa fa-chevron-left"></i> mysql事务详解-4种事务隔离界别该怎么选择
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html" rel="next" title="推荐一些学习网站">
+      推荐一些学习网站 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B"><span class="nav-number">1.</span> <span class="nav-text">mysql索引详解-你的数据库用对索引了嘛</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#innoDB%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.</span> <span class="nav-text">innoDB的索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">主键索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">二级索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">覆盖索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8"><span class="nav-number">1.1.0.4.</span> <span class="nav-text">索引下推</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E5%92%8C%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95"><span class="nav-number">1.2.</span> <span class="nav-text">唯一索引和普通索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C%E9%9D%A2"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">数据在内存里面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8D%E5%9C%A8%E5%86%85%E5%AD%98%E4%B8%AD"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">数据不在内存中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#change-buffer"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">change buffer</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

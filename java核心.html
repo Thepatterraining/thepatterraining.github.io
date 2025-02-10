@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="jvm核心基础知识jvm基础知识java字节码Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码  栈操作指令 程序流程控制指令 对象操作指令 算术运算以及类型转换指令  javap可以看到字节码文件 1javap -c -verbose ...  astore_1 代表store 本地变量表的slot 1，a代表引用类型istore代表int store 算数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法导论">
+<meta property="og:url" content="https://thepatterraining.github.io/java%E6%A0%B8%E5%BF%83.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="jvm核心基础知识jvm基础知识java字节码Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码  栈操作指令 程序流程控制指令 对象操作指令 算术运算以及类型转换指令  javap可以看到字节码文件 1javap -c -verbose ...  astore_1 代表store 本地变量表的slot 1，a代表引用类型istore代表int store 算数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-15T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.857Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/java%E6%A0%B8%E5%BF%83.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法导论 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/java%E6%A0%B8%E5%BF%83.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法导论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-04-15T10:12:47+08:00">2024-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/java%E6%A0%B8%E5%BF%83.html" class="post-meta-item leancloud_visitors" data-flag-title="算法导论" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/java%E6%A0%B8%E5%BF%83.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/java%E6%A0%B8%E5%BF%83.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="jvm核心"><a href="#jvm核心" class="headerlink" title="jvm核心"></a>jvm核心</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="jvm基础知识"><a href="#jvm基础知识" class="headerlink" title="jvm基础知识"></a>jvm基础知识</h3><h3 id="java字节码"><a href="#java字节码" class="headerlink" title="java字节码"></a>java字节码</h3><p>Java bytecode由单字节的指令组成，类似汇编，java使用了200多个操作码</p>
+<ul>
+<li>栈操作指令</li>
+<li>程序流程控制指令</li>
+<li>对象操作指令</li>
+<li>算术运算以及类型转换指令</li>
+</ul>
+<p>javap可以看到字节码文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c -verbose ...</span><br></pre></td></tr></table></figure>
+
+<p>astore_1 代表store 本地变量表的slot 1，a代表引用类型<br>istore代表int store</p>
+<p>算数操作</p>
+<p>类型转换</p>
+<p>方法调用指令</p>
+<ul>
+<li>invokestatic: 调用静态方法</li>
+<li>invokespecial: 用来调用构造函数，或同一个类中的private方法，以及超类方法</li>
+<li>invokevirtual: 调用公共，受保护和package级的私有方法类似c的虚函数</li>
+<li>invokeinterface: 调用接口方法</li>
+<li>invokedynamic: lambda实现基础</li>
+<li>new 创建对象</li>
+<li>getfield: 获取对象的实例字段</li>
+<li>putfield: 设置对象的实例字段</li>
+</ul>
+<p>栈操作指令</p>
+<ul>
+<li>pop：将栈顶的一个数值弹出（丢弃）。</li>
+<li>dup：复制栈顶的一个数值。</li>
+<li>swap：交换栈顶的两个数值。</li>
+</ul>
+<p>条件跳转指令</p>
+<ul>
+<li>if_icmpeq：如果栈顶两个int值相等，则跳转。</li>
+<li>if_icmpne：如果栈顶两个int值不相等，则跳转。</li>
+<li>goto：无条件跳转到指定位置。</li>
+<li>tableswitch：根据值选择跳转位置，用于switch语句。</li>
+</ul>
+<p>同步指令</p>
+<ul>
+<li>monitorenter：进入同步代码块。</li>
+<li>monitorexit：退出同步代码块。</li>
+</ul>
+<h3 id="JVM类加载器"><a href="#JVM类加载器" class="headerlink" title="JVM类加载器"></a>JVM类加载器</h3><p>引导类加载器</p>
+<ul>
+<li>引导类加载器是最顶层的类加载器，负责加载 Java 核心库中的类（例如 java.lang.* 包中的类）。这些类一般位于 JRE 目录下的 rt.jar 文件中。</li>
+<li>它是由 C++ 编写的，直接由操作系统加载，因此没有 Java 类的实现。</li>
+<li>它默认从 JRE&#x2F;lib 路径下加载类。</li>
+</ul>
+<p>扩展类加载器</p>
+<ul>
+<li>扩展类加载器负责加载 Java 扩展库中的类。这些类通常位于 JRE&#x2F;lib&#x2F;ext 目录下，或者由 java.ext.dirs 系统属性指定的其他路径。</li>
+<li>它是由 Java 编写的，属于标准的类加载器。</li>
+<li>它默认从 JRE&#x2F;lib&#x2F;ext 目录和 java.ext.dirs 属性指定的路径加载类</li>
+</ul>
+<p>系统类加载器</p>
+<ul>
+<li>系统类加载器负责加载应用程序的类，也就是由用户编写的类。它通常从类路径（classpath）中加载类。</li>
+<li>它是由 Java 编写的，通常是 ClassLoader 类的一个实例。用户可以指定 classpath 来告诉系统类加载器从哪里加载类。</li>
+<li>它根据环境变量 CLASSPATH 或 -cp 命令行参数指定的路径加载类。</li>
+</ul>
+<p>自定义类加载器</p>
+<ul>
+<li>Java 还允许程序员创建自定义类加载器，来自定义类加载的行为。自定义类加载器可以扩展 ClassLoader 类并重写其 findClass() 方法，来实现从不同的数据源加载类，比如从数据库、网络等加载类。</li>
+<li>自定义类加载器在很多场景中有用，比如在应用服务器中动态加载插件，或者从不常规的源（如数据库、网络等）加载类。</li>
+</ul>
+<p>类的生命周期</p>
+<ul>
+<li>加载： 找class文件，类加载器通过 findClass() 方法从指定的位置查找 .class 文件。加载器会将 .class 文件转化为二进制字节流。</li>
+<li>验证： 验证格式，依赖。验证阶段确保加载的 .class 文件格式正确，并且不包含任何有可能危害虚拟机安全的代码。</li>
+<li>准备： 静态字段，方法表。准备阶段分配内存并为类变量（静态字段）设置默认值（如 0、null 等）。</li>
+<li>解析： 符号解析为引用。解析阶段将类中的符号引用（例如字段、方法、类的名字等）解析为实际的内存地址或方法引用。</li>
+<li>初始化： 构造器，静态变量赋值，静态代码块。初始化阶段是类加载过程的最后一步，它会执行类的静态初始化块（static 块）和静态字段的初始化。</li>
+<li>使用</li>
+<li>卸载</li>
+</ul>
+<p>图片</p>
+<p>JVM 中的类加载器采用了父子委托机制（Parent Delegation Model）。当一个类加载器收到加载某个类的请求时，它不会直接去加载类，而是首先将请求委托给父类加载器。如果父类加载器无法加载，则再由当前加载器进行加载。这种机制的好处是可以保证 Java 核心类库不会被用户定义的类覆盖。</p>
+<h3 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h3><p>java栈</p>
+<ul>
+<li>线程私有：存储线程的本地变量信息等</li>
+<li>每个线程在执行方法时，都会在栈中创建一个栈帧（stack frame）。栈帧包含方法的局部变量、操作数栈、动态链接、方法返回地址等信息。栈的大小通常由 -Xss 参数进行控制。</li>
+<li>局部变量的作用范围仅限于当前方法，存储在栈帧中。</li>
+</ul>
+<p>本地方法栈</p>
+<ul>
+<li>用于执行本地方法（即通过 JNI 调用的 C&#x2F;C++ 等语言编写的代码）。和 Java 栈类似，本地方法栈也包含栈帧，但栈帧里存储的是本地方法的相关信息。</li>
+<li>每个线程有自己的本地方法栈。</li>
+</ul>
+<p>java堆</p>
+<ul>
+<li>共有</li>
+<li>存储动态信息，如对象数据，包括对象的成员变量，成员函数，静态变量。因此多线程访问堆中的数据时需要进行同步，以保证数据的一致性和可见性。</li>
+<li>堆是垃圾回收的主要区域。</li>
+<li>垃圾回收器负责堆内存的管理，通过标记清除、复制回收、分代回收等算法来回收无用对象的内存。</li>
+</ul>
+<p>方法区</p>
+<ul>
+<li>方法区用于存储类信息、常量、静态变量、即时编译器（JIT）编译后的代码等数据。在 Java 7 之前，方法区和永久代（PermGen）是一个概念，但在 Java 8 中，永久代被 Metaspace（元空间）替代，Metaspace 位于本地内存中，而非堆中。</li>
+<li>方法区是所有线程共享的，因此多线程访问时也需要注意同步。</li>
+<li>存储类的元数据（类的结构、常量池等）、静态变量、方法等。</li>
+</ul>
+<p>运行时常量池</p>
+<ul>
+<li>运行时常量池是方法区的一部分，用于存储编译期间生成的字面量和符号引用（例如字符串常量和类、方法、字段的引用）。</li>
+<li>常量池是所有线程共享的，所有类共享相同的常量池。</li>
+</ul>
+<p>直接内存</p>
+<ul>
+<li>直接内存并不是 JVM 内存模型的一部分，但它是通过 java.nio 包提供的 ByteBuffer 类实现的内存区域。直接内存可以绕过 JVM 的堆和垃圾回收机制，直接与操作系统的内存交互，用于提高 I&#x2F;O 性能。</li>
+<li>直接内存可以由多个线程共享，但需要开发者手动管理。</li>
+</ul>
+<p>图片</p>
+<p>图片</p>
+<p>堆内存图片</p>
+<p>堆内存</p>
+<ul>
+<li>年轻代<ul>
+<li>新生代</li>
+<li>存活区： 一般有两个</li>
+</ul>
+</li>
+<li>老年代</li>
+</ul>
+<p>非堆</p>
+<ul>
+<li>元数据：以前是永久代</li>
+<li>CCS: 存放class信息，和元数据有交叉</li>
+<li>code cache: 存放JIT编译后的本地机器代码</li>
+</ul>
+<p>可见性</p>
+<ul>
+<li>当多个线程访问同一个共享变量时，一个线程对变量的修改可能对其他线程不可见。JMM 规定了变量的可见性，确保一个线程对共享变量的修改能够及时地被其他线程看到。</li>
+</ul>
+<h3 id="JVM启动参数"><a href="#JVM启动参数" class="headerlink" title="JVM启动参数"></a>JVM启动参数</h3><p>-开头是标准参数，如-server<br>-D设置系统属性，如-Dfile.encoding&#x3D;UTF-8<br>-X开头是非标准参数，基本都传给JVM的，默认JVM实现这些参数的功能。可以jvm -X查看支持的参数。如-Xmx8g<br>-XX开头是非稳定参数，专门控制jvm的行为，根具体的jvm实现有关</p>
+<ul>
+<li>-XX:+-Flags形式，+-是对布尔值进行开关。+代表开，-代表关。如-XX:_UseG1GC</li>
+<li>-XX:key&#x3D;value形式，指定某个选项的值.如-XX:MaxPermSize&#x3D;256m</li>
+</ul>
+<h3 id="JDK内置工具"><a href="#JDK内置工具" class="headerlink" title="JDK内置工具"></a>JDK内置工具</h3><p>图片</p>
+<p>jps&#x2F;jinfo 查看java进程<br>jstat 查看jvm gc信息<br>jmap 查看heap或类占用空间统计<br>jstack 查看线程信息<br>jcmd 执行jvm相关分析命令<br>jrunscript&#x2F;jjs 执行js命令</p>
+<p>jstat -gc pid xxx</p>
+<p>图片</p>
+<p>jmap -heap 查看堆信息</p>
+<p>jcmd可以查看所有信息</p>
+<p>jconsole</p>
+<p>jvisulVM</p>
+<p>jMC</p>
+<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><p>分代假设：大部分新生对象很快无用，存活较长时间的对象，可能存活更长时间。</p>
+<p>经历了15次GC还存在的就放在老年代</p>
+<p>新生代80%，S0,S1各10%<br>新生代到存活区是复制，到老年代是移动<br>-XX: +MaxTenuringThreshold&#x3D;15标记15次后放到老年代</p>
+<p>可以做为GC ROOT的对象</p>
+<ol>
+<li>当前正在执行的方法里的局部变量和输入参数</li>
+<li>活动线程</li>
+<li>所有类的静态字段</li>
+<li>JNI引用</li>
+</ol>
+<p>需要记录夸代的依赖信息</p>
+<h4 id="Serial-GC-x2F-ParNewGC"><a href="#Serial-GC-x2F-ParNewGC" class="headerlink" title="Serial GC&#x2F;ParNewGC"></a>Serial GC&#x2F;ParNewGC</h4><p>-XX: +UseSerialGC开启</p>
+<p>对年轻代使用mark-copy算法，对老年代使用mark-sweep-compact算法</p>
+<p>串行GC不能并行处理，所以触发全部暂停(STW)</p>
+<p>ParNewGC可以配合CMSGC使用</p>
+<p>适用场景：</p>
+<ul>
+<li>单线程应用或资源有限的环境（如嵌入式系统）。</li>
+<li>小型应用，不需要频繁的垃圾回收。</li>
+</ul>
+<h4 id="Parallel-GC"><a href="#Parallel-GC" class="headerlink" title="Parallel GC"></a>Parallel GC</h4><p>目标是最大化应用程序运行时间（吞吐量），最小化 GC 时间。还是会短暂的暂停业务。需要业务能接受短暂的暂停。</p>
+<p>-XX: +UseParallelGC<br>-XX: +UseParallelOldGC</p>
+<p>年轻代和老年代GC都会触发STW事件。</p>
+<p>对年轻代使用mark-copy算法，对老年代使用mark-sweep-compact算法</p>
+<p>-XX: ParallelGCThreads&#x3D;N 来指定GC线程数，默认值为CPU核心数。</p>
+<p>优点：</p>
+<ul>
+<li>多线程回收显著提高了回收效率，适合多核环境。</li>
+<li>停顿时间较 Serial GC 短。</li>
+<li>两次GC之间不消耗系统资源。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>GC 停顿仍然是全暂停（STW）。</li>
+<li>不适合对延迟要求苛刻的场景。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>需要高吞吐量的大型后台任务（如批处理、数据分析）。</li>
+<li>多核 CPU 环境。</li>
+</ul>
+<h4 id="CMS-GC"><a href="#CMS-GC" class="headerlink" title="CMS GC"></a>CMS GC</h4><p>-XX: +UseConcMarkSweepGC</p>
+<p>对年轻代使用STW的mark-copy算法，对老年代主要使用并发的mark-sweep算法</p>
+<p>设计目标:专为老年代设计，目标是最小化 GC 停顿时间。</p>
+<ol>
+<li>不对老年代进行整理，而是使用空闲列表来管理内存空间的回收</li>
+<li>在mark-and-sweep的工作和业务线程并发执行。</li>
+</ol>
+<p>默认并发线程数等于CPU核心数的1&#x2F;4</p>
+<p>6个阶段</p>
+<ol>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>并发预清理</li>
+<li>最终标记</li>
+<li>并发清楚</li>
+<li>并发重制</li>
+</ol>
+<p>MaxHeapSize是系统的1&#x2F;4内存<br>MaxNewSize是MaxHeapSize的1&#x2F;3<br>NewSize是系统的1&#x2F;64</p>
+<p>优点：</p>
+<ul>
+<li>只有yongGC暂停业务。GC 停顿时间短，适合延迟敏感的应用。</li>
+<li>并发回收利用多核资源减少 STW 时间。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>内存碎片化：CMS 不会整理内存，可能导致分配大对象失败（触发 Full GC）。</li>
+<li>CPU 开销较高：并发阶段可能与用户线程争抢资源。</li>
+<li>容易产生 “Concurrent Mode Failure”：若老年代空间不足，回退到 Serial GC。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的应用（如 Web 服务、在线交易系统）。</li>
+<li>多核环境下的中大型应用。</li>
+</ul>
+<h4 id="G1-GC"><a href="#G1-GC" class="headerlink" title="G1 GC"></a>G1 GC</h4><p>分区堆内存：将堆划分为若干独立的固定大小的区域（Region），每个 Region 可充当年轻代、老年代或其他用途。混合回收：通过优先回收包含最多垃圾的 Region（Garbage-First）。并行和并发回收：减少 STW 时间。内置碎片整理机制，避免了 CMS 的碎片化问题。</p>
+<p>-XX: +UseG1GC -XX: MaxGCPauseMillis&#x3D;50</p>
+<p>将STW的时间和分布变成可预期和可配置的，可设置某项特定的性能指标，为了达成可预期的指标，有独特的实现。增量方式，每次处理一部分，称为回收集合，每次处理所有的年轻代和部分老年代。能看到哪个块的垃圾多，优先回收他们</p>
+<p>处理步骤</p>
+<ol>
+<li>年轻代模式转移暂停</li>
+<li>并发标记</li>
+<li>转移暂停：混合模式</li>
+</ol>
+<p>G1GC可能退化成串行GC</p>
+<ol>
+<li>并发模式失败：增加堆大小</li>
+<li>晋升失败：</li>
+<li>巨型对象分配失败：增加内存或增大Region大小</li>
+</ol>
+<p>优点：</p>
+<ul>
+<li>减少内存碎片化。</li>
+<li>更好地控制 GC 停顿时间，可通过 -XX:MaxGCPauseMillis 调整。</li>
+<li>自动调节年轻代和老年代的大小。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>实现复杂，配置选项多。</li>
+<li>内存占用较高，CPU 开销大。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>需要低延迟的中大型应用。</li>
+<li>堆内存较大的环境（如 &gt;4GB）。</li>
+<li>替代 CMS 的推荐选择。</li>
+</ul>
+<ol>
+<li>如果系统考虑吞吐优先，CPU资源用来处理业务，用Parallel GC</li>
+<li>如果系统考虑低延迟优先，每次GC时间尽量短，用CMS GC</li>
+<li>如果系统内存堆大，平均GC时间可控，使用G1 GC</li>
+</ol>
+<h4 id="ZGC"><a href="#ZGC" class="headerlink" title="ZGC"></a>ZGC</h4><p>专注于低延迟，目标是将 GC 停顿时间控制在 10ms 以下。支持非常大的堆内存（TB 级）。使用多线程并发回收，避免长时间的 STW。基于标记-整理算法，避免内存碎片化。使用指针染色（Pointer Coloring）来实现并发标记和引用更新。</p>
+<p>-XX: +UnlockExpermentalVMOptions<br>-XX: +UseZGC<br>-XX: -Xmx16g</p>
+<p>优点：</p>
+<ul>
+<li>极低的 GC 停顿时间。</li>
+<li>支持超大堆，扩展性好。</li>
+<li>减少内存碎片。</li>
+<li>与G1相比，应用吞吐量下降不超过15%</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>内存占用较高：由于需要染色指针和写屏障。</li>
+<li>不适合资源紧张的环境。</li>
+</ul>
+<p>-XX: +UseShenandoahGC</p>
+<p>立项比ZGC早，暂停时间与堆大小无关</p>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的大型应用（如金融交易、高并发系统）。</li>
+<li>超大堆应用（TB 级别内存）。</li>
+</ul>
+<h4 id="Shenandoah-GC"><a href="#Shenandoah-GC" class="headerlink" title="Shenandoah GC"></a>Shenandoah GC</h4><p>目标是极低延迟，尽可能减少 STW 时间。采用并发压缩技术（Concurrent Compaction），避免碎片化问题。大部分回收工作与应用线程并发执行。</p>
+<p>优点：</p>
+<ul>
+<li>GC 停顿时间低。</li>
+<li>内存整理避免碎片化。</li>
+<li>对堆内存的需求比 ZGC 更低。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>较新的 GC，生态和调优支持可能不如 G1 和 ZGC。</li>
+<li>CPU 开销高。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>延迟敏感的应用。</li>
+<li>中大型堆内存的场景。</li>
+</ul>
+<h4 id="GC日志分析"><a href="#GC日志分析" class="headerlink" title="GC日志分析"></a>GC日志分析</h4><h4 id="JVM线程堆栈数据分析"><a href="#JVM线程堆栈数据分析" class="headerlink" title="JVM线程堆栈数据分析"></a>JVM线程堆栈数据分析</h4><p>图片</p>
+<p>JVM内部线程</p>
+<ul>
+<li>VM线程：单例的VMThread对象，负责执行VM操作</li>
+<li>定时任务线程：单例的WatcherThread对象，模拟计时器中断。</li>
+<li>GC线程：垃圾回收</li>
+<li>编译器线程：将字节码编译为本地机器代码</li>
+<li>信号分发线程：等待进程指示的信号，并将其分配给java级别的信号处理</li>
+</ul>
+<p>安全点</p>
+<ul>
+<li>方法代码中植入检测入口</li>
+<li>线程处于安全点状态：线程暂停执行，这个时候线程栈不再发生改变</li>
+<li>JVM的安全点状态：所有线程都处于安全点状态</li>
+</ul>
+<p>fastthread</p>
+<h4 id="内存分析"><a href="#内存分析" class="headerlink" title="内存分析"></a>内存分析</h4><p>Instrumentation.getObjectSize()</p>
+<p>JOL可以看到内存布局</p>
+<p>64位JVM中对象头占12byte，8字节对齐。Integer占16字节(8+4+对齐)，int占4字节。Long占16字节，long占8字节。</p>
+<p>String对象的空间随着内部字符数组的增长而增长。String类的对象有24个字节的额外开销。</p>
+<p>jhat</p>
+<h4 id="JVM问题分析调优"><a href="#JVM问题分析调优" class="headerlink" title="JVM问题分析调优"></a>JVM问题分析调优</h4><p>分配速率:两次GC之间的年轻代使用量。也就是创建速度，流入速度。</p>
+<ul>
+<li>正常系统：分配速率较低 &lt; GC速率： 健康</li>
+<li>内存溢出: 分配速率 &gt; GC速率： OOM</li>
+<li>性能不好：分配速率较高 &lt; GC速率： 亚健康，可能随时导致内存溢出</li>
+</ul>
+<p>提升速率：从年轻代到老年代的数据量。</p>
+<ul>
+<li>有一些要被干掉的放到了老年代，老年代GC时间更长。</li>
+</ul>
+<p>一般来说过早提升的症状表现为以下形式：</p>
+<ol>
+<li>短时间内频繁的执行full GC</li>
+<li>每次full GC后老年代的使用率都很低，在10%-20%或以下。</li>
+<li>提升速率接近分配速率</li>
+</ol>
+<p>解决方案</p>
+<ol>
+<li>增加年轻代大小。-Xmx1g -XX:NewSize&#x3D;512M，FullGC的次数就会减少</li>
+<li>减少每次批处理的数量</li>
+</ol>
+<p>Arthas工具</p>
+<h4 id="GC疑难情况"><a href="#GC疑难情况" class="headerlink" title="GC疑难情况"></a>GC疑难情况</h4><h4 id="JVM常见面试题"><a href="#JVM常见面试题" class="headerlink" title="JVM常见面试题"></a>JVM常见面试题</h4><h2 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h2><h3 id="java-socket"><a href="#java-socket" class="headerlink" title="java socket"></a>java socket</h3><p>java.net.ServerSocket类</p>
+<h3 id="server处理发生了什么"><a href="#server处理发生了什么" class="headerlink" title="server处理发生了什么"></a>server处理发生了什么</h3><h3 id="IO模型和相关概念"><a href="#IO模型和相关概念" class="headerlink" title="IO模型和相关概念"></a>IO模型和相关概念</h3><p>阻塞非阻塞</p>
+<p>同步异步</p>
+<h3 id="netty"><a href="#netty" class="headerlink" title="netty"></a>netty</h3><p>高性能</p>
+<ul>
+<li>高并发</li>
+<li>低延迟：延迟指服务端运行时间</li>
+<li>高吞吐量</li>
+</ul>
+<h4 id="netty如何实现高性能"><a href="#netty如何实现高性能" class="headerlink" title="netty如何实现高性能"></a>netty如何实现高性能</h4><ul>
+<li>异步</li>
+<li>事件驱动</li>
+<li>基于NIO</li>
+</ul>
+<p>粘包和拆包，主要通过解码器来解决，比如抄答案的时候两个多选题，答案写的abcd，你不知道是1.ab 2.cd还是1.a 2.bcd还是1.abc 2.d，所以中间需要来个标点符号区分。</p>
+<ul>
+<li>Fixed：固定长度解码器</li>
+<li>LineBased：行分隔符，\n or \r\n</li>
+<li>Delimiter: 分隔符解码器，可以自定义分隔符</li>
+<li>LengthField: 长度编码解码器，划分为包文头，包文体</li>
+<li>Json： JSON解码器</li>
+</ul>
+<p>网络拥堵和Nagle算法。TCP_NODELAY 可以关掉Nagle算法<br>触发条件，达到下面的条件才会真正向网络发送数据</p>
+<ul>
+<li>缓冲区满</li>
+<li>达到超时</li>
+</ul>
+<p>优化</p>
+<ol>
+<li>不要阻塞EventLoop</li>
+<li>系统参数优化</li>
+<li>缓冲区优化</li>
+<li>心跳周期优化</li>
+<li>内存和buffer优化</li>
+</ol>
+<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p>start以后陷入JVM线程，然后OS线程，最后TLAB,准备好了运行以后开始运行状态，run状态。</p>
+<p>重要属性</p>
+<ul>
+<li>线程名称</li>
+<li>是否后台执行</li>
+<li>任务</li>
+<li>start 启动</li>
+<li>join 等待执行完成</li>
+<li>currentThread 静态方法，获取当前线程信息</li>
+<li>sleep 静态方法，线程睡眠并让出时间片</li>
+<li>wait 释放锁，等待</li>
+<li>notify 唤醒一个</li>
+<li>notifyAll 唤醒所有</li>
+<li>yield 让出cpu资源</li>
+</ul>
+<p>原子性<br>可见性<br>有序性</p>
+<p>图片</p>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><ul>
+<li>核心线程数</li>
+<li>最大线程数</li>
+<li>队列</li>
+<li>拒绝策略</li>
+</ul>
+<p>为什么核心线程数满了以后先放到队列里面？因为要平衡CPU密集型应用和IO密集型应用</p>
+<p>拒绝策略</p>
+<ul>
+<li>丢弃任务抛出异常</li>
+<li>丢弃任务不抛出异常</li>
+<li>丢弃队列最前面的任务，重新提交被拒绝的任务</li>
+<li>由调用线程处理该任务</li>
+</ul>
+<p>线程池创建</p>
+<ul>
+<li>Executors.newSingleThreadExecutor : 仅仅创建一个线程的线程池</li>
+<li>Executors.newFixedThreadPool：固定大小的</li>
+<li>Executors.newCachedThreadPool：可缓存的线程池，如果线程超过了执行任务所需的，60s不执行任务的会被回收，任务增加的时候可以智能增加线程数，线程大小依赖于操作系统</li>
+<li>Executors.newScheduledThreadPool：支持定时以及周期性执行</li>
+</ul>
+<p>核心线程数，如果CPU密集型，可以N+1或者N,如果IO密集型，可以2N或者2N+2</p>
+<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><ul>
+<li><p>Sync</p>
+</li>
+<li><p>ReentrantLock</p>
+</li>
+<li><p>ReadWriteLock</p>
+</li>
+<li><p>Condition</p>
+</li>
+<li></li>
+<li><p>可重入锁</p>
+</li>
+<li><p>公平锁</p>
+</li>
+</ul>
+<p>LockSupport 类似Executors</p>
+<ul>
+<li>park</li>
+<li>parkNanos</li>
+<li>unpark</li>
+</ul>
+<p>三个用锁的最佳实践</p>
+<ul>
+<li>永远只在更新对象的成员变量时加锁</li>
+<li>永远只在访问可变的成员变量时加锁</li>
+<li>永远不在调用其他对象的方法时加锁</li>
+</ul>
+<h3 id="原子类"><a href="#原子类" class="headerlink" title="原子类"></a>原子类</h3><p>通过volitale和CAS实现</p>
+<p>LongAdder对AtomicLong的改进</p>
+<h3 id="JUC"><a href="#JUC" class="headerlink" title="JUC"></a>JUC</h3><h4 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h4><h4 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h4><p>准入数量 信号量</p>
+<h4 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h4><h4 id="CyclicBarrier"><a href="#CyclicBarrier" class="headerlink" title="CyclicBarrier"></a>CyclicBarrier</h4><h4 id="arrayList"><a href="#arrayList" class="headerlink" title="arrayList"></a>arrayList</h4><p>默认大小10，扩容1.5， new &#x3D; old + (old &gt;&gt; 1)</p>
+<p>线程不安全</p>
+<p>写写冲突<br>读写冲突 iterator</p>
+<h4 id="linkedList"><a href="#linkedList" class="headerlink" title="linkedList"></a>linkedList</h4><p>链表实现不需要扩容</p>
+<p>线程不安全</p>
+<h4 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h4><p>写时复制线程安全，写加锁</p>
+<h4 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h4><p>加锁的ArrayList</p>
+<h4 id="List-asList"><a href="#List-asList" class="headerlink" title="List.asList"></a>List.asList</h4><p>只能set，不能添加删除元素</p>
+<h4 id="Collections-SyncList"><a href="#Collections-SyncList" class="headerlink" title="Collections.SyncList"></a>Collections.SyncList</h4><p>加锁的ArrayList</p>
+<h4 id="Collections-noModifyList"><a href="#Collections-noModifyList" class="headerlink" title="Collections.noModifyList"></a>Collections.noModifyList</h4><p>不可插入删除set的list</p>
+<h4 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h4><p>初始容量16，扩容*2，负载因子0.75, jDK8以后，链表长度8，数组长度64以后，改成红黑树</p>
+<ul>
+<li>写冲突</li>
+<li>读写问题</li>
+<li>keys()无序问题</li>
+</ul>
+<h4 id="LinkedHashMap"><a href="#LinkedHashMap" class="headerlink" title="LinkedHashMap"></a>LinkedHashMap</h4><p>继承HashMap, 增加了双向链表，保证有序</p>
+<h4 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h4><p>线程安全 JDK7用的extendible hash 实现，分段</p>
+<p>JDK8改成一个大叔组</p>
+<h4 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h4><p>线程本地变量<br>不改方法签名静默传参<br>及时进行清理</p>
+<h4 id="线程通信"><a href="#线程通信" class="headerlink" title="线程通信"></a>线程通信</h4><p>static变量<br>Lock<br>Sync</p>
+<p>协作</p>
+<ul>
+<li>Thread#join();</li>
+<li>Object#wait&#x2F;notify&#x2F;notifyall</li>
+<li>Future&#x2F;Callable</li>
+<li>CountdownLatch</li>
+<li>CyclicBarrier</li>
+</ul>
+<p>进程间通信</p>
+<h3 id="分布式服务"><a href="#分布式服务" class="headerlink" title="分布式服务"></a>分布式服务</h3><h4 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h4><p>集群：多个相同服务，对等的关系<br>分布式：有角色关系，多个服务处理不一样的东西</p>
+<p>服务汇聚到ESB：服务编排，网关</p>
+<ol>
+<li>暴露调用</li>
+<li>增强和中介</li>
+<li>统计和监控</li>
+</ol>
+<p>缺点是中心节点，增加一层</p>
+<p>分布式服务化：用配置和注册发现代替ESB单节点，使请求直连</p>
+<p>有状态的部分放到配置中心和注册中心，无状态的部分放到应用侧。比如RPC放到应用侧。</p>
+<p>配置中心：全局非业务参数<br>注册中心：运行期临时状态<br>元数据中心：核心的业务模型</p>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><p>两种消息模式：</p>
+<ul>
+<li>点对点</li>
+<li>发布订阅</li>
+</ul>
+<p>消息处理的保障</p>
+<ul>
+<li>At most once,至多一次，只发一次，消息丢失了也不重发</li>
+<li>At least once, 至少一次，消息不回丢失，可能会重复</li>
+<li>Exactly once, 精确一次，每条消息肯定会被传输一次且仅一次，不丢失不重复</li>
+</ul>
+<p>消息处理的事务性</p>
+<ul>
+<li>通过确认机制实现事务性</li>
+<li>可以被事务管理器管理，甚至可以支持XA分布式事务</li>
+</ul>
+<p>有序性</p>
+<ul>
+<li>同一个Topic或Queue的消息，保障顺序</li>
+<li>消息分区，批量预取等可能会无序</li>
+</ul>
+<p>书籍企业集成模式</p>
+<p>消息协议</p>
+<ul>
+<li>AMQP：规定了序列化，网路传输等</li>
+<li>MQTT：遥感常用</li>
+<li>JMS：java规定的接口</li>
+<li>XMPP： IM用的</li>
+</ul>
+<p>kafka<br>ack &#x3D; 0 ,不管成功没<br>ack &#x3D; 1, 写到leader就成功<br>ack &#x3D; -1&#x2F;all 写到最小副本数才算成功</p>
+<p>顺序保证<br>per.connetion &#x3D; 1<br>send()<br>flush()</p>
+<p>消息可靠性</p>
+<ul>
+<li>消息的事务，发送的时候要么全成功，要么全失败，ack &#x3D; all，idem&#x3D;true打开幂等,transaction.id tx0001设置事务ID,begin开始事务</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html" rel="prev" title="算法导论">
+      <i class="fa fa-chevron-left"></i> 算法导论
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html" rel="next" title="ArrayList和LinkedList解析">
+      ArrayList和LinkedList解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jvm%E6%A0%B8%E5%BF%83"><span class="nav-number">1.</span> <span class="nav-text">jvm核心</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.1.</span> <span class="nav-text">jvm基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java%E5%AD%97%E8%8A%82%E7%A0%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">java字节码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">JVM类加载器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.4.</span> <span class="nav-text">JVM内存模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.5.</span> <span class="nav-text">JVM启动参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK%E5%86%85%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.1.6.</span> <span class="nav-text">JDK内置工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC"><span class="nav-number">1.1.7.</span> <span class="nav-text">GC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Serial-GC-x2F-ParNewGC"><span class="nav-number">1.1.7.1.</span> <span class="nav-text">Serial GC&#x2F;ParNewGC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-GC"><span class="nav-number">1.1.7.2.</span> <span class="nav-text">Parallel GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS-GC"><span class="nav-number">1.1.7.3.</span> <span class="nav-text">CMS GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G1-GC"><span class="nav-number">1.1.7.4.</span> <span class="nav-text">G1 GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZGC"><span class="nav-number">1.1.7.5.</span> <span class="nav-text">ZGC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shenandoah-GC"><span class="nav-number">1.1.7.6.</span> <span class="nav-text">Shenandoah GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">1.1.7.7.</span> <span class="nav-text">GC日志分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E7%BA%BF%E7%A8%8B%E5%A0%86%E6%A0%88%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90"><span class="nav-number">1.1.7.8.</span> <span class="nav-text">JVM线程堆栈数据分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90"><span class="nav-number">1.1.7.9.</span> <span class="nav-text">内存分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E8%B0%83%E4%BC%98"><span class="nav-number">1.1.7.10.</span> <span class="nav-text">JVM问题分析调优</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E7%96%91%E9%9A%BE%E6%83%85%E5%86%B5"><span class="nav-number">1.1.7.11.</span> <span class="nav-text">GC疑难情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="nav-number">1.1.7.12.</span> <span class="nav-text">JVM常见面试题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NIO"><span class="nav-number">1.2.</span> <span class="nav-text">NIO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#java-socket"><span class="nav-number">1.2.1.</span> <span class="nav-text">java socket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#server%E5%A4%84%E7%90%86%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.2.</span> <span class="nav-text">server处理发生了什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.3.</span> <span class="nav-text">IO模型和相关概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netty"><span class="nav-number">1.2.4.</span> <span class="nav-text">netty</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#netty%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%AB%98%E6%80%A7%E8%83%BD"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">netty如何实现高性能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-number">1.3.</span> <span class="nav-text">并发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E7%B1%BB"><span class="nav-number">1.3.3.</span> <span class="nav-text">原子类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JUC"><span class="nav-number">1.3.4.</span> <span class="nav-text">JUC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AQS"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">AQS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Semaphore"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">Semaphore</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CountDownLatch"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">CountDownLatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CyclicBarrier"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">CyclicBarrier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#arrayList"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">arrayList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linkedList"><span class="nav-number">1.3.4.6.</span> <span class="nav-text">linkedList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">1.3.4.7.</span> <span class="nav-text">CopyOnWriteArrayList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vector"><span class="nav-number">1.3.4.8.</span> <span class="nav-text">Vector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#List-asList"><span class="nav-number">1.3.4.9.</span> <span class="nav-text">List.asList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Collections-SyncList"><span class="nav-number">1.3.4.10.</span> <span class="nav-text">Collections.SyncList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Collections-noModifyList"><span class="nav-number">1.3.4.11.</span> <span class="nav-text">Collections.noModifyList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HashMap"><span class="nav-number">1.3.4.12.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedHashMap"><span class="nav-number">1.3.4.13.</span> <span class="nav-text">LinkedHashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ConcurrentHashMap"><span class="nav-number">1.3.4.14.</span> <span class="nav-text">ConcurrentHashMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ThreadLocal"><span class="nav-number">1.3.4.15.</span> <span class="nav-text">ThreadLocal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-number">1.3.4.16.</span> <span class="nav-text">线程通信</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.3.5.</span> <span class="nav-text">分布式服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">服务治理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">1.3.6.</span> <span class="nav-text">队列</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

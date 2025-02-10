@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Cache Labcache lab 缓存实验 代码下载从CSAPP上面下载对应的lab代码  http:&#x2F;&#x2F;csapp.cs.cmu.edu&#x2F;3e&#x2F;labs.html  环境准备需要安装 valgrind。可以参考文章Valgrind centos。 安装好以后执行valgrind --version可以看到版本号。 Cache simulator cache simulator not a c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解计算机系统CacheLab">
+<meta property="og:url" content="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="Cache Labcache lab 缓存实验 代码下载从CSAPP上面下载对应的lab代码  http:&#x2F;&#x2F;csapp.cs.cmu.edu&#x2F;3e&#x2F;labs.html  环境准备需要安装 valgrind。可以参考文章Valgrind centos。 安装好以后执行valgrind --version可以看到版本号。 Cache simulator cache simulator not a c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/csapp/lab4/csapp-lab4-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/csapp/lab4/csapp-lab4-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/csapp/lab4/csapp-lab4-3.png">
+<meta property="article:published_time" content="2023-07-11T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.896Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="csapp">
+<meta property="article:tag" content="lab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/csapp/lab4/csapp-lab4-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入理解计算机系统CacheLab | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解计算机系统CacheLab
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-11 10:12:47" itemprop="dateCreated datePublished" datetime="2023-07-11T10:12:47+08:00">2023-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统CacheLab" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Cache-Lab"><a href="#Cache-Lab" class="headerlink" title="Cache Lab"></a>Cache Lab</h1><p>cache lab 缓存实验</p>
+<h3 id="代码下载"><a href="#代码下载" class="headerlink" title="代码下载"></a>代码下载</h3><p>从CSAPP上面下载对应的lab代码</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://csapp.cs.cmu.edu/3e/labs.html">http://csapp.cs.cmu.edu/3e/labs.html</a></p>
+</blockquote>
+<h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>需要安装 <code>valgrind</code>。可以参考文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/frank_good/article/details/104052768">Valgrind centos</a>。</p>
+<p>安装好以后执行<code>valgrind --version</code>可以看到版本号。</p>
+<h3 id="Cache-simulator"><a href="#Cache-simulator" class="headerlink" title="Cache simulator"></a>Cache simulator</h3><ul>
+<li><code>cache simulator not a cache</code>。我们不是实现一个真正的缓存，只是实现一个模拟器。</li>
+<li>不存储内容</li>
+<li>不使用block offset</li>
+<li>只计算命中数，不命中数和驱逐数(hit count, miss count,eviction count)</li>
+<li>缓存模拟器需要在不同的s,b,E下运行。</li>
+<li>使用LRU替换策略</li>
+</ul>
+<p>Hints</p>
+<ul>
+<li>使用二维数组 struct cache_line cache[S][E];</li>
+<li>S &#x3D; 2^s</li>
+<li>cache_line &#x2F;&#x2F;上面说了不需要block offset，所以可以忽略block的内容<ul>
+<li>Valid bit</li>
+<li>Tag</li>
+<li>LRU counter</li>
+</ul>
+</li>
+<li>通过getopt获取命令行输入<ul>
+<li>返回-1表示没有输入了</li>
+<li>通常在循环里面接收参数</li>
+<li>需要包含#include &lt;unistd.h&gt;,#include &lt;getopt.h&gt;</li>
+<li>通常使用switch来处理不同的输入</li>
+<li>考虑如何处理无效输入</li>
+<li>更多信息 man 3 getopt</li>
+</ul>
+</li>
+<li>fscanf可以指定要读的流(scanf只能读标准输入流)，用来读取trace file<ul>
+<li>参数<ul>
+<li>一个流的指针</li>
+<li>如何解析文件的信息的格式化字符串</li>
+<li>其余部分是指向存储解析数据的变量的指针</li>
+</ul>
+</li>
+<li>通常在循环里使用</li>
+<li>当命中EOF或者没有匹配到格式化字符串的时候返回-1</li>
+<li>更多信息 man fscanf</li>
+</ul>
+</li>
+<li>Malloc&#x2F;free<ul>
+<li>malloc分配数据到heap</li>
+<li>记得 free 掉malloc的数据</li>
+<li>不要 free 你没有分配的内存</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/csapp/lab4/csapp-lab4-1.png" alt="lab4 getopt"></p>
+<p><img src="/../images/csapp/lab4/csapp-lab4-2.png" alt="lab4 fscanf"></p>
+<p>要求我们实现<code>csim.c</code>文件，给了一个示例<code>csim-ref</code>文件。</p>
+<p>输入<code>./csim-ref -h</code>可以看到我们要实现的东西。</p>
+<p><img src="/../images/csapp/lab4/csapp-lab4-3.png" alt="lab4 csim"></p>
+<p>首先需要接受参数，参数有</p>
+<ul>
+<li>-h 输出帮助信息</li>
+<li>-v 可选详细标志，根据示例程序来，就是输出 <code>L 10,1 miss</code>这些信息</li>
+<li>-s [num] set index bit 数</li>
+<li>-E [num] 每个set的行数</li>
+<li>-b [num] block offset bit数</li>
+<li>-t [file] Trace file文件路径</li>
+</ul>
+<p>根据上面的提示可以知道，通过<code>getopt</code>函数来接收参数，并通过switch来处理。读取文件则通过<code>fscanf</code>函数，来读取-t传的文件。</p>
+<p>下面是<code>./traces/yi.trace</code>文件的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">L 10,1</span><br><span class="line">M 20,1</span><br><span class="line">L 22,1</span><br><span class="line">S 18,1</span><br><span class="line">L 110,1</span><br><span class="line">L 210,1</span><br><span class="line">M 12,1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>L 代表数据载入 </li>
+<li>S 代表数据存储</li>
+<li>M 代表数据修改，需要一次载入 + 一次存储</li>
+<li>后面的10，20，22这些代表地址</li>
+<li>最后的1代表操作内存访问的字节数</li>
+</ul>
+<p>完整代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;cachelab.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;getopt.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">        <span class="type">int</span> valid;</span><br><span class="line">        <span class="type">int</span> tag;</span><br><span class="line">        <span class="type">int</span> time_stamp;</span><br><span class="line">&#125; cache_line;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> timestamp = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 开始匹配到合适的set 找到命中的cache，如果命中返回1,如果没有命中返回0</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">find_hit_cache</span><span class="params">(cache_line *cache_line,<span class="type">int</span> E,<span class="type">int</span> tag, <span class="type">int</span>*hits)</span> &#123;</span><br><span class="line">    <span class="type">int</span> isHit = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 循环set中的cache_line 找到是否有匹配tag &amp;&amp; valid</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cache_line[i].valid == <span class="number">1</span> &amp;&amp; cache_line[i].tag == tag ) &#123;</span><br><span class="line">            <span class="comment">//hit</span></span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;hit \n&quot;</span>);</span><br><span class="line">            *hits = *hits + <span class="number">1</span>;</span><br><span class="line">            isHit = <span class="number">1</span>;</span><br><span class="line">            <span class="comment">//刷新时间</span></span><br><span class="line">            cache_line[i].time_stamp = timestamp;</span><br><span class="line">            <span class="keyword">return</span> isHit;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> isHit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 找到一个空的cache line放进去，找到了就返回1，没有找到就返回0</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">find_empty_cache</span><span class="params">(cache_line *cache_line,<span class="type">int</span> E,<span class="type">int</span> tag)</span> &#123;</span><br><span class="line">    <span class="type">int</span> have_empty_cache = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i&lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cache_line[i].valid == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 空的</span></span><br><span class="line">            <span class="comment">// 把当前内存放入cache</span></span><br><span class="line">            cache_line[i].valid = <span class="number">1</span>;</span><br><span class="line">            cache_line[i].tag = tag;</span><br><span class="line">            cache_line[i].time_stamp = timestamp;</span><br><span class="line">            <span class="comment">// 找到了就不需要替换了</span></span><br><span class="line">            have_empty_cache = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">return</span> have_empty_cache;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> have_empty_cache;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取要替换的索引</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">get_eviction_index</span><span class="params">(cache_line *cache_line, <span class="type">int</span> E)</span> &#123;</span><br><span class="line">    <span class="type">int</span> max_time_stamp = timestamp;</span><br><span class="line">    <span class="type">int</span> eviction_index = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i&lt; E; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cache_line[i].time_stamp &lt; max_time_stamp) &#123;</span><br><span class="line">            <span class="comment">//找到time_stamp最小的那个</span></span><br><span class="line">            max_time_stamp = cache_line[i].time_stamp;</span><br><span class="line">            eviction_index = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> eviction_index;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// LRU替换</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">LRU</span><span class="params">(cache_line *cache_line, <span class="type">int</span> E,<span class="type">int</span> tag)</span> &#123;</span><br><span class="line">    <span class="comment">// 获取要替换的索引</span></span><br><span class="line">    <span class="type">int</span> eviction_index = get_eviction_index(cache_line, E);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 替换</span></span><br><span class="line">    cache_line[eviction_index].valid = <span class="number">1</span>;</span><br><span class="line">    cache_line[eviction_index].tag = tag;</span><br><span class="line">    cache_line[eviction_index].time_stamp = timestamp; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// L和S操作，M就调用两次这个</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">load_and_store</span><span class="params">(<span class="type">unsigned</span> address,<span class="type">int</span> b,<span class="type">int</span> s,<span class="type">int</span> u_max,<span class="type">int</span> E,cache_line **cache, <span class="type">int</span> *hits,<span class="type">int</span> *misses,<span class="type">int</span> *evications)</span> &#123;</span><br><span class="line">    <span class="comment">// 获取set index block offset tag</span></span><br><span class="line">    <span class="type">int</span> set_index,tag;</span><br><span class="line">    set_index = (address &gt;&gt; b) &amp; u_max;</span><br><span class="line">    tag = (address &gt;&gt; b) &gt;&gt; s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 开始匹配到合适的set 找到命中的cache，如果命中返回1,如果没有命中返回0</span></span><br><span class="line">    <span class="type">int</span> isHit = find_hit_cache(cache[set_index], E, tag, hits);</span><br><span class="line">    <span class="keyword">if</span> (isHit == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// miss</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;miss \n&quot;</span>);</span><br><span class="line">        *misses = *misses + <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 找到一个空的cache line放进去，找到了就返回1，没有找到就返回0</span></span><br><span class="line">        <span class="type">int</span> have_empty_cache = find_empty_cache(cache[set_index], E, tag);</span><br><span class="line">        <span class="comment">// 如果没有找到空的cache,就需要LRU替换</span></span><br><span class="line">        <span class="keyword">if</span> (have_empty_cache == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;evictions \n&quot;</span>);</span><br><span class="line">            *evications = *evications + <span class="number">1</span>;</span><br><span class="line">            <span class="comment">//LRU替换</span></span><br><span class="line">            LRU(cache[set_index], E, tag);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 更新全局时间戳</span></span><br><span class="line">    timestamp++;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 接受参数 getopt</span></span><br><span class="line">    <span class="type">int</span> opt,v,s,E,b,S,B;</span><br><span class="line">    <span class="comment">// 文件</span></span><br><span class="line">    FILE        *       pFile;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">-1</span> != (opt = getopt(argc, argv, <span class="string">&quot;h?v?s:E:b:t:&quot;</span>)))&#123;</span><br><span class="line">        <span class="comment">// opt is h,v,s,E,b,t的ASCII码值</span></span><br><span class="line">        <span class="comment">// 通过switch对不同的参数进行不同的处理</span></span><br><span class="line">        <span class="keyword">switch</span>(opt) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;h&#x27;</span>:</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;./csim: Missing required command line argument \n Usage: ./csim-ref [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt; \n Options: \n -h         Print this help message. \n -v         Optional verbose flag. \n -s &lt;num&gt;   Number of set index bits. \n -E &lt;num&gt;   Number of lines per set. \n -b &lt;num&gt;   Number of block offset bits. \n -t &lt;file&gt;  Trace file. \n\n Examples: \n ./csim -s 4 -E 1 -b 4 -t traces/yi.trace \n ./csim -v -s 8 -E 2 -b 4 -t traces/yi.trace \n&quot;</span>);</span><br><span class="line">                <span class="comment">// h参数输出帮助内容</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;v&#x27;</span>:</span><br><span class="line">                <span class="comment">// v参数输出详细信息</span></span><br><span class="line">                v = <span class="number">1</span>;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;v:%d \n&quot;</span>,v);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;s&#x27;</span>:</span><br><span class="line">                <span class="comment">// S is set 2^s 的数量</span></span><br><span class="line">                <span class="comment">// s is Number of set index bits</span></span><br><span class="line">                s = atoi(optarg);</span><br><span class="line">                S = <span class="number">1</span> &lt;&lt; s;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;s:%d, S:%d \n&quot;</span>,s,S);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;E&#x27;</span>:</span><br><span class="line">                <span class="comment">// E is cache line 的数量</span></span><br><span class="line">                <span class="comment">// Number of lines per set</span></span><br><span class="line">                E = atoi(optarg);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;E:%d \n&quot;</span>,E);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;b&#x27;</span>:</span><br><span class="line">                <span class="comment">// B is block data 的字节</span></span><br><span class="line">                <span class="comment">// b is Number of block offset bits</span></span><br><span class="line">                b = atoi(optarg);</span><br><span class="line">                B = <span class="number">1</span> &lt;&lt; b;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;b:%d, B:%d \n&quot;</span>,b,B);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;t&#x27;</span>:</span><br><span class="line">                <span class="comment">// t is Trace file</span></span><br><span class="line">                <span class="comment">// 读取文件</span></span><br><span class="line">                <span class="comment">//t = atoi(optarg);</span></span><br><span class="line">                pFile   =       fopen(optarg,<span class="string">&quot;r&quot;</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;t:%s, file:%p \n&quot;</span>,optarg,pFile);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;非法参数 \n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(s == <span class="number">0</span> || E == <span class="number">0</span> || b == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// cache存储</span></span><br><span class="line">    cache_line **cache = (cache_line **)<span class="built_in">malloc</span>(S * <span class="keyword">sizeof</span>(cache_line *));</span><br><span class="line">    <span class="keyword">if</span> (cache == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;内存分配失败 \n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; S; i++) &#123;</span><br><span class="line">        cache[i] = (cache_line *)<span class="built_in">malloc</span>(E * <span class="keyword">sizeof</span>(cache_line));</span><br><span class="line">        <span class="keyword">if</span>(cache[i] == <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;内存分配失败，开始回滚 \n&quot;</span>);</span><br><span class="line">                <span class="comment">// 在这里需要释放已分配的内存，然后退出</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; i; ++j) &#123;</span><br><span class="line">                <span class="built_in">free</span>(cache[j]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">free</span>(cache);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> u_max = <span class="number">1</span>; </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; s - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        u_max = (u_max &lt;&lt; <span class="number">1</span>) | <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读取文件</span></span><br><span class="line">    <span class="type">char</span>        identifier;</span><br><span class="line">    <span class="type">unsigned</span>    address;</span><br><span class="line">    <span class="type">int</span>         size;</span><br><span class="line">    <span class="type">int</span> hits,misses,evictions;</span><br><span class="line"><span class="comment">//      Reading lines   like    &quot;       M       20,1&quot;   or      &quot;L      19,3&quot;</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">fscanf</span>(pFile,<span class="string">&quot; %c %x,%d&quot;</span>,&amp;identifier,&amp;address,&amp;size)&gt;<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//      Do      stuff</span></span><br><span class="line">        <span class="comment">// 开始计算 hits,misses,evictions, hits:0 misses:0 evictions:0</span></span><br><span class="line">        <span class="comment">//printf(&quot;identifier %c, addr:%x, size:%d \n&quot;,identifier,address,size);</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//根据identifier来判断动作L load S store M = 一次L 一次S</span></span><br><span class="line">        <span class="keyword">if</span> (identifier == <span class="string">&#x27;L&#x27;</span> || identifier == <span class="string">&#x27;S&#x27;</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;identifier %c, addr:%x, size:%d \n&quot;</span>,identifier,address,size);</span><br><span class="line">            load_and_store(address,b,s,u_max,E,cache,&amp;hits,&amp;misses,&amp;evictions);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (identifier == <span class="string">&#x27;M&#x27;</span>) &#123;</span><br><span class="line">            <span class="comment">// 一次L 一次S</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;identifier %c, addr:%x, size:%d \n&quot;</span>,identifier,address,size);</span><br><span class="line">            load_and_store(address,b,s,u_max,E,cache,&amp;hits,&amp;misses,&amp;evictions);</span><br><span class="line">            load_and_store(address,b,s,u_max,E,cache,&amp;hits,&amp;misses,&amp;evictions);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    fclose(pFile);  <span class="comment">//remember      to      close   file    when    done</span></span><br><span class="line">    printSummary(hits, misses, evictions);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 释放数组内存</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i&lt; S; i++) &#123;</span><br><span class="line">        <span class="built_in">free</span>(cache[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(cache);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Efficient-Matrix-Transpose"><a href="#Efficient-Matrix-Transpose" class="headerlink" title="Efficient    Matrix    Transpose"></a>Efficient    Matrix    Transpose</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/csapp/" rel="tag"># csapp</a>
+              <a href="/tags/lab/" rel="tag"># lab</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FShellLab.html" rel="prev" title="深入理解计算机系统CacheLab">
+      <i class="fa fa-chevron-left"></i> 深入理解计算机系统CacheLab
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.html" rel="next" title="南京大学操作系统">
+      南京大学操作系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Cache-Lab"><span class="nav-number">1.</span> <span class="nav-text">Cache Lab</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.0.1.</span> <span class="nav-text">代码下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.0.2.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache-simulator"><span class="nav-number">1.0.3.</span> <span class="nav-text">Cache simulator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Efficient-Matrix-Transpose"><span class="nav-number">1.0.4.</span> <span class="nav-text">Efficient    Matrix    Transpose</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

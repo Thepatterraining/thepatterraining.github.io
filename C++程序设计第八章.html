@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学堂在线C++程序设计第八章学习笔记指针与数组定义指向数组元素的指针定义与赋值例如: int a[10], *pa;pa &#x3D; &amp;a[0] 或 pa &#x3D; &amp;a *（pa +1）就是 a[1] 也可以 pa[1] 指针数组：数组的元素是指针类型例如：Point *pa[2];由pa[0],pa[1]两个指针构成 指针与函数为什么需要指针做参数  需要数据双向传递时（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学堂在线C++程序设计第八章学习笔记">
+<meta property="og:url" content="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="学堂在线C++程序设计第八章学习笔记指针与数组定义指向数组元素的指针定义与赋值例如: int a[10], *pa;pa &#x3D; &amp;a[0] 或 pa &#x3D; &amp;a *（pa +1）就是 a[1] 也可以 pa[1] 指针数组：数组的元素是指针类型例如：Point *pa[2];由pa[0],pa[1]两个指针构成 指针与函数为什么需要指针做参数  需要数据双向传递时（">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-04T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.821Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学堂在线C++程序设计第八章学习笔记 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学堂在线C++程序设计第八章学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-04 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-04T10:12:47+08:00">2021-08-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第八章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学堂在线C-程序设计第八章学习笔记"><a href="#学堂在线C-程序设计第八章学习笔记" class="headerlink" title="学堂在线C++程序设计第八章学习笔记"></a>学堂在线C++程序设计第八章学习笔记</h1><h2 id="指针与数组"><a href="#指针与数组" class="headerlink" title="指针与数组"></a>指针与数组</h2><p>定义指向数组元素的指针<br>定义与赋值<br>例如: int a[10], *pa;<br>pa &#x3D; &amp;a[0] 或 pa &#x3D; &amp;a</p>
+<p>*（pa +1）就是 a[1]</p>
+<p>也可以 pa[1]</p>
+<p>指针数组：数组的元素是指针类型<br>例如：Point *pa[2];<br>由pa[0],pa[1]两个指针构成</p>
+<h3 id="指针与函数"><a href="#指针与函数" class="headerlink" title="指针与函数"></a>指针与函数</h3><p>为什么需要指针做参数</p>
+<ul>
+<li>需要数据双向传递时（引用传递也可以达到此效果）</li>
+<li>需要传递一组数据，只传首地址运行效率比较高</li>
+</ul>
+<h4 id="指针类型的函数"><a href="#指针类型的函数" class="headerlink" title="指针类型的函数"></a>指针类型的函数</h4><p>若函数的返回类型是指针类型，该函数就是指针类型的函数</p>
+<p>指针函数的定义形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">存储类型 数据类型 *函数名() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>不要将非静态局部地址用作函数的返回值<ul>
+<li>因为非静态局部地址<code>作用域</code>仅限于函数内部，离开函数就被<code>销毁</code>了</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="type">int</span> *<span class="title">function</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="type">int</span> *ptr = <span class="built_in">function</span>();</span><br><span class="line">    *ptr = <span class="number">5</span>; <span class="comment">//危险！！！</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> *<span class="title">function</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> local = <span class="number">0</span>; <span class="comment">//作用域只在函数内部有效</span></span><br><span class="line">    <span class="keyword">return</span> &amp;local; </span><br><span class="line">&#125; <span class="comment">//函数结束，变量local被释放</span></span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>返回的指针要确保在主调函数中是<code>有效</code>，<code>合法</code>的地址</li>
+</ul>
+<p>在子函数中通过动态内存分配<code>new</code>操作取得的内存地址返回给主函数是合法有效的，但是<code>内存分配</code>和<code>释放</code>不在同一级别，要注意不能忘记<code>释放</code>，避免<code>内存泄露</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="type">int</span> *<span class="title">function</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="type">int</span> *ptr = <span class="built_in">function</span>();</span><br><span class="line">    *ptr = <span class="number">5</span>; <span class="comment">//如果返回的是 new 分配的，就可以了</span></span><br><span class="line">    <span class="keyword">delete</span> ptr; <span class="comment">//但是这里需要释放，避免内存泄露</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> *<span class="title">function</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> *local = <span class="keyword">new</span> <span class="built_in">int</span>(); <span class="comment">//new 分配的不会离开函数就释放</span></span><br><span class="line">    <span class="keyword">return</span> local; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h4 id="指向函数的指针"><a href="#指向函数的指针" class="headerlink" title="指向函数的指针"></a>指向函数的指针</h4><p>函数指针的定义</p>
+<ul>
+<li>定义形式<br>存储类型 数据类型 (*函数指针名)()</li>
+<li>含义<br>函数指针指向的是程序代码存储区</li>
+</ul>
+<p>用途：函数回调</p>
+<ul>
+<li>通过函数指针调用的函数<ul>
+<li>例如将函数的指针作为参赛传递给一个函数，使得在处理相似事件的时候可以灵活的使用不同方法</li>
+</ul>
+</li>
+<li>调用者不关心谁是被调用者<ul>
+<li>需要知道存在一个具有特定原型和限制条件的被调用函数。</li>
+</ul>
+</li>
+</ul>
+<h4 id="对象指针"><a href="#对象指针" class="headerlink" title="对象指针"></a>对象指针</h4><p>定义：<br>类名 *对象指针名;<br>例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Point <span class="title">a</span><span class="params">(<span class="number">5</span>,<span class="number">10</span>)</span></span>;</span><br><span class="line">Point *ptr;</span><br><span class="line">ptr = &amp;a;</span><br></pre></td></tr></table></figure>
+
+<p>通过指针访问对象成员<br>对象指针名-&gt;成员名<br>例如：<br>ptr-&gt;getX() 相当于 (*ptr).getX()</p>
+<p>this 指针</p>
+<ul>
+<li>隐含于类的每一个非静态成员函数中</li>
+<li>指出成员函数所操作的对象<ul>
+<li>当通过一个对象调用成员函数时，系统先将该对象的地址赋给this指针，然后调用成员函数，成员函数对对象的数据成员进行操作时，就隐含的使用了this指针。</li>
+</ul>
+</li>
+</ul>
+<h4 id="动态内存分配"><a href="#动态内存分配" class="headerlink" title="动态内存分配"></a>动态内存分配</h4><p>动态申请内存<br>new 类型名T (初始化参数列表)</p>
+<ul>
+<li>功能：<br>在程序执行期间，申请用于存放T类型对象的内存空间，并依初值列表赋值</li>
+<li>结果值：<br>成功：T类型的指针，指向新分配的内存，失败：抛出异常</li>
+</ul>
+<p>释放内存<br>delete 指针P</p>
+<ul>
+<li>功能：<br>释放指针P所指向的内存，p必须是new操作符的返回值</li>
+</ul>
+<h3 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h3><p>C++11提供的</p>
+<ul>
+<li>unique_ptr<ul>
+<li>不允许多个指针共享资源，可以用标准库中的move函数转移指针</li>
+</ul>
+</li>
+<li>shared_ptr<ul>
+<li>多个指针共享资源</li>
+</ul>
+</li>
+<li>weak_ptr<ul>
+<li>可复制 shared_ptr ，但其构造或者释放对资源不产生影响</li>
+</ul>
+</li>
+</ul>
+<h3 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h3><p>为什么需要Vector</p>
+<ul>
+<li>封装任何类型的动态数组，自动创建和删除</li>
+<li>数组下标越界检查</li>
+</ul>
+<p>定义</p>
+<ul>
+<li>vector&lt;元素类型&gt; 数组对象名(数组长度);</li>
+<li>例子：<br>  vector<int> arr(5)  建立大小为5的int数组</li>
+</ul>
+<p>vector对象的使用</p>
+<ul>
+<li>对数组元素的引用<br>  与普通数组具有相同形式：<br>  vector对象名[下标表达式]<br>  vector数组对象名不表示数组首地址</li>
+<li>获得数组长度<br>  用<code>size</code>函数<br>  vector对象名.size()</li>
+</ul>
+<h3 id="对象复制和移动"><a href="#对象复制和移动" class="headerlink" title="对象复制和移动"></a>对象复制和移动</h3><p>浅层复制</p>
+<ul>
+<li>实现对象间数据元素的一一对应复制</li>
+</ul>
+<p>深层复制</p>
+<ul>
+<li>当被复制的对象数据成员是指针类型时，不是复制该指针成员本身，而是将指针所指对象进行复制</li>
+</ul>
+<h4 id="申请和释放动态数组"><a href="#申请和释放动态数组" class="headerlink" title="申请和释放动态数组"></a>申请和释放动态数组</h4><p>分配和释放动态数组</p>
+<ul>
+<li>分配：new 类型名T [数组长度]<ul>
+<li>数组长度可以是任何整数类型表达式，在运行时计算</li>
+</ul>
+</li>
+<li>释放：delete[] 数组名p<ul>
+<li>释放指针p所指向的数组</li>
+<li>p必须是用new分配得到的数组首地址</li>
+</ul>
+</li>
+</ul>
+<p>动态创建多维数组<br>new 类型名T[第1维长度][第2维长度]</p>
+<ul>
+<li>如果内存申请成功，new 运算返回一个指向新分配内存首地址的指针</li>
+<li>例如<br>  char (*fp)[3];<br>  fp &#x3D; new char[2][3]</li>
+</ul>
+<p>将动态数组封装成类</p>
+<ul>
+<li>更加简洁，便于管理</li>
+<li>可以在访问数组元素前检查下标是否越界</li>
+</ul>
+<h4 id="移动构造"><a href="#移动构造" class="headerlink" title="移动构造"></a>移动构造</h4><p>C++11中提供了新的构造方法</p>
+<p>C++11之前，如果要将源对象的状态转移到目标对象只能通过复制。在某些情况下，我们没有必要复制对象 – 只需要移动它们</p>
+<p>移动构造</p>
+<ul>
+<li>C++11引入移动语义：<ul>
+<li>源 对象资源的控制权全部交给目标对象</li>
+</ul>
+</li>
+<li>移动构造函数</li>
+</ul>
+<p>移动构造函数<br>class_name(class_name &amp;&amp;)</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><h4 id="C风格字符串"><a href="#C风格字符串" class="headerlink" title="C风格字符串"></a>C风格字符串</h4><p>字符串常量</p>
+<ul>
+<li>例如：”program”</li>
+<li>各字符连续，顺序存放，每个字符占一个字节，以’\0’结尾，相当于一个隐含创建的字符常量数组</li>
+<li>“program” 出现在表达式中，表示这个char数组的首地址</li>
+<li>首地址可以赋给char常量指针</li>
+<li>const char *STRING1 &#x3D; “program”</li>
+</ul>
+<p>用字符数组存储字符串</p>
+<ul>
+<li>例如<br>char str[8] &#x3D; {‘p’,’r’,’o’,’g’,’r’,’a’,’m’,’\0’}<br>char str[8] &#x3D; “program”</li>
+<li>缺点<ul>
+<li>执行连接，拷贝，比较等操作，都需要显式调用库函数，很麻烦</li>
+<li>当字符串长度不确定时，需要用new 动态创建字符数组，最后要用delete释放，很繁琐</li>
+<li>字符串实际长度大于为他分配的空间时，会产生数组下标越界的错误</li>
+</ul>
+</li>
+</ul>
+<h4 id="string类"><a href="#string类" class="headerlink" title="string类"></a>string类</h4><p>构造函数</p>
+<ul>
+<li>string() 默认的，建立长度为0的字符串<br>  例如 string s1;</li>
+<li>string(const char *s); &#x2F;&#x2F;用指针s所指向的字符串常量初始化string对象<br>  例如 string s2 &#x3D; “abc”;</li>
+<li>string(const string&amp; rhs); &#x2F;&#x2F;复制构造函数<br>  例如 string s3 &#x3D; s2;</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B8%83%E7%AB%A0.html" rel="prev" title="学堂在线C++程序设计第七章学习笔记">
+      <i class="fa fa-chevron-left"></i> 学堂在线C++程序设计第七章学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E8%8B%B1%E8%AF%AD%E8%BF%87%E5%8E%BB%E5%BC%8F%E9%9B%86%E5%90%88.html" rel="next" title="数据库系统原理第七节">
+      数据库系统原理第七节 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E5%A0%82%E5%9C%A8%E7%BA%BFC-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">学堂在线C++程序设计第八章学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%B8%8E%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">指针与数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%B8%8E%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">指针与函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">指针类型的函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%90%91%E5%87%BD%E6%95%B0%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">指向函数的指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%8C%87%E9%92%88"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">对象指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">动态内存分配</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">智能指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vector"><span class="nav-number">1.1.3.</span> <span class="nav-text">Vector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%A4%8D%E5%88%B6%E5%92%8C%E7%A7%BB%E5%8A%A8"><span class="nav-number">1.1.4.</span> <span class="nav-text">对象复制和移动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%B3%E8%AF%B7%E5%92%8C%E9%87%8A%E6%94%BE%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">申请和释放动态数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E6%9E%84%E9%80%A0"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">移动构造</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.1.5.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C%E9%A3%8E%E6%A0%BC%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">C风格字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#string%E7%B1%BB"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">string类</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

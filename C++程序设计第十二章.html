@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学堂在线C++程序设计第十二章学习笔记泛型程序设计和标准模板库泛型及STL泛型程序设计  编写不依赖于具体数据类型的程序 将算法从特定的数据结构中抽象出来成为通用的 C++的模板为泛型程序设计奠定了关键的基础  术语：概念  可以比较大小的数据类型记作Comparable 具有公有的复制函数并可以用 &#x3D; 赋值的记作Assignable 将 可以比较大小 并且 具有公有复制函数可以用 &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学堂在线C++程序设计第十二章学习笔记">
+<meta property="og:url" content="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="学堂在线C++程序设计第十二章学习笔记泛型程序设计和标准模板库泛型及STL泛型程序设计  编写不依赖于具体数据类型的程序 将算法从特定的数据结构中抽象出来成为通用的 C++的模板为泛型程序设计奠定了关键的基础  术语：概念  可以比较大小的数据类型记作Comparable 具有公有的复制函数并可以用 &#x3D; 赋值的记作Assignable 将 可以比较大小 并且 具有公有复制函数可以用 &amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-23T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.825Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学堂在线C++程序设计第十二章学习笔记 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学堂在线C++程序设计第十二章学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-23 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-23T10:12:47+08:00">2021-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十二章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学堂在线C-程序设计第十二章学习笔记"><a href="#学堂在线C-程序设计第十二章学习笔记" class="headerlink" title="学堂在线C++程序设计第十二章学习笔记"></a>学堂在线C++程序设计第十二章学习笔记</h1><h2 id="泛型程序设计和标准模板库"><a href="#泛型程序设计和标准模板库" class="headerlink" title="泛型程序设计和标准模板库"></a>泛型程序设计和标准模板库</h2><h3 id="泛型及STL"><a href="#泛型及STL" class="headerlink" title="泛型及STL"></a>泛型及STL</h3><p>泛型程序设计</p>
+<ul>
+<li>编写不依赖于具体数据类型的程序</li>
+<li>将算法从特定的数据结构中抽象出来成为通用的</li>
+<li>C++的模板为泛型程序设计奠定了关键的基础</li>
+</ul>
+<p>术语：概念</p>
+<ul>
+<li>可以比较大小的数据类型记作<code>Comparable</code></li>
+<li>具有公有的复制函数并可以用 &#x3D; 赋值的记作<code>Assignable</code></li>
+<li>将 可以比较大小 并且 具有公有复制函数可以用 &#x3D; 赋值的记作<code>Sortable</code></li>
+</ul>
+<p>对于两个不同的概念A，B,如果A所需求的所有功能也是B所需求的，那么B是A的子概念，比如，Sortable是 Comparable 的子概念，也是 Assignable的子概念</p>
+<p>术语：模型</p>
+<ul>
+<li>符合一个概念的数据类型称为该概念的模型</li>
+<li>比如 int 型是 Comparable的模型</li>
+<li>静态数组不是 Assignable的模型</li>
+</ul>
+<h4 id="STL"><a href="#STL" class="headerlink" title="STL"></a>STL</h4><ul>
+<li>标准模板库STL定义了一套概念体系，为泛型程序设计提供了逻辑基础</li>
+<li>STL中的各个类模板，函数模板的参数都是用这个体系中的概念来规定的</li>
+<li>使用STL模板时，类型参数既可以是C++标准库中已有的类型，也可以是自定义的类型–只要这些类型是所要求的概念的模型</li>
+</ul>
+<p>STL基本组件</p>
+<ul>
+<li>容器（container）：容纳，包含一组元素的对象<ul>
+<li>顺序容器：<br>  array,vector,双端队列，单链表，列表</li>
+<li>有序容器：<br>  集合，多重集合，map,多重映射</li>
+<li>无序关联容器<br>  无序集合，无序多重集合，无序映射，无序多重映射</li>
+</ul>
+</li>
+<li>迭代器（iterator）<ul>
+<li>提供了顺序访问容器中每个元素的方法</li>
+<li>可以使用 ++ 运算符来获得指向下一个元素的迭代器</li>
+<li>可以使用 * 运算符访问迭代器指向的元素，如果元素类型是类或结构体，还可以使用 -&gt; 运算符直接访问成员</li>
+<li>有些迭代器还支持通过 – 运算符获得指向上一个元素的迭代器</li>
+<li>迭代器是泛化的指针：指针也具有同样的特性，因此指针本身就是一种迭代器</li>
+<li>使用独立于STL容器的迭代器，需要包含头文件<iterator></li>
+</ul>
+</li>
+<li>函数对象（function object）</li>
+<li>算法（algorithms）</li>
+</ul>
+<p><code>迭代器</code>是<code>算法</code>和<code>容器</code>的桥梁</p>
+<ul>
+<li>将迭代器作为算法的参数，通过迭代器来访问容器而不是把容器直接作为算法参数</li>
+<li>将<code>函数对象</code>作为算法参数而不是将函数所执行的运算作为算法的一部分。</li>
+<li>使用STL中提供的或自定义的迭代器和函数对象，配合STL的算法，可以组合出各种各样的功能</li>
+</ul>
+<p>容器适配器</p>
+<ul>
+<li>栈</li>
+<li>队列</li>
+</ul>
+<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><p>迭代器是算法和容器的桥梁</p>
+<ul>
+<li>迭代器用作访问容器中的元素</li>
+<li>算法不直接操作容器中的数据，而是通过迭代器间接操作</li>
+</ul>
+<p>算法和容器独立</p>
+<ul>
+<li>增加新的算法，无需影响容器的实现</li>
+<li>增加新的容器，原有的算法也可以适用</li>
+</ul>
+<p>输入流迭代器</p>
+<ul>
+<li>istream_iterator<T></li>
+<li>以输入流 如 cin 为参数构造</li>
+<li>可用 *(p++) 获得下一个输入的元素</li>
+</ul>
+<p>输出流迭代器</p>
+<ul>
+<li>ostream_iterator<T></li>
+<li>构造时需要提供输出流 如 cout</li>
+<li>可用 (*p++) &#x3D; x 将 x 输出到输出流</li>
+</ul>
+<p>二者都属于适配器</p>
+<ul>
+<li>适配器是用来为已有对象提供新的接口的对象</li>
+<li>输入流适配器和输出流适配器为流对象提供了迭代器的接口</li>
+</ul>
+<h3 id="容器的基本功能和分类"><a href="#容器的基本功能和分类" class="headerlink" title="容器的基本功能和分类"></a>容器的基本功能和分类</h3><ul>
+<li>容器类是容纳，包含一组元素或元素集合的对象</li>
+<li>基于容器中元素的组织方式分类：顺序容器，关联容器</li>
+<li>按照与容器所关联的迭代器类型分类：可逆容器，随机访问容器</li>
+</ul>
+<h3 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h3><h5 id="顺序容器的基本功能"><a href="#顺序容器的基本功能" class="headerlink" title="顺序容器的基本功能"></a>顺序容器的基本功能</h5><ul>
+<li>STL中的顺序容器<ul>
+<li>向量</li>
+<li>双端队列(deque)</li>
+<li>列表(list)</li>
+<li>单向链表(forward_list)</li>
+<li>数组(array)</li>
+</ul>
+</li>
+<li>元素线性排列，可以随时在指定位置插入元素和删除元素</li>
+<li>必须符合 Assignable 这一概念（具有共有的复制构造函数并可以用 ‘&#x3D;’ 赋值）</li>
+<li>array 对象的大小固定，forward_list有特殊的添加和删除操作</li>
+</ul>
+<p>顺序容器的接口（不包含单向链表和数组）</p>
+<ul>
+<li>构造函数</li>
+<li>赋值函数：assign</li>
+<li>插入函数: insert, push_front(只对list和deque)，push_back, emplace, emplace_front</li>
+<li>删除函数：erase, clear, pop_front, pop_back, emplace_back</li>
+<li>首尾元素的直接访问：front, back</li>
+<li>改变大小：resize</li>
+</ul>
+<h4 id="顺序容器的特征"><a href="#顺序容器的特征" class="headerlink" title="顺序容器的特征"></a>顺序容器的特征</h4><p>向量</p>
+<ul>
+<li>特点<ul>
+<li>一个可以扩展的动态数组</li>
+<li>随机访问，在尾部插入或删除元素块</li>
+<li>在中间或头部插入或删除元素慢</li>
+</ul>
+</li>
+<li>容量<ul>
+<li>容量：实际分配空间的大小</li>
+<li>s.capacity: 返回当前容量</li>
+<li>s.reserve(n): 容量小于n，则对s进行扩展，使其容量至少为n</li>
+</ul>
+</li>
+</ul>
+<p>双端队列</p>
+<ul>
+<li>特点<ul>
+<li>在两端插入或删除元素快</li>
+<li>在中间插入或删除元素慢</li>
+<li>随机访问较快，但比向量慢</li>
+</ul>
+</li>
+</ul>
+<p>列表</p>
+<ul>
+<li>特点<ul>
+<li>在任意位置插入和删除元素都很快</li>
+<li>不支持随机访问</li>
+</ul>
+</li>
+<li>接合操作（splice）<ul>
+<li>s.splice(p, s2, q1, q2): 将s2中[q1,q2)移动到s1中p所指向元素之前</li>
+</ul>
+</li>
+</ul>
+<h4 id="顺序容器的插入迭代器与适配器"><a href="#顺序容器的插入迭代器与适配器" class="headerlink" title="顺序容器的插入迭代器与适配器"></a>顺序容器的插入迭代器与适配器</h4><p>顺序容器的插入迭代器</p>
+<ul>
+<li>用于向容器头部，尾部或中间指定位置插入元素的迭代器</li>
+<li>包括前插迭代器（front_inserter），后插迭代器（back_inserter）和任意位置插入迭代器（inserter）</li>
+<li>例子：<br>  list<int> s;<br>  back_iserter iter(s);<br>  *(iter++) &#x3D; 5; &#x2F;&#x2F;通过iter把5插入s末尾</li>
+</ul>
+<p>顺序容器的适配器</p>
+<ul>
+<li>以顺序容器为基础构建一些常用数据结构，是对顺序容器的封装<ul>
+<li>栈</li>
+<li>队列</li>
+<li>优先级队列：最 <code>大</code> 的先弹出</li>
+</ul>
+</li>
+</ul>
+<p>栈和队列模板</p>
+<ul>
+<li>栈模板<br>  template &lt;class T, class Sequence &#x3D; deque<T>&gt; class stack;</li>
+<li>队列模板<br>  template &lt;class T,class FrontInsertionSequence &#x3D; deque<T>&gt; class queue;</li>
+<li>栈可以用任何一种顺序容器作为基础容器，而队列只允许用前插顺序容器（双端队列或列表）</li>
+</ul>
+<p>栈和队列共同支持的操作</p>
+<ul>
+<li>比较</li>
+<li>返回元素个数</li>
+<li>empty</li>
+<li>push</li>
+<li>pop</li>
+<li>不支持迭代器，因为不允许对任意元素访问</li>
+</ul>
+<p>栈和队列不同的操作</p>
+<ul>
+<li>栈的操作<br>  s.top 返回栈顶元素的引用</li>
+<li>队列操作<br>  s.front 获得队头元素的引用<br>  s.back 获得队尾元素的引用</li>
+</ul>
+<p>优先级队列</p>
+<ul>
+<li>优先级队列也像栈和队列一样支持元素的压入和弹出，但元素弹出顺序和元素大小有关，每次弹出最大的</li>
+<li>template &lt;class T, class Sequence &#x3D; Vector<T>&gt; class priority_queue</li>
+<li>优先级队列的基础容器必须是支持随机访问的顺序容器</li>
+<li>支持栈和队列的size,empty, push, pop几个函数</li>
+<li>优先级队列并不支持比较操作</li>
+<li>与栈类似，优先级队列提供一个 top 函数，可以获得下一个即将被弹出元素的引用</li>
+</ul>
+<h3 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h3><h4 id="分类和基本功能"><a href="#分类和基本功能" class="headerlink" title="分类和基本功能"></a>分类和基本功能</h4><p>关联容器的特点</p>
+<ul>
+<li>每个关联容器都有一个key</li>
+<li>可以根据key高效查找元素</li>
+</ul>
+<p>接口</p>
+<ul>
+<li>插入insert</li>
+<li>删除 erase</li>
+<li>查找 find</li>
+<li>定界 lower_bound,upper_bound,equal_bound</li>
+<li>计数 count</li>
+</ul>
+<h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><p>集合用来存储一组无重复的数据。用于集合的元素本身是有序的，可以高效查找元素，也可以方便的得到指定大小范围的元素在容器中所处的区间</p>
+<h4 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h4><p>映射和集合的主要区别</p>
+<ul>
+<li><p>集合的元素类型是key本身</p>
+</li>
+<li><p>映射的元素类型是key,value二元组</p>
+</li>
+<li><p>在集合中按照key查找一个元素时，一般只是确定这个元素是否存在。</p>
+</li>
+<li><p>映射中按照key查找时，除了能确定是否存在外，还可以得到相应的附加数据</p>
+</li>
+</ul>
+<h4 id="多重集合和多重映射"><a href="#多重集合和多重映射" class="headerlink" title="多重集合和多重映射"></a>多重集合和多重映射</h4><ul>
+<li>多重集合允许有重复元素的集合，多重映射允许一个key对应多个value</li>
+<li>多重集合与集合，多重映射与映射的用法差不多</li>
+</ul>
+<h3 id="函数对象"><a href="#函数对象" class="headerlink" title="函数对象"></a>函数对象</h3><p>函数对象</p>
+<ul>
+<li>一个行为类似函数的对象</li>
+<li>可以没有参数，也可以带有若干参数</li>
+<li>其功能是获取值，或者改变操作状态</li>
+<li>普通函数就是函数对象</li>
+<li>重载了 “()” 运算符的类的实例是函数对象</li>
+</ul>
+<h4 id="函数适配器"><a href="#函数适配器" class="headerlink" title="函数适配器"></a>函数适配器</h4><ul>
+<li>绑定适配器<ul>
+<li>bind1st, bind2nd: 将n元函数对象的指定参数绑定为一个常数，得到n-1元函数对象</li>
+</ul>
+</li>
+<li>组合适配器<ul>
+<li>not1,not2: 将指定谓词的结果取反</li>
+</ul>
+</li>
+<li>函数指针适配器<ul>
+<li>ptr_fun: 将一般函数指针转换为函数对象，使之能够作为其他函数适配器的输入</li>
+<li>在进行参数绑定或其他转换的时候，通常需要函数对象的类型信息</li>
+</ul>
+</li>
+<li>成员函数适配器:ptr_fun,ptr_fun_ref<ul>
+<li>对成员函数指针使用，把n元成员函数适配为n + 1元函数对象，该函数对象的第一个参数为调用该成员函数时的目的对象</li>
+<li>也就是 object-&gt;method() 变成 method(object)</li>
+<li>将 object-&gt;method(arg1) 变成 method(object, arg1)</li>
+</ul>
+</li>
+</ul>
+<h4 id="STL算法"><a href="#STL算法" class="headerlink" title="STL算法"></a>STL算法</h4><p>本身是一种函数模板</p>
+<ul>
+<li>通过迭代器获得输入数据</li>
+<li>通过函数对象对数据进行处理</li>
+<li>通过迭代器将结果输出</li>
+</ul>
+<p>STL算法是通用的，独立于具体的数据类型，容器类型</p>
+<p>分类</p>
+<ul>
+<li>不可变序列算法<ul>
+<li>不直接修改所操作的容器内容的算法</li>
+<li>用于查找指定元素，比较是否相等，对元素进行计数等</li>
+</ul>
+</li>
+<li>可变序列算法<ul>
+<li>可修改所操作的容器对象的算法</li>
+<li>包括复制，删除，替换，洗牌及生成一个序列的算法</li>
+</ul>
+</li>
+<li>排序和搜索算法<ul>
+<li>对序列排序</li>
+<li>搜索</li>
+<li>堆算法</li>
+</ul>
+</li>
+<li>数值算法<ul>
+<li>求和，求差，积等</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html" rel="prev" title="数据库系统原理第十一节">
+      <i class="fa fa-chevron-left"></i> 数据库系统原理第十一节
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" rel="next" title="数据库系统原理第十四节">
+      数据库系统原理第十四节 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E5%A0%82%E5%9C%A8%E7%BA%BFC-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">学堂在线C++程序设计第十二章学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E5%92%8C%E6%A0%87%E5%87%86%E6%A8%A1%E6%9D%BF%E5%BA%93"><span class="nav-number">1.1.</span> <span class="nav-text">泛型程序设计和标准模板库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E5%8F%8ASTL"><span class="nav-number">1.1.1.</span> <span class="nav-text">泛型及STL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#STL"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">STL</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD%E5%92%8C%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.3.</span> <span class="nav-text">容器的基本功能和分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.4.</span> <span class="nav-text">顺序容器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.4.0.1.</span> <span class="nav-text">顺序容器的基本功能</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">顺序容器的特征</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E5%AE%B9%E5%99%A8%E7%9A%84%E6%8F%92%E5%85%A5%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">顺序容器的插入迭代器与适配器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.5.</span> <span class="nav-text">关联容器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E5%92%8C%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">分类和基本功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%A0%E5%B0%84"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E9%9B%86%E5%90%88%E5%92%8C%E5%A4%9A%E9%87%8D%E6%98%A0%E5%B0%84"><span class="nav-number">1.1.5.4.</span> <span class="nav-text">多重集合和多重映射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.6.</span> <span class="nav-text">函数对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">函数适配器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#STL%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">STL算法</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

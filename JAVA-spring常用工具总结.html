@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析LocalDateTimeLocalDateTime作为java8新加的时间类型，也是后面开发中常用的时间类型。 作为时间类型，最关注的点无非是这几个  获取当前时间 获取指定时间 时间格式化 时间转时间戳 时间戳转时间 时间比较 时间加减  这些点通过LocalDateTime来操作，都会比较简单 获取当前时间只需要now一下就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析">
+<meta property="og:url" content="https://thepatterraining.github.io/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析LocalDateTimeLocalDateTime作为java8新加的时间类型，也是后面开发中常用的时间类型。 作为时间类型，最关注的点无非是这几个  获取当前时间 获取指定时间 时间格式化 时间转时间戳 时间戳转时间 时间比较 时间加减  这些点通过LocalDateTime来操作，都会比较简单 获取当前时间只需要now一下就">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.840Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="LocalDateTime">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JAVA-LocalDateTime时间格式化，转换时间戳和源码分析 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JAVA-LocalDateTime时间格式化，转换时间戳和源码分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-30 00:00:00" itemprop="dateCreated datePublished" datetime="2022-11-30T00:00:00+08:00">2022-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html" class="post-meta-item leancloud_visitors" data-flag-title="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/JAVA-spring%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%80%BB%E7%BB%93.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析"><a href="#JAVA-LocalDateTime时间格式化，转换时间戳和源码分析" class="headerlink" title="JAVA-LocalDateTime时间格式化，转换时间戳和源码分析"></a>JAVA-LocalDateTime时间格式化，转换时间戳和源码分析</h1><h2 id="LocalDateTime"><a href="#LocalDateTime" class="headerlink" title="LocalDateTime"></a>LocalDateTime</h2><p><code>LocalDateTime</code>作为java8新加的时间类型，也是后面开发中常用的时间类型。</p>
+<p>作为时间类型，最关注的点无非是这几个</p>
+<ul>
+<li>获取当前时间</li>
+<li>获取指定时间</li>
+<li>时间格式化</li>
+<li>时间转时间戳</li>
+<li>时间戳转时间</li>
+<li>时间比较</li>
+<li>时间加减</li>
+</ul>
+<p>这些点通过<code>LocalDateTime</code>来操作，都会比较简单</p>
+<h3 id="获取当前时间"><a href="#获取当前时间" class="headerlink" title="获取当前时间"></a>获取当前时间</h3><p>只需要now一下就可以获取到当前的时间，还是很方便的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br></pre></td></tr></table></figure>
+
+<p>再看一下之前的<code>Date</code>类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取指定时间"><a href="#获取指定时间" class="headerlink" title="获取指定时间"></a>获取指定时间</h3><p>这个有比较多的方式</p>
+<ul>
+<li>通过原来的<code>date</code>和<code>dateTime</code>类型来生成</li>
+<li>通过传年月日时分秒生成</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.of(<span class="number">2022</span>,<span class="number">11</span>,<span class="number">30</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+
+<p>原来<code>Date</code>类的方式。比较奇怪，他的年份会+1900，所以2022年就得是122，月份也会+1,所以11月就是10.但是这个方法呢后面会被删除，已经被标记为弃用了，使用<code>Calendar</code>代替。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>(<span class="number">122</span>,<span class="number">10</span>,<span class="number">30</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>Calendar</code>的使用。这个年份就正常了，是2022，但是月份还是会+1.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Calendar</span> <span class="variable">calendar</span> <span class="operator">=</span> Calendar.getInstance();</span><br><span class="line">calendar.set(<span class="number">2022</span>,<span class="number">10</span>,<span class="number">30</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间格式化"><a href="#时间格式化" class="headerlink" title="时间格式化"></a>时间格式化</h3><p>时间格式化都是通过<code>format</code>函数,需要传一个<code>DateTimeFormatter</code>对象进去，我们可以通过<code>DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss&quot;)</code>来生成自己想要的格式。</p>
+<p>DateTimeFormatter类里面也有一些定义好的格式可以直接用,除了下面列出的还有一些其他的，感兴趣可以看一下，不过我觉得都没啥用。</p>
+<ul>
+<li>ISO_DATE_TIME         2011-12-03T10:15:30</li>
+<li>ISO_OFFSET_DATE_TIME  2011-12-03T10:15:30+01:00</li>
+<li>ISO_LOCAL_DATE_TIME   2011-12-03T10:15:30</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>Date</code>的格式化。这个需要借用<code>SimpleDateFormat</code>类来完成格式化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SimpleDateFormat</span> <span class="variable">format</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleDateFormat</span>(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">format.format(date);</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间转时间戳"><a href="#时间转时间戳" class="headerlink" title="时间转时间戳"></a>时间转时间戳</h3><p>时间转时间戳分为两种，一种是当你已经有一个<code>LocalDateTime</code>类型的时间了，需要转换成秒或者毫秒的时间戳。</p>
+<h4 id="时间转换秒级时间戳"><a href="#时间转换秒级时间戳" class="headerlink" title="时间转换秒级时间戳"></a>时间转换秒级时间戳</h4><p>只需要直接用<code>toEpochSecond</code>方法就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">time.toEpochSecond(ZoneOffset.ofHours(<span class="number">8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>类型没有办法直接获取秒级时间戳，只能获取毫秒级再转秒。</p>
+<h4 id="时间转换毫秒级时间戳"><a href="#时间转换毫秒级时间戳" class="headerlink" title="时间转换毫秒级时间戳"></a>时间转换毫秒级时间戳</h4><p>转换毫秒需要先转换成<code>instant</code>对象，然后才能转换成毫秒级时间戳。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">time.toInstant(ZoneOffset.ofHours(<span class="number">8</span>)).toEpochMilli();</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>获取毫秒就很简单了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">date.getTime();</span><br></pre></td></tr></table></figure>
+
+<h3 id="字符串转换成时间戳"><a href="#字符串转换成时间戳" class="headerlink" title="字符串转换成时间戳"></a>字符串转换成时间戳</h3><p>时间转时间戳分为两种，除了上面的，还有一种是有一个格式化好的字符串，比如<code>2022-12-18 10:00:00</code>这种，但是这个是字符串并不是时间类型。所以要先转换成<code>LocalDateTime</code>类型，然后就可以转换成时间戳了。</p>
+<p>其实就是上面格式化的一种反向操作。使用<code>parse</code>方法就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime.parse(<span class="string">&quot;2022-12-18 10:00:00&quot;</span>, DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>));</span><br><span class="line">LocalDateTime.parse(<span class="string">&quot;2022-12-18&quot;</span>, DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>类型的字符串转时间戳也是通过<code>SimpleDateFormat</code>类来完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SimpleDateFormat</span> <span class="variable">format</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleDateFormat</span>(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> format.parse(<span class="string">&quot;2022-12-18 10:00:00&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间戳转时间"><a href="#时间戳转时间" class="headerlink" title="时间戳转时间"></a>时间戳转时间</h3><p>那如果我们现在转换成时间戳以后又想转换成时间呢？也可以通过<code>instant</code>对象来做到。</p>
+<h4 id="毫秒时间戳转时间"><a href="#毫秒时间戳转时间" class="headerlink" title="毫秒时间戳转时间"></a>毫秒时间戳转时间</h4><p><code>Instant.ofEpochSecond(1671365543834)</code>是将一个毫秒时间戳转换成一个instant对象。在通过<code>ofInstant</code>方法就可以将instant对象转换成LocalDateTime对象了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime.ofInstant(Instant.ofEpochSecond(<span class="number">1671365543834</span>), ZoneOffset.ofHours(<span class="number">8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>(<span class="number">1669759566000L</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="秒时间戳转时间"><a href="#秒时间戳转时间" class="headerlink" title="秒时间戳转时间"></a>秒时间戳转时间</h4><p><code>Instant.ofEpochMilli(1671365543)</code>是将一个秒时间戳转换成<code>instant</code>对象。和上面的区别就是使用的是<code>ofEpochMilli</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime.ofInstant(Instant.ofEpochMilli(<span class="number">1671365543</span>), ZoneOffset.ofHours(<span class="number">8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>类不支持秒，只能把秒转成毫秒在转时间戳。</p>
+<h3 id="时间比较"><a href="#时间比较" class="headerlink" title="时间比较"></a>时间比较</h3><p>通过<code>compareTo</code>方法可以进行时间的一个比较大小。如果大于会返回1，小于返回-1.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">time.compareTo(LocalDateTime.now());</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>也是通过<code>compareTo</code>方法进行比较</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>(<span class="number">1669759566000L</span>);</span><br><span class="line">date.compareTo(<span class="keyword">new</span> <span class="title class_">Date</span>());</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间加减"><a href="#时间加减" class="headerlink" title="时间加减"></a>时间加减</h3><p>如果加上几天，就是<code>plusDays</code>。加几个小时就是<code>plusHours</code>。当然也可以使用<code>plus</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">time.plusDays(<span class="number">1</span>);</span><br><span class="line">time.plusHours(<span class="number">1</span>);</span><br><span class="line">time.plus(Period.ofDays(<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+
+<p>如果减去几天就是<code>minusDays</code>.减去几个小时就是<code>minusHours</code>。当然也可以使用<code>minus</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">LocalDateTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">time.minusDays(<span class="number">1</span>);</span><br><span class="line">time.minusHours(<span class="number">1</span>);</span><br><span class="line">time.minus(Period.ofDays(<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+
+<p><code>Date</code>类不支持时间加减，只能通过<code>Calendar</code>类实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="type">Calendar</span> <span class="variable">calendar</span> <span class="operator">=</span> Calendar.getInstance();</span><br><span class="line">calendar.setTime(date);</span><br><span class="line">calendar.add(Calendar.DAY_OF_MONTH, <span class="number">1</span>);</span><br><span class="line"><span class="comment">//减去</span></span><br><span class="line">calendar.add(Calendar.DAY_OF_MONTH, -<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间格式在入参出参中的使用"><a href="#时间格式在入参出参中的使用" class="headerlink" title="时间格式在入参出参中的使用"></a>时间格式在入参出参中的使用</h3><p>入参的时候需要通过<code>JsonFormat</code>注解来指定需要的是字符串类型和对应的时间格式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonFormat(shape = JsonFormat.Shape.STRING, pattern=&quot;yyyy-MM-dd&quot;)</span></span><br><span class="line"><span class="keyword">private</span> LocalDate date;</span><br><span class="line"></span><br><span class="line"><span class="meta">@JsonFormat(shape = JsonFormat.Shape.STRING, pattern=&quot;yyyy-MM-dd HH:mm:ss&quot;)</span></span><br><span class="line"><span class="keyword">private</span> LocalDateTime time;</span><br></pre></td></tr></table></figure>
+
+<p>出参的时候就很简单了，因为只是返回了一个字符串。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> String time;</span><br></pre></td></tr></table></figure>
+
+<h3 id="格式化时间源码分析"><a href="#格式化时间源码分析" class="headerlink" title="格式化时间源码分析"></a>格式化时间源码分析</h3><p>格式化的时候这两个年是不一样的，具体的可以看一下源码。我们来找一下。</p>
+<p>首先点进去是LocalDateTime这个类里面</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>  <span class="comment">// override for Javadoc and performance</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">format</span><span class="params">(DateTimeFormatter formatter)</span> &#123;</span><br><span class="line">    <span class="comment">//判断参数是否空</span></span><br><span class="line">    Objects.requireNonNull(formatter, <span class="string">&quot;formatter&quot;</span>);</span><br><span class="line">    <span class="comment">//真正的执行格式化</span></span><br><span class="line">    <span class="keyword">return</span> formatter.format(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来点进去，看一下怎么执行的，可以看到又调用了<code>formatTo</code>这个函数，说明主要的格式化代码都在这里面。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">format</span><span class="params">(TemporalAccessor temporal)</span> &#123;</span><br><span class="line">       <span class="comment">//创建了一个32长度的字符串构建器</span></span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">buf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(<span class="number">32</span>);</span><br><span class="line">        <span class="comment">//格式化主要代码</span></span><br><span class="line">        formatTo(temporal, buf);</span><br><span class="line">        <span class="comment">//转成字符串</span></span><br><span class="line">        <span class="keyword">return</span> buf.toString();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>formatTo</code>函数，可以发现主要是调用<code>printerParser</code>这个对象的<code>format</code>方法，那我们这个对象是哪来的呢，是在一开始指定格式化类型的时候来的。不同的格式化类型对应不同的解析器，也就会执行不同的<code>format</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">formatTo</span><span class="params">(TemporalAccessor temporal, Appendable appendable)</span> &#123;</span><br><span class="line">        <span class="comment">//判断参数，这里不用管</span></span><br><span class="line">        Objects.requireNonNull(temporal, <span class="string">&quot;temporal&quot;</span>);</span><br><span class="line">        Objects.requireNonNull(appendable, <span class="string">&quot;appendable&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//创建一个DateTimePrintContext对象</span></span><br><span class="line">            <span class="type">DateTimePrintContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DateTimePrintContext</span>(temporal, <span class="built_in">this</span>);</span><br><span class="line">            <span class="comment">//判断，显然我们之前传过来的就是一个StringBuilder</span></span><br><span class="line">            <span class="keyword">if</span> (appendable <span class="keyword">instanceof</span> StringBuilder) &#123;</span><br><span class="line">                <span class="comment">//主要看这个怎么处理  这里有个 printerParser 对象，这个对象是怎么来的呢，其实是上面DateTimeFormatter.ofPattern的时候给创建的。</span></span><br><span class="line">                printerParser.format(context, (StringBuilder) appendable);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//这里其实就是如果传的不是个StringBuilder，就在创建一个然后执行</span></span><br><span class="line">                <span class="comment">// buffer output to avoid writing to appendable in case of error</span></span><br><span class="line">                <span class="type">StringBuilder</span> <span class="variable">buf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(<span class="number">32</span>);</span><br><span class="line">                printerParser.format(context, buf);</span><br><span class="line">                appendable.append(buf);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">DateTimeException</span>(ex.getMessage(), ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们看一下<code>ofPattern</code>这个方法里面是怎样的吧。这里是创建了一个 时间格式化的建造者，然后把我们这个字符串添加进去了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里的字符串就是我们传的 yyyy-MM-dd HH:mm:ss</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> DateTimeFormatter <span class="title function_">ofPattern</span><span class="params">(String pattern)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">DateTimeFormatterBuilder</span>().appendPattern(pattern).toFormatter();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>appendPattern</code>里面是怎么把字符串加进去的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title function_">appendPattern</span><span class="params">(String pattern)</span> &#123;</span><br><span class="line">    <span class="comment">//忽略</span></span><br><span class="line">    Objects.requireNonNull(pattern, <span class="string">&quot;pattern&quot;</span>);</span><br><span class="line">    <span class="comment">//主要的解析逻辑</span></span><br><span class="line">    parsePattern(pattern);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续追踪到<code>parsePattern</code>方法里面。这个方法代码比较多，这里只关注我们想知道的。其余的有兴趣的可以看一下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">parsePattern</span><span class="params">(String pattern)</span> &#123;</span><br><span class="line">    <span class="comment">//这里给字符串做循环，注意 pattern = yyyy-MM-dd HH:mm:ss 这个字符串。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">pos</span> <span class="operator">=</span> <span class="number">0</span>; pos &lt; pattern.length(); pos++) &#123;</span><br><span class="line">        <span class="comment">//取出字符 比如第一个就是 y 对应的ASCII码就是121</span></span><br><span class="line">        <span class="type">char</span> <span class="variable">cur</span> <span class="operator">=</span> pattern.charAt(pos);</span><br><span class="line">        <span class="comment">//这里就是判断是否是大小写字母了，也就是A-Z或者a-z</span></span><br><span class="line">        <span class="keyword">if</span> ((cur &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; cur &lt;= <span class="string">&#x27;Z&#x27;</span>) || (cur &gt;= <span class="string">&#x27;a&#x27;</span> &amp;&amp; cur &lt;= <span class="string">&#x27;z&#x27;</span>)) &#123;</span><br><span class="line">            <span class="comment">//初始化变量 start = 0 pos = 1</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> pos++;</span><br><span class="line">            <span class="comment">//这里做一个循环，目的其实就是找出相同的字符有几个，比如y有4个，pos就会变成4</span></span><br><span class="line">            <span class="keyword">for</span> ( ; pos &lt; pattern.length() &amp;&amp; pattern.charAt(pos) == cur; pos++);  <span class="comment">// short loop</span></span><br><span class="line">            <span class="comment">//这里就是算出具体的数量 4 - 0 = 4</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> pos - start;</span><br><span class="line">            <span class="comment">// padding  这里忽略 我们这里面没有这个字符</span></span><br><span class="line">            <span class="keyword">if</span> (cur == <span class="string">&#x27;p&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">pad</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">if</span> (pos &lt; pattern.length()) &#123;</span><br><span class="line">                    cur = pattern.charAt(pos);</span><br><span class="line">                    <span class="keyword">if</span> ((cur &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; cur &lt;= <span class="string">&#x27;Z&#x27;</span>) || (cur &gt;= <span class="string">&#x27;a&#x27;</span> &amp;&amp; cur &lt;= <span class="string">&#x27;z&#x27;</span>)) &#123;</span><br><span class="line">                        pad = count;</span><br><span class="line">                        start = pos++;</span><br><span class="line">                        <span class="keyword">for</span> ( ; pos &lt; pattern.length() &amp;&amp; pattern.charAt(pos) == cur; pos++);  <span class="comment">// short loop</span></span><br><span class="line">                        count = pos - start;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (pad == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(</span><br><span class="line">                            <span class="string">&quot;Pad letter &#x27;p&#x27; must be followed by valid pad pattern: &quot;</span> + pattern);</span><br><span class="line">                &#125;</span><br><span class="line">                padNext(pad); <span class="comment">// pad and continue parsing</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//接下来是主要逻辑。</span></span><br><span class="line">            <span class="comment">// main rules</span></span><br><span class="line">            <span class="comment">//从hashMap里面取出对应的值，这个map放在下面了。y取出来就是 YEAR_OF_ERA</span></span><br><span class="line">            <span class="type">TemporalField</span> <span class="variable">field</span> <span class="operator">=</span> FIELD_MAP.get(cur);</span><br><span class="line">            <span class="comment">//判断map里面取出来的是否为空，如果不为空就直接解析，如果为空就接着往下走，看是不是 zvZOXxWwY 这几个，如果都不是就会报错了</span></span><br><span class="line">            <span class="keyword">if</span> (field != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">//我们y是能取出来的，直接解析这里 cur = y, count = 4, field = YEAR_OF_ERA</span></span><br><span class="line">                parseField(cur, count, field);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;z&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">4</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">4</span>) &#123;</span><br><span class="line">                    appendZoneText(TextStyle.FULL);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    appendZoneText(TextStyle.SHORT);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;V&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count != <span class="number">2</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Pattern letter count must be 2: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">                appendZoneId();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;Z&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count &lt; <span class="number">4</span>) &#123;</span><br><span class="line">                    appendOffset(<span class="string">&quot;+HHMM&quot;</span>, <span class="string">&quot;+0000&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">4</span>) &#123;</span><br><span class="line">                    appendLocalizedOffset(TextStyle.FULL);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">5</span>) &#123;</span><br><span class="line">                    appendOffset(<span class="string">&quot;+HH:MM:ss&quot;</span>,<span class="string">&quot;Z&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;O&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                    appendLocalizedOffset(TextStyle.SHORT);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">4</span>) &#123;</span><br><span class="line">                    appendLocalizedOffset(TextStyle.FULL);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Pattern letter count must be 1 or 4: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;X&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">5</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">                appendOffset(OffsetIdPrinterParser.PATTERNS[count + (count == <span class="number">1</span> ? <span class="number">0</span> : <span class="number">1</span>)], <span class="string">&quot;Z&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;x&#x27;</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">5</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">String</span> <span class="variable">zero</span> <span class="operator">=</span> (count == <span class="number">1</span> ? <span class="string">&quot;+00&quot;</span> : (count % <span class="number">2</span> == <span class="number">0</span> ? <span class="string">&quot;+0000&quot;</span> : <span class="string">&quot;+00:00&quot;</span>));</span><br><span class="line">                appendOffset(OffsetIdPrinterParser.PATTERNS[count + (count == <span class="number">1</span> ? <span class="number">0</span> : <span class="number">1</span>)], zero);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;W&#x27;</span>) &#123;</span><br><span class="line">                <span class="comment">// Fields defined by Locale</span></span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">                appendInternal(<span class="keyword">new</span> <span class="title class_">WeekBasedFieldPrinterParser</span>(cur, count));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;w&#x27;</span>) &#123;</span><br><span class="line">                <span class="comment">// Fields defined by Locale</span></span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">2</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">                &#125;</span><br><span class="line">                appendInternal(<span class="keyword">new</span> <span class="title class_">WeekBasedFieldPrinterParser</span>(cur, count));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;Y&#x27;</span>) &#123;</span><br><span class="line">                <span class="comment">// Fields defined by Locale</span></span><br><span class="line">                appendInternal(<span class="keyword">new</span> <span class="title class_">WeekBasedFieldPrinterParser</span>(cur, count));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Unknown pattern letter: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            pos--;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;\&#x27;&#x27;</span>) &#123;</span><br><span class="line">            <span class="comment">// parse literals</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> pos++;</span><br><span class="line">            <span class="keyword">for</span> ( ; pos &lt; pattern.length(); pos++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (pattern.charAt(pos) == <span class="string">&#x27;\&#x27;&#x27;</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (pos + <span class="number">1</span> &lt; pattern.length() &amp;&amp; pattern.charAt(pos + <span class="number">1</span>) == <span class="string">&#x27;\&#x27;&#x27;</span>) &#123;</span><br><span class="line">                        pos++;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">break</span>;  <span class="comment">// end of literal</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (pos &gt;= pattern.length()) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Pattern ends with an incomplete string literal: &quot;</span> + pattern);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> pattern.substring(start + <span class="number">1</span>, pos);</span><br><span class="line">            <span class="keyword">if</span> (str.length() == <span class="number">0</span>) &#123;</span><br><span class="line">                appendLiteral(<span class="string">&#x27;\&#x27;&#x27;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                appendLiteral(str.replace(<span class="string">&quot;&#x27;&#x27;&quot;</span>, <span class="string">&quot;&#x27;&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;[&#x27;</span>) &#123;</span><br><span class="line">            optionalStart();</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;]&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (active.parent == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Pattern invalid as it contains ] without previous [&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            optionalEnd();</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;&#123;&#x27;</span> || cur == <span class="string">&#x27;&#125;&#x27;</span> || cur == <span class="string">&#x27;#&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Pattern includes reserved character: &#x27;&quot;</span> + cur + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// - : 这两个符号就会走到这里了</span></span><br><span class="line">            appendLiteral(cur);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下通过不同的key取值的map</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//时代</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;G&#x27;</span>, ChronoField.ERA);                       <span class="comment">// SDF, LDML (different to both for 1/2 chars)</span></span><br><span class="line"><span class="comment">//这个时代的年份，也就是我们常用的年份yyyy</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;y&#x27;</span>, ChronoField.YEAR_OF_ERA);               <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//单纯的年份</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;u&#x27;</span>, ChronoField.YEAR);                      <span class="comment">// LDML (different in SDF)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;Q&#x27;</span>, IsoFields.QUARTER_OF_YEAR);             <span class="comment">// LDML (removed quarter from 310)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;q&#x27;</span>, IsoFields.QUARTER_OF_YEAR);             <span class="comment">// LDML (stand-alone)</span></span><br><span class="line"><span class="comment">//一年里面的月份，也是我们常用的月份 MM</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;M&#x27;</span>, ChronoField.MONTH_OF_YEAR);             <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;L&#x27;</span>, ChronoField.MONTH_OF_YEAR);             <span class="comment">// SDF, LDML (stand-alone)</span></span><br><span class="line"><span class="comment">//一年里面的天，我们基本不用这个作为日子</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;D&#x27;</span>, ChronoField.DAY_OF_YEAR);               <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//一个月里面的天，我们常用这个获取多少号</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;d&#x27;</span>, ChronoField.DAY_OF_MONTH);              <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;F&#x27;</span>, ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH);  <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;E&#x27;</span>, ChronoField.DAY_OF_WEEK);               <span class="comment">// SDF, LDML (different to both for 1/2 chars)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;c&#x27;</span>, ChronoField.DAY_OF_WEEK);               <span class="comment">// LDML (stand-alone)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;e&#x27;</span>, ChronoField.DAY_OF_WEEK);               <span class="comment">// LDML (needs localized week number)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;a&#x27;</span>, ChronoField.AMPM_OF_DAY);               <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//一天里面的小时，常用的小时 HH</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;H&#x27;</span>, ChronoField.HOUR_OF_DAY);               <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;k&#x27;</span>, ChronoField.CLOCK_HOUR_OF_DAY);         <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;K&#x27;</span>, ChronoField.HOUR_OF_AMPM);              <span class="comment">// SDF, LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;h&#x27;</span>, ChronoField.CLOCK_HOUR_OF_AMPM);        <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//一个小时里面的分钟，常用的分钟 mm</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;m&#x27;</span>, ChronoField.MINUTE_OF_HOUR);            <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//一分钟里面的秒数，常用的秒数 ss</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;s&#x27;</span>, ChronoField.SECOND_OF_MINUTE);          <span class="comment">// SDF, LDML</span></span><br><span class="line"><span class="comment">//这个大S基本不用，这是秒里面的纳秒</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;S&#x27;</span>, ChronoField.NANO_OF_SECOND);            <span class="comment">// LDML (SDF uses milli-of-second number)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;A&#x27;</span>, ChronoField.MILLI_OF_DAY);              <span class="comment">// LDML</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;n&#x27;</span>, ChronoField.NANO_OF_SECOND);            <span class="comment">// 310 (proposed for LDML)</span></span><br><span class="line">FIELD_MAP.put(<span class="string">&#x27;N&#x27;</span>, ChronoField.NANO_OF_DAY);               <span class="comment">// 310 (proposed for LDML)</span></span><br></pre></td></tr></table></figure>
+
+<p>继续深入，直接解析y的方法<code>parseField</code>。可以看到这个是根据我们格式化的字母执行不同的代码，比如u,y都执行到一个代码块。4个y走到了<code>appendValue</code>方法里面。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">parseField</span><span class="params">(<span class="type">char</span> cur, <span class="type">int</span> count, TemporalField field)</span> &#123;</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">standalone</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">switch</span> (cur) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;u&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;y&#x27;</span>:</span><br><span class="line">            <span class="comment">//判断数量</span></span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="comment">//yy走这里</span></span><br><span class="line">                appendValueReduced(field, <span class="number">2</span>, <span class="number">2</span>, ReducedPrinterParser.BASE_DATE);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count &lt; <span class="number">4</span>) &#123;</span><br><span class="line">                <span class="comment">//y or yyy走这里</span></span><br><span class="line">                appendValue(field, count, <span class="number">19</span>, SignStyle.NORMAL);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// yyyy走这里 field = YEAR_OF_ERA count = 4</span></span><br><span class="line">                appendValue(field, count, <span class="number">19</span>, SignStyle.EXCEEDS_PAD);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;c&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Invalid pattern \&quot;cc\&quot;&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*fallthrough*/</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;L&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;q&#x27;</span>:</span><br><span class="line">            standalone = <span class="literal">true</span>;</span><br><span class="line">            <span class="comment">/*fallthrough*/</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;M&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;Q&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;E&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;e&#x27;</span>:</span><br><span class="line">            <span class="keyword">switch</span> (count) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                    <span class="comment">//两个MM输出月份走到这里</span></span><br><span class="line">                    <span class="keyword">if</span> (cur == <span class="string">&#x27;c&#x27;</span> || cur == <span class="string">&#x27;e&#x27;</span>) &#123;</span><br><span class="line">                        appendInternal(<span class="keyword">new</span> <span class="title class_">WeekBasedFieldPrinterParser</span>(cur, count));</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cur == <span class="string">&#x27;E&#x27;</span>) &#123;</span><br><span class="line">                        appendText(field, TextStyle.SHORT);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                            appendValue(field);</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="comment">//经过判断走到这里</span></span><br><span class="line">                            appendValue(field, <span class="number">2</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                    appendText(field, standalone ? TextStyle.SHORT_STANDALONE : TextStyle.SHORT);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                    appendText(field, standalone ? TextStyle.FULL_STANDALONE : TextStyle.FULL);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">                    appendText(field, standalone ? TextStyle.NARROW_STANDALONE : TextStyle.NARROW);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;a&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                appendText(field, TextStyle.SHORT);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;G&#x27;</span>:</span><br><span class="line">            <span class="keyword">switch</span> (count) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                    appendText(field, TextStyle.SHORT);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                    appendText(field, TextStyle.FULL);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">                    appendText(field, TextStyle.NARROW);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;S&#x27;</span>:</span><br><span class="line">            appendFraction(NANO_OF_SECOND, count, count, <span class="literal">false</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;F&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                appendValue(field);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;d&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;h&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;H&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;k&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;K&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;m&#x27;</span>:</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;s&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                appendValue(field);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="comment">//可以看到dd HH mm ss也是走到这里，最终也是通过NumberPrinterParser这个对象来格式化</span></span><br><span class="line">                appendValue(field, count);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;D&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                appendValue(field);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (count &lt;= <span class="number">3</span>) &#123;</span><br><span class="line">                appendValue(field, count);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Too many pattern letters: &quot;</span> + cur);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">if</span> (count == <span class="number">1</span>) &#123;</span><br><span class="line">                appendValue(field);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                appendValue(field, count);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>appendValue</code>方法。field &#x3D; YEAR_OF_ERA,minWidth &#x3D; 4, maxWidth &#x3D; 19, signStyle &#x3D; SignStyle.EXCEEDS_PAD。前面是一些判断，重点是创建了一个<code>NumberPrinterParser</code>的对象。最后转换的时候其实就是通过这个对象来转换的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title function_">appendValue</span><span class="params">(</span></span><br><span class="line"><span class="params">    TemporalField field, <span class="type">int</span> minWidth, <span class="type">int</span> maxWidth, SignStyle signStyle)</span> &#123;</span><br><span class="line">    <span class="comment">//这里不执行 忽略</span></span><br><span class="line">    <span class="keyword">if</span> (minWidth == maxWidth &amp;&amp; signStyle == SignStyle.NOT_NEGATIVE) &#123;</span><br><span class="line">        <span class="keyword">return</span> appendValue(field, maxWidth);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//参数校验</span></span><br><span class="line">    Objects.requireNonNull(field, <span class="string">&quot;field&quot;</span>);</span><br><span class="line">    Objects.requireNonNull(signStyle, <span class="string">&quot;signStyle&quot;</span>);</span><br><span class="line">    <span class="comment">//一些校验规则</span></span><br><span class="line">    <span class="keyword">if</span> (minWidth &lt; <span class="number">1</span> || minWidth &gt; <span class="number">19</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;The minimum width must be from 1 to 19 inclusive but was &quot;</span> + minWidth);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (maxWidth &lt; <span class="number">1</span> || maxWidth &gt; <span class="number">19</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;The maximum width must be from 1 to 19 inclusive but was &quot;</span> + maxWidth);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (maxWidth &lt; minWidth) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;The maximum width must exceed or equal the minimum width but &quot;</span> +</span><br><span class="line">                maxWidth + <span class="string">&quot; &lt; &quot;</span> + minWidth);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//重点是这里，创建了一个 NumberPrinterParser的对象，把参数传进去了。</span></span><br><span class="line">    <span class="type">NumberPrinterParser</span> <span class="variable">pp</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NumberPrinterParser</span>(field, minWidth, maxWidth, signStyle);</span><br><span class="line">    appendValue(pp);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>NumberPrinterParser</code>类。还记得最开始格式化的时候那一段代码<code>printerParser.format(context, (StringBuilder) appendable);</code>吗，实际调用的就是这里。？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//构造方法赋值</span></span><br><span class="line">NumberPrinterParser(TemporalField field, <span class="type">int</span> minWidth, <span class="type">int</span> maxWidth, SignStyle signStyle) &#123;</span><br><span class="line">    <span class="comment">// validated by caller</span></span><br><span class="line">    <span class="built_in">this</span>.field = field;</span><br><span class="line">    <span class="built_in">this</span>.minWidth = minWidth;</span><br><span class="line">    <span class="built_in">this</span>.maxWidth = maxWidth;</span><br><span class="line">    <span class="built_in">this</span>.signStyle = signStyle;</span><br><span class="line">    <span class="built_in">this</span>.subsequentWidth = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//格式化方法</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">format</span><span class="params">(DateTimePrintContext context, StringBuilder buf)</span> &#123;</span><br><span class="line">    <span class="comment">//从context上下文中获取字段 field = YEAR_OF_ERA  context实际包含了真正的时间 2022-12-01T00:00:00</span></span><br><span class="line">    <span class="type">Long</span> <span class="variable">valueLong</span> <span class="operator">=</span> context.getValue(field);</span><br><span class="line">    <span class="keyword">if</span> (valueLong == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获取到以后 value = 2022</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">value</span> <span class="operator">=</span> getValue(context, valueLong);</span><br><span class="line">    <span class="type">DecimalStyle</span> <span class="variable">decimalStyle</span> <span class="operator">=</span> context.getDecimalStyle();</span><br><span class="line">    <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> (value == Long.MIN_VALUE ? <span class="string">&quot;9223372036854775808&quot;</span> : Long.toString(Math.abs(value)));</span><br><span class="line">    <span class="keyword">if</span> (str.length() &gt; maxWidth) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">DateTimeException</span>(<span class="string">&quot;Field &quot;</span> + field +</span><br><span class="line">            <span class="string">&quot; cannot be printed as the value &quot;</span> + value +</span><br><span class="line">            <span class="string">&quot; exceeds the maximum print width of &quot;</span> + maxWidth);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//转换一个格式类型</span></span><br><span class="line">    str = decimalStyle.convertNumberToI18N(str);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这些条件都不满足，忽略</span></span><br><span class="line">    <span class="keyword">if</span> (value &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (signStyle) &#123;</span><br><span class="line">            <span class="keyword">case</span> EXCEEDS_PAD:</span><br><span class="line">                <span class="keyword">if</span> (minWidth &lt; <span class="number">19</span> &amp;&amp; value &gt;= EXCEED_POINTS[minWidth]) &#123;</span><br><span class="line">                    buf.append(decimalStyle.getPositiveSign());</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> ALWAYS:</span><br><span class="line">                buf.append(decimalStyle.getPositiveSign());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (signStyle) &#123;</span><br><span class="line">            <span class="keyword">case</span> NORMAL:</span><br><span class="line">            <span class="keyword">case</span> EXCEEDS_PAD:</span><br><span class="line">            <span class="keyword">case</span> ALWAYS:</span><br><span class="line">                buf.append(decimalStyle.getNegativeSign());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> NOT_NEGATIVE:</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">DateTimeException</span>(<span class="string">&quot;Field &quot;</span> + field +</span><br><span class="line">                    <span class="string">&quot; cannot be printed as the value &quot;</span> + value +</span><br><span class="line">                    <span class="string">&quot; cannot be negative according to the SignStyle&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//填充0 也就是yyyy minWidth = 4就会填充0 MM minWidth = 2如果 1月就会填充01，一个M就不会走到循环填充0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; minWidth - str.length(); i++) &#123;</span><br><span class="line">        buf.append(decimalStyle.getZeroDigit());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//输出到buf中</span></span><br><span class="line">    buf.append(str);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上面的代码，但是<code>NumberPrinterParser</code>其实只是解析了<code>yMdHms</code>这些格式的。也可以再看一下<code>M</code>的确认一下。</p>
+<p>首先是<code>appendValue</code>这个方法。大差不差，除了传到解析器的参数不一样，没啥区别，其实dd这些也都一样。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title function_">appendValue</span><span class="params">(TemporalField field, <span class="type">int</span> width)</span> &#123;</span><br><span class="line">    <span class="comment">//参数校验</span></span><br><span class="line">    Objects.requireNonNull(field, <span class="string">&quot;field&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (width &lt; <span class="number">1</span> || width &gt; <span class="number">19</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;The width must be from 1 to 19 inclusive but was &quot;</span> + width);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//可以发现MM也是用的yyyy这个解析器格式化的，但是后面三个参数不一样</span></span><br><span class="line">    <span class="type">NumberPrinterParser</span> <span class="variable">pp</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NumberPrinterParser</span>(field, width, width, SignStyle.NOT_NEGATIVE);</span><br><span class="line">    appendValue(pp);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那我们<code>-</code>,<code>:</code>这些格式化符号的输出呢？是通过另外一个解析器，它先是取到<code>char</code>类型的一个字符来判断的时候会走到else里面然后走<code>appendLiteral(cur);</code>这个方法。看一下这个方法里面。这里可以看到主要使用的是 CharLiteralPrinterParser 这个解析器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title function_">appendLiteral</span><span class="params">(<span class="type">char</span> literal)</span> &#123;</span><br><span class="line">    <span class="comment">//这里可以看到主要使用的是 CharLiteralPrinterParser 这个解析器</span></span><br><span class="line">    appendInternal(<span class="keyword">new</span> <span class="title class_">CharLiteralPrinterParser</span>(literal));</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下 CharLiteralPrinterParser 这个解析器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构造方法</span></span><br><span class="line">CharLiteralPrinterParser(<span class="type">char</span> literal) &#123;</span><br><span class="line">    <span class="built_in">this</span>.literal = literal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">format</span><span class="params">(DateTimePrintContext context, StringBuilder buf)</span> &#123;</span><br><span class="line">    <span class="comment">//简单粗暴 直接把 - : 这种符号添加到字符串里面</span></span><br><span class="line">    buf.append(literal);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来看一下为啥我们刚才上面说的，y代表 YEAR_OF_ERA，为啥就能从<code>2022-12-01</code>里面取到<code>2022</code>呢？这个可以看到我们<code>NumberPrinterParser</code>这个解析器里面主要调用了一个<code>context.getValue(field)</code>方法。</p>
+<p>主要是<code>temporal.getLong(field)</code>方法，其实temporal就是我们的日期时间，在我们一开始创建上下文的时候过来的。回忆一下上面的创建。这里的temporal可以再往上一层传过来的，传的其实就是<code>LocalDateTime的对象</code>。</p>
+<blockquote>
+<p>new DateTimePrintContext(temporal, this)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Long <span class="title function_">getValue</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//主要是这里，其实temporal就是我们的日期时间，在我们一开始创建上下文的时候过来的。</span></span><br><span class="line">        <span class="keyword">return</span> temporal.getLong(field);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (DateTimeException ex) &#123;</span><br><span class="line">        <span class="keyword">if</span> (optional &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> ex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以我们再看一下<code>getLong</code>方法。可以看到有一个类型判断，<code>yMdHms</code>这几个类型就会走到if里面，如果是时间的 Hms这几个调用time.getLong方法，yMd日期的调用日期的getLong方法。Y的话就会走到 <code>getFrom</code> 这个方法。而且是通过<code>field</code>调用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getLong</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="comment">//类型判断 yMdHms这几个走的这里面</span></span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">instanceof</span> ChronoField) &#123;</span><br><span class="line">        <span class="type">ChronoField</span> <span class="variable">f</span> <span class="operator">=</span> (ChronoField) field;</span><br><span class="line">        <span class="comment">//如果是时间的 Hms这几个调用time.getLong方法，yMd日期的调用日期的getLong方法</span></span><br><span class="line">        <span class="keyword">return</span> (f.isTimeBased() ? time.getLong(field) : date.getLong(field));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Y走这个方法</span></span><br><span class="line">    <span class="keyword">return</span> field.getFrom(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下<code>getFrom</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getFrom</span><span class="params">(TemporalAccessor temporal)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (rangeUnit == WEEKS) &#123;  <span class="comment">// day-of-week</span></span><br><span class="line">        <span class="keyword">return</span> localizedDayOfWeek(temporal);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rangeUnit == MONTHS) &#123;  <span class="comment">// week-of-month</span></span><br><span class="line">        <span class="keyword">return</span> localizedWeekOfMonth(temporal);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rangeUnit == YEARS) &#123;  <span class="comment">// week-of-year</span></span><br><span class="line">        <span class="keyword">return</span> localizedWeekOfYear(temporal);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rangeUnit == WEEK_BASED_YEARS) &#123;</span><br><span class="line">        <span class="keyword">return</span> localizedWeekOfWeekBasedYear(temporal);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rangeUnit == FOREVER) &#123;</span><br><span class="line">        <span class="comment">// YYYY 大写的Y走的是这里</span></span><br><span class="line">        <span class="keyword">return</span> localizedWeekBasedYear(temporal);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;unreachable, rangeUnit: &quot;</span> + rangeUnit + <span class="string">&quot;, this: &quot;</span> + <span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果大写的<code>Y</code>格式化就会走下面的函数，主要就是取出年份以后计算周数，如果周数&#x3D;0就认为是上一年的，年份-1，如果周数大于等于下一年的周数就年份+1</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">localizedWeekBasedYear</span><span class="params">(TemporalAccessor temporal)</span> &#123;</span><br><span class="line">    <span class="comment">//获取到这周的第几天 第5天</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">dow</span> <span class="operator">=</span> localizedDayOfWeek(temporal);</span><br><span class="line">    <span class="comment">//获取日期中的年份 2021</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">year</span> <span class="operator">=</span> temporal.get(YEAR);</span><br><span class="line">    <span class="comment">//获取今年的第几天 2021-12-30 是 364天</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">doy</span> <span class="operator">=</span> temporal.get(DAY_OF_YEAR);</span><br><span class="line">    <span class="comment">//这周开始的偏移量 5</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> startOfWeekOffset(doy, dow);</span><br><span class="line">    <span class="comment">//今年的第几周 53周</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">week</span> <span class="operator">=</span> computeWeek(offset, doy);</span><br><span class="line">    <span class="comment">//如果这周是0周，就是上一年的，年份就-1</span></span><br><span class="line">    <span class="keyword">if</span> (week == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// Day is in end of week of previous year; return the previous year</span></span><br><span class="line">        <span class="keyword">return</span> year - <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//如果接近年底，使用更高精度的逻辑</span></span><br><span class="line">        <span class="comment">//检查 如果年份的日期包含在下一年的部分的星期里面了</span></span><br><span class="line">        <span class="comment">// If getting close to end of year, use higher precision logic</span></span><br><span class="line">        <span class="comment">// Check if date of year is in partial week associated with next year</span></span><br><span class="line">        <span class="comment">//获取一年里面的天数 对象里面包含 最小1天 - 最大365天</span></span><br><span class="line">        <span class="type">ValueRange</span> <span class="variable">dayRange</span> <span class="operator">=</span> temporal.range(DAY_OF_YEAR);</span><br><span class="line">        <span class="comment">//获取到年份的长度，也就是365</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">yearLen</span> <span class="operator">=</span> (<span class="type">int</span>)dayRange.getMaximum();</span><br><span class="line">        <span class="comment">//下一年的周数 根据下面的计算公式得出 (7 + 5 + 366 - 1) / 7 = 53</span></span><br><span class="line">        <span class="comment">//这里为啥是366呢，因为yearLen是今年的天数也就是365 + 1，其实也就是到下一年去了。为的是计算下一年的第一周</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">newYearWeek</span> <span class="operator">=</span> computeWeek(offset, yearLen + weekDef.getMinimalDaysInFirstWeek());</span><br><span class="line">        <span class="comment">//比较如果今年的这周大于等于下一年的周 就年份 +1 所以这里格式化就会出错了。</span></span><br><span class="line">        <span class="keyword">if</span> (week &gt;= newYearWeek) &#123;</span><br><span class="line">            <span class="keyword">return</span> year + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> year;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那么是怎么计算今年的第几周的呢，看一下<code>computeWeek</code>方法。其实就是一个计算公式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//offset = 5 , day = 今年的第几天 364 天</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">computeWeek</span><span class="params">(<span class="type">int</span> offset, <span class="type">int</span> day)</span> &#123;</span><br><span class="line">    <span class="comment">//计算公式 ( 7 + 5 + （364 - 1）) / 7</span></span><br><span class="line">    <span class="keyword">return</span> ((<span class="number">7</span> + offset + (day - <span class="number">1</span>)) / <span class="number">7</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有一个问题，就是我们用到了一个周的偏移量，这个偏移量怎么计算的呢，看一下这个方法<code>startOfWeekOffset</code>。以<code>2021-12-30</code>为例，day &#x3D; 364,dow &#x3D; 5</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">startOfWeekOffset</span><span class="params">(<span class="type">int</span> day, <span class="type">int</span> dow)</span> &#123;</span><br><span class="line">    <span class="comment">// offset of first day corresponding to the day of week in first 7 days (zero origin)</span></span><br><span class="line">    <span class="comment">//算出上一周 (364 - 5) % 7 = 2</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">weekStart</span> <span class="operator">=</span> Math.floorMod(day - dow, <span class="number">7</span>);</span><br><span class="line">    <span class="comment">// offset = -2</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> -weekStart;</span><br><span class="line">    <span class="comment">//这里 2 + 1  &gt; 1会走进去</span></span><br><span class="line">    <span class="keyword">if</span> (weekStart + <span class="number">1</span> &gt; weekDef.getMinimalDaysInFirstWeek()) &#123;</span><br><span class="line">        <span class="comment">// The previous week has the minimum days in the current month to be a &#x27;week&#x27;</span></span><br><span class="line">        <span class="comment">//这里 7 - 2 = 5 返回的就是5</span></span><br><span class="line">        offset = <span class="number">7</span> - weekStart;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> offset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面看完了大写的<code>Y</code>，再来看一下小写的<code>y</code>。走的<code>getLong</code>方法。</p>
+<p>日期的<code>getLong</code>方法。经过判断后主要看<code>get0</code>这个方法。可以看到这个命名就很随意了。。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getLong</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="comment">//这个判断也会走进来</span></span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">instanceof</span> ChronoField) &#123;</span><br><span class="line">        <span class="comment">//这两个判断忽略</span></span><br><span class="line">        <span class="keyword">if</span> (field == EPOCH_DAY) &#123;</span><br><span class="line">            <span class="keyword">return</span> toEpochDay();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (field == PROLEPTIC_MONTH) &#123;</span><br><span class="line">            <span class="keyword">return</span> getProlepticMonth();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//走到这里</span></span><br><span class="line">        <span class="keyword">return</span> get0(field);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> field.getFrom(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下日期的<code>get0</code>方法。可以发现了，这里主要处理了这几种类型。我们常用的</p>
+<ul>
+<li>y也就是YEAR_OF_ERA 处理很简单，判断了一下year &gt;&#x3D; 1就返回 year。</li>
+<li>M也就是MONTH_OF_YEAR 处理很简单，返回日期的month.</li>
+<li>d也就是DAY_OF_MONTH 返回日期的day.</li>
+</ul>
+<p>从这里也可以看出我们格式化成<code>YEAR</code>和<code>ERA</code>作为年其实也是可以的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">get0</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> ((ChronoField) field) &#123;</span><br><span class="line">        <span class="keyword">case</span> DAY_OF_WEEK: <span class="keyword">return</span> getDayOfWeek().getValue();</span><br><span class="line">        <span class="keyword">case</span> ALIGNED_DAY_OF_WEEK_IN_MONTH: <span class="keyword">return</span> ((day - <span class="number">1</span>) % <span class="number">7</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> ALIGNED_DAY_OF_WEEK_IN_YEAR: <span class="keyword">return</span> ((getDayOfYear() - <span class="number">1</span>) % <span class="number">7</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> DAY_OF_MONTH: <span class="keyword">return</span> day;</span><br><span class="line">        <span class="keyword">case</span> DAY_OF_YEAR: <span class="keyword">return</span> getDayOfYear();</span><br><span class="line">        <span class="keyword">case</span> EPOCH_DAY: <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Invalid field &#x27;EpochDay&#x27; for get() method, use getLong() instead&quot;</span>);</span><br><span class="line">        <span class="keyword">case</span> ALIGNED_WEEK_OF_MONTH: <span class="keyword">return</span> ((day - <span class="number">1</span>) / <span class="number">7</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> ALIGNED_WEEK_OF_YEAR: <span class="keyword">return</span> ((getDayOfYear() - <span class="number">1</span>) / <span class="number">7</span>) + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> MONTH_OF_YEAR: <span class="keyword">return</span> month;</span><br><span class="line">        <span class="keyword">case</span> PROLEPTIC_MONTH: <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Invalid field &#x27;ProlepticMonth&#x27; for get() method, use getLong() instead&quot;</span>);</span><br><span class="line">        <span class="keyword">case</span> YEAR_OF_ERA: <span class="keyword">return</span> (year &gt;= <span class="number">1</span> ? year : <span class="number">1</span> - year);</span><br><span class="line">        <span class="keyword">case</span> YEAR: <span class="keyword">return</span> year;</span><br><span class="line">        <span class="keyword">case</span> ERA: <span class="keyword">return</span> (year &gt;= <span class="number">1</span> ? <span class="number">1</span> : <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Unsupported field: &quot;</span> + field);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看完了日期的处理再看一下时间的吧，其实大同小异了。</p>
+<p>时间的<code>getLong</code>方法。同样的经过判断走到<code>get0</code>里面，注意这是时间的<code>getLong</code>和<code>get0</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getLong</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (field <span class="keyword">instanceof</span> ChronoField) &#123;</span><br><span class="line">        <span class="keyword">if</span> (field == NANO_OF_DAY) &#123;</span><br><span class="line">            <span class="keyword">return</span> toNanoOfDay();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (field == MICRO_OF_DAY) &#123;</span><br><span class="line">            <span class="keyword">return</span> toNanoOfDay() / <span class="number">1000</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> get0(field);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> field.getFrom(<span class="built_in">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>时间的<code>get0</code>方法。处理的就是这些类型了。主要看我们关注的几个</p>
+<ul>
+<li>H 也就是 HOUR_OF_DAY, 直接返回时间的 hour</li>
+<li>m 也就是MINUTE_OF_HOUR，直接返回时间的 minute</li>
+<li>s 也就是 SECOND_OF_MINUTE, 直接返回时间的 second</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">get0</span><span class="params">(TemporalField field)</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> ((ChronoField) field) &#123;</span><br><span class="line">        <span class="keyword">case</span> NANO_OF_SECOND: <span class="keyword">return</span> nano;</span><br><span class="line">        <span class="keyword">case</span> NANO_OF_DAY: <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Invalid field &#x27;NanoOfDay&#x27; for get() method, use getLong() instead&quot;</span>);</span><br><span class="line">        <span class="keyword">case</span> MICRO_OF_SECOND: <span class="keyword">return</span> nano / <span class="number">1000</span>;</span><br><span class="line">        <span class="keyword">case</span> MICRO_OF_DAY: <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Invalid field &#x27;MicroOfDay&#x27; for get() method, use getLong() instead&quot;</span>);</span><br><span class="line">        <span class="keyword">case</span> MILLI_OF_SECOND: <span class="keyword">return</span> nano / <span class="number">1000_000</span>;</span><br><span class="line">        <span class="keyword">case</span> MILLI_OF_DAY: <span class="keyword">return</span> (<span class="type">int</span>) (toNanoOfDay() / <span class="number">1000_000</span>);</span><br><span class="line">        <span class="keyword">case</span> SECOND_OF_MINUTE: <span class="keyword">return</span> second;</span><br><span class="line">        <span class="keyword">case</span> SECOND_OF_DAY: <span class="keyword">return</span> toSecondOfDay();</span><br><span class="line">        <span class="keyword">case</span> MINUTE_OF_HOUR: <span class="keyword">return</span> minute;</span><br><span class="line">        <span class="keyword">case</span> MINUTE_OF_DAY: <span class="keyword">return</span> hour * <span class="number">60</span> + minute;</span><br><span class="line">        <span class="keyword">case</span> HOUR_OF_AMPM: <span class="keyword">return</span> hour % <span class="number">12</span>;</span><br><span class="line">        <span class="keyword">case</span> CLOCK_HOUR_OF_AMPM: <span class="type">int</span> <span class="variable">ham</span> <span class="operator">=</span> hour % <span class="number">12</span>; <span class="keyword">return</span> (ham % <span class="number">12</span> == <span class="number">0</span> ? <span class="number">12</span> : ham);</span><br><span class="line">        <span class="keyword">case</span> HOUR_OF_DAY: <span class="keyword">return</span> hour;</span><br><span class="line">        <span class="keyword">case</span> CLOCK_HOUR_OF_DAY: <span class="keyword">return</span> (hour == <span class="number">0</span> ? <span class="number">24</span> : hour);</span><br><span class="line">        <span class="keyword">case</span> AMPM_OF_DAY: <span class="keyword">return</span> hour / <span class="number">12</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedTemporalTypeException</span>(<span class="string">&quot;Unsupported field: &quot;</span> + field);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>好了，到这里我们知道了时间格式的各种使用方法和格式化的源码。</p>
+<p>对于不同格式化的区别。总结一下。</p>
+<ul>
+<li><code>y</code> 处理简单，只是判断了year &gt; 1 就返回了year。</li>
+<li><code>Y</code> 处理较复杂，还判断了周，根据情况对年份+1和-1。某些年份的某些日期会有坑。<strong>一定要注意！！！</strong></li>
+<li><code>Md Hms</code>处理非常简单，直接返回了日期时间上面对应的数。</li>
+<li><code>-: </code>一些特殊字符，格式化的时候是直接增加到字符串里面的。</li>
+</ul>
+<p>下面总结一下源码对应文件和方法的追踪链。感兴趣的可以自己在多翻翻源码。</p>
+<p>ofPattern指定格式的调用链</p>
+<ul>
+<li>DateTimeFormatter.java -&gt; public static DateTimeFormatter ofPattern(String pattern)<ul>
+<li>DateTimeFormatterBuilder.java -&gt; public DateTimeFormatterBuilder appendPattern(String pattern)</li>
+<li>DateTimeFormatterBuilder.java -&gt; private void parsePattern(String pattern)</li>
+<li>DateTimeFormatterBuilder.java -&gt; private void parseField(char cur, int count, TemporalField field)</li>
+<li>DateTimeFormatterBuilder.java -&gt; public DateTimeFormatterBuilder appendValue(TemporalField field, int width)</li>
+<li>在这里创建的解析器</li>
+<li>DateTimeFormatterBuilder.java -&gt; <code>static class NumberPrinterParser implements DateTimePrinterParser</code></li>
+<li>DateTimeFormatterBuilder.java -&gt; <code>static final class CharLiteralPrinterParser implements DateTimePrinterParser</code></li>
+</ul>
+</li>
+</ul>
+<p>format方法调用链</p>
+<ul>
+<li>LocalDateTime.java -&gt; public String format(DateTimeFormatter formatter)<ul>
+<li>DateTimeFormatter.java -&gt; public String format(TemporalAccessor temporal)</li>
+<li>DateTimeFormatter.java -&gt; public void formatTo(TemporalAccessor temporal, Appendable appendable)<ul>
+<li>接下来根据不同的处理解析器进行处理，主要有两个解析器</li>
+<li>DateTimeFormatterBuilder.java -&gt; <code>static class NumberPrinterParser implements DateTimePrinterParser</code></li>
+<li>DateTimeFormatterBuilder.java -&gt; <code>static final class CharLiteralPrinterParser implements DateTimePrinterParser</code><ul>
+<li>DateTimePrintContext.java -&gt; Long getValue(TemporalField field)<ul>
+<li>LocalDateTime.java -&gt; public long getLong(TemporalField field)<ul>
+<li>这里日期调日期的 LocalDate.java -&gt; public long getLong(TemporalField field)</li>
+<li>LocalDate.java -&gt; private int get0(TemporalField field) </li>
+<li>时间调时间的 LocalTime.java -&gt; public long getLong(TemporalField field)</li>
+<li>LocalTime.java -&gt; private int get0(TemporalField field)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+              <a href="/tags/LocalDateTime/" rel="tag"># LocalDateTime</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/JAVA-spring-AOP.html" rel="prev" title="JAVA-spring-AOP">
+      <i class="fa fa-chevron-left"></i> JAVA-spring-AOP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/JAVA-stream%E5%8E%9F%E7%90%86%E5%88%9B%E5%BB%BA%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%93%8D%E4%BD%9C.html" rel="next" title="JAVA-stream创建原理和数据结构操作">
+      JAVA-stream创建原理和数据结构操作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JAVA-LocalDateTime%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96%EF%BC%8C%E8%BD%AC%E6%8D%A2%E6%97%B6%E9%97%B4%E6%88%B3%E5%92%8C%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">JAVA-LocalDateTime时间格式化，转换时间戳和源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LocalDateTime"><span class="nav-number">1.1.</span> <span class="nav-text">LocalDateTime</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.1.</span> <span class="nav-text">获取当前时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.2.</span> <span class="nav-text">获取指定时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-number">1.1.3.</span> <span class="nav-text">时间格式化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%BD%AC%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">1.1.4.</span> <span class="nav-text">时间转时间戳</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E7%A7%92%E7%BA%A7%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">时间转换秒级时间戳</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%BD%AC%E6%8D%A2%E6%AF%AB%E7%A7%92%E7%BA%A7%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">时间转换毫秒级时间戳</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E6%88%90%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">1.1.5.</span> <span class="nav-text">字符串转换成时间戳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3%E8%BD%AC%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.6.</span> <span class="nav-text">时间戳转时间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%AB%E7%A7%92%E6%97%B6%E9%97%B4%E6%88%B3%E8%BD%AC%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">毫秒时间戳转时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%92%E6%97%B6%E9%97%B4%E6%88%B3%E8%BD%AC%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">秒时间戳转时间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%AF%94%E8%BE%83"><span class="nav-number">1.1.7.</span> <span class="nav-text">时间比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%8A%A0%E5%87%8F"><span class="nav-number">1.1.8.</span> <span class="nav-text">时间加减</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%9C%A8%E5%85%A5%E5%8F%82%E5%87%BA%E5%8F%82%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.9.</span> <span class="nav-text">时间格式在入参出参中的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%97%B6%E9%97%B4%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.1.10.</span> <span class="nav-text">格式化时间源码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL零基础教程基础篇大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 基础篇的内容大致如下图所示。  SQL语句介绍完概念以后，我们可以来看看SQL语句了。SQL语句通常由三类组成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL零基础教程基础篇">
+<meta property="og:url" content="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="MySQL零基础教程基础篇大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 基础篇的内容大致如下图所示。  SQL语句介绍完概念以后，我们可以来看看SQL语句了。SQL语句通常由三类组成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-1.png">
+<meta property="article:published_time" content="2023-04-26T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-02-08T02:49:59.909Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL零基础教程基础篇 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL零基础教程基础篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-26 10:12:47" itemprop="dateCreated datePublished" datetime="2023-04-26T10:12:47+08:00">2023-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-08 10:49:59" itemprop="dateModified" datetime="2025-02-08T10:49:59+08:00">2025-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CMU15445/" itemprop="url" rel="index"><span itemprop="name">CMU15445</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程基础篇" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="MySQL零基础教程基础篇"><a href="#MySQL零基础教程基础篇" class="headerlink" title="MySQL零基础教程基础篇"></a>MySQL零基础教程基础篇</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
+<p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
+<p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
+<p>关注我一起学习！文末有惊喜哦！</p>
+<p>基础篇的内容大致如下图所示。</p>
+<p><img src="/../images/mysql/mysql1-1.png" alt="概念学习"></p>
+<h2 id="SQL语句"><a href="#SQL语句" class="headerlink" title="SQL语句"></a>SQL语句</h2><p>介绍完概念以后，我们可以来看看SQL语句了。SQL语句通常由三类组成。</p>
+<p>数据定义 DDL</p>
+<ul>
+<li>CREATE 创建数据库或数据库对象</li>
+<li>ALTER 对数据库或数据库对象进行修改</li>
+<li>DROP 删除数据库或数据库对象<br>数据操纵 DML</li>
+<li>SELECT 从表或视图中检索数据</li>
+<li>INSERT 将数据插入到表或视图中</li>
+<li>UPDATE 修改表或视图中的数据</li>
+<li>DELETE 从表或视图中删除数据<br>数据控制 DCL</li>
+<li>GRANT 用于授予权限</li>
+<li>REVOKE 用于收回权限</li>
+</ul>
+<h3 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h3><p>MySQL 中的 DML（数据操纵语言，Data Manipulation Language） 语句用于对数据库中的数据进行操作，主要包括数据的插入、更新、删除和查询。DML 语句是数据库操作中最常用的语句类型。</p>
+<h4 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h4><p>插入数据使用<code>insert</code>指令，可以往创建好的一张表里面插入数据，支持多种插入方式。</p>
+<p>最常用的方式是<code>insert  values</code>，这种方式也支持批量插入数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name[(col_name)] <span class="keyword">values</span> ();</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> employees (id, name, department, salary)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">&#x27;John Doe&#x27;</span>, <span class="string">&#x27;IT&#x27;</span>, <span class="number">50000</span>);</span><br></pre></td></tr></table></figure>
+
+<p>还有一种方式是 <code>insert  set</code>。这种方式不支持批量插入。这种方式以键值对的形式插入数据，适用于插入单行数据。这种方式在插入单行数据时更加直观，尤其是当列名较多时。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name</span><br><span class="line"><span class="keyword">set</span> col_name <span class="operator">=</span> <span class="string">&#x27;值&#x27;</span>, col_name <span class="operator">=</span> <span class="string">&#x27;值&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>还是刚才的插入示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> employees (id, name, department, salary)</span><br><span class="line"><span class="keyword">set</span> id <span class="operator">=</span> <span class="number">1</span>，name <span class="operator">=</span> <span class="string">&#x27;John Doe&#x27;</span>，department<span class="operator">=</span><span class="string">&#x27;IT&#x27;</span>，salary<span class="operator">=</span><span class="number">50000</span>；</span><br></pre></td></tr></table></figure>
+
+<p>还有一种方式是<code>insert  select</code>方式，这种方式适合快速复制表数据，将查询出来的数据插入到另外一个表里面。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h4><p>可以使用<code>delete from</code>指令来删除已经插入的数据。如果不加where条件的话，就是删除全表数据。</p>
+<p>删除数据操作一定要慎重！！！</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：删除刚才插入到表<code>employees</code>的<code>ID=1</code>的数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> employees <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>除了使用delete指令以外，还可以使用<code>TRUNCATE</code>指令，这个指令可以删除全表的数据，并且新的数据id自增从1开始。删除全表数据的话，该指令通常更快速。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">TABLE</span> table_name</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改数据"><a href="#修改数据" class="headerlink" title="修改数据"></a>修改数据</h4><p>当插入的数据内容需要修改或者说更新的时候，则可以使用<code>update set</code>指令进行修改。修改操作可以使用where条件来选择要修改的数据，不加where条件则会更新所有数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> table_name <span class="keyword">set</span> col_name <span class="operator">=</span> <span class="string">&#x27;值&#x27;</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：将刚才插入的数据部门修改一下。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> employees <span class="keyword">set</span> department <span class="operator">=</span> <span class="string">&#x27;Market&#x27;</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h4><p>数据查询语句是最复杂的语句，这里只是介绍，想要完全用明白，需要大量的实践。</p>
+<h5 id="select-语句"><a href="#select-语句" class="headerlink" title="select 语句"></a>select 语句</h5><p>select用于查询数据表里面插入的数据。</p>
+<p><code>*</code>代表查询所有字段。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure>
+
+<h5 id="列的选择与指定"><a href="#列的选择与指定" class="headerlink" title="列的选择与指定"></a>列的选择与指定</h5><p>如果查询指定字段，则使用字段名称代替<code>*</code>。</p>
+<p>实际开发中不推荐查询所有字段，推荐查询需要的字段，可以提升查询速度。</p>
+<ul>
+<li>如果查询的字段正好是索引，那么可以触发覆盖索引</li>
+<li>如果查询的字段过多，会增加网络传输消耗</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name1,col_name2... <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure>
+
+<h5 id="定义别名"><a href="#定义别名" class="headerlink" title="定义别名"></a>定义别名</h5><p>可以给字段和表定义别名，通过<code>as</code>指令实现。别名可以解决一些字段名冲突或者字段名过长的问题。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name <span class="keyword">as</span> alias <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure>
+
+<p>示例：department字段给一个别名是depart</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> id，department <span class="keyword">as</span> depart <span class="keyword">from</span> employees</span><br></pre></td></tr></table></figure>
+
+<h5 id="where条件"><a href="#where条件" class="headerlink" title="where条件"></a>where条件</h5><p>通过where关键字来进行条件筛选，可以选择出符合条件的数据。</p>
+<p>比如当前用户表user有数据如下：以下数据均为随机生成，非真实数据。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#122;&#x68;&#97;&#x6e;&#103;&#115;&#x61;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#122;&#x68;&#97;&#x6e;&#103;&#115;&#x61;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#x6c;&#105;&#x73;&#105;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#105;&#x73;&#105;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>003</td>
+<td>王五</td>
+<td>男</td>
+<td>13700009012</td>
+<td><a href="mailto:&#119;&#97;&#x6e;&#103;&#x77;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;">&#119;&#97;&#x6e;&#103;&#x77;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>004</td>
+<td>赵六</td>
+<td>女</td>
+<td>13600003456</td>
+<td><a href="mailto:&#x7a;&#104;&#x61;&#x6f;&#x6c;&#x69;&#x75;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#x7a;&#104;&#x61;&#x6f;&#x6c;&#x69;&#x75;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>005</td>
+<td>孙七</td>
+<td>男</td>
+<td>13500007890</td>
+<td><a href="mailto:&#x73;&#117;&#x6e;&#x71;&#105;&#64;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#x73;&#117;&#x6e;&#x71;&#105;&#64;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>006</td>
+<td>周八</td>
+<td>女</td>
+<td>13400001234</td>
+<td><a href="mailto:&#122;&#104;&#111;&#x75;&#x62;&#x61;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#104;&#111;&#x75;&#x62;&#x61;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>007</td>
+<td>吴九</td>
+<td>男</td>
+<td>13300005678</td>
+<td><a href="mailto:&#x77;&#x75;&#106;&#105;&#117;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;">&#x77;&#x75;&#106;&#105;&#117;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>008</td>
+<td>郑十</td>
+<td>女</td>
+<td>13200009012</td>
+<td><a href="mailto:&#122;&#x68;&#x65;&#x6e;&#103;&#x73;&#104;&#105;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;">&#122;&#x68;&#x65;&#x6e;&#103;&#x73;&#104;&#105;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>009</td>
+<td>钱伯</td>
+<td>男</td>
+<td>13100003456</td>
+<td><a href="mailto:&#113;&#x69;&#x61;&#110;&#98;&#x6f;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#113;&#x69;&#x61;&#110;&#98;&#x6f;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>010</td>
+<td>孔仲</td>
+<td>女</td>
+<td>13000007890</td>
+<td><a href="mailto:&#x6b;&#x6f;&#x6e;&#x67;&#x7a;&#x68;&#111;&#x6e;&#x67;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#x6b;&#x6f;&#x6e;&#x67;&#x7a;&#x68;&#111;&#x6e;&#x67;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+</tr>
+</tbody></table>
+<p>这个时候我们需要查询出张三的用户信息，而不是将这10个数据都查询出来到程序里在筛选出张三的数据。</p>
+<p>可以使用如下sql完成。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span>; </span><br></pre></td></tr></table></figure>
+
+<p>这个sql会把name字段中等于‘张三’的数据查询出来。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#104;&#x61;&#x6e;&#103;&#x73;&#x61;&#x6e;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#109;">&#x7a;&#104;&#x61;&#x6e;&#103;&#x73;&#x61;&#x6e;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#109;</a></td>
+</tr>
+</tbody></table>
+<p>where条件支持的类型如下：</p>
+<ul>
+<li>比较操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>=</code></td>
+<td>等于</td>
+</tr>
+<tr>
+<td><code>&lt;&gt;</code></td>
+<td>不等于（也可用<code>!=</code>）</td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>大于</td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>小于</td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>小于等于</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>逻辑操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AND</code></td>
+<td>逻辑与（两个条件都满足）</td>
+</tr>
+<tr>
+<td><code>OR</code></td>
+<td>逻辑或（至少一个条件满足）</td>
+</tr>
+<tr>
+<td><code>NOT</code></td>
+<td>逻辑非（对条件取反）</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>范围操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>BETWEEN...AND...</code></td>
+<td>在指定范围内（包括边界值）</td>
+</tr>
+<tr>
+<td><code>NOT BETWEEN</code></td>
+<td>不在指定范围内</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>列表操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IN</code></td>
+<td>在指定的列表中</td>
+</tr>
+<tr>
+<td><code>NOT IN</code></td>
+<td>不在指定的列表中</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>模糊匹配操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LIKE</code></td>
+<td>模糊匹配（使用<code>%</code>和<code>_</code>作为通配符）</td>
+</tr>
+<tr>
+<td><code>NOT LIKE</code></td>
+<td>不匹配指定模式</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>空值操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IS NULL</code></td>
+<td>判断是否为<code>NULL</code></td>
+</tr>
+<tr>
+<td><code>IS NOT NULL</code></td>
+<td>判断是否不为<code>NULL</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>其他操作符</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EXISTS</code></td>
+<td>检查子查询是否存在结果</td>
+</tr>
+<tr>
+<td><code>NOT EXISTS</code></td>
+<td>检查子查询是否不存在结果</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h5 id="替换查询结果集中的数据"><a href="#替换查询结果集中的数据" class="headerlink" title="替换查询结果集中的数据"></a>替换查询结果集中的数据</h5><p>可以使用if条件来进行结果的判定，比如性别，数据库里面存的可能是1代表男，2代表女。如果要查询出来男和女的话，就可以直接通过sql处理。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> </span><br><span class="line"><span class="keyword">when</span> 条件<span class="number">1</span> <span class="keyword">then</span> 表达式<span class="number">1</span></span><br><span class="line"><span class="keyword">when</span> 条件<span class="number">2</span> <span class="keyword">then</span> 表达式<span class="number">2</span></span><br><span class="line"><span class="keyword">else</span> 表达式</span><br><span class="line"><span class="keyword">end</span> <span class="keyword">as</span> alias</span><br></pre></td></tr></table></figure>
+
+<p>示例：性别转换。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="keyword">CASE</span> </span><br><span class="line">        <span class="keyword">WHEN</span> gender <span class="operator">=</span> <span class="number">1</span> <span class="keyword">THEN</span> <span class="string">&#x27;男&#x27;</span></span><br><span class="line">        <span class="keyword">WHEN</span> gender <span class="operator">=</span> <span class="number">2</span> <span class="keyword">THEN</span> <span class="string">&#x27;女&#x27;</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="string">&#x27;未知&#x27;</span></span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">AS</span> 性别</span><br><span class="line"><span class="keyword">FROM</span> <span class="keyword">user</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="计算列值"><a href="#计算列值" class="headerlink" title="计算列值"></a>计算列值</h4><p>可以直接计算将字段的值进行加减乘除运算。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name <span class="operator">+</span> <span class="number">100</span> <span class="keyword">from</span> table_name</span><br></pre></td></tr></table></figure>
+
+<h4 id="from-子句与多表连接查询"><a href="#from-子句与多表连接查询" class="headerlink" title="from 子句与多表连接查询"></a>from 子句与多表连接查询</h4><h5 id="交叉连接，笛卡尔积"><a href="#交叉连接，笛卡尔积" class="headerlink" title="交叉连接，笛卡尔积"></a>交叉连接，笛卡尔积</h5><p>交叉连接可以连接两个表，产生两个表的笛卡尔积作为结果。</p>
+<p>语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table_namme1 <span class="keyword">cross</span> <span class="keyword">join</span> table_name2</span><br></pre></td></tr></table></figure>
+<p>可以直接简写：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table_name1,table_name2;</span><br></pre></td></tr></table></figure>
+
+<p>示例：获取两个表的交叉连接。</p>
+<p>假设有表user如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#x68;&#97;&#x6e;&#x67;&#115;&#97;&#110;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#109;">&#x7a;&#x68;&#97;&#x6e;&#x67;&#115;&#97;&#110;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#105;&#115;&#x69;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;">&#108;&#105;&#115;&#x69;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;</a></td>
+</tr>
+</tbody></table>
+<p>还有表user_account存储用户的账户余额信息如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<p>使用如下sql语句获取交叉连接：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span>,user_account;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：也就是用户表数据001和用户账户001产生一条数据，和用户账户002产生一条数据，用户数据002同样。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>ID2</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#104;&#97;&#x6e;&#103;&#115;&#97;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;">&#x7a;&#104;&#97;&#x6e;&#103;&#115;&#97;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#x6e;&#64;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#109;">&#x7a;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#x6e;&#64;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#x6c;&#x69;&#115;&#x69;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#x6c;&#x69;&#115;&#x69;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#105;&#x73;&#x69;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#108;&#105;&#x73;&#x69;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<h5 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h5><p>内连接返回两个表中匹配的记录。只有当两个表中的记录满足连接条件时，才会出现在结果集中。可以理解为两个表的交集。</p>
+<p>连接的时候，<code>on</code>就类似于where条件，只不过仅仅在连接表数据的时候生效。内连接返回两个表都满足这个条件的交集。</p>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name <span class="keyword">from</span> table_name <span class="keyword">inner</span> <span class="keyword">join</span> table_name2 <span class="keyword">on</span> table_name.id <span class="operator">=</span> table_name2.t_id;</span><br></pre></td></tr></table></figure>
+
+<p>示例：获取用户数据和用户账户数据的内连接。</p>
+<p>假设有表user如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#104;&#97;&#110;&#103;&#x73;&#x61;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#109;">&#x7a;&#104;&#97;&#110;&#103;&#x73;&#x61;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#105;&#115;&#x69;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#108;&#105;&#115;&#x69;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>003</td>
+<td>王五</td>
+<td>男</td>
+<td>13700009012</td>
+<td><a href="mailto:&#119;&#97;&#x6e;&#x67;&#119;&#x75;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;">&#119;&#97;&#x6e;&#x67;&#119;&#x75;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>004</td>
+<td>赵六</td>
+<td>女</td>
+<td>13600003456</td>
+<td><a href="mailto:&#x7a;&#104;&#x61;&#x6f;&#x6c;&#105;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#x7a;&#104;&#x61;&#x6f;&#x6c;&#105;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>005</td>
+<td>孙七</td>
+<td>男</td>
+<td>13500007890</td>
+<td><a href="mailto:&#x73;&#x75;&#110;&#x71;&#x69;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#x73;&#x75;&#110;&#x71;&#x69;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>006</td>
+<td>周八</td>
+<td>女</td>
+<td>13400001234</td>
+<td><a href="mailto:&#122;&#104;&#111;&#x75;&#98;&#97;&#64;&#101;&#120;&#97;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#111;&#109;">&#122;&#104;&#111;&#x75;&#98;&#97;&#64;&#101;&#120;&#97;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>007</td>
+<td>吴九</td>
+<td>男</td>
+<td>13300005678</td>
+<td><a href="mailto:&#x77;&#x75;&#x6a;&#105;&#117;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;">&#x77;&#x75;&#x6a;&#105;&#117;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>008</td>
+<td>郑十</td>
+<td>女</td>
+<td>13200009012</td>
+<td><a href="mailto:&#x7a;&#104;&#x65;&#110;&#103;&#x73;&#x68;&#x69;&#x40;&#101;&#120;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#x7a;&#104;&#x65;&#110;&#103;&#x73;&#x68;&#x69;&#x40;&#101;&#120;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>009</td>
+<td>钱伯</td>
+<td>男</td>
+<td>13100003456</td>
+<td><a href="mailto:&#113;&#x69;&#97;&#x6e;&#98;&#x6f;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#113;&#x69;&#97;&#x6e;&#98;&#x6f;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>010</td>
+<td>孔仲</td>
+<td>女</td>
+<td>13000007890</td>
+<td><a href="mailto:&#107;&#111;&#110;&#x67;&#x7a;&#x68;&#x6f;&#x6e;&#x67;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;">&#107;&#111;&#110;&#x67;&#x7a;&#x68;&#x6f;&#x6e;&#x67;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
+</tr>
+</tbody></table>
+<p>还有表user_account存储用户的账户余额信息如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>003</td>
+<td>011</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<p>可以看到这两个表的交集就只有两条数据，也就是001和002，</p>
+<p>使用如下sql语句获取交叉连接：</p>
+<p><code>on user.id = user_account.user_id</code>这个条件代表只有当user表的id字段和user_account表的user_id字段相等的时候，才会有结果;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">inner</span> <span class="keyword">join</span> user_account <span class="keyword">on</span> user.id <span class="operator">=</span> user_account.user_id;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>ID2</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#122;&#x68;&#x61;&#x6e;&#x67;&#115;&#x61;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;">&#122;&#x68;&#x61;&#x6e;&#x67;&#115;&#x61;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#x69;&#x73;&#105;&#x40;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#108;&#x69;&#x73;&#105;&#x40;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<h5 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h5><p>外连接分为左连接和右连接，左连接返回内连接的结果+左表剩余的数据，右连接返回内连接的结果+右表剩余的数据。</p>
+<p>左表就是 <code>join</code>左边的表，右表就是<code>join</code>右边的表。</p>
+<p>左连接使用<code>left join</code>指令。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name <span class="keyword">from</span> table_name <span class="keyword">left</span> <span class="keyword">join</span> table_name2 <span class="keyword">on</span> table_name.id <span class="operator">=</span> table_name2.t_id;</span><br></pre></td></tr></table></figure>
+
+<p>示例：获取用户表和用户账户表的左连接结果。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#122;&#104;&#97;&#110;&#x67;&#x73;&#97;&#x6e;&#x40;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#122;&#104;&#97;&#110;&#x67;&#x73;&#97;&#x6e;&#x40;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#x69;&#115;&#x69;&#64;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;">&#108;&#x69;&#115;&#x69;&#64;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>003</td>
+<td>王五</td>
+<td>男</td>
+<td>13700009012</td>
+<td><a href="mailto:&#119;&#x61;&#110;&#x67;&#119;&#117;&#64;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;">&#119;&#x61;&#110;&#x67;&#119;&#117;&#64;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>004</td>
+<td>赵六</td>
+<td>女</td>
+<td>13600003456</td>
+<td><a href="mailto:&#122;&#104;&#97;&#111;&#x6c;&#x69;&#x75;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#97;&#111;&#x6c;&#x69;&#x75;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>005</td>
+<td>孙七</td>
+<td>男</td>
+<td>13500007890</td>
+<td><a href="mailto:&#115;&#117;&#x6e;&#x71;&#x69;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#115;&#117;&#x6e;&#x71;&#x69;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>006</td>
+<td>周八</td>
+<td>女</td>
+<td>13400001234</td>
+<td><a href="mailto:&#122;&#x68;&#x6f;&#x75;&#x62;&#97;&#x40;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#122;&#x68;&#x6f;&#x75;&#x62;&#97;&#x40;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>007</td>
+<td>吴九</td>
+<td>男</td>
+<td>13300005678</td>
+<td><a href="mailto:&#119;&#117;&#x6a;&#105;&#117;&#x40;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;">&#119;&#117;&#x6a;&#105;&#117;&#x40;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>008</td>
+<td>郑十</td>
+<td>女</td>
+<td>13200009012</td>
+<td><a href="mailto:&#x7a;&#104;&#x65;&#110;&#x67;&#x73;&#104;&#x69;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;">&#x7a;&#104;&#x65;&#110;&#x67;&#x73;&#104;&#x69;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>009</td>
+<td>钱伯</td>
+<td>男</td>
+<td>13100003456</td>
+<td><a href="mailto:&#113;&#x69;&#97;&#110;&#x62;&#111;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;">&#113;&#x69;&#97;&#110;&#x62;&#111;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>010</td>
+<td>孔仲</td>
+<td>女</td>
+<td>13000007890</td>
+<td><a href="mailto:&#x6b;&#x6f;&#x6e;&#103;&#x7a;&#x68;&#111;&#110;&#103;&#x40;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;">&#x6b;&#x6f;&#x6e;&#103;&#x7a;&#x68;&#111;&#110;&#103;&#x40;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;</a></td>
+</tr>
+</tbody></table>
+<p>还有表user_account存储用户的账户余额信息如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>003</td>
+<td>011</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<p>使用如下sql语句，可以看到，仅仅是<code>inner join</code>换成了<code>left join</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">left</span> <span class="keyword">join</span> user_account <span class="keyword">on</span> user.id <span class="operator">=</span> user_account.user_id;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：在内连接的结果基础上，增加了<code>左表user表</code>剩下的8条数据，右表的字段内容则是<code>null</code>，代表没有对应字段的数据。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>ID2</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#122;&#x68;&#x61;&#x6e;&#103;&#x73;&#97;&#x6e;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#x6d;">&#122;&#x68;&#x61;&#x6e;&#103;&#x73;&#97;&#x6e;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#x6d;</a></td>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#x69;&#x73;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;">&#108;&#x69;&#x73;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#x6d;</a></td>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>003</td>
+<td>王五</td>
+<td>男</td>
+<td>13700009012</td>
+<td><a href="mailto:&#119;&#97;&#x6e;&#x67;&#119;&#x75;&#64;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#99;&#x6f;&#109;">&#119;&#97;&#x6e;&#x67;&#119;&#x75;&#64;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#99;&#x6f;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>004</td>
+<td>赵六</td>
+<td>女</td>
+<td>13600003456</td>
+<td><a href="mailto:&#122;&#104;&#97;&#x6f;&#x6c;&#105;&#x75;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#x6d;">&#122;&#104;&#97;&#x6f;&#x6c;&#105;&#x75;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#x6d;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>005</td>
+<td>孙七</td>
+<td>男</td>
+<td>13500007890</td>
+<td><a href="mailto:&#115;&#117;&#110;&#x71;&#105;&#64;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#109;">&#115;&#117;&#110;&#x71;&#105;&#64;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>006</td>
+<td>周八</td>
+<td>女</td>
+<td>13400001234</td>
+<td><a href="mailto:&#x7a;&#104;&#x6f;&#x75;&#98;&#97;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#99;&#111;&#109;">&#x7a;&#104;&#x6f;&#x75;&#98;&#97;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#99;&#111;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>007</td>
+<td>吴九</td>
+<td>男</td>
+<td>13300005678</td>
+<td><a href="mailto:&#x77;&#117;&#106;&#105;&#117;&#64;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#99;&#x6f;&#109;">&#x77;&#117;&#106;&#105;&#117;&#64;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#99;&#x6f;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>008</td>
+<td>郑十</td>
+<td>女</td>
+<td>13200009012</td>
+<td><a href="mailto:&#122;&#104;&#101;&#x6e;&#x67;&#115;&#104;&#x69;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;">&#122;&#104;&#101;&#x6e;&#x67;&#115;&#104;&#x69;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>009</td>
+<td>钱伯</td>
+<td>男</td>
+<td>13100003456</td>
+<td><a href="mailto:&#113;&#x69;&#x61;&#x6e;&#x62;&#111;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#113;&#x69;&#x61;&#x6e;&#x62;&#111;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>010</td>
+<td>孔仲</td>
+<td>女</td>
+<td>13000007890</td>
+<td><a href="mailto:&#x6b;&#x6f;&#110;&#x67;&#x7a;&#x68;&#x6f;&#x6e;&#103;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;">&#x6b;&#x6f;&#110;&#x67;&#x7a;&#x68;&#x6f;&#x6e;&#103;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+</tr>
+</tbody></table>
+<p>右连接使用<code>right join</code>指令。<br>语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> col_name <span class="keyword">from</span> table_name <span class="keyword">right</span> <span class="keyword">join</span> table_name2 <span class="keyword">on</span> table_name.id <span class="operator">=</span> table_name2.t_id;</span><br></pre></td></tr></table></figure>
+
+<p>示例：获取用户表和用户账户表的右连接结果。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#x61;&#x6e;&#x40;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#x61;&#x6e;&#x40;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#x6c;&#x69;&#x73;&#x69;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;">&#x6c;&#x69;&#x73;&#x69;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>003</td>
+<td>王五</td>
+<td>男</td>
+<td>13700009012</td>
+<td><a href="mailto:&#x77;&#x61;&#x6e;&#x67;&#119;&#117;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#x77;&#x61;&#x6e;&#x67;&#119;&#117;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
+</tr>
+<tr>
+<td>004</td>
+<td>赵六</td>
+<td>女</td>
+<td>13600003456</td>
+<td><a href="mailto:&#122;&#104;&#97;&#111;&#x6c;&#105;&#x75;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#122;&#104;&#97;&#111;&#x6c;&#105;&#x75;&#x40;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>005</td>
+<td>孙七</td>
+<td>男</td>
+<td>13500007890</td>
+<td><a href="mailto:&#115;&#x75;&#x6e;&#113;&#x69;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#109;">&#115;&#x75;&#x6e;&#113;&#x69;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#99;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>006</td>
+<td>周八</td>
+<td>女</td>
+<td>13400001234</td>
+<td><a href="mailto:&#x7a;&#x68;&#x6f;&#x75;&#98;&#x61;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#x7a;&#x68;&#x6f;&#x75;&#98;&#x61;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>007</td>
+<td>吴九</td>
+<td>男</td>
+<td>13300005678</td>
+<td><a href="mailto:&#119;&#x75;&#x6a;&#x69;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;">&#119;&#x75;&#x6a;&#x69;&#117;&#64;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#x6d;</a></td>
+</tr>
+<tr>
+<td>008</td>
+<td>郑十</td>
+<td>女</td>
+<td>13200009012</td>
+<td><a href="mailto:&#122;&#x68;&#101;&#x6e;&#x67;&#x73;&#x68;&#105;&#x40;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#122;&#x68;&#101;&#x6e;&#x67;&#x73;&#x68;&#105;&#x40;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+</tr>
+<tr>
+<td>009</td>
+<td>钱伯</td>
+<td>男</td>
+<td>13100003456</td>
+<td><a href="mailto:&#x71;&#x69;&#x61;&#110;&#x62;&#111;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#x71;&#x69;&#x61;&#110;&#x62;&#111;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+<tr>
+<td>010</td>
+<td>孔仲</td>
+<td>女</td>
+<td>13000007890</td>
+<td><a href="mailto:&#107;&#x6f;&#110;&#103;&#x7a;&#104;&#111;&#110;&#x67;&#64;&#x65;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#107;&#x6f;&#110;&#103;&#x7a;&#104;&#111;&#110;&#x67;&#64;&#x65;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+</tr>
+</tbody></table>
+<p>还有表user_account存储用户的账户余额信息如下：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>003</td>
+<td>011</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<p>使用如下sql语句，可以看到，仅仅是<code>left join</code>换成了<code>right join</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">right</span> <span class="keyword">join</span> user_account <span class="keyword">on</span> user.id <span class="operator">=</span> user_account.user_id;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：在内连接的结果基础上，增加了<code>右表user_account表</code>剩下的1条数据，左表的字段内容则是<code>null</code>，代表没有对应字段的数据。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>ID2</th>
+<th>user_id</th>
+<th>balance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>001</td>
+<td>张三</td>
+<td>男</td>
+<td>13800001234</td>
+<td><a href="mailto:&#122;&#104;&#97;&#110;&#103;&#x73;&#97;&#x6e;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#97;&#110;&#103;&#x73;&#97;&#x6e;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td>001</td>
+<td>001</td>
+<td>10</td>
+</tr>
+<tr>
+<td>002</td>
+<td>李四</td>
+<td>女</td>
+<td>13900005678</td>
+<td><a href="mailto:&#108;&#105;&#115;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;">&#108;&#105;&#115;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;</a></td>
+<td>002</td>
+<td>002</td>
+<td>20</td>
+</tr>
+<tr>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+<td>null</td>
+<td>003</td>
+<td>011</td>
+<td>20</td>
+</tr>
+</tbody></table>
+<h5 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h5><p>在MySQL中，子查询是一种强大的功能，允许在一个查询中嵌套另一个查询。根据子查询返回的结果类型，可以将其分为以下几种：</p>
+<ul>
+<li>表子查询</li>
+<li>行子查询</li>
+<li>列子查询</li>
+<li>标量子查询</li>
+</ul>
+<blockquote>
+<p>注意：所有的子查询应该慎重使用，因为子查询会导致查询速度降低。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>子查询类型</th>
+<th>定义</th>
+<th>特点</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>表子查询</strong></td>
+<td>返回一个完整的表（多行多列）</td>
+<td>通常用于<code>FROM</code>子句或<code>JOIN</code>操作中，结果是一个表结构</td>
+<td><code>sql &lt;br&gt;SELECT * FROM (SELECT id, name FROM users) AS subquery;&lt;br&gt; </code></td>
+</tr>
+<tr>
+<td><strong>行子查询</strong></td>
+<td>返回一行数据（多列）</td>
+<td>通常用于<code>WHERE</code>子句中，结果是一行数据，可以与多列比较</td>
+<td><code>sql &lt;br&gt;SELECT * FROM users WHERE (id, name) = (SELECT id, name FROM users WHERE age = 25);&lt;br&gt;</code></td>
+</tr>
+<tr>
+<td><strong>列子查询</strong></td>
+<td>返回一列数据（多行）</td>
+<td>通常用于<code>WHERE</code>子句中，结果是一列数据，可以与<code>IN</code>、<code>ANY</code>、<code>ALL</code>等操作符配合使用</td>
+<td><code>sql&lt;br&gt;SELECT * FROM users WHERE id IN (SELECT id FROM orders);&lt;br&gt;</code></td>
+</tr>
+<tr>
+<td><strong>标量子查询</strong></td>
+<td>返回单个值（一行一列）</td>
+<td>通常用于<code>WHERE</code>子句中，结果是一个单一值，可以与比较操作符配合使用</td>
+<td><code>sql&lt;br&gt;SELECT * FROM users WHERE age = (SELECT MAX(age) FROM users);&lt;br&gt;</code></td>
+</tr>
+</tbody></table>
+<h6 id="表子查询"><a href="#表子查询" class="headerlink" title="表子查询"></a>表子查询</h6><ul>
+<li>定义：返回一个完整的表（多行多列）。</li>
+<li>特点：可以作为虚拟表使用，通常用于FROM子句或JOIN操作中。</li>
+<li>示例：SELECT id, name FROM users 这就是一个子查询，该子查询返回的结果是一张表的数据，将该子查询的结果作为一张表，供外部的查询使用。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> (<span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> users) <span class="keyword">AS</span> subquery;</span><br></pre></td></tr></table></figure>
+
+<h6 id="行子查询"><a href="#行子查询" class="headerlink" title="行子查询"></a>行子查询</h6><ul>
+<li>定义：返回一行数据（多列）。</li>
+<li>特点：结果是一行数据，可以与多列比较，通常用于WHERE子句中。</li>
+<li>示例：SELECT id, name FROM users WHERE mobile &#x3D; “13012345678” 是一个子查询，该子查询返回了mobile字段等于13012345678的一行数据，并且只查询了id和name字段。将这两个字段作为外部查询的where条件。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> users </span><br><span class="line"><span class="keyword">WHERE</span> (id, name) <span class="operator">=</span> (<span class="keyword">SELECT</span> id, name <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> mobile <span class="operator">=</span> &quot;13012345678&quot;);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h6 id="列子查询"><a href="#列子查询" class="headerlink" title="列子查询"></a>列子查询</h6><ul>
+<li>定义：返回一列数据（多行）。</li>
+<li>特点：结果是一列数据，可以与IN、ANY、ALL等操作符配合使用，通常用于WHERE子句中。</li>
+<li>示例：SELECT user_id FROM orders 是一个子查询，该子查询返回了orders表的所有用户id信息，并将这些用户id作为外部查询的where条件。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> users </span><br><span class="line"><span class="keyword">WHERE</span> id <span class="keyword">IN</span> (<span class="keyword">SELECT</span> user_id <span class="keyword">FROM</span> orders);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h6 id="标量子查询"><a href="#标量子查询" class="headerlink" title="标量子查询"></a>标量子查询</h6><ul>
+<li>定义：返回单个值（一行一列）。</li>
+<li>特点：结果是一个单一值，可以与比较操作符配合使用，通常用于WHERE子句中。</li>
+<li>示例：SELECT MAX(age) FROM users 是一个子查询，该子查询返回了users表的最大的年龄信息，并将最大的用户年龄作为外部查询的where条件。<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> users </span><br><span class="line"><span class="keyword">WHERE</span> age <span class="operator">=</span> (<span class="keyword">SELECT</span> <span class="built_in">MAX</span>(age) <span class="keyword">FROM</span> users);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="group-by"><a href="#group-by" class="headerlink" title="group by"></a>group by</h5><ul>
+<li>group语句可以实现分组的效果，什么是分组？</li>
+</ul>
+<p>假设该数据表中存储了10条订单信息，有3条是张三的，3条是李四的，剩下4条是王五的。</p>
+<p>group分组以后就可以分成3组，一组是张三的3条数据，一组是李四的3条数据，一组是王五的4条数据。</p>
+<ul>
+<li>分组能干什么？</li>
+</ul>
+<p>分组以后可以统计每个分组中的订单数量、订单总额、订单平均金额等。</p>
+<p>语法</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> table_name </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> col_name</span><br></pre></td></tr></table></figure>
+
+<p>支持的聚合函数：</p>
+<ul>
+<li>count(col_name): 计算每个分组中该字段的数量，比如订单数量</li>
+<li>sum(col_name): 计算每个分组中该字段的总额，比如订单总金额</li>
+<li>avg(col_name): 计算每个分组中该字段的平均值，比如订单平均金额</li>
+<li>min(col_name): 获取每个分组中该字段的最小值</li>
+<li>max(col_name): 获取每个分组中该字段的最大值</li>
+</ul>
+<p>有人要问了？那我不使用<code>group by</code>的情况下，可以使用上面的聚合函数吗？</p>
+<p>当然可以了，没有分组，其实相当于所有数据是一个大分组，所以计算的是所有数据数量、总额等。</p>
+<p>示例：下表是订单表，记录了3个用户的订单信息，现在需要查询这3个用户的订单数量、订单总金额、订单平均金额、最小金额以及最大金额。</p>
+<table>
+<thead>
+<tr>
+<th>OrderID</th>
+<th>UserID</th>
+<th>OrderDate</th>
+<th>OrderAmount</th>
+<th>OrderStatus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1001</td>
+<td>1</td>
+<td>2025-02-01</td>
+<td>120.00</td>
+<td>Completed</td>
+</tr>
+<tr>
+<td>1002</td>
+<td>1</td>
+<td>2025-02-02</td>
+<td>85.00</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>1003</td>
+<td>1</td>
+<td>2025-02-03</td>
+<td>230.00</td>
+<td>Shipped</td>
+</tr>
+<tr>
+<td>1004</td>
+<td>2</td>
+<td>2025-02-04</td>
+<td>150.00</td>
+<td>Completed</td>
+</tr>
+<tr>
+<td>1005</td>
+<td>2</td>
+<td>2025-02-05</td>
+<td>90.25</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>1006</td>
+<td>2</td>
+<td>2025-02-06</td>
+<td>110.00</td>
+<td>Shipped</td>
+</tr>
+<tr>
+<td>1007</td>
+<td>3</td>
+<td>2025-02-07</td>
+<td>100.00</td>
+<td>Completed</td>
+</tr>
+<tr>
+<td>1008</td>
+<td>3</td>
+<td>2025-02-08</td>
+<td>200.00</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>1009</td>
+<td>3</td>
+<td>2025-02-09</td>
+<td>130.75</td>
+<td>Shipped</td>
+</tr>
+<tr>
+<td>1010</td>
+<td>3</td>
+<td>2025-02-10</td>
+<td>160.00</td>
+<td>Completed</td>
+</tr>
+</tbody></table>
+<p>使用如下sql：对userID进行分组，就可以分成三组数据了，在对每个分组使用聚合函数。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> UserID, <span class="built_in">count</span>(OrderID), <span class="built_in">sum</span>(OrderAmount), <span class="built_in">avg</span>(OrderAmount), <span class="built_in">min</span>(OrderAmount), <span class="built_in">max</span>(OrderAmount)</span><br><span class="line"><span class="keyword">FROM</span> orders </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> UserID</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>UserID</th>
+<th>count(OrderID)</th>
+<th>sum(OrderAmount)</th>
+<th>avg(OrderAmount)</th>
+<th>min(OrderAmount)</th>
+<th>max(OrderAmount)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>3</td>
+<td>435.00</td>
+<td>145.00</td>
+<td>85.00</td>
+<td>230.00</td>
+</tr>
+<tr>
+<td>2</td>
+<td>3</td>
+<td>350.25</td>
+<td>116.75</td>
+<td>90.25</td>
+<td>150.00</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+<td>590.75</td>
+<td>147.68</td>
+<td>100.00</td>
+<td>200.00</td>
+</tr>
+</tbody></table>
+<h5 id="having"><a href="#having" class="headerlink" title="having"></a>having</h5><p><code>having</code>语句用来过滤<code>group by</code>分组以后的数据。</p>
+<p>简单点说，就是相当于where条件，只不过<code>where条件</code>的执行顺序在<code>group by</code>之前，having条件的执行顺序在group by之后。</p>
+<p>语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> table_name </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> col_name [<span class="keyword">having</span> col_name <span class="operator">=</span> 任何数]</span><br></pre></td></tr></table></figure>
+
+<p>示例：还是上面group by的表，这次我们只需要总金额大于400的数据，从上面的结果来看，我们知道，只需要userId为1和3的数据。</p>
+<p>但是注意，<code>where条件</code>是在<code>group by</code>之前执行，这个时候还没有总金额这个字段呢。所以，就需要使用<code>having</code>了。</p>
+<p>使用的sql如下：可以看到，仅仅是在后面增加了<code>having sum(OrderAmount) &gt; 400</code>这一条。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> UserID, <span class="built_in">count</span>(OrderID), <span class="built_in">sum</span>(OrderAmount), <span class="built_in">avg</span>(OrderAmount), <span class="built_in">min</span>(OrderAmount), <span class="built_in">max</span>(OrderAmount)</span><br><span class="line"><span class="keyword">FROM</span> orders </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> UserID <span class="keyword">having</span> <span class="built_in">sum</span>(OrderAmount) <span class="operator">&gt;</span> <span class="number">400</span></span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>UserID</th>
+<th>count(OrderID)</th>
+<th>sum(OrderAmount)</th>
+<th>avg(OrderAmount)</th>
+<th>min(OrderAmount)</th>
+<th>max(OrderAmount)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>3</td>
+<td>435.00</td>
+<td>145.00</td>
+<td>85.00</td>
+<td>230.00</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+<td>590.75</td>
+<td>147.68</td>
+<td>100.00</td>
+<td>200.00</td>
+</tr>
+</tbody></table>
+<h5 id="order-by"><a href="#order-by" class="headerlink" title="order by"></a>order by</h5><p>如果想对查询出来的结果集进行排序，可以使用<code>order by</code>语句。</p>
+<p>语法如下：asc代表升序，即1，2，3这种排序，desc代表降序，即3，2，1这种。默认是asc。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> table_name </span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> col_name [<span class="keyword">asc</span>｜<span class="keyword">desc</span>]</span><br></pre></td></tr></table></figure>
+
+<p>order by排序作用在group by分组之后，这意味着可以使用分组之后的聚合函数的结果进行排序，同时也意味着可以影响group by之后的数据。</p>
+<p>示例：对上面group by之后的数据按照总金额进行降序排序。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> UserID, <span class="built_in">count</span>(OrderID), <span class="built_in">sum</span>(OrderAmount), <span class="built_in">avg</span>(OrderAmount), <span class="built_in">min</span>(OrderAmount), <span class="built_in">max</span>(OrderAmount)</span><br><span class="line"><span class="keyword">FROM</span> orders </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> UserID <span class="keyword">having</span> <span class="built_in">sum</span>(OrderAmount) <span class="operator">&gt;</span> <span class="number">400</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="built_in">sum</span>(OrderAmount) <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>UserID</th>
+<th>count(OrderID)</th>
+<th>sum(OrderAmount)</th>
+<th>avg(OrderAmount)</th>
+<th>min(OrderAmount)</th>
+<th>max(OrderAmount)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3</td>
+<td>4</td>
+<td>590.75</td>
+<td>147.68</td>
+<td>100.00</td>
+<td>200.00</td>
+</tr>
+<tr>
+<td>1</td>
+<td>3</td>
+<td>435.00</td>
+<td>145.00</td>
+<td>85.00</td>
+<td>230.00</td>
+</tr>
+</tbody></table>
+<h5 id="group-和-order的差别"><a href="#group-和-order的差别" class="headerlink" title="group 和 order的差别"></a>group 和 order的差别</h5><table>
+<thead>
+<tr>
+<th align="left">group</th>
+<th align="left">order</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">分组行，但输出可能不是分组的排序</td>
+<td align="left">排序产生的输出</td>
+</tr>
+<tr>
+<td align="left">只能使用选择列或表达式列</td>
+<td align="left">任意列都可以使用</td>
+</tr>
+<tr>
+<td align="left">若与聚合函数一起使用列或表达式, 则必须使用group</td>
+<td align="left">不一定需要</td>
+</tr>
+</tbody></table>
+<h5 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h5><p>如果不想每次都查询数据表的全部数据，只想获取几条数据呢？比如分页功能，一页10条数据这种，就可以使用<code>limit</code>命令来实现。</p>
+<p>语法如下：start代表开始的位置，end代表结束的位置。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> orders </span><br><span class="line">limit [<span class="keyword">start</span>, <span class="keyword">end</span>]</span><br></pre></td></tr></table></figure>
+
+<p>比如表中有100条数据。获取1-10条数据就是<code>limit 1,10</code>，获取11-20条数据就是<code>limit 11,20</code>。</p>
+<p>limit最好是配合order by使用。性能更佳，另外，如果只获取1条数据，也建议使用<code>limit 1</code>代表获取1条数据。</p>
+<p>具体的原因在后面原理篇会讲到。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQL%E7%AF%87.html" rel="prev" title="MySQL零基础教程基础篇">
+      <i class="fa fa-chevron-left"></i> MySQL零基础教程基础篇
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9.html" rel="next" title="MySQL查询路径选择">
+      MySQL查询路径选择 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程基础篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.1.</span> <span class="nav-text">SQL语句</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DML"><span class="nav-number">1.1.1.</span> <span class="nav-text">DML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">删除数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">修改数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">数据查询</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#select-%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.1.1.4.1.</span> <span class="nav-text">select 语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E7%9A%84%E9%80%89%E6%8B%A9%E4%B8%8E%E6%8C%87%E5%AE%9A"><span class="nav-number">1.1.1.4.2.</span> <span class="nav-text">列的选择与指定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%88%AB%E5%90%8D"><span class="nav-number">1.1.1.4.3.</span> <span class="nav-text">定义别名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#where%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.1.1.4.4.</span> <span class="nav-text">where条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E9%9B%86%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.4.5.</span> <span class="nav-text">替换查询结果集中的数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%88%97%E5%80%BC"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">计算列值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#from-%E5%AD%90%E5%8F%A5%E4%B8%8E%E5%A4%9A%E8%A1%A8%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.</span> <span class="nav-text">from 子句与多表连接查询</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E8%BF%9E%E6%8E%A5%EF%BC%8C%E7%AC%9B%E5%8D%A1%E5%B0%94%E7%A7%AF"><span class="nav-number">1.1.1.6.1.</span> <span class="nav-text">交叉连接，笛卡尔积</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.1.1.6.2.</span> <span class="nav-text">内连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%96%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.1.1.6.3.</span> <span class="nav-text">外连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.4.</span> <span class="nav-text">子查询</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A1%A8%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.4.1.</span> <span class="nav-text">表子查询</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A1%8C%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.4.2.</span> <span class="nav-text">行子查询</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%97%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.4.3.</span> <span class="nav-text">列子查询</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A0%87%E9%87%8F%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.6.4.4.</span> <span class="nav-text">标量子查询</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#group-by"><span class="nav-number">1.1.1.6.5.</span> <span class="nav-text">group by</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#having"><span class="nav-number">1.1.1.6.6.</span> <span class="nav-text">having</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#order-by"><span class="nav-number">1.1.1.6.7.</span> <span class="nav-text">order by</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#group-%E5%92%8C-order%E7%9A%84%E5%B7%AE%E5%88%AB"><span class="nav-number">1.1.1.6.8.</span> <span class="nav-text">group 和 order的差别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#limit"><span class="nav-number">1.1.1.6.9.</span> <span class="nav-text">limit</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

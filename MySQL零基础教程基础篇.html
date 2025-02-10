@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL零基础教程基础篇大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 基础篇的内容大致如下图所示。  概念学习首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL零基础教程基础篇">
+<meta property="og:url" content="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="MySQL零基础教程基础篇大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？ 这离不开持续学习的能力，而其中最重要的当然是数据库技术了！ 对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。 关注我一起学习！文末有惊喜哦！ 基础篇的内容大致如下图所示。  概念学习首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445001.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445002.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445003.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445004.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445005.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2023-04-26T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-02-05T02:06:54.834Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL零基础教程基础篇 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL零基础教程基础篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-26 10:12:47" itemprop="dateCreated datePublished" datetime="2023-04-26T10:12:47+08:00">2023-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-05 10:06:54" itemprop="dateModified" datetime="2025-02-05T10:06:54+08:00">2025-02-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CMU15445/" itemprop="url" rel="index"><span itemprop="name">CMU15445</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程基础篇" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="MySQL零基础教程基础篇"><a href="#MySQL零基础教程基础篇" class="headerlink" title="MySQL零基础教程基础篇"></a>MySQL零基础教程基础篇</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
+<p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
+<p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
+<p>关注我一起学习！文末有惊喜哦！</p>
+<p>基础篇的内容大致如下图所示。</p>
+<p><img src="/../images/mysql/mysql1-1.png" alt="概念学习"></p>
+<h2 id="概念学习"><a href="#概念学习" class="headerlink" title="概念学习"></a>概念学习</h2><p>首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据库管理系统。</p>
+<p>数据库的英文是<code>DataBase</code>。它的概念是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">数据库是一个长期存储在计算机内的、有组织的、可共享的数据集合，它具有以下特点</span><br><span class="line">1. 数据的集合性</span><br><span class="line">2. 数据的共享性</span><br><span class="line">3. 数据的冗余度低</span><br><span class="line">4. 数据的独立性</span><br><span class="line">5. 数据的安全性</span><br><span class="line">6. 数据的完整性</span><br><span class="line">7. 数据的可维护性</span><br></pre></td></tr></table></figure>
+
+<p>而数据库管理系统的英文是<code>DataBase Management System</code>。它的概念是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">数据库管理系统（Database Management System，简称DBMS）是用于创建、管理、维护和操作数据库的软件系统。它在用户和数据库之间提供了一个接口，使得用户能够方便地存储、检索、更新和管理数据。</span><br></pre></td></tr></table></figure>
+
+<p>因此，我们要明白，<code>MySQL</code>是一个数据库管理系统，而不是一个数据库。</p>
+<p>虽然我们老说<code>MySQL数据库</code>，但这个是因为大家已经习惯了，大家都明白MySQL是什么，因此省略了一些。</p>
+<p><code>MySQL</code>是用来管理数据库的一个系统。</p>
+<p>那么问题来了，<code>SQL</code>又是什么呢？</p>
+<h3 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h3><p>SQL（Structured Query Language，结构化查询语言）是一种用于管理和操作关系数据库的标准编程语言。它允许用户定义、查询、更新和管理数据库中的数据。SQL 是关系数据库管理系统（RDBMS）的核心语言，广泛应用于各种数据库系统。</p>
+<p>这里又出现了一个新的概念，就是<code>关系数据库管理系统（RDBMS）</code>。</p>
+<p>上面已经介绍了<code>数据库管理系统</code>。那什么是关系数据库管理系统呢？</p>
+<h3 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h3><p>这里就需要先说明一下什么是<code>关系数据库</code>。</p>
+<p>关系数据库（Relational Database）<br>关系数据库是一种基于关系模型的数据库管理系统（DBMS），它使用表格（表）来组织和存储数据。每个表由行（记录）和列（字段）组成，每一行代表一个数据记录，每一列代表一个数据属性。关系数据库的核心概念是关系模型，它由数学家埃德加·弗兰克·科德（E.F. Codd）在1970年提出。</p>
+<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>Ted Codd在1969年设计了关系模型。发表了<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/362384.362685">A relational model of data for large shared data banks</a> </p>
+<p>关系模型将物理层和逻辑层分离，当数据的内部表示发生变化时，甚至当外部表示的某些方面发生变化时，用户在终端和大多数应用程序上的活动应该不受影响。</p>
+<p>关系模型提供了一种仅用数据的自然结构来描述数据的方法，因此，它为高级数据语言提供了一个基础，这种语言将一方面在程序之间产生最大的独立性，另一方面在机器表示和数据组织之间产生最大的独立性。另一个优点是，它为处理关系的可导出性、冗余性和一致性提供了坚实的基础。</p>
+<p>仍然需要消除的三种主要数据依赖是：顺序依赖、索引依赖和访问路径依赖。</p>
+<ul>
+<li>顺序依赖：程序展示的顺序和文件内容的存储顺序并不一致，需要各自独立。</li>
+<li>索引依赖：如果程序使用索引的时候，索引被删除那么程序将出错。</li>
+<li>访问路径依赖：访问数据的时候依赖数据的物理结构。</li>
+</ul>
+<p><code>关系</code>指的是数学意义上的关系，对于给定集合S1,S2,S3…Sn，R是n个集合上的关系，如果它是n个元组的集合，每个元组的第一个元素来自S1,第二个来自S2，以此类推。我们称Sj是R上的第j个定义域。R的阶为n(degree n)，阶为1的时候称为一元关系，2的时候称为二元关系，阶为n称为n元关系。</p>
+<p>关键原则：</p>
+<ul>
+<li>将数据存储在简单的数据结构(关系)中</li>
+<li>物理存储留给DBMS实现</li>
+<li>通过高级语言访问数据，DBMS确定最佳策略。</li>
+</ul>
+<p>结构采用关系。确保数据库内容满足完整性约束。程序通过接口来访问和修改数据库内容。</p>
+<p>关系是无序的，n元关系就是n个列的表。一个元组是一行记录。</p>
+<p>关系数据库就是基于<code>关系模型</code>的数据库。</p>
+<p>其具体的体现形式就是我们通常说的<code>表</code>。</p>
+<p>建表语句如下。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> employees (</span><br><span class="line">    id <span class="type">INT</span> AUTO_INCREMENT <span class="keyword">PRIMARY</span> KEY,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">100</span>),</span><br><span class="line">    department <span class="type">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line">    salary <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>除此之外，还有一些<code>关系完整性约束</code>。以确保数据的准确性和一致性。常见的完整性约束包括：</p>
+<ul>
+<li>主键约束（Primary Key）：确保表中每一行的唯一性。</li>
+<li>外键约束（Foreign Key）：确保表之间的关系完整性。</li>
+<li>唯一约束（Unique）：确保某一列或一组列的值是唯一的。</li>
+<li>非空约束（NOT NULL）：确保某一列的值不能为空。</li>
+<li>检查约束（CHECK）：确保某一列的值满足特定条件。</li>
+</ul>
+<p>这里面主键约束是必须的。<code>外键约束</code>通常不使用，因为保证这些约束，会降低数据库的性能。因此外键约束通常由代码层实现。</p>
+<p>唯一约束有的时候是可以使用的，来限制唯一性，同样也可以通过代码层实现。</p>
+<p>非空约束也是推荐使用的，因为<code>NULL</code>在数据库里面处理起来也有一些麻烦，也会影响性能。</p>
+<p>检查约束实际上也基本不使用。</p>
+<p>支持SQL标准，实现了SQL标准，最低要求实现SQL92标准。</p>
+<p>关系数据库支持事务（Transaction），事务是一组操作的集合，要么全部成功，要么全部失败。事务的四个基本特性（ACID）包括：</p>
+<ul>
+<li>原子性（Atomicity）：事务中的所有操作要么全部成功，要么全部失败。</li>
+<li>一致性（Consistency）：事务执行前后，数据库的状态保持一致。</li>
+<li>隔离性（Isolation）：并发事务之间相互隔离，不会相互干扰。</li>
+<li>持久性（Durability）：事务一旦提交，其结果是永久性的，即使系统故障也不会丢失。</li>
+</ul>
+<h3 id="SQL标准"><a href="#SQL标准" class="headerlink" title="SQL标准"></a>SQL标准</h3><p>SQL标准是一系列由国际标准化组织（ISO）和美国国家标准协会（ANSI）制定的规范，旨在确保SQL语言的统一性和兼容性。这些标准定义了SQL语言的语法、语义和行为，使得不同的数据库管理系统（DBMS）能够以一致的方式实现和使用SQL。</p>
+<p>主要的SQL标准：</p>
+<ol>
+<li>SQL-86（1986年）：</li>
+</ol>
+<ul>
+<li>第一个SQL标准，奠定了SQL语言的基础。</li>
+<li>定义了基本的SQL语法和功能，包括数据定义语言（DDL）和数据操纵语言（DML）。</li>
+</ul>
+<ol start="2">
+<li>SQL-89（1989年）：</li>
+</ol>
+<ul>
+<li>对SQL-86的修订和扩展，增加了对嵌套查询和子查询的支持。</li>
+<li>也称为SQL1，是第一个广泛接受的SQL标准。</li>
+</ul>
+<ol start="3">
+<li>SQL-92（1992年）：</li>
+</ol>
+<ul>
+<li>也称为SQL2，是SQL标准的重大更新。</li>
+<li>引入了大量新功能，包括：<ul>
+<li>外键约束（Foreign Key Constraints）</li>
+<li>多表连接（JOIN）</li>
+<li>嵌套查询（Subqueries）</li>
+<li>集合操作（Set Operations）</li>
+<li>视图（Views）</li>
+<li>完整性约束（Integrity Constraints）</li>
+</ul>
+</li>
+<li>SQL-92 是目前大多数数据库系统支持的基础标准。</li>
+</ul>
+<ol start="4">
+<li>SQL:1999（1999年）：</li>
+</ol>
+<ul>
+<li>引入了对大型对象（LOBs）、窗口函数（Window Functions）、递归查询（Recursive Queries）等的支持。</li>
+<li>也称为SQL3，是SQL标准的进一步扩展。</li>
+</ul>
+<ol start="5">
+<li>SQL:2003（2003年）：</li>
+</ol>
+<ul>
+<li>引入了对XML数据类型和操作的支持。</li>
+<li>增加了对存储过程、触发器、用户定义类型（UDTs）等的支持。</li>
+</ul>
+<ol start="6">
+<li>SQL:2006（2006年）：</li>
+</ol>
+<ul>
+<li>主要关注XML数据的处理和查询。</li>
+<li>引入了对XQuery的支持。</li>
+</ul>
+<ol start="7">
+<li>SQL:2008（2008年）：</li>
+</ol>
+<ul>
+<li>引入了对时间数据类型和操作的支持。</li>
+<li>增加了对分区表、数据加密等的支持。</li>
+</ul>
+<ol start="8">
+<li>SQL:2011（2011年）：</li>
+</ol>
+<ul>
+<li>引入了对多版本并发控制（MVCC）的支持。</li>
+<li>增加了对分区表的进一步扩展。</li>
+</ul>
+<ol start="9">
+<li>SQL:2016（2016年）：</li>
+</ol>
+<ul>
+<li>引入了对JSON数据类型和操作的支持。</li>
+<li>增加了对窗口函数的进一步扩展。</li>
+</ul>
+<ol start="10">
+<li>SQL:2019（2019年）：</li>
+</ol>
+<ul>
+<li>引入了对机器学习和数据分析的支持。</li>
+<li>增加了对时间序列数据、地理空间数据等的支持。</li>
+</ul>
+<p>尽管SQL标准提供了统一的规范，但不同的数据库系统在实现上存在差异。主要的数据库系统（如MySQL、PostgreSQL、Oracle、SQL Server等）都支持SQL标准的核心功能，但在某些高级功能和扩展上可能有所不同。例如：</p>
+<ul>
+<li>MySQL：支持SQL:2003标准，但在某些高级功能（如窗口函数）上支持较晚。</li>
+<li>PostgreSQL：支持SQL:2011标准，对SQL标准的兼容性较好。</li>
+<li>Oracle：支持SQL:2011标准，但在某些功能上有自己的扩展。</li>
+<li>SQL Server：支持SQL:2008标准，但在某些功能上有自己的扩展。</li>
+</ul>
+<p>SQL标准是一系列由ISO和ANSI制定的规范，旨在确保SQL语言的统一性和兼容性。不同的数据库系统在实现上存在差异，但都支持SQL标准的核心功能。了解数据库系统对SQL标准的支持情况，可以帮助开发者更好地编写跨数据库的SQL代码，提高代码的可移植性和兼容性。</p>
+<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><ul>
+<li>关系模型：大多数数据库使用的</li>
+<li>键值对模型：NOSql使用的，比如redis</li>
+<li>图模型：NOSql使用的</li>
+<li>文档模型：NOSql使用的，比如mongoDB</li>
+<li>列存储模型</li>
+<li>数组，向量模型：向量数据库，如Fassi</li>
+<li>分组模型，网络模型，多值模型：已经很少使用的模型</li>
+</ul>
+<h3 id="函数依赖"><a href="#函数依赖" class="headerlink" title="函数依赖"></a>函数依赖</h3><p>设R为任一给定关系，如果对于R中属性X的每一个值，R中的属性Y只有唯一值与之对应，则称X函数决定Y或称Y函数依赖于X，记作X-&gt;Y.其中X称为<code>决定因素</code></p>
+<p>分类：</p>
+<ul>
+<li>完全函数依赖</li>
+<li>部分函数依赖</li>
+<li>传递函数依赖</li>
+</ul>
+<p> 完全函数依赖：<br> 设R为任一给定关系，X,Y为其属性集，若X-&gt;Y，且对X中的任何真子集X’，都有X’不依赖Y,则称Y完全函数依赖于X</p>
+<p> 部分函数依赖：<br> 设R为任一给定关系，X,Y为其属性集，若X-&gt;Y,且X中存在一个真子集X’,都有X’-&gt;Y，则称Y部分依赖于X</p>
+<p> 传递函数依赖：<br> 设R为任一给定关系，X,Y,Z为其不同属性子集，若X-&gt;Y,Y不决定X,Y-&gt;Z,则有X-&gt;Z，称为Z传递函数依赖于X。</p>
+<h3 id="设计范式"><a href="#设计范式" class="headerlink" title="设计范式"></a>设计范式</h3><p>一个低一级范式的关系模式通过<code>模式分解</code>可以转换为若干个高一级范式的关系模式的集合，这种过程就叫<code>规范化</code></p>
+<p>第一范式1NF:<br>设R为任一给定关系，如果R中每个列与行的交点处的取值都是不可再分的基本元素，则R为第一范式</p>
+<p>第二范式2NF:<br>设R为任一给定关系，若R为1NF<br>且其所有非主属性都完全函数依赖于候选关键字，则R为第二范式。</p>
+<p>候选关键字：能唯一表示一行数据的就是候选关键字，比如主键，比如唯一索引等。</p>
+<p>第三范式3NF:<br>设R为任一给定关系，若R为2NF<br>且其每一个非主属性都不传递函数依赖于候选关键字，则R为第三范式。</p>
+<p>第三范式的改进形式BCNF:<br>设R为任意给定关系，X,Y为其属性集，F为其函数依赖集，若R为3NF<br>且其F中所有函数依赖X-&gt;Y(Y不属于X)中的X比包含候选关键字，则R为BCNF</p>
+<p>有部分函数依赖就是1NF，没有就是2NF，没有传递函数依赖就是3NF</p>
+<p>1NF-&gt;2NF<br>找到候选关键字，看其余的属性是否完全函数依赖候选关键字<br>是的，与候选关键字一同抄下来形成一个表格<br>不是的，抄下来，形成第二个表格，并且将候选关键字里能够唯一决定表格2的属性组抄在第一列</p>
+<p>2NF-&gt;3NF<br>找到表格中的传递函数依赖关系的三个属性组，设为X,Y,Z<br>将这三个属性组拆成两个表格<br>第一个表格为X,Y<br>第二个表格为Y,Z</p>
+<p>3NF-&gt;BCNF<br>列出表格中的所有函数依赖关系<br>每个关系拆出一个表格</p>
+<h3 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h3><p>ER图是一种图形化的表示方法，用于描述数据库中的实体、实体之间的关系以及实体的属性。它是一种强大的工具，广泛应用于数据库设计和概念建模阶段，帮助开发者和分析师理解数据结构和数据之间的关系。</p>
+<p>ER图的主要组成部分</p>
+<ul>
+<li>实体（Entity）：<ul>
+<li>实体是数据库中具有相同属性集合的对象。例如，学生、课程、教师等。</li>
+<li>在ER图中，实体通常用矩形表示，矩形内写上实体的名称。</li>
+</ul>
+</li>
+<li>属性（Attribute）：<ul>
+<li>属性是实体的特征或性质。例如，学生的属性可以包括学号、姓名、年龄等。</li>
+<li>在ER图中，属性通常用椭圆表示，椭圆内写上属性的名称，并用线连接到对应的实体。</li>
+</ul>
+</li>
+</ul>
+<p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
+<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<ul>
+<li>关系（Relationship）：<ul>
+<li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
+<li>在ER图中，关系通常用菱形表示，菱形内写上关系的名称，并用线连接到相关的实体。</li>
+</ul>
+</li>
+<li>关系的类型：<ul>
+<li>一对一关系（1:1）：一个实体与另一个实体之间存在一对一的联系。例如，一个学生对应一个学号。</li>
+<li>一对多关系（1:N）：一个实体与多个实体之间存在联系。例如，一个教师可以教授多个课程。</li>
+<li>多对多关系（M:N）：多个实体与多个实体之间存在联系。例如，一个学生可以选修多个课程，一个课程也可以被多个学生选修。</li>
+</ul>
+</li>
+</ul>
+<p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
+<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p>画ER图可以使用<a target="_blank" rel="noopener" href="https://www.processon.com/i/637308dd762131535d6884f7?full_name=osgpjw20iEaJn-L">processOn</a></p>
+<h3 id="OLTP"><a href="#OLTP" class="headerlink" title="OLTP"></a>OLTP</h3><p>OLTP（Online Transaction Processing，联机事务处理）数据库是一种用于支持日常事务处理和业务操作的数据库系统。它旨在快速处理大量的在线事务，确保数据的完整性和一致性。OLTP数据库广泛应用于各种需要实时数据处理的场景，如银行系统、电子商务平台、企业资源规划（ERP）系统等。</p>
+<p>OLTP数据库</p>
+<ul>
+<li>通常是业务侧使用的传统数据库，比如oracle,postgresql,mysql</li>
+<li>小的业务多次执行，比如多个简单的插入，更新，查询</li>
+</ul>
+<h4 id="OLTP数据库的主要特点"><a href="#OLTP数据库的主要特点" class="headerlink" title="OLTP数据库的主要特点"></a>OLTP数据库的主要特点</h4><p>事务性：</p>
+<ul>
+<li>OLTP数据库的核心是事务处理。事务是一组操作的集合，要么全部成功，要么全部失败。OLTP系统支持ACID（原子性、一致性、隔离性、持久性）特性，确保事务的可靠性。</li>
+<li>原子性（Atomicity）：事务中的所有操作要么全部成功，要么全部失败。</li>
+<li>一致性（Consistency）：事务执行前后，数据库的状态保持一致。</li>
+<li>隔离性（Isolation）：并发事务之间相互隔离，不会相互干扰。</li>
+<li>持久性（Durability）：事务一旦提交，其结果是永久性的，即使系统故障也不会丢失。</li>
+</ul>
+<p>高性能：</p>
+<ul>
+<li>OLTP数据库设计用于快速处理大量的在线事务。它们通常具有高效的索引、优化的查询计划和低延迟的响应时间。</li>
+<li>例如，银行系统需要在几毫秒内完成交易，OLTP数据库能够满足这种高性能要求。</li>
+</ul>
+<p>数据完整性：</p>
+<ul>
+<li>OLTP数据库通过各种完整性约束（如主键、外键、唯一约束、非空约束等）确保数据的准确性和一致性。</li>
+<li>例如，一个订单表中的订单号必须是唯一的，客户表中的客户ID必须存在。</li>
+</ul>
+<p>并发处理：</p>
+<ul>
+<li>OLTP数据库支持高并发访问，允许多个用户同时进行事务操作。它们通过锁机制和事务隔离级别来管理并发事务，确保数据的一致性和完整性。</li>
+<li>例如，多个用户可以同时在电子商务平台上下单，OLTP数据库能够处理这些并发请求。</li>
+</ul>
+<p>实时性：</p>
+<ul>
+<li>OLTP数据库提供实时数据处理，用户可以即时看到事务的结果。这使得OLTP系统适用于需要即时反馈的业务场景，如在线支付、库存管理等。</li>
+<li>例如，用户在电子商务平台上下单后，系统立即更新库存信息并生成订单。</li>
+</ul>
+<h4 id="OLTP数据库的常见应用场景"><a href="#OLTP数据库的常见应用场景" class="headerlink" title="OLTP数据库的常见应用场景"></a>OLTP数据库的常见应用场景</h4><p>银行系统：</p>
+<ul>
+<li>用于处理日常的银行交易，如存款、取款、转账等。这些交易需要快速、准确地完成，确保数据的一致性和完整性。<br>电子商务平台：</li>
+<li>用于处理用户的订单、支付、库存管理等。这些系统需要支持高并发访问，确保用户能够实时看到订单状态和库存信息。<br>企业资源规划（ERP）系统：</li>
+<li>用于管理企业的各种资源，如人力资源、财务资源、生产资源等。这些系统需要处理大量的事务，确保数据的准确性和一致性。<br>客户关系管理（CRM）系统：</li>
+<li>用于管理客户信息、销售机会、客户服务等。这些系统需要支持实时数据处理，确保客户信息的准确性和及时性。</li>
+</ul>
+<p>OLTP数据库是一种用于支持日常事务处理和业务操作的数据库系统。它具有事务性、高性能、数据完整性、并发处理和实时性等特点，广泛应用于银行系统、电子商务平台、企业资源规划（ERP）系统等。常见的OLTP数据库管理系统包括MySQL、PostgreSQL、Oracle Database、Microsoft SQL Server和SQLite。</p>
+<h3 id="OLAP"><a href="#OLAP" class="headerlink" title="OLAP"></a>OLAP</h3><p>OLAP（Online Analytical Processing，联机分析处理）数据库是一种用于支持复杂的数据分析和报告的数据库系统。它旨在快速处理大量的数据，提供多维度的数据分析能力，帮助用户从不同角度理解数据。OLAP数据库广泛应用于数据仓库、商业智能（BI）和决策支持系统。</p>
+<p>OLAP数据库</p>
+<ul>
+<li>通常是大数据，数据分析来使用，比如Hbase等，支持复杂的数据查询</li>
+<li>OLAP位于OLTP的后方</li>
+</ul>
+<h4 id="OLAP数据库的主要特点"><a href="#OLAP数据库的主要特点" class="headerlink" title="OLAP数据库的主要特点"></a>OLAP数据库的主要特点</h4><p>多维数据分析：</p>
+<ul>
+<li>OLAP数据库支持多维数据分析，允许用户从不同角度（如时间、地区、产品等）查看数据。这种多维视图有助于用户发现数据中的模式和趋势。</li>
+<li>例如，用户可以按季度、地区和产品类别分析销售数据。</li>
+</ul>
+<p>高性能查询：</p>
+<ul>
+<li>OLAP数据库优化了对大量数据的读取操作，能够快速响应复杂的查询请求。它们通常使用预计算的聚合数据和索引技术来提高查询性能。</li>
+<li>例如，数据仓库中的销售数据可以按季度、地区和产品类别预计算，以便快速生成报告。</li>
+</ul>
+<p>数据聚合：</p>
+<ul>
+<li>OLAP数据库支持数据的聚合操作，如求和、平均、最大值、最小值等。这些聚合操作通常在数据加载时预先计算，以便快速生成报告。</li>
+<li>例如，销售数据可以按季度、地区和产品类别进行汇总，以便快速生成销售报告。</li>
+</ul>
+<p>数据立方体（Data Cube）：</p>
+<ul>
+<li>OLAP数据库使用数据立方体（Data Cube）来组织数据。数据立方体是一个多维数据结构，允许用户从不同维度查看数据。</li>
+<li>例如，一个销售数据立方体可以包含时间维度（年、季度、月）、地区维度（国家、城市）和产品维度（类别、品牌）。</li>
+</ul>
+<p>数据更新：</p>
+<ul>
+<li>OLAP数据库通常不需要实时更新，数据通常在定期的时间间隔内批量加载。这使得OLAP数据库能够优化读取操作，提高查询性能。</li>
+<li>例如，销售数据可以在每天晚上批量加载到数据仓库中。</li>
+</ul>
+<h4 id="OLAP数据库的常见应用场景"><a href="#OLAP数据库的常见应用场景" class="headerlink" title="OLAP数据库的常见应用场景"></a>OLAP数据库的常见应用场景</h4><p>数据仓库：</p>
+<ul>
+<li>用于存储和管理企业的历史数据，支持复杂的查询和报告。数据仓库通常从多个数据源（如事务处理系统）提取数据，进行清洗和转换，然后加载到数据仓库中。</li>
+<li>例如，企业可以使用数据仓库来分析销售趋势、客户行为等。</li>
+</ul>
+<p>商业智能（BI）：</p>
+<ul>
+<li>用于支持企业的决策支持系统，提供数据驱动的决策支持。商业智能工具通常与OLAP数据库集成，提供交互式的报告和分析功能。</li>
+<li>例如，企业可以使用商业智能工具生成销售报告、市场分析报告等。</li>
+</ul>
+<p>决策支持系统（DSS）：</p>
+<ul>
+<li>用于支持企业的决策过程，提供数据驱动的决策支持。决策支持系统通常使用OLAP数据库来存储和分析数据。</li>
+<li>例如，企业可以使用决策支持系统来优化生产计划、资源分配等。</li>
+</ul>
+<p>OLAP数据库是一种用于支持复杂的数据分析和报告的数据库系统。它具有多维数据分析、高性能查询、数据聚合、数据立方体和数据更新等特点，广泛应用于数据仓库、商业智能（BI）和决策支持系统。常见的OLAP数据库管理系统包括HBase,ClickHouse等。</p>
+<h3 id="高级概念"><a href="#高级概念" class="headerlink" title="高级概念"></a>高级概念</h3><p>接下来在介绍一下MySQL中会用到的高级概念，这些能更好的帮助大家理解除了正常的表以外的其他东西。</p>
+<h4 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h4><p>在MySQL中，<strong>视图（View）</strong>是一种虚拟表，其内容由SQL查询定义。视图并不存储实际的数据，而是根据定义的查询动态生成数据。视图可以简化复杂的SQL操作，提供数据的逻辑抽象，并且可以限制对某些数据的访问，从而增强数据的安全性。</p>
+<p>MySQL中的视图是虚拟视图，说白了就是一条SQL语句，当查询视图的时候执行SQL语句而已。</p>
+<p>除此之外，还有一个东西叫做<code>物化视图</code>，MySQL并没有实现这个东西，物化视图就是一张真的表，而不是一个SQL语句，因此查询效率更好。</p>
+<h5 id="视图的主要特点"><a href="#视图的主要特点" class="headerlink" title="视图的主要特点"></a>视图的主要特点</h5><p>虚拟表：</p>
+<ul>
+<li>视图是一个虚拟表，其内容由SQL查询定义。视图本身并不存储数据，而是根据定义的查询动态生成数据。</li>
+</ul>
+<p>简化复杂查询：</p>
+<ul>
+<li>视图可以简化复杂的SQL操作，将复杂的查询逻辑封装起来，使用户可以像查询普通表一样查询视图。</li>
+</ul>
+<p>数据抽象：</p>
+<ul>
+<li>视图提供数据的逻辑抽象，隐藏了底层表的复杂性，使用户可以更直观地访问数据。</li>
+</ul>
+<p>安全性：</p>
+<ul>
+<li>视图可以限制对某些数据的访问，增强数据的安全性。通过视图，用户只能访问视图定义的特定数据，而不能访问底层表的全部数据。</li>
+</ul>
+<p>更新限制：</p>
+<ul>
+<li>视图可以是可更新的，也可以是不可更新的。可更新视图允许用户通过视图插入、更新或删除数据，但需要满足一定的条件。不可更新视图则不允许用户通过视图修改数据。</li>
+</ul>
+<p>创建一个视图。下面的语句，创建一个视图，视图名称是<code>sales_employees</code>，内容就是后面的Select语句的结果。当原始表<code>employees</code>变化以后，视图的内容也会跟着变化。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> sales_employees <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> name, salary</span><br><span class="line"><span class="keyword">FROM</span> employees</span><br><span class="line"><span class="keyword">WHERE</span> department <span class="operator">=</span> <span class="string">&#x27;Sales&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h4><p>在MySQL中，<strong>触发器（Trigger）</strong>是一种特殊的存储过程，它在特定的数据库操作（如INSERT、UPDATE、DELETE）发生时自动执行。触发器可以用于实现复杂的业务逻辑，确保数据的完整性和一致性，以及自动维护数据的同步。</p>
+<h5 id="触发器的主要特点"><a href="#触发器的主要特点" class="headerlink" title="触发器的主要特点"></a>触发器的主要特点</h5><p>自动执行：</p>
+<ul>
+<li>触发器在特定的数据库操作发生时自动执行，无需显式调用。这使得触发器可以用于实现自动化的数据处理和维护。</li>
+</ul>
+<p>数据完整性：</p>
+<ul>
+<li>触发器可以用于确保数据的完整性和一致性。例如，可以在插入或更新数据时自动检查数据的有效性，或者在删除数据时自动清理相关数据。</li>
+</ul>
+<p>业务逻辑：</p>
+<ul>
+<li>触发器可以用于实现复杂的业务逻辑。例如，可以在插入或更新数据时自动计算某些字段的值，或者在删除数据时自动更新相关表的数据。</li>
+</ul>
+<p>数据同步：</p>
+<ul>
+<li>触发器可以用于自动维护数据的同步。例如，可以在插入或更新数据时自动更新相关表的数据，或者在删除数据时自动清理相关表的数据。</li>
+</ul>
+<h5 id="触发器的类型"><a href="#触发器的类型" class="headerlink" title="触发器的类型"></a>触发器的类型</h5><ul>
+<li>BEFORE INSERT：<ul>
+<li>在插入数据之前执行触发器逻辑。</li>
+</ul>
+</li>
+<li>AFTER INSERT：<ul>
+<li>在插入数据之后执行触发器逻辑。</li>
+</ul>
+</li>
+<li>BEFORE UPDATE：<ul>
+<li>在更新数据之前执行触发器逻辑。</li>
+</ul>
+</li>
+<li>AFTER UPDATE：<ul>
+<li>在更新数据之后执行触发器逻辑。</li>
+</ul>
+</li>
+<li>BEFORE DELETE：<ul>
+<li>在删除数据之前执行触发器逻辑。</li>
+</ul>
+</li>
+<li>AFTER DELETE：<ul>
+<li>在删除数据之后执行触发器逻辑。</li>
+</ul>
+</li>
+</ul>
+<h5 id="触发器的限制"><a href="#触发器的限制" class="headerlink" title="触发器的限制"></a>触发器的限制</h5><p>性能影响：</p>
+<ul>
+<li>触发器的执行会增加数据库操作的开销，可能会影响性能。因此，应谨慎使用触发器，避免在高频操作的表上定义过多的触发器。<br>复杂性：</li>
+<li>触发器的逻辑可以非常复杂，但过多的复杂逻辑可能导致触发器难以维护和调试。因此，应尽量保持触发器的逻辑简单明了。<br>调试困难：</li>
+<li>触发器的调试相对困难，因为它们在特定的操作发生时自动执行，难以直接观察和调试。因此，建议在开发和测试阶段充分测试触发器的逻辑。</li>
+</ul>
+<p>因此，实际开发中基本不使用触发器。</p>
+<h4 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h4><p>在MySQL中，<strong>存储过程（Stored Procedure）</strong>是一种预编译的SQL语句集合，它存储在数据库中，可以通过调用其名称并传递参数来执行。存储过程可以包含复杂的逻辑和多个SQL语句，用于完成特定的任务。它们类似于其他编程语言中的函数或方法。</p>
+<p>可以把存储过程想成一个函数。只不过是在MySQL中的函数，这个函数可以实现各种功能。可以实现一些复杂的SQL处理，这样可以简化调用。</p>
+<h5 id="存储过程的主要特点"><a href="#存储过程的主要特点" class="headerlink" title="存储过程的主要特点"></a>存储过程的主要特点</h5><p>预编译：</p>
+<ul>
+<li>存储过程在创建时被预编译并存储在数据库中，这使得它们的执行速度比单独的SQL语句更快。<br>代码重用：</li>
+<li>存储过程可以被多次调用，减少了代码重复，提高了开发效率。<br>减少网络流量：</li>
+<li>存储过程在服务器端执行，减少了客户端和服务器之间的网络流量，因为只需要发送存储过程的名称和参数，而不是大量的SQL语句。<br>安全性：</li>
+<li>存储过程可以限制用户对底层数据的直接访问，只允许通过存储过程进行数据操作，从而增强数据的安全性。<br>事务管理：</li>
+<li>存储过程可以包含事务控制语句，如COMMIT和ROLLBACK，确保数据操作的完整性和一致性。</li>
+</ul>
+<p>创建一个存储过程get_employee_details，用于根据员工ID获取员工的详细信息：</p>
+<p>DELIMITER用来设置结束符，比如正常的句子结束符是句号。代码结束符是分号；</p>
+<p>IN代表输入参数，也就是这个函数有一个输入参数emp_id，是int类型。<br>还有out代表输出参数，用于返回结果。<br>INOUT代表既可以输入参数也可以是输出参数。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> get_employee_details(<span class="keyword">IN</span> emp_id <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> name, department, salary</span><br><span class="line">    <span class="keyword">FROM</span> employees</span><br><span class="line">    <span class="keyword">WHERE</span> id <span class="operator">=</span> emp_id;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<p>上面这个存储过程的函数体，就是一段select查询语句。</p>
+<h5 id="存储过程的限制"><a href="#存储过程的限制" class="headerlink" title="存储过程的限制"></a>存储过程的限制</h5><p>性能影响：</p>
+<ul>
+<li>存储过程的执行会增加数据库操作的开销，可能会影响性能。因此，应谨慎使用存储过程，避免在高频操作的表上定义过多的存储过程。<br>复杂性：</li>
+<li>存储过程的逻辑可以非常复杂，但过多的复杂逻辑可能导致存储过程难以维护和调试。因此，应尽量保持存储过程的逻辑简单明了。<br>调试困难：</li>
+<li>存储过程的调试相对困难，因为它们在服务器端执行，难以直接观察和调试。因此，建议在开发和测试阶段充分测试存储过程的逻辑。</li>
+</ul>
+<h4 id="存储函数"><a href="#存储函数" class="headerlink" title="存储函数"></a>存储函数</h4><p>在MySQL中，<strong>存储函数（Stored Function）</strong>是一种预编译的SQL语句集合，类似于存储过程，但它返回一个值。存储函数可以被SQL语句直接调用，就像调用普通的函数一样。存储函数通常用于封装复杂的逻辑，并在查询中重用这些逻辑。</p>
+<p>存储函数同样是一个函数，和上面的存储过程差不多。</p>
+<h5 id="存储过程和存储函数的区别"><a href="#存储过程和存储函数的区别" class="headerlink" title="存储过程和存储函数的区别"></a>存储过程和存储函数的区别</h5><p>返回值的区别</p>
+<ul>
+<li>存储过程<ul>
+<li>存储过程可以返回多个值，这些值通过OUT或INOUT参数返回。</li>
+<li>存储过程可以执行多个SQL语句，但不直接返回一个单一的值。</li>
+</ul>
+</li>
+<li>存储函数<ul>
+<li>存储函数必须返回一个单一的值。</li>
+<li>存储函数可以被SQL语句直接调用，就像调用普通的函数一样。</li>
+</ul>
+</li>
+</ul>
+<p>调用方式的区别</p>
+<ul>
+<li>存储过程<ul>
+<li>存储过程通过CALL语句调用。</li>
+<li>存储过程可以执行复杂的逻辑，包括多个SQL语句和事务控制。</li>
+</ul>
+</li>
+<li>存储函数<ul>
+<li>存储函数可以直接在SQL语句中调用，就像调用普通的函数一样。</li>
+<li>存储函数通常用于封装复杂的逻辑，并在查询中重用这些逻辑。</li>
+</ul>
+</li>
+</ul>
+<h5 id="存储函数的主要特点"><a href="#存储函数的主要特点" class="headerlink" title="存储函数的主要特点"></a>存储函数的主要特点</h5><p>返回值：</p>
+<ul>
+<li>存储函数必须返回一个值，这使得它们可以被SQL语句直接调用。<br>代码重用：</li>
+<li>存储函数可以被多次调用，减少了代码重复，提高了开发效率。<br>减少网络流量：</li>
+<li>存储函数在服务器端执行，减少了客户端和服务器之间的网络流量，因为只需要发送函数的名称和参数，而不是大量的SQL语句。<br>安全性：</li>
+<li>存储函数可以限制用户对底层数据的直接访问，只允许通过函数进行数据操作，从而增强数据的安全性。<br>事务管理：</li>
+<li>存储函数可以包含事务控制语句，如COMMIT和ROLLBACK，确保数据操作的完整性和一致性。</li>
+</ul>
+<p>创建一个存储函数get_employee_salary，用于根据员工ID获取员工的薪资：</p>
+<p>可以看到和上面存储过程的区别，声明了一个返回值，类型是DECIMAL,最后通过return返回了，并且声明了一个变量。参数也没有IN、OUT这种了。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> get_employee_salary(emp_id <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> emp_salary <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">SELECT</span> salary <span class="keyword">INTO</span> emp_salary</span><br><span class="line">    <span class="keyword">FROM</span> employees</span><br><span class="line">    <span class="keyword">WHERE</span> id <span class="operator">=</span> emp_id;</span><br><span class="line">    <span class="keyword">RETURN</span> emp_salary;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<h4 id="window窗口函数"><a href="#window窗口函数" class="headerlink" title="window窗口函数"></a>window窗口函数</h4><p>窗口函数（Window Function）是SQL标准中的一种功能强大的工具，它允许在查询中对一组行进行计算，而不会像聚合函数那样消除行的个数。窗口函数在MySQL 8.0及更高版本中得到了支持，它们可以用于计算移动平均值、累积和、排名等复杂的分析任务。</p>
+<h5 id="窗口函数的主要特点"><a href="#窗口函数的主要特点" class="headerlink" title="窗口函数的主要特点"></a>窗口函数的主要特点</h5><p>行级计算：</p>
+<ul>
+<li>窗口函数在每一行上执行计算，同时可以访问同一组中的其他行。</li>
+<li>这与聚合函数不同，聚合函数会将多行数据合并为一行。<br>分区和排序：</li>
+<li>窗口函数可以使用PARTITION BY子句将数据分成多个分区，每个分区独立计算。</li>
+<li>可以使用ORDER BY子句在每个分区内对数据进行排序。<br>灵活的范围定义：</li>
+<li>窗口函数可以定义计算的范围，如当前行的前几行或后几行。</li>
+<li>使用ROWS或RANGE子句可以指定计算的范围。<br>多种功能：</li>
+<li>窗口函数提供了多种功能，如ROW_NUMBER()、RANK()、DENSE_RANK()、NTILE()、SUM()、AVG()、LEAD()、LAG()等。</li>
+</ul>
+<p><code>ROW_NUMBER</code>和<code>RANK</code>都需要和<code>OVER</code>一起使用。</p>
+<ul>
+<li>ROW_NUMBER(): 显示当前行号</li>
+<li>RANK() : 显示排序后的排名，如果没有排序，都是1</li>
+<li>OVER()<ul>
+<li>PARTITION BY 进行分组</li>
+<li>GROUP BY 进行分组</li>
+<li>ORDER BY 排序</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/15445001.png" alt="001"></p>
+<p><img src="/../images/15445002.png" alt="002"></p>
+<p><img src="/../images/15445003.png" alt="003"></p>
+<h4 id="获取每个课程中分数最高的学生信息"><a href="#获取每个课程中分数最高的学生信息" class="headerlink" title="获取每个课程中分数最高的学生信息"></a>获取每个课程中分数最高的学生信息</h4><p>下面的SQL，在postgresql中执行成功，mysql8执行报错。</p>
+<p>首先查询所有课程信息，并按照课程分组，按照分数排序。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line"><span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line"><span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/15445004.png" alt="004"></p>
+<p>接着搜索上表中分数为1，也就是分数最高的学生。也就是每个课分数最高的学生信息。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">    <span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line">    <span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled) <span class="keyword">AS</span> ranking</span><br><span class="line"><span class="keyword">WHERE</span> ranking.rank <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/15445005.png" alt="005"></p>
+<h4 id="CTE-common-table-expressions"><a href="#CTE-common-table-expressions" class="headerlink" title="CTE(common table expressions)"></a>CTE(common table expressions)</h4><p>在MySQL中，<strong>CTE（Common Table Expressions，公共表表达式）</strong>是一种临时的结果集，可以在查询中被引用。CTE通常用于简化复杂的查询，使查询更易于理解和维护。CTE在MySQL 8.0及更高版本中得到了支持。</p>
+<h5 id="CTE的主要特点"><a href="#CTE的主要特点" class="headerlink" title="CTE的主要特点"></a>CTE的主要特点</h5><p>临时结果集：</p>
+<ul>
+<li>CTE是一个临时的结果集，可以在查询中被引用。它类似于子查询，但更易于阅读和维护。<br>简化复杂查询：</li>
+<li>CTE可以将复杂的查询分解为多个简单的部分，使查询更易于理解和维护。<br>可重用性：</li>
+<li>CTE可以被多次引用，减少了代码重复，提高了开发效率。<br>递归查询：</li>
+<li>CTE支持递归查询，可以用于处理层次结构或递归数据。</li>
+</ul>
+<p>使用<code>CTE</code>实现获取每个课程中分数最高的学生信息。</p>
+<p>通过<code>WITH</code>语句来声明一个临时表。表名<code>cteSource</code>，表的内容就是最的sid，通过<code>SELECT MAX(sid) FROM enrolled</code>查询出来的结果。字段名叫<code>maxId</code>。</p>
+<p>然后在查询语句里面就可以连接<code>cteSource</code>表，然后通过sid &#x3D; cteSource.maxId 来获取到sid最大的用户信息。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cteSource (maxId) <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">MAX</span>(sid) <span class="keyword">FROM</span> enrolled</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> student, cteSource</span><br><span class="line"><span class="keyword">WHERE</span> student.sid <span class="operator">=</span> cteSource.maxId</span><br></pre></td></tr></table></figure>
+
+<p>还有一些其他的用法，比如:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cte1 (col1) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">),</span><br><span class="line">cte2 (col2) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">2</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> cte1, cte2;</span><br></pre></td></tr></table></figure>
+
+<h4 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h4><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>介绍了上面的概念，我们现在明白了MySQL数据库是什么了吧。</p>
+<p>MySQL数据库是</p>
+<ul>
+<li>OLTP数据库</li>
+<li>基于关系模型的关系数据库管理系统</li>
+<li>实现了SQL标准，可以使用SQL进行控制，并扩展了自己的东西。</li>
+<li>可以使用ER图来设计关系模型</li>
+<li>具有一些高级特性</li>
+</ul>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><p>以上就是整体的MySQL学习路线了。</p>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
+<p>发送“电子书”即可领取价值上千的电子书资源。</p>
+<p>部分电子书如图所示。</p>
+<p><img src="/../images/bottom1.png" alt="概念学习"></p>
+<p><img src="/../images/bottom2.png" alt="概念学习"></p>
+<p><img src="/../images/bottom3.png" alt="概念学习"></p>
+<p><img src="/../images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/JAVA%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B.html" rel="prev" title="JAVA中的函数式编程">
+      <i class="fa fa-chevron-left"></i> JAVA中的函数式编程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQL%E7%AF%87.html" rel="next" title="MySQL零基础教程基础篇">
+      MySQL零基础教程基础篇 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程基础篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.1.</span> <span class="nav-text">概念学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL"><span class="nav-number">1.1.1.</span> <span class="nav-text">SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.1.2.</span> <span class="nav-text">关系数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">关系模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%A0%87%E5%87%86"><span class="nav-number">1.1.3.</span> <span class="nav-text">SQL标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.4.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.5.</span> <span class="nav-text">函数依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%8C%83%E5%BC%8F"><span class="nav-number">1.1.6.</span> <span class="nav-text">设计范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ER%E5%9B%BE"><span class="nav-number">1.1.7.</span> <span class="nav-text">ER图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OLTP"><span class="nav-number">1.1.8.</span> <span class="nav-text">OLTP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OLTP%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.8.1.</span> <span class="nav-text">OLTP数据库的主要特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OLTP%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.8.2.</span> <span class="nav-text">OLTP数据库的常见应用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OLAP"><span class="nav-number">1.1.9.</span> <span class="nav-text">OLAP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OLAP%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.9.1.</span> <span class="nav-text">OLAP数据库的主要特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OLAP%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.9.2.</span> <span class="nav-text">OLAP数据库的常见应用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.10.</span> <span class="nav-text">高级概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE"><span class="nav-number">1.1.10.1.</span> <span class="nav-text">视图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.1.1.</span> <span class="nav-text">视图的主要特点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">1.1.10.2.</span> <span class="nav-text">触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.2.1.</span> <span class="nav-text">触发器的主要特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.10.2.2.</span> <span class="nav-text">触发器的类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.1.10.2.3.</span> <span class="nav-text">触发器的限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.10.3.</span> <span class="nav-text">存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.3.1.</span> <span class="nav-text">存储过程的主要特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.1.10.3.2.</span> <span class="nav-text">存储过程的限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.10.4.</span> <span class="nav-text">存储函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%92%8C%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.10.4.1.</span> <span class="nav-text">存储过程和存储函数的区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.4.2.</span> <span class="nav-text">存储函数的主要特点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#window%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.10.5.</span> <span class="nav-text">window窗口函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.5.1.</span> <span class="nav-text">窗口函数的主要特点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%AF%8F%E4%B8%AA%E8%AF%BE%E7%A8%8B%E4%B8%AD%E5%88%86%E6%95%B0%E6%9C%80%E9%AB%98%E7%9A%84%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.10.6.</span> <span class="nav-text">获取每个课程中分数最高的学生信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CTE-common-table-expressions"><span class="nav-number">1.1.10.7.</span> <span class="nav-text">CTE(common table expressions)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CTE%E7%9A%84%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.10.7.1.</span> <span class="nav-text">CTE的主要特点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.10.8.</span> <span class="nav-text">索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学堂在线C++程序设计第六章学习笔记变量和对象定义在不同的位置  其作用域，可见性，生存期都不同  友元：  对一些类外的函数，其他的类，给预授权，使之可以访问类的私有成员  标识符的作用域与可见性作用域分类：  函数原型作用域 局部作用域 类作用域 文件作用域 命名空间作用域  函数原型作用域  函数原型中的参数  类的作用域  类的成员具有类作用域，其范围包括类体和成员函数体 在类作用域以外访">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学堂在线C++程序设计第六章学习笔记">
+<meta property="og:url" content="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="学堂在线C++程序设计第六章学习笔记变量和对象定义在不同的位置  其作用域，可见性，生存期都不同  友元：  对一些类外的函数，其他的类，给预授权，使之可以访问类的私有成员  标识符的作用域与可见性作用域分类：  函数原型作用域 局部作用域 类作用域 文件作用域 命名空间作用域  函数原型作用域  函数原型中的参数  类的作用域  类的成员具有类作用域，其范围包括类体和成员函数体 在类作用域以外访">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-28T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.822Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学堂在线C++程序设计第六章学习笔记 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学堂在线C++程序设计第六章学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-28 10:12:47" itemprop="dateCreated datePublished" datetime="2021-07-28T10:12:47+08:00">2021-07-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第六章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="学堂在线C-程序设计第六章学习笔记"><a href="#学堂在线C-程序设计第六章学习笔记" class="headerlink" title="学堂在线C++程序设计第六章学习笔记"></a>学堂在线C++程序设计第六章学习笔记</h1><p>变量和对象定义在不同的位置</p>
+<ul>
+<li>其作用域，可见性，生存期都不同</li>
+</ul>
+<p>友元：</p>
+<ul>
+<li>对一些类外的函数，其他的类，给预授权，使之可以访问类的私有成员</li>
+</ul>
+<h2 id="标识符的作用域与可见性"><a href="#标识符的作用域与可见性" class="headerlink" title="标识符的作用域与可见性"></a>标识符的作用域与可见性</h2><p>作用域分类：</p>
+<ul>
+<li>函数原型作用域</li>
+<li>局部作用域</li>
+<li>类作用域</li>
+<li>文件作用域</li>
+<li>命名空间作用域</li>
+</ul>
+<p>函数原型作用域</p>
+<ul>
+<li>函数原型中的参数</li>
+</ul>
+<p>类的作用域</p>
+<ul>
+<li>类的成员具有类作用域，其范围包括类体和成员函数体</li>
+<li>在类作用域以外访问类的成员<ul>
+<li>静态成员：通过类名，或者该类的对象名，对象引用访问</li>
+<li>非静态成员：通过类名，或该类的对象名，对象引用，对象指针访问</li>
+</ul>
+</li>
+</ul>
+<p>文件作用域</p>
+<ul>
+<li>不在前述各个作用域中出现的声明，就具有文件作用域</li>
+<li>其作用域开始于声明点，结束于文件尾</li>
+</ul>
+<p>可见性</p>
+<ul>
+<li>可见性是从对标识符的引用角度来谈论的</li>
+<li>可见性表示从内层作用域向外层作用域“看”时能看见什么</li>
+<li>如果标识在某处可见，就可以在该处引用此标识符</li>
+<li>如果某个标识符在外层中声明，且在内层中没有同一标识符的声明，则该标识符在内层可见</li>
+<li>对于两个嵌套的作用域，如果在内层作用域内声明了与外层作用域中同名的标识符，则外层标识符在内层不可见</li>
+</ul>
+<h2 id="对象的生存期"><a href="#对象的生存期" class="headerlink" title="对象的生存期"></a>对象的生存期</h2><p>静态生存期</p>
+<ul>
+<li>这种生存期与程序的运行期相同</li>
+<li>在文件作用域中声明的对象具有这种生存期</li>
+<li>在函数内部声明静态生存期对象，要冠以关键字static</li>
+</ul>
+<p>动态生存期</p>
+<ul>
+<li>开始于程序执行到声明点时，结束于命名该标识符的作用域结束处</li>
+<li>块作用域中声明的，没有用static修饰的对象是动态生存期的对象（也称局部生存期对象）</li>
+</ul>
+<h2 id="静态数据成员"><a href="#静态数据成员" class="headerlink" title="静态数据成员"></a>静态数据成员</h2><ul>
+<li>用关键词static修饰</li>
+<li>为该类的所有对象共享，静态数据成员具有静态生存期</li>
+<li>必须在类外定义和初始化，用（::）来指明所属的类</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="type">static</span> <span class="type">int</span> count;  <span class="comment">//声明</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> Point::count = <span class="number">0</span>; <span class="comment">//初始化</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="静态函数成员"><a href="#静态函数成员" class="headerlink" title="静态函数成员"></a>静态函数成员</h3><p>静态函数成员主要用来处理静态数据成员</p>
+<p>静态函数成员要处理非静态数据成员，需要用对象调用</p>
+<h2 id="类的友元"><a href="#类的友元" class="headerlink" title="类的友元"></a>类的友元</h2><ul>
+<li>友元是C++提供的一种破坏数据封装和数据隐藏的机制</li>
+<li>通过将一个模块声明为另一个模块的友元，一个模块能够引用到另一个模块中本是被隐藏的信息</li>
+<li>可以声明友元函数和友元类</li>
+<li>为了确保数据的完整性，及数据封装与隐藏的原则，建议慎用友元</li>
+</ul>
+<p>友元函数</p>
+<ul>
+<li>友元函数是在类声明中由关键字friend修饰说明的非成员函数，在它的函数体中能够通过对象名访问private和protected成员</li>
+<li>作用：增加灵活性，使程序员可以在封装和快速性方面做合理选择</li>
+<li>访问对象中的成员必须通过对象名</li>
+</ul>
+<p>友元类</p>
+<ul>
+<li>若一个类为另一个类的友元，则此类的所有成员都能访问对方类的私有成员</li>
+<li>声明语法：将友元类名在另一个类中使用friend修饰说明</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">class</span> <span class="title class_">B</span>;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            cout &lt;&lt; X &lt;&lt; endl;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="type">int</span> X;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">set</span><span class="params">(<span class="type">int</span> i)</span></span>;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        A a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">B::set</span><span class="params">(<span class="type">int</span> i)</span> </span>&#123;</span><br><span class="line">    a.X = i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    a.<span class="built_in">display</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>类的友元关系是单向的：</p>
+<ul>
+<li>声明B类是A类的友元 不等于 A类是B类的友元</li>
+</ul>
+<h2 id="共享数据的保护"><a href="#共享数据的保护" class="headerlink" title="共享数据的保护"></a>共享数据的保护</h2><p>常类型</p>
+<ul>
+<li>常对象：必须进行初始化，不能被更新。<br>  const 类名 对象名</li>
+<li>常成员：<br>  用 const 进行修饰的类成员：常数据成员和常函数成员</li>
+<li>常引用：被引用的对象不能被更新<br>  const 类型说明符 &amp;引用名；</li>
+<li>常数组：数组元素不能被更新<br>  类型说明符 const 数组名[大小]</li>
+<li>常指针：指向常量的指针</li>
+</ul>
+<p>常成员：用const修饰的对象成员</p>
+<ul>
+<li>常成员函数<ul>
+<li>使用const 关键字说明的函数</li>
+<li>常成员函数不更新对象的数据成员</li>
+<li>常成员函数说明格式：<br>  类型说明符 函数名（参数表）const;<br>  这里，const是函数类型的一个组成部分，因此在实现部分也要带const关键字</li>
+<li>const 关键字可以被用于参与对重载函数的区分</li>
+<li>通过常对象只能调用它的常成员函数</li>
+</ul>
+</li>
+<li>常数据成员<ul>
+<li>使用 const 说明的数据成员</li>
+</ul>
+</li>
+</ul>
+<p>常引用</p>
+<ul>
+<li>在友元函数中用常引用做参数，既能获得较高的执行效率，又能保证实参的安全性</li>
+</ul>
+<h2 id="多文件结构和预编译处理命令"><a href="#多文件结构和预编译处理命令" class="headerlink" title="多文件结构和预编译处理命令"></a>多文件结构和预编译处理命令</h2><p>C++程序的一般组织结构</p>
+<ul>
+<li>一个工程可以划分为多个源文件<ul>
+<li>类声明文件（.h文件）</li>
+<li>类实现文件（.cpp文件）</li>
+<li>类的使用文件（main()所在的.cpp文件）</li>
+</ul>
+</li>
+<li>利用工程来组合各个文件</li>
+</ul>
+<p>文件1 Point.h</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Point</span>&#123;</span><br><span class="line">    <span class="comment">//类的定义</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Point</span>(<span class="type">int</span> x =<span class="number">0</span>,<span class="type">int</span> y = <span class="number">0</span>):<span class="built_in">x</span>(x),<span class="built_in">y</span>(y)&#123;&#125;</span><br><span class="line">        <span class="built_in">Point</span>(<span class="type">const</span> Point &amp;p);</span><br><span class="line">        <span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">showCount</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="type">int</span> x,y;</span><br><span class="line">        <span class="type">static</span> <span class="type">int</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>文件2 Point.cpp</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Point.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> Point::cout = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">Point::<span class="built_in">Point</span>(<span class="type">const</span> Point &amp;p):<span class="built_in">x</span>(p.x),<span class="built_in">y</span>(p.y)&#123;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Point::showCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Object count =&quot;</span> &lt;&lt; count &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>文件3 主函数 main.cpp</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Point.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Point <span class="title">a</span><span class="params">(<span class="number">4</span>,<span class="number">5</span>)</span></span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Point A:&quot;</span> &lt; a.<span class="built_in">getX</span>() &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; a.<span class="built_in">getY</span>();</span><br><span class="line">    Point::<span class="built_in">showCount</span>();</span><br><span class="line">    <span class="function">Point <span class="title">b</span><span class="params">(a)</span></span>;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Point B:&quot;</span> &lt;&lt; b.<span class="built_in">getX</span>() &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; b.<span class="built_in">getY</span>();</span><br><span class="line">    Point::<span class="built_in">showCount</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>外部变量</p>
+<ul>
+<li>除了在定义它的源文件中可以使用外，还能被其他文件使用</li>
+<li>文件作用域中定义的变量，默认情况下都是外部变量</li>
+<li>在其它文件中如果需要使用，需要用extern关键字声明</li>
+</ul>
+<p>外部函数</p>
+<ul>
+<li>在所有类之外声明的函数（也就是非成员函数），都是具有文件作用域的</li>
+<li>这样的函数都可以在不同的编译单元中被调用</li>
+<li>只要在调用之前进行引用性声明（即声明函数原型）即可</li>
+</ul>
+<p>将变量和函数限制在编译单元内</p>
+<ul>
+<li>在匿名命名空间中定义的变量和函数，都不会暴露给其它的编译单元</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="comment">//匿名的命名空间</span></span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        n++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>标准C++库</p>
+<ul>
+<li>标准C++类库是一个极为灵活并可扩展的可重用软件模块的集合</li>
+</ul>
+<p>标准C++类与组件在逻辑上分为6种类型：</p>
+<ul>
+<li>输入&#x2F;输出类</li>
+<li>容器类与抽象数据类型</li>
+<li>存储管理类</li>
+<li>算法</li>
+<li>错误处理</li>
+<li>运行环境支持</li>
+</ul>
+<p>编译预处理</p>
+<ul>
+<li>#include 包含指令<ul>
+<li>将一个源文件嵌入到当前源文件中该点处</li>
+<li>#include&lt;文件名&gt;<ul>
+<li>按标准方式搜索，文件位于C++系统目录的include子目录下</li>
+</ul>
+</li>
+<li>#include “文件名”<ul>
+<li>首先在当前目录中搜索，若没有，再按标准方式搜索</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>#define 宏定义指令<ul>
+<li>定义符号常量，很多情况下已被const定义语句取代</li>
+<li>定义带参数宏，已被内联函数取代</li>
+</ul>
+</li>
+<li>#under<ul>
+<li>删除由 #define 定义的宏，使之不再起作用</li>
+</ul>
+</li>
+</ul>
+<p>条件编译指令  #if 和 #endif<br>#if 常量表达式<br>    &#x2F;&#x2F;当 常量表达式 非零时编译<br>    程序正文<br>#endif</p>
+<p>条件编译指令 #else<br>#if 常量表达式<br>    &#x2F;&#x2F;当 常量表达式 非零时编译<br>    程序正文1<br>#else<br>    &#x2F;&#x2F;当 常量表达式 为零时编译<br>    程序正文2<br>#endif</p>
+<p>条件编译指令 #elif<br>#if 常量表达式1<br>    &#x2F;&#x2F;当 常量表达式1 非零时编译<br>    程序正文1<br>#elif 常量表达式2<br>    &#x2F;&#x2F;当 常量表达式2 非零时编译<br>    程序正文2<br>#else<br>    &#x2F;&#x2F;其他情况下编译<br>    程序正文3<br>#endif</p>
+<p>条件编译指令<br>#ifdef 标识符<br>    程序段1<br>#else<br>    程序段2<br>#endif</p>
+<ul>
+<li>如果 <code>标识符</code> 经 #define 定义过，且未经undef删除，则编译程序段1</li>
+<li>否则编译程序段2</li>
+</ul>
+<p>条件编译指令<br>#ifndef 标识符<br>    程序段1<br>#else<br>    程序段2<br>#endif</p>
+<ul>
+<li>如果<code>标识符</code>未被定义过，则编译程序段1</li>
+<li>否则编译程序段2</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" rel="prev" title="软件工程第二章">
+      <i class="fa fa-chevron-left"></i> 软件工程第二章
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%85%AD%E8%8A%82.html" rel="next" title="数据库系统原理第六节">
+      数据库系统原理第六节 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E5%A0%82%E5%9C%A8%E7%BA%BFC-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%85%AD%E7%AB%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">学堂在线C++程序设计第六章学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AF%86%E7%AC%A6%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%8E%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">标识符的作用域与可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%9F%E5%AD%98%E6%9C%9F"><span class="nav-number">1.2.</span> <span class="nav-text">对象的生存期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%95%B0%E6%8D%AE%E6%88%90%E5%91%98"><span class="nav-number">1.3.</span> <span class="nav-text">静态数据成员</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%87%BD%E6%95%B0%E6%88%90%E5%91%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">静态函数成员</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%8F%8B%E5%85%83"><span class="nav-number">1.4.</span> <span class="nav-text">类的友元</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE%E7%9A%84%E4%BF%9D%E6%8A%A4"><span class="nav-number">1.5.</span> <span class="nav-text">共享数据的保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E9%A2%84%E7%BC%96%E8%AF%91%E5%A4%84%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">1.6.</span> <span class="nav-text">多文件结构和预编译处理命令</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

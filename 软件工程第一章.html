@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="软件工程软件无处不在软件是软件工程的研究对象，也是软件工程的产品形态与客观存在 工程是将理论和知识应用于实践的科学，其目的是经济有效的解决实际问题 软件的本质特性软件 &#x3D; 程序 + 数据 + 文档  程序：计算机可以接受的一系列指令，运行时可以提供所要求的的功能和性能 数据：使得程序能够适当地操作信息的数据结构 文档：描述程序的研制过程，方法和使用的图文资料  软件具有  复杂性 一致性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件工程第一章">
+<meta property="og:url" content="https://thepatterraining.github.io/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="软件工程软件无处不在软件是软件工程的研究对象，也是软件工程的产品形态与客观存在 工程是将理论和知识应用于实践的科学，其目的是经济有效的解决实际问题 软件的本质特性软件 &#x3D; 程序 + 数据 + 文档  程序：计算机可以接受的一系列指令，运行时可以提供所要求的的功能和性能 数据：使得程序能够适当地操作信息的数据结构 文档：描述程序的研制过程，方法和使用的图文资料  软件具有  复杂性 一致性">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-18T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.920Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="软件工程">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>软件工程第一章 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          软件工程第一章
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-18 10:12:47" itemprop="dateCreated datePublished" datetime="2021-07-18T10:12:47+08:00">2021-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">软件工程</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="软件工程第一章" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%AC%AC%E4%B8%80%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="软件工程"><a href="#软件工程" class="headerlink" title="软件工程"></a>软件工程</h1><h2 id="软件无处不在"><a href="#软件无处不在" class="headerlink" title="软件无处不在"></a>软件无处不在</h2><p><code>软件</code>是软件工程的研究对象，也是软件工程的产品形态与客观存在</p>
+<p><code>工程</code>是将理论和知识应用于实践的科学，其目的是经济有效的解决实际问题</p>
+<h2 id="软件的本质特性"><a href="#软件的本质特性" class="headerlink" title="软件的本质特性"></a>软件的本质特性</h2><p>软件 &#x3D; 程序 + 数据 + 文档</p>
+<ul>
+<li>程序：计算机可以接受的一系列指令，运行时可以提供所要求的的功能和性能</li>
+<li>数据：使得程序能够适当地操作信息的数据结构</li>
+<li>文档：描述程序的研制过程，方法和使用的图文资料</li>
+</ul>
+<p>软件具有</p>
+<ul>
+<li>复杂性</li>
+<li>一致性</li>
+<li>可变性</li>
+<li>不可见性</li>
+</ul>
+<p>上面是软件开发困难的根本原因</p>
+<p>一致性</p>
+<ul>
+<li>软件不能独立存在，需要依附于一定的环境（如硬件，网络以及其他软件）</li>
+<li>软件必须遵从人为的惯例并适应已有的技术和系统</li>
+<li>软件需要随接口不同而改变，随时间推移而变化，而这些变化是不同人设计的结果</li>
+</ul>
+<p>可变性</p>
+<ul>
+<li>软件一直在变化更新</li>
+<li>人们总认为软件是容易修改的，但忽视了修改的副作用</li>
+<li>不断的修改最终导致软件的退化，从而结束其生命周期</li>
+</ul>
+<p>不可见性</p>
+<ul>
+<li>软件是一种<code>看不见</code>摸不着的逻辑实体，不具有空间的形体特征</li>
+<li>开发人员可以直接看到程序代码，但是源代码并不是软件本身</li>
+<li>软件是以机器代码得形式运行，但是开发人员无法看到源代码是如何执行的</li>
+</ul>
+<p>软件所具有的复杂性，一致性，可变性，不可见性等特性，使得软件开发过程变得难以控制，开发团队如同在焦油坑中挣扎的巨兽</p>
+<h2 id="软件工程的产生与发展"><a href="#软件工程的产生与发展" class="headerlink" title="软件工程的产生与发展"></a>软件工程的产生与发展</h2><p>软件开发面临的挑战</p>
+<ul>
+<li>客户不满意<ul>
+<li>交付的许多功能不是客户需要的</li>
+<li>交付的日期没有保障</li>
+<li>客户使用时发现许多bug</li>
+</ul>
+</li>
+<li>项目过程失控<ul>
+<li>客户需求变化频繁，无力应对</li>
+<li>无法预见软件的交付质量</li>
+<li>对流程盲目遵从，忽视客户业务价值</li>
+</ul>
+</li>
+<li>风险与成本问题<ul>
+<li>开发团队专注技术，忽视风险</li>
+<li>无能力预测成本，导致预算超支</li>
+</ul>
+</li>
+<li>无力管理团队 <ul>
+<li>无法评估开发人员能力及工作进度</li>
+<li>困扰于如何提升团队的能力与效率</li>
+</ul>
+</li>
+</ul>
+<p><code>软件工程</code>一直致力于探索软件开发问题的解决之道</p>
+<p>1968年，北大西洋公约组织提出<code>软件工程</code>概念和术语</p>
+<h2 id="软件工程的基本概念"><a href="#软件工程的基本概念" class="headerlink" title="软件工程的基本概念"></a>软件工程的基本概念</h2><p>软件工程</p>
+<ul>
+<li>将系统的，规范的，可定量的方法应用与软件的开发，运行和维护，即工程化应用到软件上</li>
+<li>对1中所述方法的研究</li>
+</ul>
+<p>好的软件</p>
+<ul>
+<li>较低的开发成本</li>
+<li>按时完成开发任务并及时交付</li>
+<li>实现客户要求的功能</li>
+<li>具有良好性能，可靠性，可扩展性，可移植性等</li>
+<li>软件维护费用低</li>
+</ul>
+<p>软件工程的基本要素</p>
+<ul>
+<li>过程<br>  支持软件开发各个环节的控制和管理</li>
+<li>方法<br>  完成软件开发任务的技术手段</li>
+<li>工具<br>  为软件开发方法提供自动或半自动的软件支撑环境</li>
+</ul>
+<p>软件开发的基本策略</p>
+<ul>
+<li>软件复用</li>
+<li>分而治之</li>
+<li>逐步演进</li>
+<li>优化折中</li>
+</ul>
+<p>软件工程的wasserman规范</p>
+<ul>
+<li>抽象</li>
+<li>软件建模方法</li>
+<li>用户界面原型化</li>
+<li>软件体系结构</li>
+<li>软件过程</li>
+<li>软件复用</li>
+<li>度量</li>
+<li>工具与集成环境</li>
+</ul>
+<h2 id="软件质量实现"><a href="#软件质量实现" class="headerlink" title="软件质量实现"></a>软件质量实现</h2><p>什么是好的软件</p>
+<ul>
+<li>功能质量<ul>
+<li>软件符合指定需求</li>
+<li>软件几乎没有缺陷</li>
+<li>软件性能正常</li>
+<li>软件容易上手，操作方便</li>
+</ul>
+</li>
+<li>结构质量<ul>
+<li>代码可测试性</li>
+<li>可维护性</li>
+<li>可读性</li>
+<li>代码效率：高效管理资源</li>
+<li>代码安全：可预防常见威胁</li>
+</ul>
+</li>
+<li>过程质量<ul>
+<li>软件按时交付</li>
+<li>软件满足预算</li>
+<li>可复用的开发过程，确保交付质量</li>
+</ul>
+</li>
+</ul>
+<p>产品质量维度</p>
+<ul>
+<li>性能</li>
+<li>特色</li>
+<li>可靠性</li>
+<li>符合型</li>
+<li>耐久性</li>
+<li>可服务性</li>
+<li>审美</li>
+<li>感知</li>
+</ul>
+<p>ISO9126质量模型</p>
+<ul>
+<li>功能性<ul>
+<li>适合性：当软件在指定条件下使用，其满足明确和隐含要求功能的能力</li>
+<li>准确性：软件提供给用户功能的精确度是否符合目标</li>
+<li>互操作性：软件与其他系统进行交互的能力</li>
+<li>安全性：软件保护信息和数据的安全能力</li>
+</ul>
+</li>
+<li>可靠性<ul>
+<li>成熟性：软件产品避免因软件错误发生而导致失效的能力</li>
+<li>容错性：防止外部接口错误扩散而导致系统失效的能力</li>
+<li>可恢复性：系统失效后，重新恢复原有的功能和性能的能力</li>
+</ul>
+</li>
+<li>易用性<ul>
+<li>易理解性</li>
+<li>易学习性</li>
+<li>易操作性</li>
+<li>吸引性</li>
+</ul>
+</li>
+<li>效率<ul>
+<li>时间特性</li>
+<li>资源利用</li>
+</ul>
+</li>
+<li>可维护性<ul>
+<li>易分析性</li>
+<li>易改变性</li>
+<li>稳定性</li>
+<li>易测试性</li>
+</ul>
+</li>
+<li>可移植性<ul>
+<li>适应性</li>
+<li>易安装性</li>
+<li>共存性</li>
+<li>替换性</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag"># 软件工程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%BA%8C%E8%8A%82.html" rel="prev" title="数据库系统原理第二节">
+      <i class="fa fa-chevron-left"></i> 数据库系统原理第二节
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" rel="next" title="C++程序设计第二章">
+      C++程序设计第二章 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">软件工程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E6%97%A0%E5%A4%84%E4%B8%8D%E5%9C%A8"><span class="nav-number">1.1.</span> <span class="nav-text">软件无处不在</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%9A%84%E6%9C%AC%E8%B4%A8%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">软件的本质特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9A%84%E4%BA%A7%E7%94%9F%E4%B8%8E%E5%8F%91%E5%B1%95"><span class="nav-number">1.3.</span> <span class="nav-text">软件工程的产生与发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.4.</span> <span class="nav-text">软件工程的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E8%B4%A8%E9%87%8F%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.</span> <span class="nav-text">软件质量实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

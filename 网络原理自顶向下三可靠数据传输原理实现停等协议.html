@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="网络原理自顶向下三可靠数据传输原理实现停等协议这里仅考虑单向可靠数据传输。而不是双向可靠数据传输。 构造可靠数据传输协议经完全可靠信道的可靠数据传输 rdt1.0版本首先考虑最简单的版本，底层信道完全可靠。 发送端发送端应用层只需要调用rdt_send函数。网络层提供了一个函数udt_send来给运输层调用。现在假设udt_send是可靠的。 123456function rdt_send($da">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络原理自顶向下三可靠数据传输原理实现停等协议">
+<meta property="og:url" content="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="网络原理自顶向下三可靠数据传输原理实现停等协议这里仅考虑单向可靠数据传输。而不是双向可靠数据传输。 构造可靠数据传输协议经完全可靠信道的可靠数据传输 rdt1.0版本首先考虑最简单的版本，底层信道完全可靠。 发送端发送端应用层只需要调用rdt_send函数。网络层提供了一个函数udt_send来给运输层调用。现在假设udt_send是可靠的。 123456function rdt_send($da">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/">
+<meta property="og:image" content="https://thepatterraining.github.io/">
+<meta property="article:published_time" content="2020-12-12T07:28:49.000Z">
+<meta property="article:modified_time" content="2025-01-26T02:07:53.903Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>网络原理自顶向下三可靠数据传输原理实现停等协议 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络原理自顶向下三可靠数据传输原理实现停等协议
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-12 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-12T15:28:49+08:00">2020-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下三可靠数据传输原理实现停等协议" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="网络原理自顶向下三可靠数据传输原理实现停等协议"><a href="#网络原理自顶向下三可靠数据传输原理实现停等协议" class="headerlink" title="网络原理自顶向下三可靠数据传输原理实现停等协议"></a>网络原理自顶向下三可靠数据传输原理实现停等协议</h1><p>这里仅考虑<code>单向可靠数据传输</code>。而不是<code>双向可靠数据传输</code>。</p>
+<h2 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h2><h3 id="经完全可靠信道的可靠数据传输-rdt1-0版本"><a href="#经完全可靠信道的可靠数据传输-rdt1-0版本" class="headerlink" title="经完全可靠信道的可靠数据传输 rdt1.0版本"></a>经完全可靠信道的可靠数据传输 rdt1.0版本</h3><p>首先考虑最简单的版本，底层信道完全可靠。</p>
+<h4 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h4><p>发送端应用层只需要调用<code>rdt_send</code>函数。网络层提供了一个函数<code>udt_send</code>来给运输层调用。现在假设<code>udt_send</code>是可靠的。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输</span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h4><p>接收端网络层只需要调用<code>rdt_rev</code>函数。应用层提供了一个<code>deliver_data</code>函数来接受运输层的数据。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//解析报文</span></span><br><span class="line">    <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//把数据给应用层</span></span><br><span class="line">    <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="有限状态机"><a href="#有限状态机" class="headerlink" title="有限状态机"></a>有限状态机</h4><p>再来画一下对应的有限状态机（FSM）.</p>
+<p>发送端只有一个状态，<code>等待调用</code>。</p>
+<p><img src="/"></p>
+<p>接收端也只有一个状态，<code>等待调用</code>。</p>
+<p><img src="/"></p>
+<h3 id="经比特差错信道的可靠数据传输rdt2-0"><a href="#经比特差错信道的可靠数据传输rdt2-0" class="headerlink" title="经比特差错信道的可靠数据传输rdt2.0"></a>经比特差错信道的可靠数据传输rdt2.0</h3><p>现在底层信道有可能造成比特的错误。</p>
+<p>回想一下打电话的时候，如果我们说的话对方没听清，会怎么样。会<code>再说一遍</code>也就是<code>重传</code>。</p>
+<p>那么什么情况下会<code>重传</code>。当接收方说<code>我没听清</code>的时候。</p>
+<p>所以在<code>rdt2.0</code>里面我们让接收方接受完信息后回传一个标志，告诉我们<code>正确</code>还是<code>错误</code>。</p>
+<p>如果正确，那么我们继续等待调用。</p>
+<p>如果错误，那么我们<code>重传</code>。</p>
+<p>基于这样重传机制的可靠数据传输协议称为<code>自动重传请求协议</code>（Automatic Repeat reQuest）ARQ,需要下面三个功能</p>
+<ul>
+<li>差错检测</li>
+<li>接收方回传ack或者nak</li>
+<li>重传</li>
+</ul>
+<h4 id="发送端-1"><a href="#发送端-1" class="headerlink" title="发送端"></a>发送端</h4><p>看一下发送端的简单实现</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack或者nak</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//判断ack</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//收到了Nak分组，需要重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收端-1"><a href="#接收端-1" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="comment">//解析报文</span></span><br><span class="line">        <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">        <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">        <span class="comment">//把数据给应用层</span></span><br><span class="line">        <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//有错，回传一个nak，不交付数据</span></span><br><span class="line">        <span class="variable">$nak</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$nak</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h4><p>现在发送端有两个状态</p>
+<ul>
+<li>等待调用</li>
+<li>等待返回ack或nak</li>
+</ul>
+<p>接收端还是一个状态</p>
+<ul>
+<li>等待调用</li>
+</ul>
+<p>rdt2.0也被称为<code>停等协议</code>。因为发送端处于<code>等待ack</code>状态是不能被上层调用的。</p>
+<h3 id="ack受损rdt2-1"><a href="#ack受损rdt2-1" class="headerlink" title="ack受损rdt2.1"></a>ack受损rdt2.1</h3><p>从上面的代码可以看出来，接收端发送<code>ack</code>使用的是<code>udt_send</code>函数，这个函数是不可靠的。那么如果我们的<code>ack</code>或者<code>nak</code>损坏了怎么办。</p>
+<p>这时候可以像处理损坏分组一样。我们校验ack是否受损，如果受损，那么我们重传分组。</p>
+<p>可是重传分组就会造成接收方不知道这个分组我有没有收到过。所以我们需要增加<code>分组序号</code>。</p>
+<p>对于停等协议来说，0和1就够用了。因为停等协议只有两个状态，发完会等待ack。</p>
+<h4 id="发送端-2"><a href="#发送端-2" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack或者nak</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>)) &#123;</span><br><span class="line">        <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">        <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">        <span class="comment">//判断ack</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//收到了Nak分组，需要重传</span></span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收端-2"><a href="#接收端-2" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="comment">//判断报文序号</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="comment">//解析报文</span></span><br><span class="line">            <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">            <span class="comment">//序号对的</span></span><br><span class="line">            <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">            <span class="comment">//把数据给应用层</span></span><br><span class="line">            <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">            <span class="comment">//回传ACK</span></span><br><span class="line">            <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">            <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//序号错了，说明这不是我们要的，我们回传一个ack，告诉发送端这个分组我们收到了。</span></span><br><span class="line">            <span class="comment">//回传ACK</span></span><br><span class="line">            <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">            <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//有错，回传一个nak，不交付数据</span></span><br><span class="line">        <span class="variable">$nak</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">0</span>, <span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$nak</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="状态机-1"><a href="#状态机-1" class="headerlink" title="状态机"></a>状态机</h4><p>发送端有4个状态</p>
+<ul>
+<li>等待调用0</li>
+<li>等待ack0或者nak0</li>
+<li>等待调用1</li>
+<li>等待ack1或者nak1</li>
+</ul>
+<p>接收端有2个状态</p>
+<ul>
+<li>等待调用0</li>
+<li>等待调用1</li>
+</ul>
+<h3 id="去掉nak分组的rdt2-2"><a href="#去掉nak分组的rdt2-2" class="headerlink" title="去掉nak分组的rdt2.2"></a>去掉nak分组的rdt2.2</h3><p>从上面的代码可以看出来，发送端在接收到<code>nak</code>的时候和丢失<code>ack</code>或者<code>nak</code>的时候都是重传。<br>所以我们只需要判断<code>ack</code>就可以了。那么同样接收方只需要回传<code>ack</code>就可以了。<br>这样一来，代码更见简单了。</p>
+<h4 id="发送端-3"><a href="#发送端-3" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>) &amp;&amp; <span class="variable">$isAck</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">        <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">        <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">        <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收端-3"><a href="#接收端-3" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测通过了并且报文序号正确</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>) &amp;&amp; <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">        <span class="comment">//解析报文</span></span><br><span class="line">        <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">        <span class="comment">//序号对的</span></span><br><span class="line">        <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">        <span class="comment">//把数据给应用层</span></span><br><span class="line">        <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没通过差错检测或者序号错误，我们回传一个上一个ack，告诉发送端上一个分组我们收到了，当前分组没收到。</span></span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, !<span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="状态机-2"><a href="#状态机-2" class="headerlink" title="状态机"></a>状态机</h4><p>发送端有4个状态</p>
+<ul>
+<li>等待调用0</li>
+<li>等待ack0或者nak0</li>
+<li>等待调用1</li>
+<li>等待ack1或者nak1</li>
+</ul>
+<p>接收端有2个状态</p>
+<ul>
+<li>等待调用0</li>
+<li>等待调用1</li>
+</ul>
+<h3 id="经具有比特差错的丢包信道的可靠数据传输rdt3-0"><a href="#经具有比特差错的丢包信道的可靠数据传输rdt3-0" class="headerlink" title="经具有比特差错的丢包信道的可靠数据传输rdt3.0"></a>经具有比特差错的丢包信道的可靠数据传输rdt3.0</h3><p>现在底层信道除了会出错，还会丢包了。</p>
+<p>如果遇到丢包怎么办呢，也就是接收方接收不到数据了。这个时候也就回传不了<code>ack</code>。</p>
+<p>那么可以在发送端加上超时机制。如果长时间没收到<code>ack</code>。那么就重传分组。</p>
+<h4 id="发送端-4"><a href="#发送端-4" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//启动一个定时器</span></span><br><span class="line">    <span class="title function_ invoke__">start_timer</span>();</span><br><span class="line">    <span class="comment">//等待接收方回传ack 并且没有超时</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>() &amp;&amp; !<span class="title function_ invoke__">timeout</span>()) &#123;</span><br><span class="line">        <span class="comment">//差错检测</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>) &amp;&amp; <span class="variable">$isAck</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">            <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">            <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没接收到ack或者超时 重发</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="接收端-4"><a href="#接收端-4" class="headerlink" title="接收端"></a>接收端</h4><p>无变化</p>
+<h4 id="状态机-3"><a href="#状态机-3" class="headerlink" title="状态机"></a>状态机</h4><p>发送端</p>
+<h2 id="流水线可靠数据传输协议"><a href="#流水线可靠数据传输协议" class="headerlink" title="流水线可靠数据传输协议"></a>流水线可靠数据传输协议</h2><p>停等协议的缺点是性能受限。因为每次要等待上一个ack回来才能发送下一个报文。</p>
+<p>而采用<code>流水线</code>就是不等待ack直接发送下一个报文。</p>
+<p>这样会有下面的影响</p>
+<ul>
+<li>必须增加序号范围，因为每个分组必须有序号</li>
+<li>协议的发送方和接收方两端也许不得不缓存多个分组。</li>
+<li>所需序号范围和对缓冲的要求取决于数据传输协议如何处理丢失，损坏及时延大的分组。解决流水线的差错恢复有两种基本方法：<ul>
+<li>回退N步（Go Back N）GBN</li>
+<li>选择重传（Selective Repeat）SR</li>
+</ul>
+</li>
+</ul>
+<h3 id="GBN"><a href="#GBN" class="headerlink" title="GBN"></a>GBN</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/111138785">滑动窗口协议</a></p>
+<h3 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/111138684">选择重传协议</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html" rel="prev" title="网络原理自顶向下三运输层">
+      <i class="fa fa-chevron-left"></i> 网络原理自顶向下三运输层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" rel="next" title="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议">
+      网络原理自顶向下三可靠数据传输原理实现SR选择重传协议 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">网络原理自顶向下三可靠数据传输原理实现停等协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.</span> <span class="nav-text">构造可靠数据传输协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%AE%8C%E5%85%A8%E5%8F%AF%E9%9D%A0%E4%BF%A1%E9%81%93%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93-rdt1-0%E7%89%88%E6%9C%AC"><span class="nav-number">1.1.1.</span> <span class="nav-text">经完全可靠信道的可靠数据传输 rdt1.0版本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AB%AF"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">接收端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">有限状态机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E6%AF%94%E7%89%B9%E5%B7%AE%E9%94%99%E4%BF%A1%E9%81%93%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93rdt2-0"><span class="nav-number">1.1.2.</span> <span class="nav-text">经比特差错信道的可靠数据传输rdt2.0</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF-1"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AB%AF-1"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">接收端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">状态机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ack%E5%8F%97%E6%8D%9Frdt2-1"><span class="nav-number">1.1.3.</span> <span class="nav-text">ack受损rdt2.1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF-2"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AB%AF-2"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">接收端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA-1"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">状态机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89nak%E5%88%86%E7%BB%84%E7%9A%84rdt2-2"><span class="nav-number">1.1.4.</span> <span class="nav-text">去掉nak分组的rdt2.2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF-3"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AB%AF-3"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">接收端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA-2"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">状态机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%85%B7%E6%9C%89%E6%AF%94%E7%89%B9%E5%B7%AE%E9%94%99%E7%9A%84%E4%B8%A2%E5%8C%85%E4%BF%A1%E9%81%93%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93rdt3-0"><span class="nav-number">1.1.5.</span> <span class="nav-text">经具有比特差错的丢包信道的可靠数据传输rdt3.0</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF-4"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AB%AF-4"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">接收端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA-3"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">状态机</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.</span> <span class="nav-text">流水线可靠数据传输协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GBN"><span class="nav-number">1.2.1.</span> <span class="nav-text">GBN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SR"><span class="nav-number">1.2.2.</span> <span class="nav-text">SR</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
