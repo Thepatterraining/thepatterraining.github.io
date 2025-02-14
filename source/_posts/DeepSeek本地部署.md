@@ -1,9 +1,9 @@
 ---
-title: DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘
-date: 2025-02-08 10:12:47
+title: DeepSeek R1本地部署,解决服务器繁忙，请稍后再试问题
+date: 2025-02-10 10:12:47
 tags: ['AI','DeepSeek']
 category: AI
-article: DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘
+article: DeepSeek R1本地部署,解决服务器繁忙，请稍后再试问题
 ---
 
 # DeepSeek R1本地部署
@@ -49,14 +49,14 @@ DeepSeek本地部署的基本是蒸馏模型,简单理解为阉割版.
 
 `DeepSeek` 在开源 `DeepSeek-R1-Zero` 和 `DeepSeek-R1` 两个 660B 模型的同时，通过 `DeepSeek-R1` 的输出，蒸馏了 `6个小模型`开源给社区，其中 32B 和 70B 模型在多项能力上实现了对标 `OpenAI o1-mini` 的效果。
 
-![deepseek2-1](../images/ai/deepseek2-1.png)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-1.png)
 
 满血版DeepSeek 671B的要求:
 - 显存需求：完整版（未量化）的显存需求极高，`BF16`精度下需 `1342GB`显存，即使使用`FP16`精度也需约 `350GB`显存
 - 硬件配置：需多节点分布式计算，例如8张NVIDIA A100/H100（每卡80GB显存）并行运行，或更高端的超算集群
 - 性能限制：单卡无法支持，即使最新RTX 5090（32GB显存）也无法有效运行，推理速度极低（低于每秒10个token）
 
-![deepseek2-1](../images/ai/deepseek2-2.jpg)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-2.jpg)
 
 看一下蒸馏版的要求和推荐配置.
 
@@ -68,7 +68,7 @@ DeepSeek本地部署的基本是蒸馏模型,简单理解为阉割版.
 | DeepSeek-R1-32B | 32B | ~64GB | 64GB+ | M1 Ultra/M2 Ultra，64GB统一内存[^2^] | 2x RTX 4090/A100 80G，48GB+显存[^2^] |
 | DeepSeek-R1-70B | 70B | ~140GB | 128GB+ | 需要更高配置的Mac Pro[^6^] | 4x RTX 4090/A100 80G[^6^] |
 
-![deepseek2-1](../images/ai/deepseek2-3.jpg)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-3.jpg)
 
 ## 安装
 
@@ -80,37 +80,113 @@ DeepSeek本地部署的基本是蒸馏模型,简单理解为阉割版.
 
 在如下界面,直接点击`DownLoad`就可以了.
 
-![deepseek2-1](../images/ai/deepseek2-4.jpg)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-4.jpg)
 
 接下来选择版本,Mac、Linux或者Windows.
 
-![deepseek2-1](../images/ai/deepseek2-5.jpg)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-5.png)
 
 等待下载完成以后,运行`Ollama`.这个东西可以理解为大模型的运行环境.
 
-![deepseek2-1](../images/ai/deepseek2-6.jpg)
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-6.png)
+
+接下来点击Ollama官网左上角的`Models`可以准备大模型了.
+
+![deepseek2-1](https://thepatterraining.github.io/images/ai/deepseek2-7.png)
+
+选择我们要部署的`DeepSeek R1`大模型.
+
+接下里可以选择要部署的版本.版本信息上面已经介绍过了.
+
+![deepseek2-8](https://thepatterraining.github.io/images/ai/deepseek2-8.png)
+
+选择以后右侧的命令会改变,直接复制右侧的命令即可.比如我选择`7b`版本,右侧的命令就是`ollama run deepseek-r1:7b`.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-9.png)
+
+直接在命令行中输入这个命令就可以了.`Windows`使用`CMD`或者`终端`都可以.`Mac`使用`终端`或者`Iterm2`都可以.运行以后会先开始下载大模型.
+
+> 在windows下,可以在下面的搜索里面输入CMD打开终端程序,或者按住键盘Win + R两个键,然后在里面输入CMD打开终端程序.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-10.png)
+
+下载完成以后进入大模型的输入界面,是命令行格式的,可以直接输入.
+
+比如我输入`你是谁`.回答中的<think>标签里面对应的是思考的内容.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-11.png)
+
+到这里其实就安装完成了,不过如果需要UI界面在浏览器中使用的话,也可以再安装一个UI界面.
+
+后续如果还想运行的话依然是两个步骤
+1. 打开Ollama程序
+2. 运行命令ollama run deepseek-r1:7b, 注意替换成你自己的命令.
+
+### 可视化界面安装
+
+有很多人可能使用不惯命令行程序来输入,因此可以安装一个可视化界面,这样就和在DeepSeek官网使用一样了.
+
+接下来我们看看如何安装UI界面吧!
+
+可视化界面使用[Open-Web UI](https://github.com/open-webui/open-webui)提供的界面程序.可以先下载Docker,使用`Docker`运行`Open-Web UI`.
+
+#### 安装Docker
+
+进入[Docker官网](https://www.docker.com/),进行下载.选择要下载的版本.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-12.png)
+
+下载以后进行安装,安装完成以后,打开程序,使用推荐配置就可以了.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-13.png)
+
+#### 安装Open Web-UI
+
+接下来就可以安装`Open Web-UI`了.
+
+使用如下命令即可.和之前一样,在CMD或者终端程序中运行如下命令.
+
+```
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+```
+
+接下来等待下载完成就可以了.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-14.png)
+
+现在打开浏览器,输入`http://localhost:3000/`即可进入本地部署的可视化界面了!
+
+第一次的话需要创建管理员账号,输入名称、邮箱、密码就可以了.
+
+进来以后如图所示.
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-15.png)
+
+使用体验如下
+
+![deepseek2-9](https://thepatterraining.github.io/images/ai/deepseek2-16.png)
 
 ## 总结
+
+这样就算安装完成了,可以使用命令行或者界面,看个人喜好了!
+
 通过以上步骤，您可以在本地部署 DeepSeek。请根据实际需求调整配置并确保所有依赖项已正确安装。如果在运行过程中遇到问题，请参考官方文档或联系技术支持团队。
 
 希望这份指南对您有所帮助！
 
 ## 文末福利
 
-关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。
+> 关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。
+> 发送“电子书”即可领取价值上千的电子书资源。
+> 发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。
+> 部分电子书如图所示。
 
-发送“电子书”即可领取价值上千的电子书资源。
+![概念学习](https://thepatterraining.github.io/images/bottom1.png)
 
-发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。
+![概念学习](https://thepatterraining.github.io/images/bottom2.png)
 
-部分电子书如图所示。
+![概念学习](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](../images/bottom1.png)
-
-![概念学习](../images/bottom2.png)
-
-![概念学习](../images/bottom3.png)
-
-![概念学习](../images/bottom4.png)
+![概念学习](https://thepatterraining.github.io/images/bottom4.png)
 
 

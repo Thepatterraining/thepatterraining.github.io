@@ -85,7 +85,7 @@ MySQL查询路径是指查询优化器在执行查询时所选择的具体执行
 
 这里就要介绍一下MySQL的整体架构了。
 
-![架构](../images/mysql/mysql2-1.png)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-1.png)
 
 - 连接器：MySQL连接器（MySQL Connector）是用于连接MySQL数据库的客户端库，它允许应用程序与MySQL数据库进行通信。这些连接器提供了API（应用程序编程接口），使得开发者可以在各种编程语言中轻松地执行SQL语句、管理数据库连接、处理查询结果等。
 - 分析器：MySQL分析器才算真正进入了MySQL里面。它会分析词法和语法，如果你的SQL语句不对，就会看到一些报错，例如语法错误。
@@ -105,7 +105,7 @@ MySQL连接器（MySQL Connector）是用于连接MySQL数据库的客户端库�
 Access denied for user 'root'@'localhost'(using password: YES)
 ```
 
-![架构](../images/mysql/mysql2-2.png)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-2.png)
 
 ### 分析器
 
@@ -121,7 +121,7 @@ Access denied for user 'root'@'localhost'(using password: YES)
 
 > You have an error in your SQL syntax: check the maual that corresponds to your MySQL server version for the right syntax to use near 'elect * from users' at line 1
 
-![架构](../images/mysql/mysql2-3.png)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-3.png)
 
 ### 优化器
 
@@ -158,7 +158,7 @@ select a,b from table_a where a = 1;
 
 如果没有谓词下推优化的话，执行树如下。
 
-![架构](../images/mysql/mysql2-4.png)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-4.png)
 
 其执行顺序如下：
 1. 扫描`table_a`表的10条数据，将10条数据传递给where过滤节点。
@@ -169,7 +169,7 @@ select a,b from table_a where a = 1;
 
 而有了谓词下推优化以后，执行树如下。
 
-![架构](../images/mysql/mysql2-5.png)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-5.png)
 
 执行顺序如下：
 1. 扫描`table_a`表的10条数据，过滤出符合`a = 1`条件的这一个数据。将这个数据传给列选择节点。
@@ -442,7 +442,7 @@ select * from test_a where a = 5
 
 根据计算公式`预估行数 = 密度 * 高度`来计算0.6 * 2，预估行数就是1.2，也就是1-2行。
 
-![架构](../images/mysql/mysql2-6.jpg)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-6.jpg)
 
 可以看到查询计划里面的rows是10行，这是因为类型是全表扫描，但是后面的`filtered`字段是10，表示的意思是会过滤出来 `10 * 10% = 10 * 0.1 = 1`行。
 
@@ -462,11 +462,11 @@ select a,b from test_a where a = 1 and b = 'A1';
 
 第一种执行方式，先查`a=1`在查询`b='A1'`的数据。执行树如下。
 
-![架构](../images/mysql/mysql2-7.jpg)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-7.jpg)
 
 第二种执行方式，先查`b='A1'`在查询 `a=1`。执行树如下。
 
-![架构](../images/mysql/mysql2-8.jpg)
+![架构](https://thepatterraining.github.io/images/mysql/mysql2-8.jpg)
 
 目前看着这两种方式都没啥问题。
 
@@ -496,13 +496,13 @@ INSERT INTO test_a (a, b) VALUES
 
 部分电子书如图所示。
 
-![概念学习](../images/bottom1.png)
+![概念学习](https://thepatterraining.github.io/images/bottom1.png)
 
-![概念学习](../images/bottom2.png)
+![概念学习](https://thepatterraining.github.io/images/bottom2.png)
 
-![概念学习](../images/bottom3.png)
+![概念学习](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](../images/bottom4.png)
+![概念学习](https://thepatterraining.github.io/images/bottom4.png)
 
 
 

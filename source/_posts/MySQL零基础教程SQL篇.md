@@ -20,7 +20,7 @@ article: MySQL零基础教程基础篇
 
 基础篇的内容大致如下图所示。
 
-![概念学习](../images/mysql/mysql1-1.png)
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-1.png)
 
 ## SQL语句
 
@@ -524,12 +524,12 @@ drop function fn_search
 
 部分电子书如图所示。
 
-![概念学习](../images/bottom1.png)
+![概念学习](https://thepatterraining.github.io/images/bottom1.png)
 
-![概念学习](../images/bottom2.png)
+![概念学习](https://thepatterraining.github.io/images/bottom2.png)
 
-![概念学习](../images/bottom3.png)
+![概念学习](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](../images/bottom4.png)
+![概念学习](https://thepatterraining.github.io/images/bottom4.png)
 
 
