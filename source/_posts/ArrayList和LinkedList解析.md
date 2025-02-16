@@ -1,9 +1,9 @@
 ---
-title: 算法导论
+title: ArrayList和LinkedList解析
 date: 2024-04-15 10:12:47
-tags: ['算法']
+tags: ['算法','数据结构']
 category: 算法
-article: 算法导论
+article: ArrayList和LinkedList解析
 ---
 
 ## 数组数据结构

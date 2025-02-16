@@ -907,7 +907,7 @@ mysql> SELECT @@optimizer_switch\G
 column_statistics数据字典表存储有关列值的直方图统计信息，供优化器在构造查询执行计划时使用。要执行直方图管理，请使用ANALYZE TABLE语句。
 - 该表包含除几何类型（空间数据）和JSON之外的所有数据类型的列的统计信息。
 - 该表是持久的，因此不必在每次服务器启动时都创建列统计信息。
-- 服务器对表执行更新;用户不执行。
+- 服务器对表执行更新，用户不执行。
 
 用户不能直接访问column_statistics表，因为它是数据字典的一部分。直方图信息可使用 INFORMATION_SCHEMA.COLUMN_STATISTICS 获得，它是作为数据字典表上的视图实现的。COLUMN_STATISTICS包含以下列：
 - SCHEMA_NAME、TABLE_NAME、COLUMN_NAME：应用统计信息的模式、表和列的名称。
