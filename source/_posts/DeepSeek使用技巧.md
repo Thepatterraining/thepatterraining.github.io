@@ -1,6 +1,6 @@
 ---
 title: 七招教你玩转DeepSeek，我求求你别再花钱买课了！
-date: 2025-02-10 10:12:47
+date: 2025-02-16 10:12:47
 tags: ['AI','DeepSeek']
 category: AI
 article: 七招教你玩转DeepSeek，我求求你别再花钱买课了！
