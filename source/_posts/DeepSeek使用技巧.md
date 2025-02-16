@@ -58,7 +58,7 @@ article: 七招教你玩转DeepSeek，我求求你别再花钱买课了！
 
 来看一下AI的回答。
 
-![deepseek3-2](https://thepatterraining.github.io/images/ai/deepseek3-2.png)
+![deepseek3-2](https://thepatterraining.github.io/images/AI/deepseek3-2.png)
 
 乍一看，这个推荐也像这么回事，但是你仔细看一看，会发现AI回答的很`宽泛`。
 
@@ -83,7 +83,7 @@ article: 七招教你玩转DeepSeek，我求求你别再花钱买课了！
 
 这里交代清楚了时间、地点、人物要素。
 
-![deepseek3-1](https://thepatterraining.github.io/images/ai/deepseek3-1.png)
+![deepseek3-1](https://thepatterraining.github.io/images/AI/deepseek3-1.png)
 
 看看AI的回答。跟上面比明显更好了！
 
@@ -111,7 +111,7 @@ article: 七招教你玩转DeepSeek，我求求你别再花钱买课了！
 
 AI给出的回答如下，可以看到，给出来的回答更加好了。不仅有具体的时间安排，还有对应的推荐菜以及推荐玩法。还有本地人的放坑指南等等。
 
-![deepseek3-3](https://thepatterraining.github.io/images/ai/deepseek3-3.png)
+![deepseek3-3](https://thepatterraining.github.io/images/AI/deepseek3-3.png)
 
 这份攻略明显更好了！
 
@@ -139,7 +139,7 @@ AI给出的回答如下，可以看到，给出来的回答更加好了。不仅
 
 ✅ 正确示范：帮我规划一个五一的旅游攻略，从北京到成都，第一步，给出交通方案的时间、价格信息。第二步，给出住宿的推荐、价格、和景点的距离。第三步，给出景点的游玩信息、高峰期、路线、门票。
 
-![deepseek3-3](https://thepatterraining.github.io/images/ai/deepseek3-4.png)
+![deepseek3-3](https://thepatterraining.github.io/images/AI/deepseek3-4.png)
 
 ## 第四招：结合上下文，深入交流
 
@@ -160,7 +160,7 @@ AI给出的回答如下，可以看到，给出来的回答更加好了。不仅
 - 请帮我细化成都的住宿推荐，给出住宿的推荐、价格、和景点的距离等
 - 根据这些信息帮我细化景点的游玩信息、高峰期、路线、门票等
 
-![deepseek3-3](https://thepatterraining.github.io/images/ai/deepseek3-5.png)
+![deepseek3-3](https://thepatterraining.github.io/images/AI/deepseek3-5.png)
 
 可以看到同样的问题，AI的回答明显别上次的更加好了。还给出了一些方案对比。很适合我们选择。
 
