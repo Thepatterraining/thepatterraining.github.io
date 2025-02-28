@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="网关今天，小白的老师让小白写一个网关，小白学艺不精，过来向大头求救了。    网关是什么？看图说话，很明显，她是介于客户端和服务器之间的一个中间层。 那么为什么要有网关？  网关可以承接更多的流量 网关可以对流量做减法 网关可以添加其他和业务无关的能力，和业务解藕 网关可以实现负载均衡  网关可以承接更多的流量服务器的逻辑通常是来一个请求A,出现一个A线程进行处理。来一个请求B，出现一个B线程进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我是如何一个小时教会小白手写网关的">
+<meta property="og:url" content="https://thepatterraining.github.io/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="网关今天，小白的老师让小白写一个网关，小白学艺不精，过来向大头求救了。    网关是什么？看图说话，很明显，她是介于客户端和服务器之间的一个中间层。 那么为什么要有网关？  网关可以承接更多的流量 网关可以对流量做减法 网关可以添加其他和业务无关的能力，和业务解藕 网关可以实现负载均衡  网关可以承接更多的流量服务器的逻辑通常是来一个请求A,出现一个A线程进行处理。来一个请求B，出现一个B线程进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway1.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway2.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway3.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway4.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway5.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway6.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway7.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway8.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway9.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway10.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway11.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway12.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway13.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway14.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway15.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway16.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway17.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway18.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway19.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway20.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway21.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway22.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway23.jpg">
+<meta property="og:image" content="https://thepatterraining.github.io/images/java/gateway/gateway24.jpg">
+<meta property="article:published_time" content="2024-12-15T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-02-17T02:21:34.445Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/java/gateway/gateway1.jpg">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>我是如何一个小时教会小白手写网关的 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          我是如何一个小时教会小白手写网关的
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-12-15T10:12:47+08:00">2024-12-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-17 10:21:34" itemprop="dateModified" datetime="2025-02-17T10:21:34+08:00">2025-02-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" class="post-meta-item leancloud_visitors" data-flag-title="我是如何一个小时教会小白手写网关的" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h1><p>今天，小白的老师让小白写一个网关，小白学艺不精，过来向大头求救了。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway1.jpg" alt="netty服务器"></p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway2.jpg" alt="netty服务器"></p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway3.jpg" alt="netty服务器"></p>
+<p>网关是什么？看图说话，很明显，她是介于<code>客户端</code>和<code>服务器</code>之间的一个中间层。</p>
+<p>那么为什么要有网关？</p>
+<ul>
+<li>网关可以承接更多的流量</li>
+<li>网关可以对流量做减法</li>
+<li>网关可以添加其他和业务无关的能力，和业务解藕</li>
+<li>网关可以实现负载均衡</li>
+</ul>
+<h2 id="网关可以承接更多的流量"><a href="#网关可以承接更多的流量" class="headerlink" title="网关可以承接更多的流量"></a>网关可以承接更多的流量</h2><p>服务器的逻辑通常是来一个请求A,出现一个A线程进行处理。来一个请求B，出现一个B线程进行处理。</p>
+<p>而有了网关就变成了</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器A线程</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器B线程</li>
+</ul>
+<p>为什么能承接更多的流量，因为承接流量的线程，实在Main线程上面，而Main线程，仅仅负责<code>分发请求</code>。所以它很快。</p>
+<h2 id="网关可以对流量做减法"><a href="#网关可以对流量做减法" class="headerlink" title="网关可以对流量做减法"></a>网关可以对流量做减法</h2><p>网关就如同一个漏斗，可以对流量做减法。</p>
+<p>比如实现限流、权限检查、缓存处理。那么进来的10个请求，可能只有1个请求到达服务器，减轻了服务器的压力。</p>
+<p>请求流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 网关权限检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器A线程</li>
+</ul>
+<h2 id="网关可以添加其他和业务无关的能力，和业务解藕"><a href="#网关可以添加其他和业务无关的能力，和业务解藕" class="headerlink" title="网关可以添加其他和业务无关的能力，和业务解藕"></a>网关可以添加其他和业务无关的能力，和业务解藕</h2><p>如同上面说的，网关可以实现一些和业务无关的能力，比如现限流、权限检查、缓存处理。</p>
+<p>目前用的最多的网关应该是<code>nginx</code>。nginx可以通过<code>lua</code>来扩展实现一些功能。比如上面说的这些。</p>
+<p>还有一些比如像<code>OpenResty</code>这种，也就是基于<code>nginx</code>和<code>lua</code>来进行扩展。</p>
+<h2 id="网关可以实现负载均衡"><a href="#网关可以实现负载均衡" class="headerlink" title="网关可以实现负载均衡"></a>网关可以实现负载均衡</h2><p>什么是负载均衡？简单来说就是后端有多个服务器，通过负载均衡可以把请求流量转发给不同的服务器去处理。</p>
+<p>这个具体后面会实操讲解。</p>
+<h1 id="第一版网关实现"><a href="#第一版网关实现" class="headerlink" title="第一版网关实现"></a>第一版网关实现</h1><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway4.jpg" alt="netty服务器"></p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway5.jpg" alt="netty服务器"></p>
+<p>第一版网关的基本原理如上面说的，仅仅是实现了<code>服务器端，也就是Main线程</code>和<code>客户端，也就是Worker线程</code>。</p>
+<p>执行流程如下：</p>
+<ol>
+<li>通过Netty实现一个服务器，接收真正客户端的请求</li>
+<li>然后把请求给Worker线程</li>
+<li>Worker线程启动一个客户端请求真正的服务器。</li>
+<li>Worker线程接收到真正服务器的返回数据。</li>
+<li>Worker线程将数据返回给真正的客户端。</li>
+</ol>
+<p>部分代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个netty服务端，接收客户端的请求</span></span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">bossGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">1</span>);</span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">workerGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 一些参数 初始化</span></span><br><span class="line">    <span class="type">ServerBootstrap</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerBootstrap</span>();</span><br><span class="line">    b.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">            .childOption(ChannelOption.TCP_NODELAY, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_KEEPALIVE, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_REUSEADDR, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_RCVBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_SNDBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);</span><br><span class="line"></span><br><span class="line">    b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)</span><br><span class="line">            .handler(<span class="keyword">new</span> <span class="title class_">LoggingHandler</span>(LogLevel.DEBUG))</span><br><span class="line">            .childHandler(<span class="keyword">new</span> <span class="title class_">HttpInboundInitializer</span>(<span class="built_in">this</span>.proxyServers));</span><br><span class="line"></span><br><span class="line">    <span class="type">Channel</span> <span class="variable">ch</span> <span class="operator">=</span> b.bind(port).sync().channel();</span><br><span class="line">    System.out.println(<span class="string">&quot;开启netty http服务器，监听地址和端口为 http://127.0.0.1:&quot;</span> + port + <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">    ch.closeFuture().sync();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    bossGroup.shutdownGracefully();</span><br><span class="line">    workerGroup.shutdownGracefully();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端处理代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">fetchGet</span><span class="params">(<span class="keyword">final</span> FullHttpRequest inbound, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> String url)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">HttpGet</span> <span class="variable">httpGet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpGet</span>(url);</span><br><span class="line">    httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);</span><br><span class="line"></span><br><span class="line">    httpclient.execute(httpGet, <span class="keyword">new</span> <span class="title class_">FutureCallback</span>&lt;HttpResponse&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">completed</span><span class="params">(<span class="keyword">final</span> HttpResponse endpointResponse)</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                handleResponse(inbound, ctx, endpointResponse);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">failed</span><span class="params">(<span class="keyword">final</span> Exception ex)</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cancelled</span><span class="params">()</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>来看一下有网关和没网关的服务器请求架构图吧。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway6.jpg" alt="netty服务器"></p>
+<h1 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h1><p>完成以后小白很高兴</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway7.jpg" alt="netty服务器"></p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway8.jpg" alt="netty服务器"></p>
+<p>接下来再给简陋的网关加点装饰，实现一些业务外的功能，给服务器减减压。</p>
+<p>filter可以做什么，看一下下面filter的架构图。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway9.jpg" alt="netty服务器"></p>
+<p><code>Req Filter</code>在每次请求执行之前运行。那么它能干什么呢？它可以实现权限检查。流程如下</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter: 权限检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
+</ul>
+<p>Filter可以是链式的，也就是可以增加多个Filter.实现不同的功能。比如在权限检查以外还要做跨域支持。</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查不通过，返回错误</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查不通过，返回错误</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
+</ul>
+<p><code>Res Filter</code>在每次请求执行之后运行，那么它能干什么呢？它可以配合<code>Req Filter</code>实现缓存处理。</p>
+<p>比如每次请求回来以后放入缓存，每次请求之前判断缓存是否存在，有的话直接返回。</p>
+<p>处理流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存不存在，继续请求 -&gt; 服务器A线程 -&gt; Res Filter1: 请求成功，结果放到缓存</li>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存存在，获取缓存并返回。</li>
+</ul>
+<p>开始代码改造，增加Req filter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> <span class="built_in">this</span>.backendUrls.get(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续增加Res Filter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line">        <span class="comment">// res filter 请求结束执行</span></span><br><span class="line">        filter.filter(response);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Filter的具体实现，应该先有两个接口</p>
+<ul>
+<li>Req Filter</li>
+<li>Res Filter</li>
+</ul>
+<p>在有具体的实现类，可以通过配置文件，配置使用不同的Filter。</p>
+<p>比如实现一个权限检查的Req Filter</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheRequestFilter</span> <span class="keyword">implements</span> <span class="title class_">HttpRequestFilter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">filter</span><span class="params">(FullHttpRequest fullRequest, ChannelHandlerContext ctx)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取token</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> fullRequest.headers().get(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">        <span class="comment">// 处理token</span></span><br><span class="line">        <span class="keyword">if</span> (!jwt.check(token)) &#123;</span><br><span class="line">            <span class="comment">// 返回错误</span></span><br><span class="line">            <span class="type">byte</span>[] body;</span><br><span class="line">            <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HttpResponseStatus.HTTP_1_1, HttpResponseStatus.FORBIDDEN, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">            response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">            response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, <span class="number">0</span>);</span><br><span class="line">            ctx.write(response);</span><br><span class="line">            ctx.flush();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway10.jpg" alt="netty服务器"></p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway11.jpg" alt="netty服务器"></p>
+<p>负载均衡（Load Balancing）是一种计算机技术，用于在多个计算资源（如服务器、网络链路等）之间分配工作负载，以提高系统的整体性能、可靠性和可扩展性。</p>
+<p>负载均衡的基本原理</p>
+<ul>
+<li>资源分配：将用户的请求按照一定的算法和规则，均匀地分配到多个后端服务器上。这样可以避免单点服务器因承受过多请求而过载，同时充分利用所有可用服务器的资源。</li>
+<li>健康检查：负载均衡器会定期检查后端服务器的健康状态。例如，通过发送心跳包或尝试建立连接等方式，来确定服务器是否正常运行。如果发现某台服务器出现故障，负载均衡器会自动停止将请求分配到该服务器，直到其恢复正常。</li>
+</ul>
+<p>利用软件程序来实现负载均衡。软件负载均衡器可以安装在通用的服务器上，通过软件代码来处理请求的分发。这种方式相对硬件负载均衡成本较低，并且具有更好的灵活性，方便进行定制化和扩展。</p>
+<p>看一下<code>Nginx</code>的实现吧。</p>
+<p>Nginx：这是一个非常流行的开源软件负载均衡器。它可以作为反向代理服务器，将客户端请求转发到后端服务器。Nginx 支持多种负载均衡算法，如轮询（Round - Robin）、加权轮询（Weighted Round - Robin）、IP 哈希（IP - Hash）等。例如，在轮询算法中，Nginx 会按照顺序依次将请求分配到后端服务器列表中的每一台服务器上。假设后端有服务器 A、服务器 B 和服务器 C，第一个请求会被发送到服务器 A，第二个请求发送到服务器 B，第三个请求发送到服务器 C，然后再从服务器 A 开始循环。</p>
+<p>负载均衡的优势</p>
+<ul>
+<li>提高性能：通过将负载均匀分布在多个服务器上，可以充分利用服务器的资源，避免单点出现性能瓶颈。例如，在一个网站流量高峰期，如果只有一台服务器处理请求，可能会因为 CPU、内存或网络带宽等资源耗尽而导致响应速度变慢。而使用负载均衡将请求分散到多台服务器后，每台服务器处理的请求数量减少，响应时间可以得到有效缩短。</li>
+<li>增强可靠性：当某一台后端服务器出现故障时，负载均衡器可以将请求自动切换到其他正常的服务器，从而保证服务的连续性。这对于需要高可用性的应用（如电子商务网站、金融服务等）至关重要。例如，一个在线购物网站，如果没有负载均衡和容错机制，当一台服务器宕机时，可能会导致部分用户无法访问商品信息或进行购物操作，而有了负载均衡后，即使一台服务器出现问题，其他服务器仍可以继续处理请求，用户可能只是感觉到短暂的延迟，而不会出现服务完全中断的情况。</li>
+<li>便于扩展：随着业务的增长，可以方便地添加新的服务器到负载均衡池中，以应对不断增加的请求量。例如，一个新兴的互联网公司，其网站的用户访问量逐月增加。通过负载均衡，公司可以根据流量增长情况逐步添加服务器，而不需要对整个系统架构进行大规模的重新设计。负载均衡器可以自动将新添加的服务器纳入请求分配的范围，实现无缝的系统扩展。</li>
+</ul>
+<p>在看一下实现负载均衡以后的网关架构吧。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway12.jpg" alt="netty服务器"></p>
+<h2 id="负载均衡的算法"><a href="#负载均衡的算法" class="headerlink" title="负载均衡的算法"></a>负载均衡的算法</h2><p>那负载均衡具体是如何实现呢？看大头怎么说。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway13.jpg" alt="netty服务器"></p>
+<h3 id="轮询算法"><a href="#轮询算法" class="headerlink" title="轮询算法"></a>轮询算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway14.jpg" alt="netty服务器"></p>
+<p>下面是轮询算法的时序图。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway15.jpg" alt="netty服务器"></p>
+<ul>
+<li>原理：按照顺序依次将请求分配到后端服务的各个实例上。例如，有三个后端服务实例 A、B、C，第一个请求被路由到 A，第二个请求路由到 B，第三个请求路由到 C，然后又从 A 开始循环分配。这种算法简单公平，能均匀地分配请求负载。</li>
+<li>适用场景：适用于后端服务实例性能相近，处理能力相对均衡的情况。例如，多个相同配置的 Web 服务器提供相同的静态网页服务，使用轮询算法可以很好地平衡请求流量。</li>
+</ul>
+<p>轮询的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
+<li>请求E -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
+<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
+</ul>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> urls.get(current);</span><br><span class="line">        current++;</span><br><span class="line">        current = current % urls.size();</span><br><span class="line">        <span class="keyword">return</span> url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="加权轮询算法"><a href="#加权轮询算法" class="headerlink" title="加权轮询算法"></a>加权轮询算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway16.jpg" alt="netty服务器"></p>
+<p>下面是加权轮询算法的时序图。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway17.jpg" alt="netty服务器"></p>
+<ul>
+<li>原理：为每个后端服务实例分配一个权重值，权重表示该实例相对处理能力的大小。在分配请求时，按照权重比例来分配。例如，服务实例 A 的权重为 5，服务实例 B 的权重为 3，服务实例 C 的权重为 2，那么在总共 10 次请求分配中，A 会被分配 5 次，B 会被分配 3 次，C 会被分配 2 次。</li>
+<li>适用场景：当后端服务实例的性能不同，比如部分实例配置更高、处理能力更强时，通过加权轮询可以让性能强的实例处理更多的请求。例如，有新老两代服务器，新服务器性能是老服务器的两倍，就可以给新服务器分配更高的权重，让其承担更多的请求负载。</li>
+</ul>
+<p>加设3个服务器权重是5，3，2.</p>
+<p>加权轮询的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 3 2 因此选择服务器1   PS:当前服务器权重为-5 3 2</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 6 4 因此选择服务器2   PS:当前服务器权重为0 -4 4</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 -1 6 因此选择服务器3  PS:当前服务器权重为5 -1 -4</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为10 2 -2 因此选择服务器1   PS:当前服务器权重为0 2 -2</li>
+<li>请求E -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 5 0 因此选择服务器1   PS:当前服务器权重为-5 5 0</li>
+<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 8 2 因此选择服务器2   PS:当前服务器权重为0 -2 2</li>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 1 4 因此选择服务器1  PS:当前服务器权重为-5 1 4</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为0 4 6 因此选择服务器3   PS:当前服务器权重为0 4 -4</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 7 -2 因此选择服务器2   PS:当前服务器权重为5 -3 -2</li>
+<li>请求D -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为10 0 0 因此选择服务器1   PS:当前服务器权重为0 0 0</li>
+</ul>
+<p>可以看到上面10次请求结果，服务器1分配了5次请求，服务器2分配了3次请求，服务器3分配了2次请求。</p>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightedRoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;BackendServer&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        BackendServer selectedServer;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一步：计算总权重，并更新每个服务器的当前权重</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            totalWeight += server.weight;</span><br><span class="line">            server.currentWeight += server.weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第二步：找出当前权重最大的服务器作为本次选择的服务器</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            <span class="keyword">if</span> (server.currentWeight &gt; selectedServer.currentWeight) &#123;</span><br><span class="line">                selectedServer = server;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三步：将选中的服务器的当前权重减去总权重，用于下一轮的权重计算和比较</span></span><br><span class="line">        selectedServer.currentWeight -= totalWeight;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> selectedServer.url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway18.jpg" alt="netty服务器"></p>
+<p>下面是哈希算法的时序图。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway19.jpg" alt="netty服务器"></p>
+<p>使用IP进行哈希算法</p>
+<ul>
+<li>原理：根据请求客户端的 IP 地址计算一个哈希值，然后通过这个哈希值来确定将请求路由到后端服务的哪个实例。相同 IP 地址的请求会始终被路由到同一个后端实例，除非后端实例的数量发生变化。</li>
+<li>适用场景：适用于需要保证特定客户端的请求始终由同一个后端实例处理的场景。例如，在一些有状态的服务中，如需要保持用户会话状态（如购物车信息等），通过 IP 哈希可以确保用户的每次请求都能路由到保存其会话状态的后端服务器。</li>
+</ul>
+<p>哈希算法的基本执行流程如下：</p>
+<ul>
+<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; hash(ip) % 3 结果是0，因此选择服务器1</li>
+<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; hash(ip) % 3 结果是1，因此选择服务器2</li>
+<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; hash(ip) % 3 结果是2，因此选择服务器3</li>
+</ul>
+<p>看一段代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HashRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls, ip)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> hash(ip) % urls.size();</span><br><span class="line">        <span class="keyword">return</span> urls.get(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="随机算法"><a href="#随机算法" class="headerlink" title="随机算法"></a>随机算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway20.jpg" alt="netty服务器"></p>
+<p>随机算法的时序图，原理啥的就不放了，因为太简单了，就是取一个(0,2)开区间的一个随机数。是0就服务器1，1就服务器2，2就服务器3.</p>
+<p>简单的代码实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RandomRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> urls.size();</span><br><span class="line">        <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>(System.currentTimeMillis());</span><br><span class="line">        <span class="keyword">return</span> urls.get(random.nextInt(size));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来只要修改一下获取请求url的代码就可以了。改成从负载均衡获取请求的url，而不是固定取第一个。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="comment">// 这里通过负载均衡的路由获取请求的url</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> router.route(<span class="built_in">this</span>.backendUrls);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h2><p>当实现这些以后，小白很高兴。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway21.jpg" alt="netty服务器"></p>
+<p>小白想知道当后端多个服务器，一个挂了怎么办呢？网关又不知道它挂了，把流量请求过去了，结果服务器挂了，那不就请求失败了吗？</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway22.jpg" alt="netty服务器"></p>
+<p>我们可以通过<code>健康检查机制</code>来解决，添加<code>Zookeeper</code>作为健康检查机制，服务器向Zookeeper注册服务，如果服务器挂了那么Zookeeper就会知道。网关通过Zookeeper来获取现在的服务器列表，然后再通过负载均衡选择服务器。</p>
+<p>一般最常用的就是<code>心跳检测</code>。</p>
+<p>什么是心跳检测呢？</p>
+<p>就是每隔一段时间，发送一个请求，看是否正常返回，如果是，那么服务器就正常，如果不是，比如超时之类的就认为服务器挂了，那么接下来的请求流量就不分给这个服务器了，从服务器列表中移除，啥时候发送心跳检测，发现服务器正常返回了，那么就再放到服务器列表中。</p>
+<p>也可以直接通过<code>Zookeeper</code>这种额外的组件来实现。服务器跟<code>Zookeeper</code>通信，服务器列表通过<code>Zookeeper</code>获取。</p>
+<p>具体的时序图如下。<br><img src="https://thepatterraining.github.io/images/java/gateway/gateway23.jpg" alt="netty服务器"></p>
+<p>健康检查的代码就不放了，就当作作业了哈哈，有兴趣的小伙伴可以自己实现一个放到评论区哦～</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>小白又自己实现了一个网关程序，可以开心的回去交差啦。</p>
+<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway24.jpg" alt="netty服务器"></p>
+<p>一个基本的单体网关就实现完成了。</p>
+<p>其实还有一些其他的问题，比如网关挂了怎么办？那么可以部署多个网关节点，组成集群。</p>
+<p>那么集群的话就需要引入<code>Raft</code>这种分布式共识协议来进行leader节点选择，信息同步。</p>
+<p>那么多个网关节点的元信息放在哪里呢？当然也可以放在<code>Zookeeper</code>里面啦～</p>
+<p>更多知识下期介绍～</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/gc%E6%AF%94%E8%BE%83.html" rel="prev" title="java gc 横向对比">
+      <i class="fa fa-chevron-left"></i> java gc 横向对比
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html" rel="next" title="黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了">
+      黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E5%85%B3"><span class="nav-number">1.</span> <span class="nav-text">网关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E5%8F%AF%E4%BB%A5%E6%89%BF%E6%8E%A5%E6%9B%B4%E5%A4%9A%E7%9A%84%E6%B5%81%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">网关可以承接更多的流量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E5%8F%AF%E4%BB%A5%E5%AF%B9%E6%B5%81%E9%87%8F%E5%81%9A%E5%87%8F%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">网关可以对流量做减法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E5%8F%AF%E4%BB%A5%E6%B7%BB%E5%8A%A0%E5%85%B6%E4%BB%96%E5%92%8C%E4%B8%9A%E5%8A%A1%E6%97%A0%E5%85%B3%E7%9A%84%E8%83%BD%E5%8A%9B%EF%BC%8C%E5%92%8C%E4%B8%9A%E5%8A%A1%E8%A7%A3%E8%97%95"><span class="nav-number">1.3.</span> <span class="nav-text">网关可以添加其他和业务无关的能力，和业务解藕</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E5%8F%AF%E4%BB%A5%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">网关可以实现负载均衡</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%89%88%E7%BD%91%E5%85%B3%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">第一版网关实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#filter"><span class="nav-number">3.</span> <span class="nav-text">filter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">4.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">负载均衡的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">轮询算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.2.</span> <span class="nav-text">加权轮询算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.3.</span> <span class="nav-text">哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.4.</span> <span class="nav-text">随机算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="nav-number">4.2.</span> <span class="nav-text">健康检查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -31,7 +31,7 @@
 <meta property="og:site_name" content="dream">
 <meta property="og:description" content="数组数据结构什么是接口接口就是Interface，也可以是ADT(Abstract Data Tructure), 当定义一个接口的时候，实际上是一种规范，一种约束。 接口定义了一些方法，也就是支持哪些操作。 这里拿Java的List接口举个例子。 List  add(E element): 表示List接口支持add操作，将一个元素添加到list中，至于如何实现，不重要。 remove(E el">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list1.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list2.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list3.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list4.png">
@@ -48,12 +48,12 @@
 <meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list13.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/DataStructure/list14.png">
 <meta property="article:published_time" content="2024-04-15T02:12:47.000Z">
-<meta property="article:modified_time" content="2025-01-26T02:07:53.815Z">
+<meta property="article:modified_time" content="2025-02-17T02:21:34.443Z">
 <meta property="article:author" content="Thepatter">
 <meta property="article:tag" content="算法">
 <meta property="article:tag" content="数据结构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/DataStructure/list1.png">
 
 <link rel="canonical" href="https://thepatterraining.github.io/ArrayList%E5%92%8CLinkedList%E8%A7%A3%E6%9E%90.html">
 
@@ -249,7 +249,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+                <time title="修改时间：2025-02-17 10:21:34" itemprop="dateModified" datetime="2025-02-17T10:21:34+08:00">2025-02-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -346,9 +346,9 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">len</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>对于数组来说，我们知道它是内存中一段连续的空间，因此这个时候，我们的内存里面是这样的。假设x里面是1,2,3,4,5,6</p>
-<p><img src="https://github.com/Thepatterraining/thepatterraining.github.io/blob/master/images/DataStructure/list1.png" alt="list1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list1.png" alt="list1.png"></p>
 <p>我们还知道一个int等于32位，4个字节，因此，假设元素1的地址是0，那么其余的地址如下图所示。</p>
-<p><img src="/../images/DataStructure/list2.png" alt="list1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list2.png" alt="list1.png"></p>
 <p>因此，<code>get_at(i)</code>这个操作的时间复杂度同样是O(1)，因为可以直接计算出对应位置的地址，计算公式如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">第i个元素的地址 = 首地址 + （4 * i）</span><br><span class="line">i = 0的地址 = 0 + 0 = 0</span><br><span class="line">i = 1的地址 = 0 + 4 = 4</span><br></pre></td></tr></table></figure>
 
@@ -361,9 +361,9 @@
 <p>上面的操作都很快，但是如果我们想插入或者删除一个元素，对于<code>静态数组</code>这个数据结构来说，就很慢了。因为要移动元素。我们看一下操作<code>delete_at(i)</code>的执行过程。</p>
 <p>假设delete_at(0)：表示删除第0个元素，也就是首个元素。</p>
 <p>第一步，删除，我们可以看到地址0指向的首个元素的内容变成<code>null</code>了</p>
-<p><img src="/../images/DataStructure/list3.png" alt="list1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list3.png" alt="list1.png"></p>
 <p>第二步，移动后面的元素到前面的位置。</p>
-<p><img src="/../images/DataStructure/list4.png" alt="list1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list4.png" alt="list1.png"></p>
 <p>删除完成，这个时候肯定有人问了，不对啊，你这最后两个元素一样啊，是的，不用管它。</p>
 <p>因为我们的len减少了，而获取的时候需要判断大小，如果获取的下标长度超过len了，应该返回空或错误。这个在上面的伪代码里面省略了。</p>
 <blockquote>
@@ -375,10 +375,10 @@
 <p>对于<code>insert_at(i,x)</code>操作来说，和上面的原理几乎一样，分为两个步骤。</p>
 <p>第一步，将i元素及后面的元素往后移动一步，把i这个位置腾出来。我们拿<code>insert(0,1)</code>来举例。</p>
 <p>可以看到几乎是上方delete操作的一个逆序过程。</p>
-<p><img src="/../images/DataStructure/list5.png" alt="list1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list5.png" alt="list1.png"></p>
 <p>现在可以看到0的位置已经空出来了，虽然里面还有一个2，但是我们可以覆盖它。</p>
 <p>第二步，将1插入0的位置。</p>
-<p><img src="/../images/DataStructure/list6.png" alt="list6.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list6.png" alt="list6.png"></p>
 <p>如此，就完成了整个insert操作。伪代码如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 移动元素 注意从后往前移动</span></span><br><span class="line">    <span class="keyword">for</span> (j = len - <span class="number">1</span>; j &gt;= i; j--) &#123;</span><br><span class="line">        array[j + <span class="number">1</span>] = array[j];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步 插入</span></span><br><span class="line">    array[i] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -419,8 +419,8 @@
 <li>优点：不用连续的空间，长度不固定</li>
 <li>缺点：查询慢</li>
 </ul>
-<p>val代表具体的内容，Next代表下一个节点的指针，内容是下一个节点的地址。最后一个节点的Next指针是null。<br><img src="/../images/DataStructure/list7.png" alt="list7.png"></p>
-<p>而在实际内存中的表现形式则是下图所示。这里是连续的，仅仅是巧合，也可能是不连续的。在这里我们忽略class头的占用，this指针的占用空间，val占据空间是4个字节，next做为指针是64位，占用8个字节。<br><img src="/../images/DataStructure/list8.png" alt="list7.png"></p>
+<p>val代表具体的内容，Next代表下一个节点的指针，内容是下一个节点的地址。最后一个节点的Next指针是null。<br><img src="https://thepatterraining.github.io/images/DataStructure/list7.png" alt="list7.png"></p>
+<p>而在实际内存中的表现形式则是下图所示。这里是连续的，仅仅是巧合，也可能是不连续的。在这里我们忽略class头的占用，this指针的占用空间，val占据空间是4个字节，next做为指针是64位，占用8个字节。<br><img src="https://thepatterraining.github.io/images/DataStructure/list8.png" alt="list7.png"></p>
 <p>由于链表的地址不连续，所以没办法通过首地址直接计算出每个元素的地址，而需要通过<code>next</code>属性来获取下一个元素的地址。</p>
 <p>整个<code>get_at(i)</code>的获取步骤如下</p>
 <ol>
@@ -430,7 +430,7 @@
 <li>返回该元素内容</li>
 </ol>
 <p>整个步骤如图所示。假设是<code>get_at(2)</code>，代表获取第三个元素。也就是3这个内容。因为是从0开始。</p>
-<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list9.png" alt="list7.png"></p>
 <p>伪代码如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> E <span class="title function_">get_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (node == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> node.val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -441,13 +441,13 @@
 <p>可以看到几乎是一样的。</p>
 <p>再来看一下<code>insert_at(i, x)</code>和<code>delete_at(i)</code>。首先看一下<code>delete_at(i)</code>。</p>
 <p>比如<code>delete_at(2)</code> 分为两步，第一步查询，和上面的步骤是一样的。</p>
-<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list9.png" alt="list7.png"></p>
 <p>第二步是删除。删除分为2步</p>
 <ol>
 <li>将上一个指针的next指向第i+1个元素。可以看到图里更新成36了</li>
 <li>将第i个元素的next指针更新成null</li>
 </ol>
-<p><img src="/../images/DataStructure/list10.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list10.png" alt="list7.png"></p>
 <p>整个伪代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete_at</span><span class="params">(i)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步删除</span></span><br><span class="line">    <span class="comment">// 2.1 将i-1个元素的next指向i+1</span></span><br><span class="line">    inode = node.next;</span><br><span class="line">    node.next = node.next.next;</span><br><span class="line">    <span class="comment">// 2.2 将第i个元素的next指针更新成null</span></span><br><span class="line">    inode.next = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -457,14 +457,14 @@
 </blockquote>
 <p>再看一下<code>insert_at(i,x)</code>的执行步骤，分为两步。</p>
 <p>第一步是查询，和上面也是一样的。</p>
-<p><img src="/../images/DataStructure/list9.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list9.png" alt="list7.png"></p>
 <p>第二步是插入，插入分为两步</p>
 <ol>
 <li>修改插入节点的next指向当前i节点的next</li>
 <li>修改当前i-1节点的next指向插入节点</li>
 </ol>
 <p>我们以<code>insert_at(2,3)</code>为例。首先找到i&#x3D;0，再找到i&#x3D;1的位置就是要插入的位置，因为要插入的位置是2，所以我们要把i&#x3D;1的元素的next指向插入的节点。所以找到i&#x3D;1的元素就可以停止了。</p>
-<p><img src="/../images/DataStructure/list11.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list11.png" alt="list7.png"></p>
 <p>整个伪代码实现</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert_at</span><span class="params">(i,x)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步 找到i-1的元素</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> head;</span><br><span class="line">    <span class="keyword">while</span>(node != <span class="literal">null</span> &amp;&amp; i &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        node = node.next;</span><br><span class="line">        i--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 第二步插入</span></span><br><span class="line">    <span class="comment">// 2.1 修改插入节点的next指向当前i节点的next</span></span><br><span class="line">    <span class="type">Node</span> <span class="variable">insertNode</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(x);</span><br><span class="line">    insertNode.next = node.next;</span><br><span class="line">    <span class="comment">// 2.2 修改当前i-1节点的next指向插入节点</span></span><br><span class="line">    node.next = insertNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -533,12 +533,12 @@
 <p>重点在接下来。敲黑板了！！！</p>
 <p>对于<code>insert_last(x)</code>和<code>delete_at(i)</code>来说。我们看一下实现。</p>
 <p>以<code>insert_last(1)</code>来说吧。由于是动态数组，是可以扩容的。假设当前内存是空.然后我们插入1.</p>
-<p><img src="/../images/DataStructure/list12.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list12.png" alt="list7.png"></p>
 <p>在接下来我们要插入2.也就是<code>insert_last(2)</code>。但是这个数组没有空间了，我们需要扩容，比如我们扩容一倍，也就是申请两个内存，现在的内存首地址就不是1了，可能是10-17.</p>
 <p>然后再把原来数组的内容复制过去，在插入新的元素2.</p>
-<p><img src="/../images/DataStructure/list13.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list13.png" alt="list7.png"></p>
 <p>接下来又插入了元素3.再次扩容，内存地址是20-35。同样把内容复制过去，在插入元素3.</p>
-<p><img src="/../images/DataStructure/list14.png" alt="list7.png"></p>
+<p><img src="https://thepatterraining.github.io/images/DataStructure/list14.png" alt="list7.png"></p>
 <p>至于原来那些不用的数组的内存空间，会被JAVA的内存垃圾回收机制，给回收掉。所以不用管。</p>
 <p>接下来计算一下它的时间复杂度吧。</p>
 <p>因为我们是每次扩容一倍，所以分别是在1、2、4、8、…、n的时候扩容。<br>因此，当我们插入n个元素的时候，时间复杂度是</p>
@@ -746,20 +746,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-count">81</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
