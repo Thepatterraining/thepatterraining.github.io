@@ -353,16 +353,33 @@ public class shopAggRoot {
     private Integer shopId; // 商品id值对象
     private String shopName; //商品名称值对象
     private PriceVO price; //价格值对象
-    private UnventoryVO inventory; //库存值对象
+    private InventoryVO inventory; //库存值对象
 
     public void subInventory() {
         // 扣减库存
         // 1. 创建新的库存值对象
 
         // 2. 替换inventory属性
+        // 。。。。
     }
 }
 ```
+
+看一些值对象：
+```java
+public class priceVO{
+    private BigDecimal originalPrice; //原价格
+    private BigDecimal currentPrice; //当前价格，可能是优惠后的价格等等
+}
+
+public class inventoryVO{
+    private Long inventory; //库存
+}
+```
+
+
+
+
 
 
 
