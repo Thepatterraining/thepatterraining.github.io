@@ -18,8 +18,8 @@ article: MySQL零基础教程基础篇
 
 基础篇的内容大致如下图所示。
 
-![概念学习](../images/mysql/mysql1-1.png)
-
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-1.png)
+ 
 ## SQL语句
 
 介绍完概念以后，我们可以来看看SQL语句了。SQL语句通常由三类组成。

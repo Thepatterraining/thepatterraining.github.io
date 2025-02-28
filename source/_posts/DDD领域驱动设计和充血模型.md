@@ -1,8 +1,8 @@
 ---
 title: DDD领域驱动设计和充血模型
 date: 2020-04-30 16:51:30
-tags: ['mysql']
-category: mysql
+tags: ['架构','DDD']
+category: DDD
 article: DDD领域驱动设计和充血模型
 ---
 
