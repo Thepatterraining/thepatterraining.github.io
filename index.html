@@ -196,6 +196,523 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" class="post-title-link" itemprop="url">MySQL零基础教程ER图</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-05 10:12:47" itemprop="dateCreated datePublished" datetime="2025-03-05T10:12:47+08:00">2025-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-17 14:08:27" itemprop="dateModified" datetime="2025-03-17T14:08:27+08:00">2025-03-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程ER图" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h2><p>接下来讲讲ER图，这个是在实际工作中也会使用到的东西。</p>
+<p>大家应该都听过ER图，全称是（Entity Relationship）实体关系图。</p>
+<p>借用维基百科的介绍：</p>
+<blockquote>
+<p>ER模型，全称为实体联系模型、实体关系模型或实体联系模式图（ERM）（英语：Entity-relationship model）由美籍台湾人计算机科学家陈品山发明，是概念数据模型的高层描述所使用的数据模型或模式图。</p>
+</blockquote>
+<p>ER图通常用在<code>设计数据库</code>的阶段，当我们接到一个需求以后，我们要进行一些<code>技术设计</code>，在这个阶段如果涉及到一些对于数据库的修改，我们可以使用ER图进行设计。</p>
+<p>万事万物都有两面性，因此我们看一下好处和坏处，如何使用由大家自己权衡。</p>
+<ul>
+<li>好处：好处是设计直观、在设计之后也方便给大家讲为什么这样设计，还有留存文档，当后续需要修改设计的时候直接修改即可。</li>
+<li>坏处：坏处就是需要花时间去画ER图了。</li>
+</ul>
+<h3 id="ER图的基本概念"><a href="#ER图的基本概念" class="headerlink" title="ER图的基本概念"></a>ER图的基本概念</h3><p>ER图的主要组成部分</p>
+<ul>
+<li>实体（Entity）：<ul>
+<li>实体是数据库中具有相同属性集合的对象。例如，学生、课程、教师等。</li>
+<li>在ER图中，实体通常用矩形表示，矩形内写上实体的名称。</li>
+</ul>
+</li>
+<li>属性（Attribute）：<ul>
+<li>属性是实体的特征或性质。例如，学生的属性可以包括学号、姓名、年龄等。</li>
+<li>在ER图中，属性通常用椭圆表示，椭圆内写上属性的名称，并用线连接到对应的实体。</li>
+</ul>
+</li>
+</ul>
+<p>简单来讲，实体就是一个表，属性就是表里面的一个字段。</p>
+<p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
+<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<ul>
+<li>关系（Relationship）：<ul>
+<li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
+<li>在ER图中，关系通常用菱形表示，菱形内写上关系的名称，并用线连接到相关的实体。</li>
+</ul>
+</li>
+<li>关系的类型：<ul>
+<li>一对一关系（1:1）：一个实体与另一个实体之间存在一对一的联系。例如，一个学生对应一个学号。</li>
+<li>一对多关系（1:N）：一个实体与多个实体之间存在联系。例如，一个教师可以教授多个课程。</li>
+<li>多对多关系（M:N）：多个实体与多个实体之间存在联系。例如，一个学生可以选修多个课程，一个课程也可以被多个学生选修。</li>
+</ul>
+</li>
+</ul>
+<p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
+<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><code>关系</code>这个东西，简单来说就是通过<code>两个字段</code>链接进行实现的。</p>
+<h4 id="多对多关系"><a href="#多对多关系" class="headerlink" title="多对多关系"></a>多对多关系</h4><p>比如我们有<code>角色</code>表和<code>管理员用户</code>表，这两个表，是多对多关系。</p>
+<p>所以我们就需要用一张单独的表来存储这个关系。比如我们新建第三个表叫<code>角色和管理员用户关系</code>表。</p>
+<p><code>角色和管理员用户关系</code>表有字段内容如下：</p>
+<ul>
+<li>id: 该表的主键。</li>
+<li>roleId: 角色表的主键。用来关联角色信息。</li>
+<li>adminId: 管理员用户表的主键。用来关联管理员用户信息。</li>
+</ul>
+<p>可以看到，这个关系就是通过<code>角色和管理员用户关系</code>的两个字段来表示的。</p>
+<p><code>角色</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">前台角色</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">行政角色</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">开发角色</td>
+</tr>
+</tbody></table>
+<p><code>管理员用户</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张三</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李四</td>
+</tr>
+</tbody></table>
+<p><code>角色和管理员用户关系</code>表内容如下：</p>
+<p>根据表的数据我们很清晰的能看出来，<code>张三</code>既拥有<code>前台角色</code>也拥有<code>行政角色</code>，可谓身兼数职。当代牛马。<code>李四</code>则拥有一个<code>开发角色</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">roleId</th>
+<th align="left">adminId</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">1</td>
+<td align="left">2</td>
+</tr>
+</tbody></table>
+<p>记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>这里的两个字段就是<code>roleId</code>和<code>adminId</code>。</p>
+<p><code>roleId = 1</code>表示的是角色表中，<code>id = 1</code>的<code>前台角色</code>，对应的数据是<code>adminId = 1</code>的数据，也就是管理员表中<code>id = 1</code>的管理员<code>张三</code>。</p>
+<p>如此，我们就知道了，张三拥有角色：前台角色。</p>
+<h4 id="一对多关系"><a href="#一对多关系" class="headerlink" title="一对多关系"></a>一对多关系</h4><p><code>一对多关系</code>和<code>多对一关系</code>基本一样。就是反过来了。</p>
+<p>一个老师可以教授多个课程，比如我们有两个表，一个<code>老师表</code>，一个<code>课程表</code>。</p>
+<p>一对多关系比较灵活，记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>先看老师表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张老师</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李老师</td>
+</tr>
+</tbody></table>
+<p>课程表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">语文课程</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">数学课程</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">英语课程</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>为什么说一对多关系比较灵活呢，可以看到，我们这里用到的关联字段是老师表的<code>id</code>和课程表的<code>teacher_id</code>。而不需要再多加一张表了。</p>
+<blockquote>
+<p>这里要记住一个重点！！！！<br>多出来的这个teacher_id 字段要放在一对多关系中的 多 的这个表里面。</p>
+</blockquote>
+<p>什么是一对多关系中的<code>多</code>的关系呢？</p>
+<p>比如上面一个老师教多个课程，那么<code>多</code>的关系就是课程信息。</p>
+<p>当然了，如果你想要多加一张表来存储这两个字段的话也是可以的。</p>
+<p>比如增加下表，教授课程表，如果增加了这张表，就可以把课程表中的<code>teacher_id</code>字段删除了：</p>
+<p>下表也代表了<code>张老师</code>教授语文课程和英语课程，李老师教授数学课程。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">course_id</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">3</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<h4 id="一对一关系"><a href="#一对一关系" class="headerlink" title="一对一关系"></a>一对一关系</h4><p>一对一关系是最简单的。其实算是<code>一对多关系</code>的一个<code>真子集</code>。</p>
+<p>为什么这么说呢？</p>
+<p>我们假设，一个老师只能教授一个课程，那么上面的两个表是不是就变成了<code>一对一关系</code>呢？所以我们说一对一关系是一对多关系的一个真子集。</p>
+<h3 id="ER图实践"><a href="#ER图实践" class="headerlink" title="ER图实践"></a>ER图实践</h3><p>接下来我们来实践一下ER图。</p>
+<p>我这里使用的工具是免费的在线画图工具<a target="_blank" rel="noopener" href="https://www.processon.com/i/637308dd762131535d6884f7?full_name=osgpjw20iEaJn-L">Processon</a></p>
+<h4 id="多对多关系的ER图"><a href="#多对多关系的ER图" class="headerlink" title="多对多关系的ER图"></a>多对多关系的ER图</h4><p>首先来画出多对多关系的ER图吧。</p>
+<p>以上面的三个表为例子。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 管理员实体，管理员实体后面会转化成管理员表。</li>
+<li>实体2: 角色实体，角色实体后面会转化成角色表。</li>
+<li>关系：两个实体之间的多对多关系，多对多关系后期需要转换成一张关系表。</li>
+</ul>
+<p>我们首先画出第一个实体，<code>管理员实体</code>使用矩形表示。如下图。</p>
+<p><img src="/../images/mysql/mysql3-4.png" alt="概念学习"></p>
+<p>接下来我们给管理员实体增加属性，属性使用<code>椭圆</code>来表示，如下图。</p>
+<p><img src="/../images/mysql/mysql3-3.png" alt="概念学习"></p>
+<p>现在我们画出第二个实体，<code>角色实体</code>和对应的属性。</p>
+<p><img src="/../images/mysql/mysql3-5.png" alt="概念学习"></p>
+<p>接下来我们画出关系，关系使用<code>棱形</code>来表示，并且使用线连接两个实体，表示是这两个实体之间的关系。多对多关系还需要在两边分别标记上<code>n</code>和<code>m</code>。</p>
+<p>此外，关系还要有一个名称，用来描述，比如<code>管理员拥有角色，角色被管理员拥有</code>。所以我们可以用<code>拥有</code>关系来描述这两个实体之间的关系。</p>
+<p><img src="/../images/mysql/mysql3-6.png" alt="概念学习"></p>
+<p>如此，我们就完成了一个多对多关系的ER图。</p>
+<h4 id="一对多关系的ER图"><a href="#一对多关系的ER图" class="headerlink" title="一对多关系的ER图"></a>一对多关系的ER图</h4><p>接下来再实践一次一对多关系的ER图，最好大家先动手画一次，再跟我们的结果来对比，只有自己实操了才行。</p>
+<p>实操时间。。。。。</p>
+<p>好了，实操结束。</p>
+<p>我们来看一下一对多关系如何画图。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 教师实体，后面变成教师表。</li>
+<li>实体2: 课程实体，后面变成课程表。</li>
+<li>关系：两个实体之间的一对多关系，一对多关系可以是一个字段也可以是一个表。</li>
+</ul>
+<p>首先画出第一个实体和属性，也就是教师实体。</p>
+<p><img src="/../images/mysql/mysql3-7.png" alt="概念学习"></p>
+<p>接下来画出第二个实体和属性，也就是课程实体。课程实体这里有一个属性是<code>教师ID</code>，这代表我们使用这个字段，而不是增加了一个关系表。如果我们没有这个字段就代表我们要增加一个关系表。</p>
+<p><img src="/../images/mysql/mysql3-8.png" alt="概念学习"></p>
+<p>最后，画出关系并连线。这里关系名称我们选择教授，这个其实无所谓。能明白就好。重点是要标明一对多关系，可以看到<code>教师实体</code>上写的是1，<code>课程实体</code>上写的是n，代表一对多关系中，教师是1，课程是多。这个不能写反了。</p>
+<p><img src="/../images/mysql/mysql3-9.png" alt="概念学习"></p>
+<blockquote>
+<p>多对一关系的画起来是一样的，需要注意的就是关系上的1和n别写错了。</p>
+</blockquote>
+<h4 id="一对一关系的ER图"><a href="#一对一关系的ER图" class="headerlink" title="一对一关系的ER图"></a>一对一关系的ER图</h4><p>一对一关系的ER图和上面的差不多，我们举个例子吧。</p>
+<ul>
+<li>实体1: 用户实体，转化成用户表，存储用户信息。</li>
+<li>实体2: 用户账户实体，转化成用户账户表，存储用户的账号资金信息。</li>
+<li>关系：一对一关系，一个用户只能拥有一个用户账户。</li>
+</ul>
+<p>首先画出第一个实体，用户实体。属性包括ID、用户名称、手机号。</p>
+<p><img src="/../images/mysql/mysql3-10.png" alt="概念学习"></p>
+<p>接下来画出第二个实体，用户账户实体，属性包括ID、账户余额、用户ID。用户ID作为关联关系的字段，和一对多关系一样，就不需要单独加表了。</p>
+<p><img src="/../images/mysql/mysql3-11.png" alt="概念学习"></p>
+<p>最后，画出关系并连线，标上关系是一对一关系就可以了。</p>
+<p><img src="/../images/mysql/mysql3-12.png" alt="概念学习"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
+<p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
+<p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
+<p>此外，还有一个方法，就是使用在线工具<a target="_blank" rel="noopener" href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
+<p><img src="/../images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html" class="post-title-link" itemprop="url">DDD概念详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-03 16:51:30 / 修改时间：17:17:06" itemprop="dateCreated datePublished" datetime="2025-03-03T16:51:30+08:00">2025-03-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DDD/" itemprop="url" rel="index"><span itemprop="name">DDD</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="DDD概念详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
+<p>说人话就是：</p>
+<ul>
+<li>What: 它是一种设计思想、一种指导原则。</li>
+<li>When: 设计微服务的时候，或者说，不知道怎么拆分微服务的时候。</li>
+<li>Why：为什么要用它，上面其实说了，不知道怎么拆分微服务的时候，可以用它来指导你如何拆分微服务。</li>
+<li>How：这个后面讲。</li>
+</ul>
+<p>很多人都说，DDD是用来处理<code>复杂</code>业务逻辑的，那<code>多复杂</code>才算<code>复杂</code>业务呢？</p>
+<p>这个问题，其实和<code>微服务什么时候用</code>是一个问题。</p>
+<p>所有的技术都不是<code>银弹</code>。都有适合它的使用场景。</p>
+<p>拿微服务来说，你一个小公司，就两三个开发，硬要上微服务，拆好几个服务出来，有什么<code>意义</code>吗？</p>
+<p>是提升性能了？</p>
+<p>是增加开发效率了？</p>
+<p>都不是，你会发现拆分完以后，程序反而<code>三高</code>了。</p>
+<ul>
+<li>高复杂度：程序变得更加复杂了。</li>
+<li>高维护成本：程序的维护成本增加了、当有需求需要修改的时候、开发效率反而降低了。</li>
+<li>高运维成本：原来一台机器就满足了，你拆的服务多了，一台机器不够了。要么加机器性能要么加机器数量。</li>
+</ul>
+<p>所以，<code>适合</code>很重要。</p>
+<blockquote>
+<p>俗话说的好，见人说人话，见鬼说鬼话。技术也一样。</p>
+</blockquote>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>实体：使用充血模型实现的实体，既有属性、也有方法。</li>
+<li>值对象：只有属性的类。</li>
+<li>聚合根：一个特殊的实体，聚合的入口。</li>
+<li>聚合：聚合是一个概念、也可以理解成一个模块。聚合内包含了聚合根、实体、值对象。</li>
+<li>限界上下文：分割领域的边界、也是分割微服务的边界，通过这个边界明确这个接口属于哪个领域，也就是属于哪个微服务。每个领域有每个领域的上下文。</li>
+<li>领域：领域也就是我们的领域模型，也可以是一个微服务。</li>
+<li>子领域：一个领域可以分成多个子领域。这个就是粒度的问题了。</li>
+<li>领域事件：领域之间通信的方法。通过这个来调用其他的微服务。</li>
+</ul>
+<p>还有一些核心领域、支撑领域、通用领域等，都是领域的一种，作用不同而已。</p>
+<h3 id="领域"><a href="#领域" class="headerlink" title="领域"></a>领域</h3><p>一个<code>领域</code>里面包含了多个<code>子领域</code>，如图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-3.png" alt="ddd1-3"></p>
+<p>一个<code>子领域</code>里面包含了多个<code>聚合</code>，每个聚合里又有一个<code>聚合根</code>作为入口，还有若干个<code>实体</code>和<code>值对象</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-4.png" alt="ddd1-4"></p>
+<p>通过DDD我们可以来拆分微服务。</p>
+<p>DDD是围绕<code>业务概念</code>来进行领域建模的，后续的接口也是根据业务概念来划分到对应的领域中。从而解决开发过程中，业务演进的问题。</p>
+<p>因为当业务改变了，那么领域就改变了，对应的代码也就跟着变就好了。</p>
+<p>所以DDD和微服务不一样，不是一种具体的架构，只是一种指导方法。</p>
+<p>它可以划分出清晰的<code>业务边界</code>也就是微服务的边界，从而让微服务的拆分更加符合业务。而不是乱拆分。</p>
+<p>他也有一些步骤</p>
+<ul>
+<li>战略设计：战略设计从业务的视角上看待问题，建立领域边界、划分领域、子领域等等。</li>
+<li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
+<li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
+<p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
+<p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -227,7 +744,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-28 11:18:10" itemprop="dateModified" datetime="2025-02-28T11:18:10+08:00">2025-02-28</time>
+                <time title="修改时间：2025-03-03 16:24:16" itemprop="dateModified" datetime="2025-03-03T16:24:16+08:00">2025-03-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,7 +794,6 @@
 <blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
 </blockquote>
-<p>这里插入名片</p>
 <h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
 <p>说人话就是：</p>
 <ul>
@@ -395,7 +911,7 @@
 <li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
 <li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
 </ul>
-<p>首先，需要进行<code>事件风暴</code>，梳理出一些和业务逻辑有关的<code>词汇</code>。</p>
+<h5 id="电子商务DDD示例"><a href="#电子商务DDD示例" class="headerlink" title="电子商务DDD示例"></a>电子商务DDD示例</h5><p>首先，需要进行<code>事件风暴</code>，梳理出一些和业务逻辑有关的<code>词汇</code>。</p>
 <p>以电商举例，<code>用户</code>，<code>购买者</code>，<code>订单</code>，<code>商品</code>，<code>库存</code>，<code>收货地址</code>，<code>商家</code>，<code>价格</code>，<code>购买行为</code>，<code>下单</code>，<code>支付</code>，<code>取消订单</code>，<code>退款</code>，<code>发货</code>等等。</p>
 <p>接下来进行一些<code>识别</code>。</p>
 <p>识别什么呢？识别上面的概念，也就是哪些是<code>实体</code>、<code>值对象</code>和<code>领域事件</code>。</p>
@@ -457,6 +973,66 @@
 <ul>
 <li>下单领域事件：用户聚合发起事件 -》 订单聚合接受事件。完成下单操作。</li>
 </ul>
+<p>接下来我们需要把上面梳理出来的内容<code>映射</code>到代码上。</p>
+<p>比如，我们将上面的内容放到代码里面。这里面有两种方式，聚合是DDD中的<code>最小单元</code>，所以可以把一个聚合部署为一个微服务。</p>
+<p>当然了，也可以一个领域作为一个微服务，具体的情况，根据自身业务和流量这些具体考虑就可以了。</p>
+<p>我们这里以领域做为微服务来示例：</p>
+<ul>
+<li>用户微服务</li>
+<li>交易微服务</li>
+</ul>
+<p>先看用户微服务的文件夹吧，因为分层放在了下面介绍，所以这里的代码我们仅展示<code>领域层</code>的代码。</p>
+<ul>
+<li>userAgg: userAgg文件夹，代表了用户聚合。<ul>
+<li>core: 聚合的核心代码，包含了聚合根、实体、值对象。一个文件夹。<ul>
+<li>userAggRoot.java: 用户聚合根实体，是一个java文件，一个class类。</li>
+</ul>
+</li>
+<li>event: 聚合的一些领域事件代码。<ul>
+<li>buyEvent.java: 下单的领域事件。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>这个实体采用的是<code>充血模型</code>。</p>
+<p>简单看一下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">userAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer userId; <span class="comment">//userId是这个实体中的一个值对象。</span></span><br><span class="line">    <span class="keyword">private</span> String name; <span class="comment">//name也是一个值对象。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserAggRoot <span class="title function_">getUserInfo</span><span class="params">(Integer userId)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户实体的信息</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateUserName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="comment">// 更新用户名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//getter和setter....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>领域事件的代码，其实简单来说，因为跨越微服务了，所以可以直接通过消息队列来进行事件通信。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">buyEvent</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">buy</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 组装事件信息并且发送事件</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看一下交易微服务：</p>
+<ul>
+<li>shopAgg: 代表了商品聚合，是一个文件夹<ul>
+<li>core:<ul>
+<li>shopAggRoot.java: 商品聚合根实体。</li>
+<li>priceVO.java: 价格值对象的类，一个class。VO代表的是Value Object的意思。</li>
+<li>inventoryVO.java: 库存值对象的类，一个class。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>orderAgg: 代表了订单聚合，是一个文件夹<ul>
+<li>core:<ul>
+<li>orderAggRoot.java: 订单聚合根实体。</li>
+<li>buyerEntity.java: 购买者实体，一个java的class。</li>
+<li>addressVO.java: 收货地址值对象。</li>
+</ul>
+</li>
+<li>event:<ul>
+<li>orderEvent: 订单事件，发送订单事件可以给物流微服务，进行物流发货。还有积分服务进行积分处理等等。。。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>代码类似：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">shopAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer shopId; <span class="comment">// 商品id值对象</span></span><br><span class="line">    <span class="keyword">private</span> String shopName; <span class="comment">//商品名称值对象</span></span><br><span class="line">    <span class="keyword">private</span> PriceVO price; <span class="comment">//价格值对象</span></span><br><span class="line">    <span class="keyword">private</span> InventoryVO inventory; <span class="comment">//库存值对象</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subInventory</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 扣减库存</span></span><br><span class="line">        <span class="comment">// 1. 创建新的库存值对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 替换inventory属性</span></span><br><span class="line">        <span class="comment">// 。。。。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一些值对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">priceVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BigDecimal originalPrice; <span class="comment">//原价格</span></span><br><span class="line">    <span class="keyword">private</span> BigDecimal currentPrice; <span class="comment">//当前价格，可能是优惠后的价格等等</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">inventoryVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long inventory; <span class="comment">//库存</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h5 id="DDD的分层架构"><a href="#DDD的分层架构" class="headerlink" title="DDD的分层架构"></a>DDD的分层架构</h5><p>DDD的分层和传统的MVC分层不太一样。</p>
 <p>传统的后端服务一般是这样的层次</p>
 <ul>
@@ -474,7 +1050,6 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
 <p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
 <p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
-<p>这里插入名片</p>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
 </blockquote>
@@ -1928,507 +2503,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html" class="post-title-link" itemprop="url">黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-12-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-12-15T10:12:47+08:00">2024-12-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-17 10:21:34" itemprop="dateModified" datetime="2025-02-17T10:21:34+08:00">2025-02-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html" class="post-meta-item leancloud_visitors" data-flag-title="黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84%20copy.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了"><a href="#黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了" class="headerlink" title="黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了"></a>黄子韬送车，抖音却出现bug了，又有一个人的年终奖泡汤了</h1><p>1月10日下午4点，黄子韬发布视频，称晚上7点将直播送车，并再次声明规则：“你只要来了都可以参与。”此前，黄子韬曾在直播中承诺，其短视频账号超过1500万粉丝将赠送国产汽车10台。消息一出，黄子韬的评论区立马成为了网友的许愿池，大家纷纷在评论区留言自己想要的车型。</p>
-<p>当晚，黄子稻进行直播，在线观看人数达到了1100多万人，点赞数更是爆了！</p>
-<h2 id="抖音重大bug"><a href="#抖音重大bug" class="headerlink" title="抖音重大bug"></a>抖音重大bug</h2><p>点赞数持续上涨，最终更是超过了Int的最大值<code>2147483647</code>。也就是超过了2<sup>31</sup> - 1。</p>
-<p>接下来，神奇的一幕发生了，点赞数变成了负数！</p>
-<p><img src="/../images/1736676504909.jpg" alt="list1.png"></p>
-<p>大家知道这是怎么回事吗？</p>
-<p>在Java中，只存在有符号整数，而没有无符号整数。具体各个类型的大小如下表所示。</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>最小值</th>
-<th>最大值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>byte</td>
-<td>-128</td>
-<td>127</td>
-</tr>
-<tr>
-<td>short</td>
-<td>-32768</td>
-<td>32767</td>
-</tr>
-<tr>
-<td>int</td>
-<td>-2147483648</td>
-<td>2147483647</td>
-</tr>
-<tr>
-<td>long</td>
-<td>-9223372036854775808</td>
-<td>9223372036854775807</td>
-</tr>
-</tbody></table>
-<p>什么是<code>有符号整数</code>和<code>无符号整数</code>呢？</p>
-<h2 id="有符号整数（Signed-Integer）"><a href="#有符号整数（Signed-Integer）" class="headerlink" title="有符号整数（Signed Integer）"></a>有符号整数（Signed Integer）</h2><p>有符号整数是指可以表示正数、负数和零的整数类型。在计算机中，有符号整数通常使用最高位（即最左边的位）作为符号位来表示正负。最高位为0表示正数，最高位为1表示负数。</p>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><h4 id="8位有符号整数（byte）"><a href="#8位有符号整数（byte）" class="headerlink" title="8位有符号整数（byte）"></a>8位有符号整数（byte）</h4><p>范围：-128 到 127<br>二进制表示：<br>0000 0000 表示 0<br>0000 0001 表示 1<br>0111 1111 表示 127<br>1000 0000 表示 -128<br>1000 0001 表示 -127<br>1111 1111 表示 -1</p>
-<h4 id="32位有符号整数（int）"><a href="#32位有符号整数（int）" class="headerlink" title="32位有符号整数（int）"></a>32位有符号整数（int）</h4><p>范围：-2,147,483,648 到 2,147,483,647<br>二进制表示：<br>0000 0000 0000 0000 0000 0000 0000 0000 表示 0<br>0000 0000 0000 0000 0000 0000 0000 0001 表示 1<br>0111 1111 1111 1111 1111 1111 1111 1111 表示 2,147,483,647<br>1000 0000 0000 0000 0000 0000 0000 0000 表示 -2,147,483,648<br>1000 0000 0000 0000 0000 0000 0000 0001 表示 -2,147,483,647<br>1111 1111 1111 1111 1111 1111 1111 1111 表示 -1</p>
-<h2 id="无符号整数（Unsigned-Integer）"><a href="#无符号整数（Unsigned-Integer）" class="headerlink" title="无符号整数（Unsigned Integer）"></a>无符号整数（Unsigned Integer）</h2><p>无符号整数是指只能表示非负数（即零和正数）的整数类型。无符号整数没有符号位，所有位都用于表示数值，因此其范围是从0到最大值。</p>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h3><h4 id="8位无符号整数"><a href="#8位无符号整数" class="headerlink" title="8位无符号整数"></a>8位无符号整数</h4><p>范围：0 到 255<br>二进制表示：<br>0000 0000 表示 0<br>0000 0001 表示 1<br>0111 1111 表示 127<br>1000 0000 表示 128<br>1111 1111 表示 255</p>
-<h4 id="32位无符号整数"><a href="#32位无符号整数" class="headerlink" title="32位无符号整数"></a>32位无符号整数</h4><p>范围：0 到 4,294,967,295<br>二进制表示：<br>0000 0000 0000 0000 0000 0000 0000 0000 表示 0<br>0000 0000 0000 0000 0000 0000 0000 0001 表示 1<br>0111 1111 1111 1111 1111 1111 1111 1111 表示 2,147,483,647<br>1000 0000 0000 0000 0000 0000 0000 0000 表示 2,147,483,648<br>1111 1111 1111 1111 1111 1111 1111 1111 表示 4,294,967,295</p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>有符号整数</th>
-<th>无符号整数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>范围</strong></td>
-<td>包含负数、零和正数</td>
-<td>只包含零和正数</td>
-</tr>
-<tr>
-<td><strong>最高位</strong></td>
-<td>用于表示符号</td>
-<td>用于表示数值</td>
-</tr>
-<tr>
-<td><strong>8位</strong></td>
-<td>-128 到 127</td>
-<td>0 到 255</td>
-</tr>
-<tr>
-<td><strong>16位</strong></td>
-<td>-32768 到 32767</td>
-<td>0 到 65535</td>
-</tr>
-<tr>
-<td><strong>32位</strong></td>
-<td>-2,147,483,648 到 2,147,483,647</td>
-<td>0 到 4,294,967,295</td>
-</tr>
-<tr>
-<td><strong>64位</strong></td>
-<td>-9,223,372,036,854,775,808 到 9,223,372,036,854,775,807</td>
-<td>0 到 18,446,744,073,709,551,615</td>
-</tr>
-</tbody></table>
-<p>在Java中，没有原生的无符号整数类型，但可以使用BigInteger类来模拟无符号整数。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.math.BigInteger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">IntegerExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 有符号整数</span></span><br><span class="line">        <span class="type">byte</span> <span class="variable">signedByte</span> <span class="operator">=</span> <span class="number">127</span>;</span><br><span class="line">        <span class="type">short</span> <span class="variable">signedShort</span> <span class="operator">=</span> <span class="number">32767</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">signedInt</span> <span class="operator">=</span> <span class="number">2147483647</span>;</span><br><span class="line">        <span class="type">long</span> <span class="variable">signedLong</span> <span class="operator">=</span> <span class="number">9223372036854775807L</span>;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;有符号 byte 最大值: &quot;</span> + signedByte);</span><br><span class="line">        System.out.println(<span class="string">&quot;有符号 short 最大值: &quot;</span> + signedShort);</span><br><span class="line">        System.out.println(<span class="string">&quot;有符号 int 最大值: &quot;</span> + signedInt);</span><br><span class="line">        System.out.println(<span class="string">&quot;有符号 long 最大值: &quot;</span> + signedLong);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 无符号整数（使用 BigInteger 模拟）</span></span><br><span class="line">        <span class="type">BigInteger</span> <span class="variable">unsignedByte</span> <span class="operator">=</span> BigInteger.valueOf(<span class="number">255</span>);</span><br><span class="line">        <span class="type">BigInteger</span> <span class="variable">unsignedShort</span> <span class="operator">=</span> BigInteger.valueOf(<span class="number">65535</span>);</span><br><span class="line">        <span class="type">BigInteger</span> <span class="variable">unsignedInt</span> <span class="operator">=</span> BigInteger.valueOf(<span class="number">4294967295L</span>);</span><br><span class="line">        <span class="type">BigInteger</span> <span class="variable">unsignedLong</span> <span class="operator">=</span> BigInteger.valueOf(<span class="number">18446744073709551615L</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;无符号 byte 最大值: &quot;</span> + unsignedByte);</span><br><span class="line">        System.out.println(<span class="string">&quot;无符号 short 最大值: &quot;</span> + unsignedShort);</span><br><span class="line">        System.out.println(<span class="string">&quot;无符号 int 最大值: &quot;</span> + unsignedInt);</span><br><span class="line">        System.out.println(<span class="string">&quot;无符号 long 最大值: &quot;</span> + unsignedLong);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出结果。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">有符号 byte 最大值: 127</span><br><span class="line">有符号 short 最大值: 32767</span><br><span class="line">有符号 int 最大值: 2147483647</span><br><span class="line">有符号 long 最大值: 9223372036854775807</span><br><span class="line">无符号 byte 最大值: 255</span><br><span class="line">无符号 short 最大值: 65535</span><br><span class="line">无符号 int 最大值: 4294967295</span><br><span class="line">无符号 long 最大值: 18446744073709551615</span><br></pre></td></tr></table></figure>
-
-<h2 id="有符号整数溢出"><a href="#有符号整数溢出" class="headerlink" title="有符号整数溢出"></a>有符号整数溢出</h2><p>有符号整数溢出是指在进行算术运算时，结果超出了该整数类型所能表示的范围。由于有符号整数有固定的范围，当运算结果超过这个范围时，就会发生溢出。溢出会导致结果“回绕”到范围的另一端，这可能会导致一些意外的行为。</p>
-<p>下图展示了有符号整数的整个范围，将范围看作一个圆，我特意切开了这个圆，左边表示<code>正数</code>，右边表示<code>负数</code>。从这里可以看到，当正数的最大值再加上1，就会变成负数的最大值。</p>
-<p><img src="/../images/kepu.png" alt="list1.png"></p>
-<p>这个是为什么呢，可以从二进制看到答案。</p>
-<p>32位最大值是<code>2147483647</code>，用二进制表示如下,也就是符号为是0表示正数，剩下31位是1.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01111111111111111111111111111111</span><br></pre></td></tr></table></figure>
-
-<p>这个数再加1是多少呢，二进制加法和十进制加法是一样的，<code>逢2进1</code>。那么一直进位，二进制结果如下。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10000000000000000000000000000000</span><br></pre></td></tr></table></figure>
-
-<p>可以看到结果是符号位是1，剩下31位是0.这个结果就是<code>-2147483648</code>。</p>
-<h2 id="真实点赞数"><a href="#真实点赞数" class="headerlink" title="真实点赞数"></a>真实点赞数</h2><p>接下来，我们可以算一下，真实的点赞数到底是多少呢？</p>
-<p>假设当前的点赞数是<code>-1671321474</code>。</p>
-<p>已知：</p>
-<ol>
-<li>当前是有符号整数</li>
-<li>当前是Int类型</li>
-<li>当Int类型达到最大值<code>2147483647</code>以后再加1就会溢出。</li>
-</ol>
-<p>所以真实的点赞数 &#x3D; 0 + Int最大值 + 1（溢出到最小值） + x &#x3D; -1671321474<br>                &#x3D; -2147483648 + x &#x3D; -1671321474</p>
-<p>因此 x &#x3D; -1671321474 + 2147483648 &#x3D; 476162174</p>
-<p>也就是说真实的点赞数 &#x3D; 2147483647 + 1 + 476162174 &#x3D; 2623645822</p>
-<p>也就是26亿。千分位表示：2,623,645,822</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>有人说服务端是好的，只是安卓端的老代码使用的是Int，因此造成了这个Bug，这不就是传说中的屎山代码吗？</p>
-<p>也不知道又有哪些人要倒霉的没有年终奖啦，大家也要注意这个问题啊～</p>
-<p>我相信最开始的程序员也没有想到一场直播的点赞数能干爆Int吧～</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" class="post-title-link" itemprop="url">我是如何一个小时教会小白手写网关的</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-12-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-12-15T10:12:47+08:00">2024-12-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-17 10:21:34" itemprop="dateModified" datetime="2025-02-17T10:21:34+08:00">2025-02-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" class="post-meta-item leancloud_visitors" data-flag-title="我是如何一个小时教会小白手写网关的" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E4%B8%80%E4%B8%AA%E5%B0%8F%E6%97%B6%E6%95%99%E4%BC%9A%E5%B0%8F%E7%99%BD%E6%89%8B%E5%86%99%E7%BD%91%E5%85%B3%E7%9A%84.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h1><p>今天，小白的老师让小白写一个网关，小白学艺不精，过来向大头求救了。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway1.jpg" alt="netty服务器"></p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway2.jpg" alt="netty服务器"></p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway3.jpg" alt="netty服务器"></p>
-<p>网关是什么？看图说话，很明显，她是介于<code>客户端</code>和<code>服务器</code>之间的一个中间层。</p>
-<p>那么为什么要有网关？</p>
-<ul>
-<li>网关可以承接更多的流量</li>
-<li>网关可以对流量做减法</li>
-<li>网关可以添加其他和业务无关的能力，和业务解藕</li>
-<li>网关可以实现负载均衡</li>
-</ul>
-<h2 id="网关可以承接更多的流量"><a href="#网关可以承接更多的流量" class="headerlink" title="网关可以承接更多的流量"></a>网关可以承接更多的流量</h2><p>服务器的逻辑通常是来一个请求A,出现一个A线程进行处理。来一个请求B，出现一个B线程进行处理。</p>
-<p>而有了网关就变成了</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器A线程</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器B线程</li>
-</ul>
-<p>为什么能承接更多的流量，因为承接流量的线程，实在Main线程上面，而Main线程，仅仅负责<code>分发请求</code>。所以它很快。</p>
-<h2 id="网关可以对流量做减法"><a href="#网关可以对流量做减法" class="headerlink" title="网关可以对流量做减法"></a>网关可以对流量做减法</h2><p>网关就如同一个漏斗，可以对流量做减法。</p>
-<p>比如实现限流、权限检查、缓存处理。那么进来的10个请求，可能只有1个请求到达服务器，减轻了服务器的压力。</p>
-<p>请求流程如下：</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 网关权限检查不通过，返回错误</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器A线程</li>
-</ul>
-<h2 id="网关可以添加其他和业务无关的能力，和业务解藕"><a href="#网关可以添加其他和业务无关的能力，和业务解藕" class="headerlink" title="网关可以添加其他和业务无关的能力，和业务解藕"></a>网关可以添加其他和业务无关的能力，和业务解藕</h2><p>如同上面说的，网关可以实现一些和业务无关的能力，比如现限流、权限检查、缓存处理。</p>
-<p>目前用的最多的网关应该是<code>nginx</code>。nginx可以通过<code>lua</code>来扩展实现一些功能。比如上面说的这些。</p>
-<p>还有一些比如像<code>OpenResty</code>这种，也就是基于<code>nginx</code>和<code>lua</code>来进行扩展。</p>
-<h2 id="网关可以实现负载均衡"><a href="#网关可以实现负载均衡" class="headerlink" title="网关可以实现负载均衡"></a>网关可以实现负载均衡</h2><p>什么是负载均衡？简单来说就是后端有多个服务器，通过负载均衡可以把请求流量转发给不同的服务器去处理。</p>
-<p>这个具体后面会实操讲解。</p>
-<h1 id="第一版网关实现"><a href="#第一版网关实现" class="headerlink" title="第一版网关实现"></a>第一版网关实现</h1><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway4.jpg" alt="netty服务器"></p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway5.jpg" alt="netty服务器"></p>
-<p>第一版网关的基本原理如上面说的，仅仅是实现了<code>服务器端，也就是Main线程</code>和<code>客户端，也就是Worker线程</code>。</p>
-<p>执行流程如下：</p>
-<ol>
-<li>通过Netty实现一个服务器，接收真正客户端的请求</li>
-<li>然后把请求给Worker线程</li>
-<li>Worker线程启动一个客户端请求真正的服务器。</li>
-<li>Worker线程接收到真正服务器的返回数据。</li>
-<li>Worker线程将数据返回给真正的客户端。</li>
-</ol>
-<p>部分代码如下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个netty服务端，接收客户端的请求</span></span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">bossGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">1</span>);</span><br><span class="line"><span class="type">EventLoopGroup</span> <span class="variable">workerGroup</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NioEventLoopGroup</span>(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 一些参数 初始化</span></span><br><span class="line">    <span class="type">ServerBootstrap</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerBootstrap</span>();</span><br><span class="line">    b.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">            .childOption(ChannelOption.TCP_NODELAY, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_KEEPALIVE, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_REUSEADDR, <span class="literal">true</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_RCVBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.SO_SNDBUF, <span class="number">32</span> * <span class="number">1024</span>)</span><br><span class="line">            .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);</span><br><span class="line"></span><br><span class="line">    b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)</span><br><span class="line">            .handler(<span class="keyword">new</span> <span class="title class_">LoggingHandler</span>(LogLevel.DEBUG))</span><br><span class="line">            .childHandler(<span class="keyword">new</span> <span class="title class_">HttpInboundInitializer</span>(<span class="built_in">this</span>.proxyServers));</span><br><span class="line"></span><br><span class="line">    <span class="type">Channel</span> <span class="variable">ch</span> <span class="operator">=</span> b.bind(port).sync().channel();</span><br><span class="line">    System.out.println(<span class="string">&quot;开启netty http服务器，监听地址和端口为 http://127.0.0.1:&quot;</span> + port + <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">    ch.closeFuture().sync();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    bossGroup.shutdownGracefully();</span><br><span class="line">    workerGroup.shutdownGracefully();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>客户端处理代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">fetchGet</span><span class="params">(<span class="keyword">final</span> FullHttpRequest inbound, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> String url)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">HttpGet</span> <span class="variable">httpGet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpGet</span>(url);</span><br><span class="line">    httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);</span><br><span class="line"></span><br><span class="line">    httpclient.execute(httpGet, <span class="keyword">new</span> <span class="title class_">FutureCallback</span>&lt;HttpResponse&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">completed</span><span class="params">(<span class="keyword">final</span> HttpResponse endpointResponse)</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                handleResponse(inbound, ctx, endpointResponse);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">failed</span><span class="params">(<span class="keyword">final</span> Exception ex)</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cancelled</span><span class="params">()</span> &#123;</span><br><span class="line">            httpGet.abort();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>来看一下有网关和没网关的服务器请求架构图吧。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway6.jpg" alt="netty服务器"></p>
-<h1 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h1><p>完成以后小白很高兴</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway7.jpg" alt="netty服务器"></p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway8.jpg" alt="netty服务器"></p>
-<p>接下来再给简陋的网关加点装饰，实现一些业务外的功能，给服务器减减压。</p>
-<p>filter可以做什么，看一下下面filter的架构图。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway9.jpg" alt="netty服务器"></p>
-<p><code>Req Filter</code>在每次请求执行之前运行。那么它能干什么呢？它可以实现权限检查。流程如下</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter: 权限检查不通过，返回错误</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
-</ul>
-<p>Filter可以是链式的，也就是可以增加多个Filter.实现不同的功能。比如在权限检查以外还要做跨域支持。</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查不通过，返回错误</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查不通过，返回错误</li>
-<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; Req Filter1: 跨域检查通过，继续请求 -&gt; Req Filter2: 权限检查通过，继续请求 -&gt; 服务器A线程</li>
-</ul>
-<p><code>Res Filter</code>在每次请求执行之后运行，那么它能干什么呢？它可以配合<code>Req Filter</code>实现缓存处理。</p>
-<p>比如每次请求回来以后放入缓存，每次请求之前判断缓存是否存在，有的话直接返回。</p>
-<p>处理流程如下：</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存不存在，继续请求 -&gt; 服务器A线程 -&gt; Res Filter1: 请求成功，结果放到缓存</li>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; Req Filter1: 判断缓存存在，获取缓存并返回。</li>
-</ul>
-<p>开始代码改造，增加Req filter</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> <span class="built_in">this</span>.backendUrls.get(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>继续增加Res Filter</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">handleResponse</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> HttpResponse endpointResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] body = EntityUtils.toByteArray(endpointResponse.getEntity());</span><br><span class="line"></span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">        response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">        response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, Integer.parseInt(endpointResponse.getFirstHeader(<span class="string">&quot;Content-Length&quot;</span>).getValue()));</span><br><span class="line">        <span class="comment">// res filter 请求结束执行</span></span><br><span class="line">        filter.filter(response);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        response = <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HTTP_1_1, NO_CONTENT);</span><br><span class="line">        exceptionCaught(ctx, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fullRequest != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!HttpUtil.isKeepAlive(fullRequest)) &#123;</span><br><span class="line">                ctx.write(response).addListener(ChannelFutureListener.CLOSE);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ctx.write(response);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ctx.flush();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Filter的具体实现，应该先有两个接口</p>
-<ul>
-<li>Req Filter</li>
-<li>Res Filter</li>
-</ul>
-<p>在有具体的实现类，可以通过配置文件，配置使用不同的Filter。</p>
-<p>比如实现一个权限检查的Req Filter</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CacheRequestFilter</span> <span class="keyword">implements</span> <span class="title class_">HttpRequestFilter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">filter</span><span class="params">(FullHttpRequest fullRequest, ChannelHandlerContext ctx)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取token</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">token</span> <span class="operator">=</span> fullRequest.headers().get(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">        <span class="comment">// 处理token</span></span><br><span class="line">        <span class="keyword">if</span> (!jwt.check(token)) &#123;</span><br><span class="line">            <span class="comment">// 返回错误</span></span><br><span class="line">            <span class="type">byte</span>[] body;</span><br><span class="line">            <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(HttpResponseStatus.HTTP_1_1, HttpResponseStatus.FORBIDDEN, Unpooled.wrappedBuffer(body));</span><br><span class="line"></span><br><span class="line">            response.headers().set(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">            response.headers().setInt(<span class="string">&quot;Content-Length&quot;</span>, <span class="number">0</span>);</span><br><span class="line">            ctx.write(response);</span><br><span class="line">            ctx.flush();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway10.jpg" alt="netty服务器"></p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway11.jpg" alt="netty服务器"></p>
-<p>负载均衡（Load Balancing）是一种计算机技术，用于在多个计算资源（如服务器、网络链路等）之间分配工作负载，以提高系统的整体性能、可靠性和可扩展性。</p>
-<p>负载均衡的基本原理</p>
-<ul>
-<li>资源分配：将用户的请求按照一定的算法和规则，均匀地分配到多个后端服务器上。这样可以避免单点服务器因承受过多请求而过载，同时充分利用所有可用服务器的资源。</li>
-<li>健康检查：负载均衡器会定期检查后端服务器的健康状态。例如，通过发送心跳包或尝试建立连接等方式，来确定服务器是否正常运行。如果发现某台服务器出现故障，负载均衡器会自动停止将请求分配到该服务器，直到其恢复正常。</li>
-</ul>
-<p>利用软件程序来实现负载均衡。软件负载均衡器可以安装在通用的服务器上，通过软件代码来处理请求的分发。这种方式相对硬件负载均衡成本较低，并且具有更好的灵活性，方便进行定制化和扩展。</p>
-<p>看一下<code>Nginx</code>的实现吧。</p>
-<p>Nginx：这是一个非常流行的开源软件负载均衡器。它可以作为反向代理服务器，将客户端请求转发到后端服务器。Nginx 支持多种负载均衡算法，如轮询（Round - Robin）、加权轮询（Weighted Round - Robin）、IP 哈希（IP - Hash）等。例如，在轮询算法中，Nginx 会按照顺序依次将请求分配到后端服务器列表中的每一台服务器上。假设后端有服务器 A、服务器 B 和服务器 C，第一个请求会被发送到服务器 A，第二个请求发送到服务器 B，第三个请求发送到服务器 C，然后再从服务器 A 开始循环。</p>
-<p>负载均衡的优势</p>
-<ul>
-<li>提高性能：通过将负载均匀分布在多个服务器上，可以充分利用服务器的资源，避免单点出现性能瓶颈。例如，在一个网站流量高峰期，如果只有一台服务器处理请求，可能会因为 CPU、内存或网络带宽等资源耗尽而导致响应速度变慢。而使用负载均衡将请求分散到多台服务器后，每台服务器处理的请求数量减少，响应时间可以得到有效缩短。</li>
-<li>增强可靠性：当某一台后端服务器出现故障时，负载均衡器可以将请求自动切换到其他正常的服务器，从而保证服务的连续性。这对于需要高可用性的应用（如电子商务网站、金融服务等）至关重要。例如，一个在线购物网站，如果没有负载均衡和容错机制，当一台服务器宕机时，可能会导致部分用户无法访问商品信息或进行购物操作，而有了负载均衡后，即使一台服务器出现问题，其他服务器仍可以继续处理请求，用户可能只是感觉到短暂的延迟，而不会出现服务完全中断的情况。</li>
-<li>便于扩展：随着业务的增长，可以方便地添加新的服务器到负载均衡池中，以应对不断增加的请求量。例如，一个新兴的互联网公司，其网站的用户访问量逐月增加。通过负载均衡，公司可以根据流量增长情况逐步添加服务器，而不需要对整个系统架构进行大规模的重新设计。负载均衡器可以自动将新添加的服务器纳入请求分配的范围，实现无缝的系统扩展。</li>
-</ul>
-<p>在看一下实现负载均衡以后的网关架构吧。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway12.jpg" alt="netty服务器"></p>
-<h2 id="负载均衡的算法"><a href="#负载均衡的算法" class="headerlink" title="负载均衡的算法"></a>负载均衡的算法</h2><p>那负载均衡具体是如何实现呢？看大头怎么说。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway13.jpg" alt="netty服务器"></p>
-<h3 id="轮询算法"><a href="#轮询算法" class="headerlink" title="轮询算法"></a>轮询算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway14.jpg" alt="netty服务器"></p>
-<p>下面是轮询算法的时序图。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway15.jpg" alt="netty服务器"></p>
-<ul>
-<li>原理：按照顺序依次将请求分配到后端服务的各个实例上。例如，有三个后端服务实例 A、B、C，第一个请求被路由到 A，第二个请求路由到 B，第三个请求路由到 C，然后又从 A 开始循环分配。这种算法简单公平，能均匀地分配请求负载。</li>
-<li>适用场景：适用于后端服务实例性能相近，处理能力相对均衡的情况。例如，多个相同配置的 Web 服务器提供相同的静态网页服务，使用轮询算法可以很好地平衡请求流量。</li>
-</ul>
-<p>轮询的基本执行流程如下：</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
-<li>请求C -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
-<li>请求D -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器1</li>
-<li>请求E -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器2</li>
-<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器3</li>
-</ul>
-<p>看一段代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> urls.get(current);</span><br><span class="line">        current++;</span><br><span class="line">        current = current % urls.size();</span><br><span class="line">        <span class="keyword">return</span> url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="加权轮询算法"><a href="#加权轮询算法" class="headerlink" title="加权轮询算法"></a>加权轮询算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway16.jpg" alt="netty服务器"></p>
-<p>下面是加权轮询算法的时序图。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway17.jpg" alt="netty服务器"></p>
-<ul>
-<li>原理：为每个后端服务实例分配一个权重值，权重表示该实例相对处理能力的大小。在分配请求时，按照权重比例来分配。例如，服务实例 A 的权重为 5，服务实例 B 的权重为 3，服务实例 C 的权重为 2，那么在总共 10 次请求分配中，A 会被分配 5 次，B 会被分配 3 次，C 会被分配 2 次。</li>
-<li>适用场景：当后端服务实例的性能不同，比如部分实例配置更高、处理能力更强时，通过加权轮询可以让性能强的实例处理更多的请求。例如，有新老两代服务器，新服务器性能是老服务器的两倍，就可以给新服务器分配更高的权重，让其承担更多的请求负载。</li>
-</ul>
-<p>加设3个服务器权重是5，3，2.</p>
-<p>加权轮询的基本执行流程如下：</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 3 2 因此选择服务器1   PS:当前服务器权重为-5 3 2</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 6 4 因此选择服务器2   PS:当前服务器权重为0 -4 4</li>
-<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 -1 6 因此选择服务器3  PS:当前服务器权重为5 -1 -4</li>
-<li>请求D -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为10 2 -2 因此选择服务器1   PS:当前服务器权重为0 2 -2</li>
-<li>请求E -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 5 0 因此选择服务器1   PS:当前服务器权重为-5 5 0</li>
-<li>请求F -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为0 8 2 因此选择服务器2   PS:当前服务器权重为0 -2 2</li>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; 服务器权重为5 1 4 因此选择服务器1  PS:当前服务器权重为-5 1 4</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker4线程 -&gt; 服务器权重为0 4 6 因此选择服务器3   PS:当前服务器权重为0 4 -4</li>
-<li>请求C -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; 服务器权重为5 7 -2 因此选择服务器2   PS:当前服务器权重为5 -3 -2</li>
-<li>请求D -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; 服务器权重为10 0 0 因此选择服务器1   PS:当前服务器权重为0 0 0</li>
-</ul>
-<p>可以看到上面10次请求结果，服务器1分配了5次请求，服务器2分配了3次请求，服务器3分配了2次请求。</p>
-<p>看一段代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightedRoundRobinRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;BackendServer&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        BackendServer selectedServer;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第一步：计算总权重，并更新每个服务器的当前权重</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            totalWeight += server.weight;</span><br><span class="line">            server.currentWeight += server.weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第二步：找出当前权重最大的服务器作为本次选择的服务器</span></span><br><span class="line">        <span class="keyword">for</span> (BackendServer server : urls) &#123;</span><br><span class="line">            <span class="keyword">if</span> (server.currentWeight &gt; selectedServer.currentWeight) &#123;</span><br><span class="line">                selectedServer = server;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三步：将选中的服务器的当前权重减去总权重，用于下一轮的权重计算和比较</span></span><br><span class="line">        selectedServer.currentWeight -= totalWeight;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> selectedServer.url;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway18.jpg" alt="netty服务器"></p>
-<p>下面是哈希算法的时序图。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway19.jpg" alt="netty服务器"></p>
-<p>使用IP进行哈希算法</p>
-<ul>
-<li>原理：根据请求客户端的 IP 地址计算一个哈希值，然后通过这个哈希值来确定将请求路由到后端服务的哪个实例。相同 IP 地址的请求会始终被路由到同一个后端实例，除非后端实例的数量发生变化。</li>
-<li>适用场景：适用于需要保证特定客户端的请求始终由同一个后端实例处理的场景。例如，在一些有状态的服务中，如需要保持用户会话状态（如购物车信息等），通过 IP 哈希可以确保用户的每次请求都能路由到保存其会话状态的后端服务器。</li>
-</ul>
-<p>哈希算法的基本执行流程如下：</p>
-<ul>
-<li>请求A -&gt; 网关main线程 -&gt; 网关worker1线程 -&gt; hash(ip) % 3 结果是0，因此选择服务器1</li>
-<li>请求B -&gt; 网关main线程 -&gt; 网关worker2线程 -&gt; hash(ip) % 3 结果是1，因此选择服务器2</li>
-<li>请求C -&gt; 网关main线程 -&gt; 网关worker3线程 -&gt; hash(ip) % 3 结果是2，因此选择服务器3</li>
-</ul>
-<p>看一段代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HashRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">current</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls, ip)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> hash(ip) % urls.size();</span><br><span class="line">        <span class="keyword">return</span> urls.get(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<h3 id="随机算法"><a href="#随机算法" class="headerlink" title="随机算法"></a>随机算法</h3><p><img src="https://thepatterraining.github.io/images/java/gateway/gateway20.jpg" alt="netty服务器"></p>
-<p>随机算法的时序图，原理啥的就不放了，因为太简单了，就是取一个(0,2)开区间的一个随机数。是0就服务器1，1就服务器2，2就服务器3.</p>
-<p>简单的代码实现。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RandomRouter</span> <span class="keyword">implements</span> <span class="title class_">HttpEndpointRouter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">route</span><span class="params">(List&lt;String&gt; urls)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> urls.size();</span><br><span class="line">        <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>(System.currentTimeMillis());</span><br><span class="line">        <span class="keyword">return</span> urls.get(random.nextInt(size));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来只要修改一下获取请求url的代码就可以了。改成从负载均衡获取请求的url，而不是固定取第一个。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handle</span><span class="params">(<span class="keyword">final</span> FullHttpRequest fullRequest, <span class="keyword">final</span> ChannelHandlerContext ctx, HttpRequestFilter filter)</span> &#123;</span><br><span class="line">    <span class="comment">// 这里通过负载均衡的路由获取请求的url</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">backendUrl</span> <span class="operator">=</span> router.route(<span class="built_in">this</span>.backendUrls);</span><br><span class="line">    <span class="keyword">final</span> <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> backendUrl + fullRequest.uri();</span><br><span class="line">    <span class="comment">// Req filter 请求前执行</span></span><br><span class="line">    filter.filter(fullRequest, ctx);</span><br><span class="line">    proxyService.submit(()-&gt;fetchGet(fullRequest, ctx, url));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h2><p>当实现这些以后，小白很高兴。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway21.jpg" alt="netty服务器"></p>
-<p>小白想知道当后端多个服务器，一个挂了怎么办呢？网关又不知道它挂了，把流量请求过去了，结果服务器挂了，那不就请求失败了吗？</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway22.jpg" alt="netty服务器"></p>
-<p>我们可以通过<code>健康检查机制</code>来解决，添加<code>Zookeeper</code>作为健康检查机制，服务器向Zookeeper注册服务，如果服务器挂了那么Zookeeper就会知道。网关通过Zookeeper来获取现在的服务器列表，然后再通过负载均衡选择服务器。</p>
-<p>一般最常用的就是<code>心跳检测</code>。</p>
-<p>什么是心跳检测呢？</p>
-<p>就是每隔一段时间，发送一个请求，看是否正常返回，如果是，那么服务器就正常，如果不是，比如超时之类的就认为服务器挂了，那么接下来的请求流量就不分给这个服务器了，从服务器列表中移除，啥时候发送心跳检测，发现服务器正常返回了，那么就再放到服务器列表中。</p>
-<p>也可以直接通过<code>Zookeeper</code>这种额外的组件来实现。服务器跟<code>Zookeeper</code>通信，服务器列表通过<code>Zookeeper</code>获取。</p>
-<p>具体的时序图如下。<br><img src="https://thepatterraining.github.io/images/java/gateway/gateway23.jpg" alt="netty服务器"></p>
-<p>健康检查的代码就不放了，就当作作业了哈哈，有兴趣的小伙伴可以自己实现一个放到评论区哦～</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>小白又自己实现了一个网关程序，可以开心的回去交差啦。</p>
-<p><img src="https://thepatterraining.github.io/images/java/gateway/gateway24.jpg" alt="netty服务器"></p>
-<p>一个基本的单体网关就实现完成了。</p>
-<p>其实还有一些其他的问题，比如网关挂了怎么办？那么可以部署多个网关节点，组成集群。</p>
-<p>那么集群的话就需要引入<code>Raft</code>这种分布式共识协议来进行leader节点选择，信息同步。</p>
-<p>那么多个网关节点的元信息放在哪里呢？当然也可以放在<code>Zookeeper</code>里面啦～</p>
-<p>更多知识下期介绍～</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2501,7 +2575,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

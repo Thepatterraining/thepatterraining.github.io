@@ -196,6 +196,293 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html" class="post-title-link" itemprop="url">mysql事务详解-4种事务隔离界别该怎么选择</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-22 08:57:57" itemprop="dateCreated datePublished" datetime="2020-04-22T08:57:57+08:00">2020-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html" class="post-meta-item leancloud_visitors" data-flag-title="mysql事务详解-4种事务隔离界别该怎么选择" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="mysql事务详解-4种事务隔离级别该怎么选择"><a href="#mysql事务详解-4种事务隔离级别该怎么选择" class="headerlink" title="mysql事务详解-4种事务隔离级别该怎么选择"></a>mysql事务详解-4种事务隔离级别该怎么选择</h1><p>事务要保证ACID,其中就有隔离性。</p>
+<p>当我们有多个事务在执行的时候，如果保证每个事务都是隔离的，而不是数据混乱的呢？sql标准的四种隔离级别如下：</p>
+<ul>
+<li>读未提交 RU(Read Uncommitted),在这个级别下，是所有数据共享的，A事务在执行的任何操作，B事务都能看见，不管有没有提交。</li>
+<li>读已提交 RC(Read Committed),在这个级别下，只有A事务提交的数据，B事务才能看见。提交前的数据对其他事务是不可见的。</li>
+<li>可重复读 RR(Repeatable Read),在这个级别下，一个事务内读取的数据都是重复的，也就是都是一致的，就算别的事务提交了数据，你读取的还是原来的数据。</li>
+<li>串行化 (serializable)， 对于同一行记录，写会加写锁，读会加读锁。</li>
+</ul>
+<h2 id="事务隔离的原理"><a href="#事务隔离的原理" class="headerlink" title="事务隔离的原理"></a>事务隔离的原理</h2><p>这些是怎么做到的呢？因为事务是具备回滚功能的，如果一旦事务出错就会回滚整个事务。</p>
+<p>用过github的应该都知道，github上的代码是具备回滚功能的，如果上线之后发现bug，会回滚到上一个版本，github就是基于版本控制的。</p>
+<p>事务同样是基于版本控制的。有一个<code>undo log</code>回滚日志来记录这些版本。比如对于一行用户数据：</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:13245678976, pwd: 123456}</p>
+</blockquote>
+<p>事务1进行了修改手机号操作,这时候还没有提交。数据库就会有两个版本的数据。这些都记录在undo log里面，这也就是所谓的<code>MVCC</code>的概念。</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:13245678976, pwd: 123456} 原始版本<br>{id: 1, name: 张三, mobile:12322223333, pwd: 123456} 事务1版本</p>
+</blockquote>
+<p>事务2同时启动，但是稍后进行查询操作，获取用户信息，如果你是读未提交级别，那么读取的是事务1版本数据：</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:12322223333, pwd: 123456} 事务1版本</p>
+</blockquote>
+<p>如果你是其他级别，那么你读取的是原始版本数据：</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:13245678976, pwd: 123456} 原始版本</p>
+</blockquote>
+<p>如果事务1已经提交了修改，那么事务2在读已提交级别下获取的也是事务1版本数据。</p>
+<p>这个是怎么判断的呢？</p>
+<p>每个事务有自己的事务id，这个id是单调递增的。在每行数据的版本上会记录事务id。在事务启动的时候，会维护一个已经启动但没有提交的事务的<code>有序数组</code>。有序也就是从小到大，排好序了。如果事务id小于这个数组中第一个id，那么这个事务一定是一个已经提交的事务。如果事务id大于这个数组，那么这个事务是在我之后启动的事务。如果事务id在这个数组中，那么他在我启动的时候一定是未提交的。</p>
+<p>拿上面的数据举例，原始版本的事务id为100，事务1的事务id为101，事务2的事务id为102。</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:13245678976, pwd: 123456} 原始版本 100<br>{id: 1, name: 张三, mobile:12322223333, pwd: 123456} 事务1版本 101</p>
+</blockquote>
+<p>当事务2启动后，事务数组为[101]，假设这时候事务1未提交。</p>
+<p>如果是可重复读级别下，那么当查询到最新版本事务id&#x3D;101,在数组中，那么不可见，接着查询上一个版本，上一个版本事务id &#x3D; 100，发现小于数组最小值，那么这个值是正确的，取出这个版本的数据。</p>
+<p>这样就算后面有事务提交，但是它提交后的版本的事务id不满足要求，那么查看到的数据永远都是同一个版本的数据，这也就是<code>一致性读</code>。</p>
+<p>但是如果你在事务2中先更新了密码再执行查询，那么就会有三个版本的数据</p>
+<blockquote>
+<p>{id: 1, name: 张三, mobile:13245678976, pwd: 123456} 原始版本 100<br>{id: 1, name: 张三, mobile:12322223333, pwd: 123456} 事务1版本 101<br>{id: 1, name: 张三, mobile:12322223333, pwd: 123456789} 事务2版本 102</p>
+</blockquote>
+<p>这时候查询，事务数组为[101,102]。</p>
+<p>再可重复读级别下，查询到最新数据事务id&#x3D;102，发现和自己的一样，那么是可见的。因为是自己修改的，自己修改的不能不让自己看到啊，所以这时候查询到的数据会是最新数据。这也就是<code>当前读</code>。</p>
+<p>可重复读级别和读已提交级别的区别如下：</p>
+<ul>
+<li>可重复读是再事务开始时候创建一致性视图，数组，这些东西，它只认事务启动前提交的数据。</li>
+<li>读已提交级别则是每次执行sql语句的时候创建一致性视图，数组，这些东西，它认的是语句启动前提交的数据。</li>
+</ul>
+<p>这四个隔离级别，常用的就是读已提交和可重复读两个级别。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" class="post-title-link" itemprop="url">mysql事务怎么实现的，什么是两阶段提交</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-17 18:34:10" itemprop="dateCreated datePublished" datetime="2020-04-17T18:34:10+08:00">2020-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" class="post-meta-item leancloud_visitors" data-flag-title="mysql事务怎么实现的，什么是两阶段提交" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="mysql事务怎么实现的，什么是两阶段提交"><a href="#mysql事务怎么实现的，什么是两阶段提交" class="headerlink" title="mysql事务怎么实现的，什么是两阶段提交"></a>mysql事务怎么实现的，什么是两阶段提交</h1><p>我们都知道使用mysql的事务，准确来说是innoDB引擎的事务，可以保证数据的一致性，原子性等。那么为什么呢？</p>
+<h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>innoDB里面用到了一个叫做<code>redo log</code>（重做日志）的东西。</p>
+<p>当你进行数据库操作的时候，innoDB并不会直接操作磁盘数据，因为这样很慢很慢。它使用了<code>wal</code>的机制，所有的操作先记录在redo log。等没事干了或者redo log满了再把数据刷到磁盘里面。这样的话他刷盘的时候就是顺序io，避免了使用随机io。redo log的大小我们可以通过参数设置。</p>
+<h3 id="缓冲池"><a href="#缓冲池" class="headerlink" title="缓冲池"></a>缓冲池</h3><p>在innoDB里面还有一个缓冲池，buffer_pool，这个缓冲池是在内存中的。为啥有缓冲池，因为磁盘的速度太慢了，如果每次都直接操作磁盘，那就完犊子了。就需要用到内存来缓冲一下，提升性能。</p>
+<p>从innoDB里面读取数据的时候，实际上读取的是缓冲池，只有当缓冲池中没有记录的时候，才会读取磁盘，并且将记录放入缓冲池方便下次读取。</p>
+<p>缓冲池的大小可以通过<code>innodb_buffer_pool_size</code>参数来指定。</p>
+<p>缓存池中基本有以下组件：</p>
+<ul>
+<li>索引页</li>
+<li>数据页</li>
+<li>undo页</li>
+<li>插入缓冲（insert buffer)</li>
+<li>自适应哈希索引</li>
+<li>锁信息</li>
+<li>数据字典</li>
+<li>redo log buffer</li>
+</ul>
+<p>缓冲池既然是在内存中，有固定大小，就会有淘汰机制，缓冲池使用的是LRU机制，也就是最近最少使用的会被淘汰掉。</p>
+<p>这里面还有一个redo log buffer，这里面存储的就是上面说的redo log的信息了，会先写入这个buffer，然后再刷入redo log里面。有一个参数<code>innodb_log_buffer_size</code>来控制redo log buffer的大小。这个不用太大，因为一般每秒都会把这里面的刷新到redo log。</p>
+<p>redo log buffer刷新到redo log的三种情况：</p>
+<ul>
+<li>每秒刷新</li>
+<li>事务提交时候刷新</li>
+<li>当redo log buffer剩余空间少于一半的时候刷新</li>
+</ul>
+<h3 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h3><p>redo log是innoDB引擎的日志，那mysql自己同样有日志，就是这个binlog日志。binlog 里面记载了mysql的所有变化，可以用来恢复数据库，创建备库，从库等。可以查看我的<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105248917">mysql读写分离</a>。</p>
+<p>那为什么有两个日志呢，这是因为mysql最开始默认使用的是myisam引擎，myisam引擎没有redo log，mysql就有自己的binlog。innoDB引擎是后来加入mysql的。所以他们各自有各自的日志。</p>
+<p>这两个日志有什么区别呢？</p>
+<ol>
+<li>rodo log是innoDB引擎的，binlog 是mysql的，binlog所有引擎都可以使用。</li>
+<li>redo log记录的是“再某个数据页上修改了啥”，binlog记录的是你的sql。</li>
+<li>redo log是固定大小，循环写入的，binlog没有大小限制，不断追加。</li>
+</ol>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>那一个事务怎么执行的呢，比如更新一个登录时间。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> login_time <span class="operator">=</span> ? <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>走完了前面的连接器，分析器，优化器，执行器。执行器会去innoDB更新数据了。</li>
+<li>他会先取出这条数据，取出id &#x3D; 1的数据，id是主键索引，和数据在一起。innoDB直接查找主键索引树找到对应数据就返回了。当然，如果数据再缓冲池，那么直接返回了。</li>
+<li>执行器拿到以后再修改登陆时间，然后再次调用innoDB引擎的接口。</li>
+<li>innoDB把数据更新到内存中，同时更新redo log，把redo log标记成待提交状态。</li>
+<li>执行器写入binlog。</li>
+<li>执行器调用innoDB引擎的接口，innoDB把redo log标记成提交状态。</li>
+</ul>
+<p>这个时候整个更新事务完成。</p>
+<p>为什么要这么做呢？</p>
+<p>因为有两个日志的原因，所以两个日志都要写入，要保证这两个日志的一致性。那么如果不使用两阶段提交的方式，直接写入redo log然后写入binlog有什么问题呢？</p>
+<p>假设，写完redo log，系统挂了。那么重启后innoDB引擎会根据redo log日志来恢复数据库。这时候数据库里面的数据是正确的。但是binlog丢失了啊。如果你有从库，那么从库的数据就错误了。因为从库的数据是通过binlog同步的。</p>
+<p>如果把这两个步骤反过来呢，先写入binlog 再写入redo log呢？</p>
+<p>那么就会redo log丢失，数据库实际上没有更新。但是从库通过binlog更新了。还是数据不一致。</p>
+<p>所以需要<code>两阶段提交</code>来保证数据一致性。如果这时候写完redo log后挂掉了，因为redo log和binlog都没有数据，所以会回滚事务。<br>如果binlog和redo log都写入了，但是没有提交，那么重启后会提交事务。这样binlog和数据库就都有数据了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1257,223 +1544,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html" class="post-title-link" itemprop="url">基于docker快速搭建多平台laravel环境-laradock</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-05 14:48:27" itemprop="dateCreated datePublished" datetime="2020-04-05T14:48:27+08:00">2020-04-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html" class="post-meta-item leancloud_visitors" data-flag-title="基于docker快速搭建多平台laravel环境-laradock" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基于docker快速搭建多平台laravel环境-laradock"><a href="#基于docker快速搭建多平台laravel环境-laradock" class="headerlink" title="基于docker快速搭建多平台laravel环境-laradock"></a>基于docker快速搭建多平台laravel环境-laradock</h1><p>现在docker技术越来越火，docker的应用也越来越多。</p>
-<p>我们为什么要用docker呢，因为它能提供你一个纯净的环境，能统一所有开发人员的环境，公司的技术有很多人，那每个人装的环境都可能不一样，你是php7.3，他是php7.0，你是mysql8.0，他是mysql5.6，这些环境上的差异有时候会导致代码的错误。</p>
-<p>还有环境这东西装一次就够用了，你家里的电脑环境和公司的环境也有可能不一致。使用docker装环境之后，我们可以装完之后打包起来，在任何一个docker上运行这个配置文件都可以生成相同的环境。</p>
-<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><blockquote>
-<p> git clone <a target="_blank" rel="noopener" href="https://github.com/Laradock/laradock.git">https://github.com/Laradock/laradock.git</a></p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E5%9F%BA%E4%BA%8Edocker%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E5%A4%9A%E5%B9%B3%E5%8F%B0laravel%E7%8E%AF%E5%A2%83-laradock.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-title-link" itemprop="url">你不知道的队列使用技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-27 16:34:31" itemprop="dateCreated datePublished" datetime="2020-03-27T16:34:31+08:00">2020-03-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">队列</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-meta-item leancloud_visitors" data-flag-title="你不知道的队列使用技巧" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><blockquote>
-<p>队列是一种先进先出的数据结构</p>
-</blockquote>
-<p>我们的程序在什么情况下会用到队列呢？<code>异步处理</code>。</p>
-<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>我们一般写的web程序都是同步执行的，比如前端发送一个登录请求，后端一步一步的处理，查询用户，判断密码等等，返回登陆成功或者错误信息，前端阻塞等到后端返回后进行下一步处理。</p>
-<p>那么这种程序有一个什么问题呢，首先，前后端建立的http连接是有超时时间的，当后端处理请求时间过长会返回超时错误。</p>
-<p>就算没有超时的限制，对于用户体验来讲，当你的程序响应很慢，那么用户就会觉得，这什么玩意，真垃圾！！！</p>
-<h3 id="导出场景"><a href="#导出场景" class="headerlink" title="导出场景"></a>导出场景</h3><p>基于这些原因，我们可以需要快速的处理用户请求。像导出大文件的时候，没办法很快的给用户响应怎么办呢，我们可以用异步的方式处理，先给用户返回正在导出，或者导出成功。</p>
-<p>这个时候我们后台程序真的导出了嘛？没有，我们可以将这个导出请求放入一个队列中，等待另外一个处理程序将队列中的数据取出进行处理，这个处理程序一直监听队列，如果发现队列有消息，就去取出来进行处理。在处理程序中可以根据数据类型的不同，把它送到具体的处理类中，比如导出数据，处理程序会分发给导出类进行处理，由导出类处理完成后，返回处理完成。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1546,7 +1616,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

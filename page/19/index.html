@@ -196,6 +196,223 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html" class="post-title-link" itemprop="url">k8s之etcd节点竞选</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-03 16:15:00" itemprop="dateCreated datePublished" datetime="2018-12-03T16:15:00+08:00">2018-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/etcd/" itemprop="url" rel="index"><span itemprop="name">etcd</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html" class="post-meta-item leancloud_visitors" data-flag-title="k8s之etcd节点竞选" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="竞选流程"><a href="#竞选流程" class="headerlink" title="竞选流程"></a>竞选流程</h3><p>etcd内部采用raft协议来实现，所以在etcd里面，节点有3个状态，一开始都是follower节点，然后接收leader的心跳信息，如果接收不到，就进入candidate进入下一轮term发起竞选，等到收到集群多数节点的投票时，该节点就会转变成新的leader节点。leader节点有可能出现故障，导致follower接收不到心跳，这时候就会发生上面的竞选，新的leader产生以后，旧的leader就会变成follower。其实就是有新的leader之后，所有其他节点都会变成follower。</p>
+<p>成为leader也是有条件的，比如你的数据完整性，在竞选投票的时候，如果其他节点发现你的数据不完整，是不会给你投票的。</p>
+<h3 id="节点损坏"><a href="#节点损坏" class="headerlink" title="节点损坏"></a>节点损坏</h3><p>节点可能会因为各种原因损坏，导致无法正常工作。如果是leader节点那么就会导致follower收不到心跳而触发竞选机制，如果是follower节点，那么我们可以将这个节点删除以后在创建新的节点。因为损坏的节点依然会被计算在etcd总节点之中。</p>
+<p>etcd采用基于仲裁模型的分布式共识，即（n + 1) &#x2F; 2成员（多数）必须就提案一致才能提交给集群。因此当有follower损坏的时候，我们需要先删除在创建，而不能先创建在删除。</p>
+<p>比如：如果有一个3个成员的集群，有一个成员损坏，那么这个集群仍然可以正常工作，这个时候删除损坏成员，该集群依然可以正常工作，然后添加新节点，这个行为是存在风险的，因为他可能会导致配置错误或无法加入集群，这种情况下，集群依然可以正常工作。而如果正确加入，依然可以正常工作。那我们想一下先增加新成员，如果增加失败，那么该集群总成员数量变成4个，而其中有1个早已损坏，还有一个刚添加的同样算是损坏，这将会使仲裁失效，所以默认情况下，etcd会拒绝这种成员的添加。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/k8s%E4%B9%8Betcd%E8%8A%82%E7%82%B9%E7%AB%9E%E9%80%89.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/k8s%E4%B9%8Betcd-%E4%B8%80.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/k8s%E4%B9%8Betcd-%E4%B8%80.html" class="post-title-link" itemprop="url">k8s之etcd基本操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-27 15:11:07" itemprop="dateCreated datePublished" datetime="2018-11-27T15:11:07+08:00">2018-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/etcd/" itemprop="url" rel="index"><span itemprop="name">etcd</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/k8s%E4%B9%8Betcd-%E4%B8%80.html" class="post-meta-item leancloud_visitors" data-flag-title="k8s之etcd基本操作" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/k8s%E4%B9%8Betcd-%E4%B8%80.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/k8s%E4%B9%8Betcd-%E4%B8%80.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>可以参考etcd的github </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/etcd-io/etcd">https://github.com/etcd-io/etcd</a></p>
+</blockquote>
+<p>如果是mac的话，简单的方式应该是运行如下命令</p>
+<blockquote>
+<p>brew install etcd</p>
+</blockquote>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>etcd是一个分布式键值存储，旨在可靠，快速地保存和提供对关键数据的访问。它通过分布式锁定，领导者选举和写入障碍实现可靠的分布式协调。etcd集群旨在实现高可用性和永久数据存储和检索。</p>
+<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><p>可以使用<code>goreman</code>来在本地启动多个节点</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/k8s%E4%B9%8Betcd-%E4%B8%80.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%B4%A0%E6%95%B0%E5%AF%B9%E7%8C%9C%E6%83%B3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1052,7 +1269,7 @@ rabbitMq队列
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

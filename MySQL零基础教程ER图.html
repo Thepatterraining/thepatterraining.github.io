@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL零基础教程本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。基础概念和SQL已经更新完成。 接下来是应用篇，应用篇的内容大致如下图所示。  ER图接下来讲讲ER图，这个是在实际工作中也会使用到的东西。 大家应该都听过ER图，全称是（Entity Relationship）实体关系图。 借用维基百科的介绍：  ER模型，全称为实体联系模型、实体关系模型或实体联">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL零基础教程ER图">
+<meta property="og:url" content="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="MySQL零基础教程本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。基础概念和SQL已经更新完成。 接下来是应用篇，应用篇的内容大致如下图所示。  ER图接下来讲讲ER图，这个是在实际工作中也会使用到的东西。 大家应该都听过ER图，全称是（Entity Relationship）实体关系图。 借用维基百科的介绍：  ER模型，全称为实体联系模型、实体关系模型或实体联">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-10.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-11.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-12.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-13.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-03-05T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-03-17T06:08:27.410Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-2.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL零基础教程ER图 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL零基础教程ER图
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-05 10:12:47" itemprop="dateCreated datePublished" datetime="2025-03-05T10:12:47+08:00">2025-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-17 14:08:27" itemprop="dateModified" datetime="2025-03-17T14:08:27+08:00">2025-03-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程ER图" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h2><p>接下来讲讲ER图，这个是在实际工作中也会使用到的东西。</p>
+<p>大家应该都听过ER图，全称是（Entity Relationship）实体关系图。</p>
+<p>借用维基百科的介绍：</p>
+<blockquote>
+<p>ER模型，全称为实体联系模型、实体关系模型或实体联系模式图（ERM）（英语：Entity-relationship model）由美籍台湾人计算机科学家陈品山发明，是概念数据模型的高层描述所使用的数据模型或模式图。</p>
+</blockquote>
+<p>ER图通常用在<code>设计数据库</code>的阶段，当我们接到一个需求以后，我们要进行一些<code>技术设计</code>，在这个阶段如果涉及到一些对于数据库的修改，我们可以使用ER图进行设计。</p>
+<p>万事万物都有两面性，因此我们看一下好处和坏处，如何使用由大家自己权衡。</p>
+<ul>
+<li>好处：好处是设计直观、在设计之后也方便给大家讲为什么这样设计，还有留存文档，当后续需要修改设计的时候直接修改即可。</li>
+<li>坏处：坏处就是需要花时间去画ER图了。</li>
+</ul>
+<h3 id="ER图的基本概念"><a href="#ER图的基本概念" class="headerlink" title="ER图的基本概念"></a>ER图的基本概念</h3><p>ER图的主要组成部分</p>
+<ul>
+<li>实体（Entity）：<ul>
+<li>实体是数据库中具有相同属性集合的对象。例如，学生、课程、教师等。</li>
+<li>在ER图中，实体通常用矩形表示，矩形内写上实体的名称。</li>
+</ul>
+</li>
+<li>属性（Attribute）：<ul>
+<li>属性是实体的特征或性质。例如，学生的属性可以包括学号、姓名、年龄等。</li>
+<li>在ER图中，属性通常用椭圆表示，椭圆内写上属性的名称，并用线连接到对应的实体。</li>
+</ul>
+</li>
+</ul>
+<p>简单来讲，实体就是一个表，属性就是表里面的一个字段。</p>
+<p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
+<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<ul>
+<li>关系（Relationship）：<ul>
+<li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
+<li>在ER图中，关系通常用菱形表示，菱形内写上关系的名称，并用线连接到相关的实体。</li>
+</ul>
+</li>
+<li>关系的类型：<ul>
+<li>一对一关系（1:1）：一个实体与另一个实体之间存在一对一的联系。例如，一个学生对应一个学号。</li>
+<li>一对多关系（1:N）：一个实体与多个实体之间存在联系。例如，一个教师可以教授多个课程。</li>
+<li>多对多关系（M:N）：多个实体与多个实体之间存在联系。例如，一个学生可以选修多个课程，一个课程也可以被多个学生选修。</li>
+</ul>
+</li>
+</ul>
+<p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
+<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><code>关系</code>这个东西，简单来说就是通过<code>两个字段</code>链接进行实现的。</p>
+<h4 id="多对多关系"><a href="#多对多关系" class="headerlink" title="多对多关系"></a>多对多关系</h4><p>比如我们有<code>角色</code>表和<code>管理员用户</code>表，这两个表，是多对多关系。</p>
+<p>所以我们就需要用一张单独的表来存储这个关系。比如我们新建第三个表叫<code>角色和管理员用户关系</code>表。</p>
+<p><code>角色和管理员用户关系</code>表有字段内容如下：</p>
+<ul>
+<li>id: 该表的主键。</li>
+<li>roleId: 角色表的主键。用来关联角色信息。</li>
+<li>adminId: 管理员用户表的主键。用来关联管理员用户信息。</li>
+</ul>
+<p>可以看到，这个关系就是通过<code>角色和管理员用户关系</code>的两个字段来表示的。</p>
+<p><code>角色</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">前台角色</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">行政角色</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">开发角色</td>
+</tr>
+</tbody></table>
+<p><code>管理员用户</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张三</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李四</td>
+</tr>
+</tbody></table>
+<p><code>角色和管理员用户关系</code>表内容如下：</p>
+<p>根据表的数据我们很清晰的能看出来，<code>张三</code>既拥有<code>前台角色</code>也拥有<code>行政角色</code>，可谓身兼数职。当代牛马。<code>李四</code>则拥有一个<code>开发角色</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">roleId</th>
+<th align="left">adminId</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">1</td>
+<td align="left">2</td>
+</tr>
+</tbody></table>
+<p>记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>这里的两个字段就是<code>roleId</code>和<code>adminId</code>。</p>
+<p><code>roleId = 1</code>表示的是角色表中，<code>id = 1</code>的<code>前台角色</code>，对应的数据是<code>adminId = 1</code>的数据，也就是管理员表中<code>id = 1</code>的管理员<code>张三</code>。</p>
+<p>如此，我们就知道了，张三拥有角色：前台角色。</p>
+<h4 id="一对多关系"><a href="#一对多关系" class="headerlink" title="一对多关系"></a>一对多关系</h4><p><code>一对多关系</code>和<code>多对一关系</code>基本一样。就是反过来了。</p>
+<p>一个老师可以教授多个课程，比如我们有两个表，一个<code>老师表</code>，一个<code>课程表</code>。</p>
+<p>一对多关系比较灵活，记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>先看老师表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张老师</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李老师</td>
+</tr>
+</tbody></table>
+<p>课程表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">语文课程</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">数学课程</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">英语课程</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>为什么说一对多关系比较灵活呢，可以看到，我们这里用到的关联字段是老师表的<code>id</code>和课程表的<code>teacher_id</code>。而不需要再多加一张表了。</p>
+<blockquote>
+<p>这里要记住一个重点！！！！<br>多出来的这个teacher_id 字段要放在一对多关系中的 多 的这个表里面。</p>
+</blockquote>
+<p>什么是一对多关系中的<code>多</code>的关系呢？</p>
+<p>比如上面一个老师教多个课程，那么<code>多</code>的关系就是课程信息。</p>
+<p>当然了，如果你想要多加一张表来存储这两个字段的话也是可以的。</p>
+<p>比如增加下表，教授课程表，如果增加了这张表，就可以把课程表中的<code>teacher_id</code>字段删除了：</p>
+<p>下表也代表了<code>张老师</code>教授语文课程和英语课程，李老师教授数学课程。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">course_id</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">3</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<h4 id="一对一关系"><a href="#一对一关系" class="headerlink" title="一对一关系"></a>一对一关系</h4><p>一对一关系是最简单的。其实算是<code>一对多关系</code>的一个<code>真子集</code>。</p>
+<p>为什么这么说呢？</p>
+<p>我们假设，一个老师只能教授一个课程，那么上面的两个表是不是就变成了<code>一对一关系</code>呢？所以我们说一对一关系是一对多关系的一个真子集。</p>
+<h3 id="ER图实践"><a href="#ER图实践" class="headerlink" title="ER图实践"></a>ER图实践</h3><p>接下来我们来实践一下ER图。</p>
+<p>我这里使用的工具是免费的在线画图工具<a target="_blank" rel="noopener" href="https://www.processon.com/i/637308dd762131535d6884f7?full_name=osgpjw20iEaJn-L">Processon</a></p>
+<h4 id="多对多关系的ER图"><a href="#多对多关系的ER图" class="headerlink" title="多对多关系的ER图"></a>多对多关系的ER图</h4><p>首先来画出多对多关系的ER图吧。</p>
+<p>以上面的三个表为例子。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 管理员实体，管理员实体后面会转化成管理员表。</li>
+<li>实体2: 角色实体，角色实体后面会转化成角色表。</li>
+<li>关系：两个实体之间的多对多关系，多对多关系后期需要转换成一张关系表。</li>
+</ul>
+<p>我们首先画出第一个实体，<code>管理员实体</code>使用矩形表示。如下图。</p>
+<p><img src="/../images/mysql/mysql3-4.png" alt="概念学习"></p>
+<p>接下来我们给管理员实体增加属性，属性使用<code>椭圆</code>来表示，如下图。</p>
+<p><img src="/../images/mysql/mysql3-3.png" alt="概念学习"></p>
+<p>现在我们画出第二个实体，<code>角色实体</code>和对应的属性。</p>
+<p><img src="/../images/mysql/mysql3-5.png" alt="概念学习"></p>
+<p>接下来我们画出关系，关系使用<code>棱形</code>来表示，并且使用线连接两个实体，表示是这两个实体之间的关系。多对多关系还需要在两边分别标记上<code>n</code>和<code>m</code>。</p>
+<p>此外，关系还要有一个名称，用来描述，比如<code>管理员拥有角色，角色被管理员拥有</code>。所以我们可以用<code>拥有</code>关系来描述这两个实体之间的关系。</p>
+<p><img src="/../images/mysql/mysql3-6.png" alt="概念学习"></p>
+<p>如此，我们就完成了一个多对多关系的ER图。</p>
+<h4 id="一对多关系的ER图"><a href="#一对多关系的ER图" class="headerlink" title="一对多关系的ER图"></a>一对多关系的ER图</h4><p>接下来再实践一次一对多关系的ER图，最好大家先动手画一次，再跟我们的结果来对比，只有自己实操了才行。</p>
+<p>实操时间。。。。。</p>
+<p>好了，实操结束。</p>
+<p>我们来看一下一对多关系如何画图。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 教师实体，后面变成教师表。</li>
+<li>实体2: 课程实体，后面变成课程表。</li>
+<li>关系：两个实体之间的一对多关系，一对多关系可以是一个字段也可以是一个表。</li>
+</ul>
+<p>首先画出第一个实体和属性，也就是教师实体。</p>
+<p><img src="/../images/mysql/mysql3-7.png" alt="概念学习"></p>
+<p>接下来画出第二个实体和属性，也就是课程实体。课程实体这里有一个属性是<code>教师ID</code>，这代表我们使用这个字段，而不是增加了一个关系表。如果我们没有这个字段就代表我们要增加一个关系表。</p>
+<p><img src="/../images/mysql/mysql3-8.png" alt="概念学习"></p>
+<p>最后，画出关系并连线。这里关系名称我们选择教授，这个其实无所谓。能明白就好。重点是要标明一对多关系，可以看到<code>教师实体</code>上写的是1，<code>课程实体</code>上写的是n，代表一对多关系中，教师是1，课程是多。这个不能写反了。</p>
+<p><img src="/../images/mysql/mysql3-9.png" alt="概念学习"></p>
+<blockquote>
+<p>多对一关系的画起来是一样的，需要注意的就是关系上的1和n别写错了。</p>
+</blockquote>
+<h4 id="一对一关系的ER图"><a href="#一对一关系的ER图" class="headerlink" title="一对一关系的ER图"></a>一对一关系的ER图</h4><p>一对一关系的ER图和上面的差不多，我们举个例子吧。</p>
+<ul>
+<li>实体1: 用户实体，转化成用户表，存储用户信息。</li>
+<li>实体2: 用户账户实体，转化成用户账户表，存储用户的账号资金信息。</li>
+<li>关系：一对一关系，一个用户只能拥有一个用户账户。</li>
+</ul>
+<p>首先画出第一个实体，用户实体。属性包括ID、用户名称、手机号。</p>
+<p><img src="/../images/mysql/mysql3-10.png" alt="概念学习"></p>
+<p>接下来画出第二个实体，用户账户实体，属性包括ID、账户余额、用户ID。用户ID作为关联关系的字段，和一对多关系一样，就不需要单独加表了。</p>
+<p><img src="/../images/mysql/mysql3-11.png" alt="概念学习"></p>
+<p>最后，画出关系并连线，标上关系是一对一关系就可以了。</p>
+<p><img src="/../images/mysql/mysql3-12.png" alt="概念学习"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
+<p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
+<p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
+<p>此外，还有一个方法，就是使用在线工具<a target="_blank" rel="noopener" href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
+<p><img src="/../images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html" rel="prev" title="DDD概念详解">
+      <i class="fa fa-chevron-left"></i> DDD概念详解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ER%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">ER图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ER%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">ER图的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">多对多关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">一对多关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">一对一关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ER%E5%9B%BE%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.1.2.</span> <span class="nav-text">ER图实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB%E7%9A%84ER%E5%9B%BE"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">多对多关系的ER图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB%E7%9A%84ER%E5%9B%BE"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">一对多关系的ER图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E5%85%B3%E7%B3%BB%E7%9A%84ER%E5%9B%BE"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">一对一关系的ER图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

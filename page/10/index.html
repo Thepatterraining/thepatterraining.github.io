@@ -196,6 +196,258 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/wsl%E5%AE%89%E8%A3%85docker.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/wsl%E5%AE%89%E8%A3%85docker.html" class="post-title-link" itemprop="url">wsl安装docker</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-07 00:00:00" itemprop="dateCreated datePublished" datetime="2021-06-07T00:00:00+08:00">2021-06-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/wsl%E5%AE%89%E8%A3%85docker.html" class="post-meta-item leancloud_visitors" data-flag-title="wsl安装docker" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/wsl%E5%AE%89%E8%A3%85docker.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/wsl%E5%AE%89%E8%A3%85docker.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="wsl安装docker"><a href="#wsl安装docker" class="headerlink" title="wsl安装docker"></a>wsl安装docker</h1><p>wsl 使用的是ubuntu 20的版本，所以可以直接使用<code>apt</code>进行安装，docker官网的安装也是推荐使用的apt进行安装。</p>
+<p>需要先更新apt安装包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+
+<p>安装一些依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install \</span><br><span class="line">    apt-transport-https \</span><br><span class="line">    ca-certificates \</span><br><span class="line">    curl \</span><br><span class="line">    gnupg \</span><br><span class="line">    lsb-release</span><br></pre></td></tr></table></figure>
+
+<p>添加Docker官方的GPG密钥：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</span><br></pre></td></tr></table></figure>
+
+<p>添加docker的源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo \</span><br><span class="line">  &quot;deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \</span><br><span class="line">  $(lsb_release -cs) stable&quot; | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+<p>更新apt安装包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+
+<p>安装docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后启动docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service docker start</span><br></pre></td></tr></table></figure>
+
+<p>测试，运行hello world</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run hello-world</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-index%20template.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-index%20template.html" class="post-title-link" itemprop="url">ElasticSearch十四--ES-index template</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-09 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-09T00:00:00+08:00">2021-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-index%20template.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十四--ES-index template" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-index%20template.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-index%20template.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="index-template"><a href="#index-template" class="headerlink" title="index template"></a>index template</h1><h2 id="index-template-1"><a href="#index-template-1" class="headerlink" title="index template"></a>index template</h2><p>index template 可以帮助你设定 Mappings 和 Settins ，并按照一定的规则，自动匹配到新创建的索引上</p>
+<ul>
+<li>模板仅在一个索引被新创建时，才会产生作用。修改模板不会影响已经创建的索引</li>
+<li>可以设定多个索引模板，这些设置会根据一定的规则 合并到一起</li>
+<li>可以指定 Order的数值 控制 合并 的过程</li>
+</ul>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT _template/template_default</span><br><span class="line">&#123;</span><br><span class="line">  &quot;index_patterns&quot;:[&quot;*&quot;],</span><br><span class="line">  &quot;order&quot;: 0,</span><br><span class="line">  &quot;version&quot;: 1,</span><br><span class="line">  &quot;settings&quot;:&#123;</span><br><span class="line">    &quot;number_of_shards&quot;:1,</span><br><span class="line">    &quot;number_of_replicas&quot;:1</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="index-templalte-的工作方式"><a href="#index-templalte-的工作方式" class="headerlink" title="index templalte 的工作方式"></a>index templalte 的工作方式</h3><p>当一个新索引被创建</p>
+<ul>
+<li>应用 ES 的默认 settins 和 mappings</li>
+<li>应用 order 数值低的 index template 的 settings mappings</li>
+<li>应用 order 数值高的 index template 的 settings mappings</li>
+<li>应用 用户 自定义的 settings mappings</li>
+</ul>
+<h2 id="Dynamic-template"><a href="#Dynamic-template" class="headerlink" title="Dynamic template"></a>Dynamic template</h2><p>根据 ES 识别的数据类型，结合字段名称，来动态设定字段类型</p>
+<ul>
+<li>所有的字符串类型都设定成 keyword 或者关闭 keyword 字段</li>
+<li>is 开头的字段都设置成 boolean</li>
+<li>long_ 开头的都设置成 long 类型</li>
+</ul>
+<h2 id="Aggregation-聚合"><a href="#Aggregation-聚合" class="headerlink" title="Aggregation 聚合"></a>Aggregation 聚合</h2><p>ES 除了搜索以外提供了统计分析的功能</p>
+<ul>
+<li>实时性高</li>
+<li>Hadoop</li>
+</ul>
+<p>通过聚合可以得到数据的概览，是分析和总结全套的数据，而不是寻找单个文档</p>
+<p>高性能，只需要一条语句，就可以从 ES 得到结果</p>
+<ul>
+<li>无需在客户端自己去实现分析逻辑</li>
+</ul>
+<p>比如 Kibana 中的可视化报表就是使用 聚合 实现的</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>Bucket Aggregation : 一些满足特定条件的集合，相当于 sql 里面的 group by 分组功能</p>
+<p>Metric Aggregatino : 提供数学运算，比如最大值，最小值，平均值 相当于 sql 里面的 count(),max()等函数功能</p>
+<p>Pipeline Aggregation: 可以二次聚合</p>
+<p>Matrix Aggregation: 支持对多个字段的操作并提供一个结果矩阵</p>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1384,325 +1636,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E6%98%BE%E5%BC%8Fmapping.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES-%E6%98%BE%E5%BC%8Fmapping.html" class="post-title-link" itemprop="url">ElasticSearch十二--ES--显式mapping</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES-%E6%98%BE%E5%BC%8Fmapping.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十二--ES--显式mapping" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES-%E6%98%BE%E5%BC%8Fmapping.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E6%98%BE%E5%BC%8Fmapping.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="显式mapping"><a href="#显式mapping" class="headerlink" title="显式mapping"></a>显式mapping</h1><h2 id="设置mapping"><a href="#设置mapping" class="headerlink" title="设置mapping"></a>设置mapping</h2><p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;:&#123;</span><br><span class="line">    &quot;properties&quot;:&#123;                 //设置mapping</span><br><span class="line">      &quot;job_name&quot;:&#123;</span><br><span class="line">        &quot;type&quot;:&quot;text&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;                                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="自定义Mapping"><a href="#自定义Mapping" class="headerlink" title="自定义Mapping"></a>自定义Mapping</h2><p>可以参考 API 手册，纯手写</p>
-<p>也可以复制现有的动态Mapping：</p>
-<ul>
-<li>创建一个临时的index,写入一些样本数据</li>
-<li>通过访问 Mapping API 获得该临时文件的动态 Mapping 定义</li>
-<li>修改后，使用该配置创建你的索引</li>
-<li>删除临时索引</li>
-</ul>
-<h3 id="index"><a href="#index" class="headerlink" title="index"></a>index</h3><p>index 控制当前字段是否被索引。默认为true,如果设置成false，就不会被索引，不能被搜索。</p>
-<p>优点：不会建立倒排索引，更节省内存空间<br>缺点：该字段不能被搜索</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;:&#123;</span><br><span class="line">    &quot;properties&quot;:&#123;                 //设置mapping</span><br><span class="line">      &quot;job_name&quot;:&#123;</span><br><span class="line">        &quot;type&quot;:&quot;text&quot;,</span><br><span class="line">        &quot;index&quot;:false             //这里设置false，这个字段就不能被搜索</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;                                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="index-options"><a href="#index-options" class="headerlink" title="index options"></a>index options</h3><p>有四种不同级别的 index options 配置，可以控制倒排索引记录的内容</p>
-<ul>
-<li>docs - 记录 doc id</li>
-<li>freqs - 记录 doc id 和 term frequencies</li>
-<li>positions - 记录 doc id &#x2F; term frequencies &#x2F; term position</li>
-<li>offsets - 记录 doc id &#x2F; term frequencies &#x2F; term position &#x2F; character offects</li>
-</ul>
-<p>Text类型默认记录 positions ,其他默认为 docs</p>
-<p>记录内容越多，占用存储空间越大。</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;:&#123;</span><br><span class="line">    &quot;properties&quot;:&#123;                 //设置mapping</span><br><span class="line">      &quot;job_name&quot;:&#123;</span><br><span class="line">        &quot;type&quot;:&quot;text&quot;,</span><br><span class="line">        &quot;index_options&quot;:&quot;offsets&quot;             //这里设置index_options</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;                                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="null-value"><a href="#null-value" class="headerlink" title="null value"></a>null value</h3><p> 如果需要对 NULL 值进行搜搜，那么只有 <code>Keyword</code> 类型支持设定 null_value</p>
-<p> 指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;:&#123;</span><br><span class="line">    &quot;properties&quot;:&#123;                 //设置mapping</span><br><span class="line">      &quot;job_name&quot;:&#123;</span><br><span class="line">        &quot;type&quot;:&quot;text&quot;,</span><br><span class="line">        &quot;null_value&quot;:&quot;NULL&quot;             //这里设置null_value</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;                                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="copy-to"><a href="#copy-to" class="headerlink" title="copy_to"></a>copy_to</h3><p>copy_to 相当于以前的 _all 。可以满足一些特定的搜索需求。copy_to 将字段的数值拷贝到目标字段，实现类似_all的作用。copy_to的目标字段不会出现在_source中</p>
-<p> 指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;:&#123;</span><br><span class="line">    &quot;properties&quot;:&#123;                 //设置mapping</span><br><span class="line">      &quot;job_name&quot;:&#123;</span><br><span class="line">        &quot;type&quot;:&quot;text&quot;,</span><br><span class="line">        &quot;copy_to&quot;:&quot;fullName&quot;             //这里设置copy_to</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;                                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="数组类型"><a href="#数组类型" class="headerlink" title="数组类型"></a>数组类型</h3><p>ES不提供专门的数组类型。但是任何字段，都可以包含多个相同类型的数值。</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PUT test_home/_doc/1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;job_name&quot;:&quot;php&quot;,</span><br><span class="line">  &quot;city&quot;:[</span><br><span class="line">    &quot;北京市&quot;,&quot;上海市&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到 city 就是一个数组。但是如果查看 mapping 会发现 city 是一个 text&#x2F;Keyword 类型。</p>
-<blockquote>
-<p>极客时间 ES 学习笔记</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-title-link" itemprop="url">ElasticSearch四--ES--基本操作和批量操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch四--ES--基本操作和批量操作" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h1><h2 id="文档的CRUD"><a href="#文档的CRUD" class="headerlink" title="文档的CRUD"></a>文档的CRUD</h2><ul>
-<li>Create 如果id 已经存在，会失败</li>
-<li>Index 如果id不存在，创建新的文档。否则先删除在创建新的，版本会增加</li>
-<li>Update 文档必须已经存在，更新只会对相应字段做增量修改</li>
-</ul>
-<h3 id="Create"><a href="#Create" class="headerlink" title="Create"></a>Create</h3><p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125;?op_type=create  //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125; //创建或更新</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_create/&#123;id&#125; //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">POST &#123;index&#125;/_doc/  //只是创建 自动生成id</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>如果通过op_type参数指定<code>create</code>那么就只会创建，如果存在会报错</li>
-<li>支持自动生成文档ID，和指定ID两种方式</li>
-<li>通过调用 <code>POST /index/_doc</code>.不指定ID系统就会自动生成</li>
-<li>使用 HTTP PUT index&#x2F;_create&#x2F;1 创建，URI中显式指定 <code>_create</code>,如果该ID的文档已经存在，则操作失败。</li>
-</ul>
-<p><img src="/../images/ES01.png" alt="ES"></p>
-<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br></pre></td></tr></table></figure>
-
-<p>找到文档。HTTP 200,找不到就返回 404</p>
-<p>元信息</p>
-<ul>
-<li>_index&#x2F;_type</li>
-<li>版本信息，同一个ID的文档，即使被删除，Version也会不断增加</li>
-<li>_source 中默认包含了文档的所有原始信息</li>
-</ul>
-<p><img src="/../images/ES02.png" alt="ES"></p>
-<h3 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h3><p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br><span class="line">&#123;JSON&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Index和Create不一样的地方就在于存在就删除在创建，并且版本号增加。</p>
-<h3 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h3><p> Update 是直接更新</p>
-<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_update/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;doc&quot;:&#123;JSON&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p> <img src="/../images/ES03.png" alt="ES"></p>
-<h3 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h3><p> Delete是删除操作</p>
-<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE &#123;index&#125;/_doc/&#123;id&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="批量操作-Bulk-API"><a href="#批量操作-Bulk-API" class="headerlink" title="批量操作 Bulk API"></a>批量操作 Bulk API</h2><p> 支持一次调用，对不同的索引进行操作<br> 支持</p>
-<ul>
-<li>Index</li>
-<li>Create</li>
-<li>Update</li>
-<li>Delete</li>
-</ul>
-<p> 只有一次网络请求，单条失败不会影响其他操作结果</p>
-<p> 返回结果包括每一条的执行结果</p>
-<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST _bulk</span><br><span class="line">&#123; &quot;index&quot;:&#123;&quot;_index&quot;:&quot;test&quot;, &quot;_id&quot;:&quot;1&quot;&#125; &#125;  //指定index和_id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value1&quot; &#125;                     //index 的数据</span><br><span class="line">&#123; &quot;delete&quot; : &#123;&quot;_index&quot;:&quot;test&quot; &quot;_id&quot;:&quot;2&quot;&#125;&#125; //delete 的 index 和id</span><br><span class="line">&#123; &quot;create&quot;: &#123;&quot;_index&quot;:&quot;test2&quot;,&quot;_id&quot;:1&#125;&#125;              //create 的index id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value3&quot;&#125;                      //create 的数据</span><br><span class="line">&#123; &quot;update&quot;:&#123;&quot;_id&quot;:1,&quot;_index&quot;:&quot;test&quot;&#125;&#125;     //update 的id index</span><br><span class="line">&#123; &quot;doc&quot;:&#123;&quot;field2&quot;:&quot;value2&quot;&#125;&#125;              //update 的数据</span><br></pre></td></tr></table></figure></p>
-<p>  <img src="/../images/ES04.png" alt="ES"></p>
-<h2 id="批量获取-mget"><a href="#批量获取-mget" class="headerlink" title="批量获取 mget"></a>批量获取 mget</h2><p>批量操作，可减少网络开销</p>
-<p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST _mget</span><br><span class="line">&#123;</span><br><span class="line">    &quot;docs&quot;:[</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;_index&quot;:&quot;user&quot;</span><br><span class="line">            &quot;_id&quot;:1</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>  <img src="/../images/ES05.png" alt="ES"></p>
-<h2 id="批量查询-msearch"><a href="#批量查询-msearch" class="headerlink" title="批量查询 msearch"></a>批量查询 msearch</h2><p>指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_msearch</span><br><span class="line">&#123;&#125;                             //注意这里需要加上这个 不加会报错</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br><span class="line">&#123;&quot;index&quot;: user &#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br></pre></td></tr></table></figure>
-
-<p>  <img src="/../images/ES06.png" alt="ES"></p>
-<h2 id="常见错误返回"><a href="#常见错误返回" class="headerlink" title="常见错误返回"></a>常见错误返回</h2><table>
-<thead>
-<tr>
-<th align="left">问题</th>
-<th align="left">原因</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">无法连接</td>
-<td align="left">网络故障或集群挂了</td>
-</tr>
-<tr>
-<td align="left">连接无法关闭</td>
-<td align="left">网络故障或节点出错</td>
-</tr>
-<tr>
-<td align="left">429</td>
-<td align="left">集群过于繁忙</td>
-</tr>
-<tr>
-<td align="left">4xx</td>
-<td align="left">请求体格式有错</td>
-</tr>
-<tr>
-<td align="left">500</td>
-<td align="left">集群内部错误</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>极客时间 ES 学习笔记</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1775,7 +1708,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

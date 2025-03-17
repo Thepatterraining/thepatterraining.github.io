@@ -1,6 +1,367 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL零基础教程ER图</title>
+    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html</url>
+    <content><![CDATA[<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h2><p>接下来讲讲ER图，这个是在实际工作中也会使用到的东西。</p>
+<p>大家应该都听过ER图，全称是（Entity Relationship）实体关系图。</p>
+<p>借用维基百科的介绍：</p>
+<blockquote>
+<p>ER模型，全称为实体联系模型、实体关系模型或实体联系模式图（ERM）（英语：Entity-relationship model）由美籍台湾人计算机科学家陈品山发明，是概念数据模型的高层描述所使用的数据模型或模式图。</p>
+</blockquote>
+<p>ER图通常用在<code>设计数据库</code>的阶段，当我们接到一个需求以后，我们要进行一些<code>技术设计</code>，在这个阶段如果涉及到一些对于数据库的修改，我们可以使用ER图进行设计。</p>
+<p>万事万物都有两面性，因此我们看一下好处和坏处，如何使用由大家自己权衡。</p>
+<ul>
+<li>好处：好处是设计直观、在设计之后也方便给大家讲为什么这样设计，还有留存文档，当后续需要修改设计的时候直接修改即可。</li>
+<li>坏处：坏处就是需要花时间去画ER图了。</li>
+</ul>
+<h3 id="ER图的基本概念"><a href="#ER图的基本概念" class="headerlink" title="ER图的基本概念"></a>ER图的基本概念</h3><p>ER图的主要组成部分</p>
+<ul>
+<li>实体（Entity）：<ul>
+<li>实体是数据库中具有相同属性集合的对象。例如，学生、课程、教师等。</li>
+<li>在ER图中，实体通常用矩形表示，矩形内写上实体的名称。</li>
+</ul>
+</li>
+<li>属性（Attribute）：<ul>
+<li>属性是实体的特征或性质。例如，学生的属性可以包括学号、姓名、年龄等。</li>
+<li>在ER图中，属性通常用椭圆表示，椭圆内写上属性的名称，并用线连接到对应的实体。</li>
+</ul>
+</li>
+</ul>
+<p>简单来讲，实体就是一个表，属性就是表里面的一个字段。</p>
+<p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
+<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<ul>
+<li>关系（Relationship）：<ul>
+<li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
+<li>在ER图中，关系通常用菱形表示，菱形内写上关系的名称，并用线连接到相关的实体。</li>
+</ul>
+</li>
+<li>关系的类型：<ul>
+<li>一对一关系（1:1）：一个实体与另一个实体之间存在一对一的联系。例如，一个学生对应一个学号。</li>
+<li>一对多关系（1:N）：一个实体与多个实体之间存在联系。例如，一个教师可以教授多个课程。</li>
+<li>多对多关系（M:N）：多个实体与多个实体之间存在联系。例如，一个学生可以选修多个课程，一个课程也可以被多个学生选修。</li>
+</ul>
+</li>
+</ul>
+<p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
+<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><code>关系</code>这个东西，简单来说就是通过<code>两个字段</code>链接进行实现的。</p>
+<h4 id="多对多关系"><a href="#多对多关系" class="headerlink" title="多对多关系"></a>多对多关系</h4><p>比如我们有<code>角色</code>表和<code>管理员用户</code>表，这两个表，是多对多关系。</p>
+<p>所以我们就需要用一张单独的表来存储这个关系。比如我们新建第三个表叫<code>角色和管理员用户关系</code>表。</p>
+<p><code>角色和管理员用户关系</code>表有字段内容如下：</p>
+<ul>
+<li>id: 该表的主键。</li>
+<li>roleId: 角色表的主键。用来关联角色信息。</li>
+<li>adminId: 管理员用户表的主键。用来关联管理员用户信息。</li>
+</ul>
+<p>可以看到，这个关系就是通过<code>角色和管理员用户关系</code>的两个字段来表示的。</p>
+<p><code>角色</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">前台角色</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">行政角色</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">开发角色</td>
+</tr>
+</tbody></table>
+<p><code>管理员用户</code>表内容如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张三</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李四</td>
+</tr>
+</tbody></table>
+<p><code>角色和管理员用户关系</code>表内容如下：</p>
+<p>根据表的数据我们很清晰的能看出来，<code>张三</code>既拥有<code>前台角色</code>也拥有<code>行政角色</code>，可谓身兼数职。当代牛马。<code>李四</code>则拥有一个<code>开发角色</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">roleId</th>
+<th align="left">adminId</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">1</td>
+<td align="left">2</td>
+</tr>
+</tbody></table>
+<p>记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>这里的两个字段就是<code>roleId</code>和<code>adminId</code>。</p>
+<p><code>roleId = 1</code>表示的是角色表中，<code>id = 1</code>的<code>前台角色</code>，对应的数据是<code>adminId = 1</code>的数据，也就是管理员表中<code>id = 1</code>的管理员<code>张三</code>。</p>
+<p>如此，我们就知道了，张三拥有角色：前台角色。</p>
+<h4 id="一对多关系"><a href="#一对多关系" class="headerlink" title="一对多关系"></a>一对多关系</h4><p><code>一对多关系</code>和<code>多对一关系</code>基本一样。就是反过来了。</p>
+<p>一个老师可以教授多个课程，比如我们有两个表，一个<code>老师表</code>，一个<code>课程表</code>。</p>
+<p>一对多关系比较灵活，记住上面说的，通过<code>两个字段</code>链接进行实现的。</p>
+<p>先看老师表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">张老师</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">李老师</td>
+</tr>
+</tbody></table>
+<p>课程表的数据如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">语文课程</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">数学课程</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">英语课程</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<p>为什么说一对多关系比较灵活呢，可以看到，我们这里用到的关联字段是老师表的<code>id</code>和课程表的<code>teacher_id</code>。而不需要再多加一张表了。</p>
+<blockquote>
+<p>这里要记住一个重点！！！！<br>多出来的这个teacher_id 字段要放在一对多关系中的 多 的这个表里面。</p>
+</blockquote>
+<p>什么是一对多关系中的<code>多</code>的关系呢？</p>
+<p>比如上面一个老师教多个课程，那么<code>多</code>的关系就是课程信息。</p>
+<p>当然了，如果你想要多加一张表来存储这两个字段的话也是可以的。</p>
+<p>比如增加下表，教授课程表，如果增加了这张表，就可以把课程表中的<code>teacher_id</code>字段删除了：</p>
+<p>下表也代表了<code>张老师</code>教授语文课程和英语课程，李老师教授数学课程。</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">course_id</th>
+<th align="left">teacher_id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">3</td>
+<td align="left">1</td>
+</tr>
+</tbody></table>
+<h4 id="一对一关系"><a href="#一对一关系" class="headerlink" title="一对一关系"></a>一对一关系</h4><p>一对一关系是最简单的。其实算是<code>一对多关系</code>的一个<code>真子集</code>。</p>
+<p>为什么这么说呢？</p>
+<p>我们假设，一个老师只能教授一个课程，那么上面的两个表是不是就变成了<code>一对一关系</code>呢？所以我们说一对一关系是一对多关系的一个真子集。</p>
+<h3 id="ER图实践"><a href="#ER图实践" class="headerlink" title="ER图实践"></a>ER图实践</h3><p>接下来我们来实践一下ER图。</p>
+<p>我这里使用的工具是免费的在线画图工具<a href="https://www.processon.com/i/637308dd762131535d6884f7?full_name=osgpjw20iEaJn-L">Processon</a></p>
+<h4 id="多对多关系的ER图"><a href="#多对多关系的ER图" class="headerlink" title="多对多关系的ER图"></a>多对多关系的ER图</h4><p>首先来画出多对多关系的ER图吧。</p>
+<p>以上面的三个表为例子。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 管理员实体，管理员实体后面会转化成管理员表。</li>
+<li>实体2: 角色实体，角色实体后面会转化成角色表。</li>
+<li>关系：两个实体之间的多对多关系，多对多关系后期需要转换成一张关系表。</li>
+</ul>
+<p>我们首先画出第一个实体，<code>管理员实体</code>使用矩形表示。如下图。</p>
+<p><img src="/../images/mysql/mysql3-4.png" alt="概念学习"></p>
+<p>接下来我们给管理员实体增加属性，属性使用<code>椭圆</code>来表示，如下图。</p>
+<p><img src="/../images/mysql/mysql3-3.png" alt="概念学习"></p>
+<p>现在我们画出第二个实体，<code>角色实体</code>和对应的属性。</p>
+<p><img src="/../images/mysql/mysql3-5.png" alt="概念学习"></p>
+<p>接下来我们画出关系，关系使用<code>棱形</code>来表示，并且使用线连接两个实体，表示是这两个实体之间的关系。多对多关系还需要在两边分别标记上<code>n</code>和<code>m</code>。</p>
+<p>此外，关系还要有一个名称，用来描述，比如<code>管理员拥有角色，角色被管理员拥有</code>。所以我们可以用<code>拥有</code>关系来描述这两个实体之间的关系。</p>
+<p><img src="/../images/mysql/mysql3-6.png" alt="概念学习"></p>
+<p>如此，我们就完成了一个多对多关系的ER图。</p>
+<h4 id="一对多关系的ER图"><a href="#一对多关系的ER图" class="headerlink" title="一对多关系的ER图"></a>一对多关系的ER图</h4><p>接下来再实践一次一对多关系的ER图，最好大家先动手画一次，再跟我们的结果来对比，只有自己实操了才行。</p>
+<p>实操时间。。。。。</p>
+<p>好了，实操结束。</p>
+<p>我们来看一下一对多关系如何画图。</p>
+<p>我们需要两个实体和一个关系。</p>
+<ul>
+<li>实体1: 教师实体，后面变成教师表。</li>
+<li>实体2: 课程实体，后面变成课程表。</li>
+<li>关系：两个实体之间的一对多关系，一对多关系可以是一个字段也可以是一个表。</li>
+</ul>
+<p>首先画出第一个实体和属性，也就是教师实体。</p>
+<p><img src="/../images/mysql/mysql3-7.png" alt="概念学习"></p>
+<p>接下来画出第二个实体和属性，也就是课程实体。课程实体这里有一个属性是<code>教师ID</code>，这代表我们使用这个字段，而不是增加了一个关系表。如果我们没有这个字段就代表我们要增加一个关系表。</p>
+<p><img src="/../images/mysql/mysql3-8.png" alt="概念学习"></p>
+<p>最后，画出关系并连线。这里关系名称我们选择教授，这个其实无所谓。能明白就好。重点是要标明一对多关系，可以看到<code>教师实体</code>上写的是1，<code>课程实体</code>上写的是n，代表一对多关系中，教师是1，课程是多。这个不能写反了。</p>
+<p><img src="/../images/mysql/mysql3-9.png" alt="概念学习"></p>
+<blockquote>
+<p>多对一关系的画起来是一样的，需要注意的就是关系上的1和n别写错了。</p>
+</blockquote>
+<h4 id="一对一关系的ER图"><a href="#一对一关系的ER图" class="headerlink" title="一对一关系的ER图"></a>一对一关系的ER图</h4><p>一对一关系的ER图和上面的差不多，我们举个例子吧。</p>
+<ul>
+<li>实体1: 用户实体，转化成用户表，存储用户信息。</li>
+<li>实体2: 用户账户实体，转化成用户账户表，存储用户的账号资金信息。</li>
+<li>关系：一对一关系，一个用户只能拥有一个用户账户。</li>
+</ul>
+<p>首先画出第一个实体，用户实体。属性包括ID、用户名称、手机号。</p>
+<p><img src="/../images/mysql/mysql3-10.png" alt="概念学习"></p>
+<p>接下来画出第二个实体，用户账户实体，属性包括ID、账户余额、用户ID。用户ID作为关联关系的字段，和一对多关系一样，就不需要单独加表了。</p>
+<p><img src="/../images/mysql/mysql3-11.png" alt="概念学习"></p>
+<p>最后，画出关系并连线，标上关系是一对一关系就可以了。</p>
+<p><img src="/../images/mysql/mysql3-12.png" alt="概念学习"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
+<p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
+<p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
+<p>此外，还有一个方法，就是使用在线工具<a href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
+<p><img src="/../images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DDD概念详解</title>
+    <url>/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
+<p>说人话就是：</p>
+<ul>
+<li>What: 它是一种设计思想、一种指导原则。</li>
+<li>When: 设计微服务的时候，或者说，不知道怎么拆分微服务的时候。</li>
+<li>Why：为什么要用它，上面其实说了，不知道怎么拆分微服务的时候，可以用它来指导你如何拆分微服务。</li>
+<li>How：这个后面讲。</li>
+</ul>
+<p>很多人都说，DDD是用来处理<code>复杂</code>业务逻辑的，那<code>多复杂</code>才算<code>复杂</code>业务呢？</p>
+<p>这个问题，其实和<code>微服务什么时候用</code>是一个问题。</p>
+<p>所有的技术都不是<code>银弹</code>。都有适合它的使用场景。</p>
+<p>拿微服务来说，你一个小公司，就两三个开发，硬要上微服务，拆好几个服务出来，有什么<code>意义</code>吗？</p>
+<p>是提升性能了？</p>
+<p>是增加开发效率了？</p>
+<p>都不是，你会发现拆分完以后，程序反而<code>三高</code>了。</p>
+<ul>
+<li>高复杂度：程序变得更加复杂了。</li>
+<li>高维护成本：程序的维护成本增加了、当有需求需要修改的时候、开发效率反而降低了。</li>
+<li>高运维成本：原来一台机器就满足了，你拆的服务多了，一台机器不够了。要么加机器性能要么加机器数量。</li>
+</ul>
+<p>所以，<code>适合</code>很重要。</p>
+<blockquote>
+<p>俗话说的好，见人说人话，见鬼说鬼话。技术也一样。</p>
+</blockquote>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>实体：使用充血模型实现的实体，既有属性、也有方法。</li>
+<li>值对象：只有属性的类。</li>
+<li>聚合根：一个特殊的实体，聚合的入口。</li>
+<li>聚合：聚合是一个概念、也可以理解成一个模块。聚合内包含了聚合根、实体、值对象。</li>
+<li>限界上下文：分割领域的边界、也是分割微服务的边界，通过这个边界明确这个接口属于哪个领域，也就是属于哪个微服务。每个领域有每个领域的上下文。</li>
+<li>领域：领域也就是我们的领域模型，也可以是一个微服务。</li>
+<li>子领域：一个领域可以分成多个子领域。这个就是粒度的问题了。</li>
+<li>领域事件：领域之间通信的方法。通过这个来调用其他的微服务。</li>
+</ul>
+<p>还有一些核心领域、支撑领域、通用领域等，都是领域的一种，作用不同而已。</p>
+<h3 id="领域"><a href="#领域" class="headerlink" title="领域"></a>领域</h3><p>一个<code>领域</code>里面包含了多个<code>子领域</code>，如图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-3.png" alt="ddd1-3"></p>
+<p>一个<code>子领域</code>里面包含了多个<code>聚合</code>，每个聚合里又有一个<code>聚合根</code>作为入口，还有若干个<code>实体</code>和<code>值对象</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-4.png" alt="ddd1-4"></p>
+<p>通过DDD我们可以来拆分微服务。</p>
+<p>DDD是围绕<code>业务概念</code>来进行领域建模的，后续的接口也是根据业务概念来划分到对应的领域中。从而解决开发过程中，业务演进的问题。</p>
+<p>因为当业务改变了，那么领域就改变了，对应的代码也就跟着变就好了。</p>
+<p>所以DDD和微服务不一样，不是一种具体的架构，只是一种指导方法。</p>
+<p>它可以划分出清晰的<code>业务边界</code>也就是微服务的边界，从而让微服务的拆分更加符合业务。而不是乱拆分。</p>
+<p>他也有一些步骤</p>
+<ul>
+<li>战略设计：战略设计从业务的视角上看待问题，建立领域边界、划分领域、子领域等等。</li>
+<li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
+<li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
+<p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
+<p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>DDD</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>DDD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>为什么大厂都开始使用DDD了</title>
     <url>/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html</url>
     <content><![CDATA[<blockquote>
@@ -9,7 +370,6 @@
 <blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
 </blockquote>
-<p>这里插入名片</p>
 <h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
 <p>说人话就是：</p>
 <ul>
@@ -127,7 +487,7 @@
 <li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
 <li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
 </ul>
-<p>首先，需要进行<code>事件风暴</code>，梳理出一些和业务逻辑有关的<code>词汇</code>。</p>
+<h5 id="电子商务DDD示例"><a href="#电子商务DDD示例" class="headerlink" title="电子商务DDD示例"></a>电子商务DDD示例</h5><p>首先，需要进行<code>事件风暴</code>，梳理出一些和业务逻辑有关的<code>词汇</code>。</p>
 <p>以电商举例，<code>用户</code>，<code>购买者</code>，<code>订单</code>，<code>商品</code>，<code>库存</code>，<code>收货地址</code>，<code>商家</code>，<code>价格</code>，<code>购买行为</code>，<code>下单</code>，<code>支付</code>，<code>取消订单</code>，<code>退款</code>，<code>发货</code>等等。</p>
 <p>接下来进行一些<code>识别</code>。</p>
 <p>识别什么呢？识别上面的概念，也就是哪些是<code>实体</code>、<code>值对象</code>和<code>领域事件</code>。</p>
@@ -189,6 +549,66 @@
 <ul>
 <li>下单领域事件：用户聚合发起事件 -》 订单聚合接受事件。完成下单操作。</li>
 </ul>
+<p>接下来我们需要把上面梳理出来的内容<code>映射</code>到代码上。</p>
+<p>比如，我们将上面的内容放到代码里面。这里面有两种方式，聚合是DDD中的<code>最小单元</code>，所以可以把一个聚合部署为一个微服务。</p>
+<p>当然了，也可以一个领域作为一个微服务，具体的情况，根据自身业务和流量这些具体考虑就可以了。</p>
+<p>我们这里以领域做为微服务来示例：</p>
+<ul>
+<li>用户微服务</li>
+<li>交易微服务</li>
+</ul>
+<p>先看用户微服务的文件夹吧，因为分层放在了下面介绍，所以这里的代码我们仅展示<code>领域层</code>的代码。</p>
+<ul>
+<li>userAgg: userAgg文件夹，代表了用户聚合。<ul>
+<li>core: 聚合的核心代码，包含了聚合根、实体、值对象。一个文件夹。<ul>
+<li>userAggRoot.java: 用户聚合根实体，是一个java文件，一个class类。</li>
+</ul>
+</li>
+<li>event: 聚合的一些领域事件代码。<ul>
+<li>buyEvent.java: 下单的领域事件。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>这个实体采用的是<code>充血模型</code>。</p>
+<p>简单看一下代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">userAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer userId; <span class="comment">//userId是这个实体中的一个值对象。</span></span><br><span class="line">    <span class="keyword">private</span> String name; <span class="comment">//name也是一个值对象。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserAggRoot <span class="title function_">getUserInfo</span><span class="params">(Integer userId)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户实体的信息</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateUserName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="comment">// 更新用户名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//getter和setter....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>领域事件的代码，其实简单来说，因为跨越微服务了，所以可以直接通过消息队列来进行事件通信。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">buyEvent</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">buy</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 组装事件信息并且发送事件</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看一下交易微服务：</p>
+<ul>
+<li>shopAgg: 代表了商品聚合，是一个文件夹<ul>
+<li>core:<ul>
+<li>shopAggRoot.java: 商品聚合根实体。</li>
+<li>priceVO.java: 价格值对象的类，一个class。VO代表的是Value Object的意思。</li>
+<li>inventoryVO.java: 库存值对象的类，一个class。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>orderAgg: 代表了订单聚合，是一个文件夹<ul>
+<li>core:<ul>
+<li>orderAggRoot.java: 订单聚合根实体。</li>
+<li>buyerEntity.java: 购买者实体，一个java的class。</li>
+<li>addressVO.java: 收货地址值对象。</li>
+</ul>
+</li>
+<li>event:<ul>
+<li>orderEvent: 订单事件，发送订单事件可以给物流微服务，进行物流发货。还有积分服务进行积分处理等等。。。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>代码类似：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">shopAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer shopId; <span class="comment">// 商品id值对象</span></span><br><span class="line">    <span class="keyword">private</span> String shopName; <span class="comment">//商品名称值对象</span></span><br><span class="line">    <span class="keyword">private</span> PriceVO price; <span class="comment">//价格值对象</span></span><br><span class="line">    <span class="keyword">private</span> InventoryVO inventory; <span class="comment">//库存值对象</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subInventory</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 扣减库存</span></span><br><span class="line">        <span class="comment">// 1. 创建新的库存值对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 替换inventory属性</span></span><br><span class="line">        <span class="comment">// 。。。。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一些值对象：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">priceVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BigDecimal originalPrice; <span class="comment">//原价格</span></span><br><span class="line">    <span class="keyword">private</span> BigDecimal currentPrice; <span class="comment">//当前价格，可能是优惠后的价格等等</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">inventoryVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long inventory; <span class="comment">//库存</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h5 id="DDD的分层架构"><a href="#DDD的分层架构" class="headerlink" title="DDD的分层架构"></a>DDD的分层架构</h5><p>DDD的分层和传统的MVC分层不太一样。</p>
 <p>传统的后端服务一般是这样的层次</p>
 <ul>
@@ -206,7 +626,6 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
 <p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
 <p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
-<p>这里插入名片</p>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
 </blockquote>
@@ -4685,7 +5104,7 @@
 <p>DRAM的发展历史，RAS:发送行号，CAS:发送列号</p>
 <ul>
 <li>快页模式DRAM(Fast Page Mode DRAM, FPMDRAM)。传统的DRAM将存储单元的一整行复制到它的内部行缓冲区中， 使用一个 ，然后丢弃剩余的。FPM DRAM允许对同一行连续地访问可以直接从行缓冲区得到服务，从而改进了这一 点。例如，要从一个传统的DRAM的行i中读4个存储单元，内存控制器必须发送4 个RAS&#x2F;CAS请求，即使是行地址i在每个情况中都是一样的。要从一个FPM DRAM的同一行中读取存储单元，内存控制器发送第一个RAS&#x2F;CAS请求，后面跟三个CAS请求。初始的RAS&#x2F; CAS请求将行i复制到行缓冲区，并返回CAS寻址的那个存储单元。接下来三个存储单元直接从行缓冲区获得，因此返回得更快。</li>
-<li>扩展数据输出 DRAM( Extended Data Out DRAM, EDO DRAM) . FPM DRAM 的一个增强的形式 ，它允许各个 CAS 信号在时间上靠得更紧密一点 。</li>
+<li>扩展数据输出 DRAM( Extended Data Out DRAM, EDO DRAM) . FPM DRAM 的一个增强的形式 ，它允许各个 CAS 信号在时间上靠得更紧密一点。</li>
 <li>同步DRAM(Synchronous DRAM，SDRAM)。就它们与内存控制器通信使用一组显式的控制信号来说，常规的FPM 和EDO DRAM 都是异步的。SDRAM用与驱动内存控制器相同的外部时钟信号的上升沿来代替许多这样的控制信号。我们不会深人讨论细节， 最终效果就是SDRAM 能够比那些异步的存储器更快地输出它的超单元的内容。</li>
 <li>双倍数据速率同步DRAM(Double Data-Rate SynchronousDRAM, DDR SDRAM)。 DDR SDRAM 是 对 SDRAM 的一种增强 ，它通过使用两个时钟沿作为控制信号，从而使DRAM的速度翻倍。不同类型的DDR SDRAM 是用提高有效带宽的很小的预取绥冲区的大小来划分的 : DDR (2位)、 DDR2 (4位)和 DDR (8位)。</li>
 </ul>
