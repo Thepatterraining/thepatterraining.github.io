@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP详解">
+<meta property="og:url" content="https://thepatterraining.github.io/MCP%E8%AF%A6%E8%A7%A3.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp1-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-04-23T08:51:30.000Z">
+<meta property="article:modified_time" content="2025-05-05T08:56:55.260Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/ai/mcp1-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MCP%E8%AF%A6%E8%A7%A3.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MCP详解 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MCP%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MCP详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-23 16:51:30" itemprop="dateCreated datePublished" datetime="2025-04-23T16:51:30+08:00">2025-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-05 16:56:55" itemprop="dateModified" datetime="2025-05-05T16:56:55+08:00">2025-05-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MCP%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="MCP详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MCP%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MCP%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MCP"><a href="#MCP" class="headerlink" title="MCP"></a>MCP</h1><p>在AI技术大火的当下，各个公司都在搞AI-Agent技术。对于Agent来说，其实还处于一个早期的阶段，没有所谓的<code>最佳实践</code>。更没有一些<code>标准规则</code>。可谓是一片蓝海。</p>
+<p>大厂们也都在做着自己的一些尝试。但是总有人在建设底层规则。</p>
+<p>MCP就是一个标准化的产物。它定义了一些<code>标准</code>。</p>
+<p>Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标准，旨在为大型语言模型（LLM）应用提供统一的上下文交互接口，使其能够与外部数据源和工具进行无缝集成。​MCP采用客户端-主机-服务器架构，基于JSON-RPC 2.0协议，支持有状态连接和功能协商，允许AI模型访问文件、执行函数和处理上下文提示。</p>
+<p>截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Model Context Protocol (MCP) 遵循客户端-主机-服务器架构，每个主机可以运行多个客户端实例。此架构使用户能够在应用程序中集成 AI 功能，同时保持明确的安全边界和隔离关注点。基于 JSON-RPC，MCP 提供了一个有状态的会话协议，专注于上下文交换和客户端与服务器之间的采样协调。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-1.png" alt="MCP架构"></p>
+<h2 id="为什么使用MCP？"><a href="#为什么使用MCP？" class="headerlink" title="为什么使用MCP？"></a>为什么使用MCP？</h2><p>为什么要有MCP这个东西呢？我不用它是否可以？</p>
+<p>当然可以。MCP更像是一个USB接口的作用。不使用的话会有一些麻烦而已。我们来看两个案例。</p>
+<h3 id="案例一：USB接口案例"><a href="#案例一：USB接口案例" class="headerlink" title="案例一：USB接口案例"></a>案例一：USB接口案例</h3><p>我们先想象一下如果电脑没有USB接口，会怎么样？</p>
+<p>每个品牌的鼠标键盘显示器接口都不一样，比如</p>
+<ul>
+<li>罗技鼠标键盘使用罗技接口</li>
+<li>牧马人鼠标键盘使用牧马人接口</li>
+<li>雷蛇鼠标键盘使用雷蛇接口</li>
+<li>等等，每个品牌有自己的接口</li>
+</ul>
+<p>那现在我们买了一台戴尔的电脑，这个电脑只支持戴尔的接口和罗技的接口，这样就导致我们只能买这两个品牌的鼠标键盘显示器了。</p>
+<p>像下面这个图，我如果家里是华硕显示器，但是我买了一个戴尔的电脑，就用不了了，很不方便。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-2.png" alt="MCP架构"></p>
+<h3 id="案例二：充电接口案例"><a href="#案例二：充电接口案例" class="headerlink" title="案例二：充电接口案例"></a>案例二：充电接口案例</h3><p>现在很现实的一个问题就是苹果手机的充电接口。它的充电接口和安卓的充电接口是不一样的，因此两个手机的充电器无法共用。</p>
+<p>如果你从安卓换到苹果，你需要重新买一个充电器，如果你家里两个人用的是一个安卓一个苹果，那么你们出门需要带两个充电器。。。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-3.png" alt="MCP架构"></p>
+<h3 id="案例三：Agent案例"><a href="#案例三：Agent案例" class="headerlink" title="案例三：Agent案例"></a>案例三：Agent案例</h3><p>经过上面两个案例，我们应该明白了MCP解决了什么问题，也明白了为什么要使用MCP这种标准化协议。</p>
+<p>那么我们再看看对于Agent而言，MCP到底干了什么呢？</p>
+<p>我们当前Agent的现状如下：<br>我们实现了一个查询天气信息，并根据下雨下雪刮风等进行邮件通知预警的Agent。我们的Agent需要调用2个接口：</p>
+<ol>
+<li>获取天气信息</li>
+<li>发送邮件</li>
+</ol>
+<p>我们知道，这两个接口是不一样的，因此，我们需要实现<code>两套调用逻辑</code>。</p>
+<p>这样是很不方便的。甚至，如果说第一个获取天气信息的接口不好使了，我们要进行切换，其他的获取天气信息的接口也需要<code>重新实现</code>。</p>
+<p>但是，如果我们使用了<code>MCP</code>,那么我们只需要一套逻辑即可了。</p>
+<h2 id="MCP组件"><a href="#MCP组件" class="headerlink" title="MCP组件"></a>MCP组件</h2><p>接下来我们来了解一下MCP有哪些内容，包含什么东西。</p>
+<ul>
+<li>主机：也就是你的Agent，或者大模型。严格来说，这个并不属于MCP，因为这个是你必备的一个东西。只不过我们的Agent需要支持MCP才可以。</li>
+<li>MCP服务器：轻量级程序，每个程序都通过标准化的模型上下文协议公开特定的功能。MCP服务器就是一个提供接口程序的<code>服务器程序</code>，可以简单的理解为<code>HTTP服务器</code>，提供一些接口。比如我们上面提到的两个接口都放到这个服务器里面。</li>
+<li>MCP客户端：这个是<code>重中之重</code>。客户端程序负责调度<code>主机</code>和<code>MCP服务器</code>进行交互。</li>
+</ul>
+<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>资源表示 MCP 服务器希望提供给客户端的任何类型的数据。这可以包括：</p>
+<ul>
+<li>文件内容</li>
+<li>数据库记录</li>
+<li>API 响应</li>
+<li>实时系统数据</li>
+<li>屏幕截图和图像</li>
+<li>日志文件</li>
+<li>更多</li>
+</ul>
+<p>资源主要用来读取文件内容，比如我们经常使用大模型的时候会上传文件，还有使用Idea的时候可以直接让大模型获取我们的代码文件内容。</p>
+<p>资源可以包含两种类型的内容：</p>
+<ul>
+<li>文本资源<ul>
+<li>源代码</li>
+<li>配置文件</li>
+<li>日志文件</li>
+<li>JSON&#x2F;XML数据</li>
+<li>纯文本</li>
+</ul>
+</li>
+<li>二进制资源<ul>
+<li>图像</li>
+<li>PDF</li>
+<li>音频</li>
+<li>视频</li>
+<li>其他非文本格式</li>
+</ul>
+</li>
+</ul>
+<p>MCP服务器需要实现下面的接口来支持<code>资源</code>功能</p>
+<ul>
+<li>资源列表接口：接口地址必须是<code>resources/list</code>，返回内容需要包含4个信息，这个接口会告诉Agent我们拥有哪些资源<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  uri<span class="punctuation">:</span> string;            <span class="comment">//资源的URI</span></span><br><span class="line">  name<span class="punctuation">:</span> string;           <span class="comment">//资源的名称，方便人类看</span></span><br><span class="line">  description?<span class="punctuation">:</span> string;   <span class="comment">//可选的资源描述</span></span><br><span class="line">  mimeType?<span class="punctuation">:</span> string;      <span class="comment">//可选的资源类型</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>获取资源接口：接口地址必须是<code>resources/read</code>, 返回内容必须是以下格式，这个接口就是当Agent需要获取资源内容的时候进行调用的。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  contents<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      uri<span class="punctuation">:</span> string;        <span class="comment">//资源的URI</span></span><br><span class="line">      mimeType?<span class="punctuation">:</span> string;  <span class="comment">//可选的资源类型</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// 根据资源类型进行返回的信息:</span></span><br><span class="line">      text?<span class="punctuation">:</span> string;      <span class="comment">// 文本资源的内容</span></span><br><span class="line">      blob?<span class="punctuation">:</span> string;      <span class="comment">// 二进制资源的内容</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>资源列表更新接口：接口地址必须是<code>notifications/resources/list_changed</code>，这个接口是当我们能获取的资源列表有变化的时候，服务器来通知客户端说列表改变了，你需要重新获取一下。</li>
+<li>资源内容更新接口：<ul>
+<li>客户端进行资源订阅，接口地址必须是<code>resources/subscribe</code></li>
+<li>当资源内容改变的时候，服务器会发送<code>notifications/resources/updated</code>来通知客户端资源内容变化了</li>
+<li>客户端可以重新调用获取资源接口来获取最新内容。</li>
+<li>客户端可以取消资源订阅，接口地址必须是<code>resources/unsubscribe</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><p>提示这个功能也是比较常见的，当你输入<code>/</code>以后，会出现一些提示的命令，很多大模型都支持这么做了。</p>
+<p>通过提示这个功能，我们自己的Agent也可以轻松支持这个功能了。</p>
+<p>提示符使服务器能够定义可重用的提示模板和工作流，客户端可以轻松地向用户和 LLM 显示。它们提供了一种强大的方式来标准化和共享常见的 LLM 交互。</p>
+<p>MCP服务器需要支持以下接口：</p>
+<ul>
+<li>提示列表接口：接口地址<code>prompts/list</code>.展示提示列表。返回内容如下：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  prompts<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      name<span class="punctuation">:</span> <span class="string">&quot;analyze-code&quot;</span><span class="punctuation">,</span> <span class="comment">// 提示名称</span></span><br><span class="line">      description<span class="punctuation">:</span> <span class="string">&quot;Analyze code for potential improvements&quot;</span><span class="punctuation">,</span> <span class="comment">//提示描述</span></span><br><span class="line">      arguments<span class="punctuation">:</span> <span class="punctuation">[</span> <span class="comment">// 提示需要的参数列表</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          name<span class="punctuation">:</span> <span class="string">&quot;language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数名称</span></span><br><span class="line">          description<span class="punctuation">:</span> <span class="string">&quot;Programming language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数描述</span></span><br><span class="line">          required<span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">//是否必填</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>使用提示接口：接口地址<code>prompts/get</code>，服务器会返回一些信息如下，客户端可以将这个信息喂给服务器。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Analyze Python code for potential improvements&quot;</span><span class="punctuation">,</span></span><br><span class="line">  messages<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      role<span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">      content<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type<span class="punctuation">:</span> <span class="string">&quot;text&quot;</span><span class="punctuation">,</span></span><br><span class="line">        text<span class="punctuation">:</span> <span class="string">&quot;Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p><code>工具</code>功能是MCP的核心功能，作用就是我们一开始讲的那个。通过这个功能我们可以接入所有支持MCP的工具。</p>
+<p>工具是模型上下文协议（MCP）中的一个强大的原语，它使服务器能够向客户端公开可执行功能。通过工具，LLM 可以与外部系统交互，执行计算，并在真实的世界中采取行动。</p>
+<p>MCP服务器需要实现以下接口：</p>
+<ul>
+<li>工具列表接口：接口地址是<code>tools/list</code>，作用是获取MCP服务器支持的所有工具列表。可以返回如下内容：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  name<span class="punctuation">:</span> <span class="string">&quot;github_create_issue&quot;</span><span class="punctuation">,</span> <span class="comment">//工具名称</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Create a GitHub issue&quot;</span><span class="punctuation">,</span> <span class="comment">// 工具描述</span></span><br><span class="line">  inputSchema<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 输入参数</span></span><br><span class="line">    type<span class="punctuation">:</span> <span class="string">&quot;object&quot;</span><span class="punctuation">,</span> <span class="comment">// 参数类型</span></span><br><span class="line">    properties<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//详细的请求参数名称和类型</span></span><br><span class="line">      title<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      body<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      labels<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;array&quot;</span><span class="punctuation">,</span> items<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>工具调用接口：接口地址是<code>tools/call</code>，作用是调用指定的工具。客户端同样可以把调用工具的结果喂给大模型。</li>
+</ul>
+<h3 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h3><p>采样是一个强大的 MCP 功能，允许服务器通过客户端请求 LLM 完成，在维护安全和隐私的同时实现复杂的代理行为。</p>
+<p>采样流程如下：</p>
+<ol>
+<li>服务器请求客户端的接口<code>sampling/createMessage</code></li>
+<li>客户端检查请求并可以修改它</li>
+<li>客户端获取大模型的样本</li>
+<li>客户端复审样本信息</li>
+<li>客户端将结果返回给服务器</li>
+</ol>
+<p>服务器可以指定要采样的大模型，如果客户端没有这个大模型，服务器还可以指定一些<code>模型偏好</code>，也就是一些优先级，如果没有这个大模型，就按照服务器指定的优先级来选择一些其他的大模型进行采样。</p>
+<p>模型偏好设置</p>
+<ul>
+<li>hits:模型名称建议的数组，客户端可以使用它来选择合适的模型,客户端可以将提示映射到来自不同提供程序的等效模型,多个提示按优先级顺序进行评估</li>
+<li>costPriority: 降低成本的重要性,低成本的模型优先级更高</li>
+<li>speedPriority: 低延迟响应的重要性，速度更快的模型优先级更高</li>
+<li>intelligencePriority：高级模型功能的重要性，功能强大的模型优先级更高</li>
+</ul>
+<h3 id="根"><a href="#根" class="headerlink" title="根"></a>根</h3><p><code>根</code>是 MCP 中的一个概念，它定义了服务器可以操作的边界。它们为客户端提供了一种方法，可以将相关资源及其位置通知服务器。</p>
+<p>根是客户端建议服务器应该关注的 URI。当客户端连接到服务器时，它声明服务器应该使用哪些根。虽然主要用于文件系统路径，但根可以是任何有效的 URI，包括 HTTP URL。</p>
+<p>根有几个重要的用途：</p>
+<ul>
+<li>指导 ：它们通知服务器相关资源和位置</li>
+<li>清晰度 ：根目录清楚地表明哪些资源是您工作空间的一部分</li>
+<li>组织 ：多个根允许您同时使用不同的资源</li>
+</ul>
+<p>当客户端支持根时，它：</p>
+<ul>
+<li>在连接期间声明<code>根</code>功能</li>
+<li>向服务器提供建议的<code>根目录</code>列表</li>
+<li>根目录更改时通知服务器（如果支持）</li>
+</ul>
+<p>虽然根是信息性的，并不严格执行，但服务器应该：</p>
+<ul>
+<li>尊重提供的根</li>
+<li>使用根 URI 定位和访问资源</li>
+<li>优先考虑根边界内的操作</li>
+</ul>
+<p>根通常用于定义：</p>
+<ul>
+<li>项目目录</li>
+<li>存储库位置</li>
+<li>API 端点</li>
+<li>配置目录</li>
+<li>资源边界</li>
+</ul>
+<p>客户端应该返回如下根信息</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file:///home/user/projects/frontend&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Frontend Repository&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://api.example.com/v1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;API Endpoint&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MCP服务器"><a href="#MCP服务器" class="headerlink" title="MCP服务器"></a>MCP服务器</h3><p>MCP服务器作为接口的提供方。需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>需要支持上面的一些功能，主要是支持<code>工具</code>。至于资源和提示功能可以不支持。</p>
+<h3 id="MCP客户端"><a href="#MCP客户端" class="headerlink" title="MCP客户端"></a>MCP客户端</h3><p>MCP客户端作为接口的调用方。也需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>可以选择支持<code>采样</code>和<code>根</code>功能。</p>
+<p>MCP客户端还需要调用MCP服务器和大模型进行沟通。</p>
+<h3 id="MCP通信协议"><a href="#MCP通信协议" class="headerlink" title="MCP通信协议"></a>MCP通信协议</h3><p>所有传输都使用 <code>JSON-RPC2.0</code> 来交换消息。</p>
+<h4 id="JSON-RPC2-0"><a href="#JSON-RPC2-0" class="headerlink" title="JSON-RPC2.0"></a>JSON-RPC2.0</h4><p><code>JSON-RPC 2.0</code>是一个轻量级的远程过程调用（RPC）协议。它使用JSON格式的数据进行通信，这使得它非常易于理解和操作。下面是对JSON-RPC 2.0协议的详细解释以及案例说明：</p>
+<p>在JSON-RPC 2.0中，通信的基本单位是请求和响应。客户端发送请求给服务器，服务器处理请求后返回响应。</p>
+<p>一个典型的JSON-RPC 2.0请求格式如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span> <span class="comment">//要调用的方法名称，可以简单理解为接口地址</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//请求参数</span></span><br><span class="line">    <span class="attr">&quot;param1&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;param2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value2&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器处理请求以后，通常会返回以下两个格式：</p>
+<ul>
+<li>正确返回的格式。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Success&quot;</span><span class="punctuation">,</span> <span class="comment">//成功的结果</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>如果出现错误，需要返回错误码和错误信息。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 错误信息，包括错误码和错误描述</span></span><br><span class="line">    <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="number">-32601</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Method not found&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>除了正常的请求和返回以外，还有一种<code>通知</code>类型。作为单向消息从客户端发送到服务器，反之亦然。接收方不得发送响应。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;params?&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 请求参数</span></span><br><span class="line">    <span class="punctuation">[</span>key<span class="punctuation">:</span> string<span class="punctuation">]</span><span class="punctuation">:</span> unknown</span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="MCP传输方式"><a href="#MCP传输方式" class="headerlink" title="MCP传输方式"></a>MCP传输方式</h3><p>MCP 使用<code>JSON-RPC</code>对消息进行编码。<code>JSON-RPC</code>消息必须是 <code>UTF-8</code> 编码的。</p>
+<p>该协议目前为客户端-服务器通信定义了两种标准传输机制：</p>
+<ul>
+<li>STDIO: 通过标准输入输出来进行传输，通常用在MCP客户端和服务器都在同一主机的情况下。</li>
+<li>HTTP：通过HTTP来进行传输，这允许MCP客户端和服务器不在同一主机。</li>
+</ul>
+<p>客户端应尽可能支持<code>stdio</code>传输。</p>
+<h4 id="STDIO"><a href="#STDIO" class="headerlink" title="STDIO"></a>STDIO</h4><ul>
+<li>客户端将 <code>MCP服务器</code>作为子进程启动。</li>
+<li>服务器从其标准输入（stdin）读取 JSON-RPC 消息，并将消息发送到其标准输出（stdout）。</li>
+<li>消息可以是 JSON-RPC 请求、通知、响应或 JSON-RPC 包含一个或多个请求和&#x2F;或通知的批处理。</li>
+<li>消息由换行符分隔，并且不能包含嵌入的换行符。</li>
+<li>服务器可以将 UTF-8 字符串写入其标准错误（stderr）以进行日志记录。客户端可以捕获、转发或忽略此日志记录。</li>
+<li>服务器不能向它的 stdout 写入任何不是有效的 MCP 消息。</li>
+<li>客户端不得向服务器的 stdin 写入任何不是有效 MCP 消息的内容。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-6.png" alt="初始化"></p>
+<h4 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h4><p>在 <code>HTTP</code> 传输中，服务器作为一个独立的进程运行， 可以处理多个客户端连接。</p>
+<p>此传输使用HTTP<code>POST</code> 和 <code>GET</code> 请求。 </p>
+<p>服务器可以选择使用服务器发送的事件 （SSE）以流式传输多个服务器消息。</p>
+<p>这允许基本的 MCP 服务器，以及支持流媒体和服务器到客户端通知和请求的功能更丰富的服务器。</p>
+<h3 id="MCP生命周期"><a href="#MCP生命周期" class="headerlink" title="MCP生命周期"></a>MCP生命周期</h3><p>模型上下文协议（MCP）为客户端-服务器连接定义了严格的生命周期，以确保适当的能力协商和状态管理。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-5.png" alt="初始化"></p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p><img src="https://thepatterraining.github.io/images/ai/mcp1-4.png" alt="初始化"></p>
+<ul>
+<li>客户端发送包含<code>协议版本</code>和<code>功能</code>的<code>初始化请求</code></li>
+<li>服务器返回服务器支持的<code>协议版本</code>和<code>功能</code>进行响应</li>
+<li>客户端发送<code>初始化通知</code>作为确认</li>
+</ul>
+<p>此阶段要确认的内容如下：</p>
+<ul>
+<li>建立协议版本兼容性</li>
+<li>交换和谈判能力</li>
+<li>分享实施细节</li>
+</ul>
+<p>请求示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;initialize&quot;</span><span class="punctuation">,</span> <span class="comment">//初始化方法</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">// MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 支持的能力</span></span><br><span class="line">      <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//支持根</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">// 根变化的时候可以通知</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sampling&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span> <span class="comment">// 不支持采样</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;clientInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//客户端基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleClient&quot;</span><span class="punctuation">,</span> <span class="comment">//客户端名称</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span> <span class="comment">//客户端版本</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>对应的服务器接收到请求以后可以返回如下内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 返回结果</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">//MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器支持的能力</span></span><br><span class="line">      <span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="comment">// 日志能力</span></span><br><span class="line">      <span class="attr">&quot;prompts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 提示能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;resources&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 资源能力</span></span><br><span class="line">        <span class="attr">&quot;subscribe&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 工具能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;serverInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleServer&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;instructions&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Optional instructions for the client&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>成功初始化以后，客户端必须发送一个<code>初始化通知</code>来确认初始化完成。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;notifications/initialized&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在初始化请求中，客户端必须发送它支持的协议版本。这应该是客户端支持的最新版本。</p>
+<p>如果服务器支持请求的协议版本，它必须以相同的版本响应。否则，服务器必须使用它支持的另一个协议版本进行响应。这应该是服务器支持的最新版本。</p>
+<p>如果客户端不支持服务器响应中的版本，它应该 断开连接。</p>
+<h4 id="操作阶段"><a href="#操作阶段" class="headerlink" title="操作阶段"></a>操作阶段</h4><p>这个阶段表示已经初始化完成了，可以双方开始通信了。</p>
+<p>在这个阶段就可以开始上面说的交流了。</p>
+<p>这里应该注意</p>
+<ul>
+<li>尊重协商的协议版本</li>
+<li>仅使用已成功协商的功能</li>
+</ul>
+<h4 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h4><p>在关闭阶段，一方（通常是客户端）干净地终止协议连接。没有定义特定的关闭消息-相反，应该使用底层传输机制来发出连接终止的信号：</p>
+<p>​对于<code>STDIO</code>的传输方式来说，可以进行如下步骤关闭MCP：</p>
+<ul>
+<li>首先，关闭子进程（服务器）的输入流</li>
+<li>等待服务器退出，或者如果服务器没有在合理的时间内退出，则发送<code>SIGTERM</code>信号</li>
+<li>如果服务器<code>SIGTERM</code>之后的合理时间内没有退出，则发送<code>SIGKILL</code>信号<br>服务器可以通过关闭到客户端的输出流并退出来启动关机。</li>
+</ul>
+<p>对于 <code>HTTP</code>传输方式来说，通过关闭关联的 HTTP 连接就可以了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了MCP的概念，MCP的通信协议、通信方式、生命周期。MCP到底是什么东西，实现了哪些内容，使用场景以及为什么要使用MCP。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html" rel="prev" title="chatGPT可以生成图片啦">
+      <i class="fa fa-chevron-left"></i> chatGPT可以生成图片啦
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MCP"><span class="nav-number">1.</span> <span class="nav-text">MCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8MCP%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">为什么使用MCP？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E4%B8%80%EF%BC%9AUSB%E6%8E%A5%E5%8F%A3%E6%A1%88%E4%BE%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">案例一：USB接口案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E4%BA%8C%EF%BC%9A%E5%85%85%E7%94%B5%E6%8E%A5%E5%8F%A3%E6%A1%88%E4%BE%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">案例二：充电接口案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E4%B8%89%EF%BC%9AAgent%E6%A1%88%E4%BE%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">案例三：Agent案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCP%E7%BB%84%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">MCP组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">1.3.2.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.3.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E6%A0%B7"><span class="nav-number">1.3.4.</span> <span class="nav-text">采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9"><span class="nav-number">1.3.5.</span> <span class="nav-text">根</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MCP%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.3.6.</span> <span class="nav-text">MCP服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MCP%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.3.7.</span> <span class="nav-text">MCP客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MCP%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.8.</span> <span class="nav-text">MCP通信协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON-RPC2-0"><span class="nav-number">1.3.8.1.</span> <span class="nav-text">JSON-RPC2.0</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MCP%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.9.</span> <span class="nav-text">MCP传输方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#STDIO"><span class="nav-number">1.3.9.1.</span> <span class="nav-text">STDIO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP"><span class="nav-number">1.3.9.2.</span> <span class="nav-text">HTTP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MCP%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.3.10.</span> <span class="nav-text">MCP生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.3.10.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E9%98%B6%E6%AE%B5"><span class="nav-number">1.3.10.2.</span> <span class="nav-text">操作阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%AD"><span class="nav-number">1.3.10.3.</span> <span class="nav-text">关闭</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.5.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

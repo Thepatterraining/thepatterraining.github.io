@@ -196,6 +196,729 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B.html" class="post-title-link" itemprop="url">DDD领域驱动设计和充血模型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-30 16:51:30" itemprop="dateCreated datePublished" datetime="2020-04-30T16:51:30+08:00">2020-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-27 16:03:03" itemprop="dateModified" datetime="2025-02-27T16:03:03+08:00">2025-02-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DDD/" itemprop="url" rel="index"><span itemprop="name">DDD</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="DDD领域驱动设计和充血模型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="贫血模型"><a href="#贫血模型" class="headerlink" title="贫血模型"></a>贫血模型</h1><p>什么是<code>贫血模型</code>？</p>
+<p><code>贫血模型</code>就是缺血了，缺东西，也就是只有数据但是没有业务逻辑或者有业务逻辑但是没有数据。</p>
+<p>比如你有一个计算类，他有一个加法计算的方法。但是他不持有计算的数据。</p>
+<p>和贫血模型对应的就是充血模型。</p>
+<p>什么是<code>充血模型</code>？</p>
+<p><code>充血模型</code>就是不缺血了，有数据同样有业务逻辑。</p>
+<p>比如你的计算类现在不只有加法计算，还有需要的数据。</p>
+<p>我们现在进行的开发基本上都是基于贫血模型开发的。</p>
+<p>比如一个电商系统，有商品模型，但是一个商品模型只有商品的基本信息，数据。如果需要获取一个商品的总价，那么我们需要调用model里面的一个方法来计算。这就是典型的贫血模型。</p>
+<p>如果我们在商品模型里面提供一个计算总价的方法。把数据和业务逻辑放在一起，这就是充血模型。</p>
+<h1 id="充血模型"><a href="#充血模型" class="headerlink" title="充血模型"></a>充血模型</h1><p>充血模型要将数据和业务高度内聚在一个类中，使得类更加饱满，也是高内聚低耦合的一种实践。不过充血模型需要更好的设计整个类才能实现。因为要考虑到扩展性，测试性，可读性，复用性等。充血模型注定比贫血模型更加耗费时间，更加难以实现。</p>
+<p>现在更推崇敏捷开发。快速实现需求，慢慢迭代升级。如果使用充血模型也容易搞得四不像。也因此贫血模型更让人喜欢。贫血模型也更容易设计和实现，日常开发中随便写的都是贫血模型。而充血模型需要进行好好的设计。那怎么设计充血模型呢？可以根据<code>DDD领域驱动设计</code>来实现。</p>
+<h1 id="领域驱动设计DDD"><a href="#领域驱动设计DDD" class="headerlink" title="领域驱动设计DDD"></a>领域驱动设计DDD</h1><p>DDD的概念很早就有了，但是一直没有火起来。现在又出现了<code>充血模型</code>的概念。</p>
+<p>DDD的核心思想其实就是根据不同的领域，功能来设计建模，划分模块。微服务的划分就可以借鉴DDD的思想，根据不同的业务领域来划分。</p>
+<p>DDD可以用来指导我们如果做软件设计，但是想要用好DDD，需要对自身的业务足够理解，足够熟练。</p>
+<p><code>领域</code>是一个组织所做的事情以及其包含的一切。领域驱动设计就是从自身的领域出发，分析自身领域内的一切关联关系，根据其设计我们的软件。构造充血模型。也就是充血模型是和业务高度耦合的，完全从自身的领域出发进行设计。可以先将自身的领域细分出多个子领域，然后再每个子领域中设计出各自的领域模型。也就是充血模型。</p>
+<p>比如电商领域可以分成用户，商品，订单，物流等子领域。然后设计出各自的实体对象，根据全局领域的上下文来分析需要承担哪些责任也就是哪些数据和业务逻辑。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E4%B8%8D%E6%8E%A8%E8%8D%90mysql%E8%BF%9E%E8%A1%A8join%E6%9F%A5%E8%AF%A2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E4%B8%8D%E6%8E%A8%E8%8D%90mysql%E8%BF%9E%E8%A1%A8join%E6%9F%A5%E8%AF%A2.html" class="post-title-link" itemprop="url">为什么很多人不推荐mysql连表join查询</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-27 14:02:52" itemprop="dateCreated datePublished" datetime="2020-04-27T14:02:52+08:00">2020-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E4%B8%8D%E6%8E%A8%E8%8D%90mysql%E8%BF%9E%E8%A1%A8join%E6%9F%A5%E8%AF%A2.html" class="post-meta-item leancloud_visitors" data-flag-title="为什么很多人不推荐mysql连表join查询" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E4%B8%8D%E6%8E%A8%E8%8D%90mysql%E8%BF%9E%E8%A1%A8join%E6%9F%A5%E8%AF%A2.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BA%BA%E4%B8%8D%E6%8E%A8%E8%8D%90mysql%E8%BF%9E%E8%A1%A8join%E6%9F%A5%E8%AF%A2.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="为什么很多人不推荐mysql连表join查询"><a href="#为什么很多人不推荐mysql连表join查询" class="headerlink" title="为什么很多人不推荐mysql连表join查询"></a>为什么很多人不推荐mysql连表join查询</h1><p>join查询是什么？是连表查询，我们需要两个表的数据，就会使用join来进行连表。那么mysql里面是怎么连表的呢？它和我们自己查询出一张表的数据在遍历去查询另外一个表是不是一样呢？</p>
+<h2 id="join查询"><a href="#join查询" class="headerlink" title="join查询"></a>join查询</h2><p>join查询还可以写成left join，表示的是根据左边的表来查询右边的表。但实际上，优化器会进行优化，选择合适的表来做驱动表，不一定是左边的表。</p>
+<h3 id="Index-Nested-Loop-Join"><a href="#Index-Nested-Loop-Join" class="headerlink" title="Index Nested-Loop Join"></a>Index Nested-Loop Join</h3><p>NLJ算法，这是一种基于索引的算法，如果你的连表用到了索引，则会使用这个算法。</p>
+<p>比如下面的查询语句：</p>
+<p>b.uid字段有索引，并且假设a是小表，优化器选择了a表作为驱动表，b表作为被驱动表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> a <span class="keyword">left</span> <span class="keyword">join</span> b <span class="keyword">on</span> a.id <span class="operator">=</span> b.uid;</span><br></pre></td></tr></table></figure>
+
+<p>执行流程大致如下：</p>
+<ol>
+<li>读取表a的第一行数据</li>
+<li>使用表a的id去b表的索引树上查询到对应的b表id</li>
+<li>通过查询的b表id回表查询b表数据</li>
+<li>把a表和b表数据放在一起</li>
+<li>重复上面的步骤直到a表遍历完成</li>
+<li>返回数据</li>
+</ol>
+<p>可以看到这和我们自己查询出一张表然后遍历查询过程是一样的。</p>
+<p>但是它的优势是省略了多次连接数据库，连接数据库是比较耗费资源和时间的，这样来看，使用join是更加好的选择。当然前提是你的join被驱动表有索引。</p>
+<p>这个过程扫描了整个表a和表a的id对应的每一行表b。假设a表的数据量是n，那么扫描了n + n行，当然不算回表。如果算上回表其实相当于n + n + n行。</p>
+<p>我们再看一下这个算法的时间复杂度。</p>
+<p>b+树中，定位一个记录的时间复杂度大约是log(m)。m是b表的数据行数。为什么这里使用了b表的数据行数而不是上面说的a表的行数呢，因为这里指的是b表索引树的时间复杂度，当然是跟b表索引树大小挂钩也就是b表数据大小挂钩了。如果在算上回表查询，那么时间复杂度大约是2log(m)。</p>
+<p>a表要进行全表扫描，那么a表的时间复杂度就是n，再加上每一行要去b表中查询，那么去b表查询的时间就是n * 2log(m)。加起来就是n + (2nlog(m))。</p>
+<p>这里面2是常量可以忽略不记，而且2是因为回表造成的，如果我们使用覆盖索引，那么这个2就可以去掉了。</p>
+<p>nlog(m) 比 n小，所以显然n的影响是最大的。也就是说n越小，那么我们连表的速度就越快。所以我们连表的时候要使用更小的那张表作为驱动表，然后给被驱动表的连表字段上面加上索引或者覆盖索引。这样我们的连表其实还是很快的。</p>
+<h3 id="Block-Nested-Loop-Join"><a href="#Block-Nested-Loop-Join" class="headerlink" title="Block Nested-Loop Join"></a>Block Nested-Loop Join</h3><p>如果你的被驱动表字段上面没有索引，那么mysql就会使用另外一种算法。这个算法叫BNL算法。</p>
+<p>本来没有索引的情况下，按照上面的流程应该是下面这样：</p>
+<ol>
+<li>读取表a的第一行数据</li>
+<li>使用表a的id去b表上进行全表扫描查询到对应的b表数据</li>
+<li>把a表和b表数据放在一起</li>
+<li>重复上面的步骤直到a表遍历完成</li>
+<li>返回数据</li>
+</ol>
+<p>这样的话对于每一行表a的数据都要进行b表的全表扫描，也就是如果表a记为n行，表b记为m行，那么需要扫描n * m + n行数据。和上面的n + (2nlog(m))相比，可以看到慢了多少倍。</p>
+<p>所以mysql使用了另外一种方法，也就是BNL算法，这个算法做了一下优化，流程变成了下面这样：</p>
+<ol>
+<li>读取表a的所有数据放入join buffer</li>
+<li>对表b进行全表扫描，然后把每一条数据和join buffer中的数据做对比。</li>
+<li>把满足条件的数据返回。</li>
+</ol>
+<p>这样的话，也就是扫描了一遍表a和表b，那么需要扫描n + m行数据。可以看到比上面的n + (n<em>m)来说少了n倍的扫描量。当然了，这个算法，还需要在join buffer中进行n</em>m次对比数据，但是这样内存判断也要比上面的方法好很多。</p>
+<p>同样的这个算法对于两张表都是全表扫描，也就无所谓上面说的需要小表做驱动表了，反正都一样，都要全表扫描。</p>
+<p>join buffer存在内存中，那么他就有大小的限制，参数<code>join_buffer_size</code>就是限制join buffer大小的。默认值是256k。如果表a的数据大于join buffer的大小，那么就会分段，也就是分多次进行。</p>
+<p>但是分多次执行就会有一个问题了。比如分成了c次，那么表b就要经历c次的全表扫描。所以内存允许，当然Join buffer大一点速度会快一些。</p>
+<p>这样的话就不是上面的n + m了，而是变成了n + (c*m)，c是根据join buffer大小和n的大小来决定的。如果n越小或者join buffer size越大，那么c就越小。也就是说，如果我们使用小表作为驱动表，那么在遇到数据量超过join buffer的时候，速度也会比较快。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说，Join的时候注意下面几点：</p>
+<ul>
+<li>总是用小表作为驱动表比较好。</li>
+<li>能加索引就在被驱动表join字段上面加索引，使用NLJ算法而不是BNL算法。</li>
+<li>在没有索引，并且驱动表数据量过大时，可以通过调大join_buffer_size的值来加速连表查询。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysqlorderby%E8%AF%A6%E8%A7%A3-sortbuffer%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysqlorderby%E8%AF%A6%E8%A7%A3-sortbuffer%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.html" class="post-title-link" itemprop="url">mysqlorderby详解-sortbuffer是什么东西</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-26 16:46:24" itemprop="dateCreated datePublished" datetime="2020-04-26T16:46:24+08:00">2020-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysqlorderby%E8%AF%A6%E8%A7%A3-sortbuffer%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.html" class="post-meta-item leancloud_visitors" data-flag-title="mysqlorderby详解-sortbuffer是什么东西" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysqlorderby%E8%AF%A6%E8%A7%A3-sortbuffer%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysqlorderby%E8%AF%A6%E8%A7%A3-sortbuffer%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="mysql是怎么操作order-by来进行排序的"><a href="#mysql是怎么操作order-by来进行排序的" class="headerlink" title="mysql是怎么操作order by来进行排序的"></a>mysql是怎么操作order by来进行排序的</h1><p>mysql的排序用到了sort buffer，sort buffer是一个内存块。</p>
+<p>mysql会先取出需要排序的数据，然后把数据放入sort buffer，当所有数据都放入sort buffer或者sort buffer满了就开始排序，然后将排序好的结果返回给客户端。</p>
+<p>参数<code>sort_buffer_size</code>显示的就是sort buffer的大小。</p>
+<p>如果数据量超过sort buffer，那么就会通过磁盘临时文件辅助进行排序，如果数据量比较小，则可以直接在内存中进行。</p>
+<p>在内存中排序会使用<code>快排算法</code>，而通过磁盘临时文件则会使用<code>归并排序算法</code>。</p>
+<p>排序步骤可以分为以下几步：</p>
+<ol>
+<li>取出select的数据存入sort buffer。</li>
+<li>在sort buffer中进行快排或者归并排序算法。</li>
+<li>如果有limit按照limit取相应的结果集进行返回。</li>
+</ol>
+<h3 id="rowid排序算法"><a href="#rowid排序算法" class="headerlink" title="rowid排序算法"></a>rowid排序算法</h3><p>这里面select出来的数据量可能会很大，跟你要查询的列多少有关，如果你的列很多，那么mysql可能会使用另外一种排序方法，叫做<code>rowid</code>排序。</p>
+<p>rowid算法不管你查询出来的结果集，它只把必要的字段放入sort buffer中，这样sort buffer就可以存入更多的数据来进行排序。</p>
+<p>必要的字段也就是你排序需要的字段和主键字段，比如<code>order by time</code>那么他只会放入id 和 time，然后按照time字段排序完成后再通过主键id回表查询一遍数据，然后返回数据。</p>
+<p>显然rowid算法还需要再次回表，所以效率上要低一些，所以不是mysql默认使用的排序方法。</p>
+<p>只有当你的内存不够用，查询的列太多的时候，mysql才会使用这种算法。</p>
+<p>排序步骤可以分为以下几步：</p>
+<ol>
+<li>取出排序的字段和id存入sort buffer。</li>
+<li>在sort buffer中进行快排或者归并排序算法。</li>
+<li>按照排序结果和limit数量回表查询然后返回数据。</li>
+</ol>
+<h3 id="不需要排序的方法"><a href="#不需要排序的方法" class="headerlink" title="不需要排序的方法"></a>不需要排序的方法</h3><p>既然这样，我们为了更快速，可以避免mysql排序。</p>
+<p>innoDB的索引是有序的，也就是说，如果我们要排序的字段本身就是有序的，那么就不用排序了。</p>
+<p>所以我们可以在排序字段上建立索引，而如果我们查询的字段不多，甚至可以建立覆盖索引，那么速度会快很多。</p>
+<p>mysql到底有没有进行排序，可以通过explain的执行计划来看。如果最后有using filesort，就表示使用了排序算法。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%B8%80%E6%96%87%E5%B8%A6%E4%BD%A0%E6%90%9E%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%8E%A8%E8%8D%90count-%E8%80%8C%E4%B8%8D%E6%98%AFcountid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E4%B8%80%E6%96%87%E5%B8%A6%E4%BD%A0%E6%90%9E%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%8E%A8%E8%8D%90count-%E8%80%8C%E4%B8%8D%E6%98%AFcountid.html" class="post-title-link" itemprop="url">一文带你搞懂为什么大家都推荐count*而不是countid</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-24 16:11:01" itemprop="dateCreated datePublished" datetime="2020-04-24T16:11:01+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E4%B8%80%E6%96%87%E5%B8%A6%E4%BD%A0%E6%90%9E%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%8E%A8%E8%8D%90count-%E8%80%8C%E4%B8%8D%E6%98%AFcountid.html" class="post-meta-item leancloud_visitors" data-flag-title="一文带你搞懂为什么大家都推荐count*而不是countid" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E4%B8%80%E6%96%87%E5%B8%A6%E4%BD%A0%E6%90%9E%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%8E%A8%E8%8D%90count-%E8%80%8C%E4%B8%8D%E6%98%AFcountid.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E4%B8%80%E6%96%87%E5%B8%A6%E4%BD%A0%E6%90%9E%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%AE%B6%E9%83%BD%E6%8E%A8%E8%8D%90count-%E8%80%8C%E4%B8%8D%E6%98%AFcountid.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="一文带你搞懂为什么大家都推荐count-而不是count-id"><a href="#一文带你搞懂为什么大家都推荐count-而不是count-id" class="headerlink" title="一文带你搞懂为什么大家都推荐count(*)而不是count(id)"></a>一文带你搞懂为什么大家都推荐count(*)而不是count(id)</h1><p>在开发中，我们经常用到count这个函数来计算行数，尤其是后台列表展示。</p>
+<p>那么究竟应该使用count(<em>)还是count(id)呢？很多人，很多书籍都推荐使用count(</em>)。</p>
+<h3 id="count"><a href="#count" class="headerlink" title="count(*)"></a>count(*)</h3><p>在每个引擎里面其实是不一样的，比如myisam引擎，会把总行数存起来，如果你需要总行数，那么直接返回，那速度嗖嗖嗖的。</p>
+<p>我们常用的innoDB引擎呢，他就真的是一行行计数了。</p>
+<p>那为什么一行行计数还推荐count(*)呢？</p>
+<p>innoDB是索引树组织表，不仅有主键索引树还有其他索引树，而count(*)反正是要全表扫描，那么优化器会去遍历最小的索引树，普通索引树的叶子节点只有id，当然要更小一些。</p>
+<p>执行这个的时候innoDB遍历全表，但不取值，并且不判断，因为count(*)肯定不是null，直接累加。</p>
+<h3 id="count-id"><a href="#count-id" class="headerlink" title="count(id)"></a>count(id)</h3><p>执行这个的时候innoDB遍历全表，把每一行数据的id值取出来返回给mysql，mysql拿到数据以后判断不为空则+1。累加后返回。</p>
+<h3 id="count-1"><a href="#count-1" class="headerlink" title="count(1)"></a>count(1)</h3><p>执行这个的时候innoDB遍历全表，但不取值，直接返回给mysql，mysql收到返回值，给返回值赋值1，然后判断，累加。</p>
+<h3 id="count-字段"><a href="#count-字段" class="headerlink" title="count(字段)"></a>count(字段)</h3><p>这个和count(id)类似，只不过如果允许为空的话，需要把值取出来做个判断，多个判断。如果不允许为空，那就一样了。</p>
+<p>这么一对比，就看出来了，显然count(<em>)更快，这也是因为mysql对count(</em>)这个语句专门做了优化。所以更推荐count(*)</p>
+<blockquote>
+<p>count(字段) 慢于 count(id) 慢于 count(1) 慢于 count(*)</p>
+</blockquote>
+<p>除了这些我们同样可以自己实现计数。</p>
+<p>我们可以使用缓存系统，将计数放入缓存，然后持久化。比如redis。</p>
+<p>我们也可以直接创建一个计数的表，把计数字段放入表里。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html" class="post-title-link" itemprop="url">推荐一些学习网站</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-24 15:51:16" itemprop="dateCreated datePublished" datetime="2020-04-24T15:51:16+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html" class="post-meta-item leancloud_visitors" data-flag-title="推荐一些学习网站" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%8E%A8%E8%8D%90%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="推荐一些学习网站"><a href="#推荐一些学习网站" class="headerlink" title="推荐一些学习网站"></a>推荐一些学习网站</h1><h2 id="coursera"><a href="#coursera" class="headerlink" title="coursera"></a>coursera</h2><p><a target="_blank" rel="noopener" href="https://www.coursera.org/">coursera</a>是国际最大的高校慕课网站。上面有很多很火的课程，可以选择免费旁听，只不过免费的没法做作业。但是课件都是一样的，很多都有了中文字幕。也可以选择付费学习或者申请助学金，如果申请助学金成功就不用掏钱了。</p>
+<p><img src="/../images/coursera.png" alt="coursera"></p>
+<h2 id="edx"><a href="#edx" class="headerlink" title="edx"></a>edx</h2><p><a target="_blank" rel="noopener" href="https://www.edx.org/">edX</a>是麻省理工和哈佛大学于2012年4月联手创建的大规模开放在线课堂平台。</p>
+<p>这上面也有很多免费的优秀课程。</p>
+<p><img src="/../images/edx.png" alt="coursera"></p>
+<h2 id="优达学城"><a href="#优达学城" class="headerlink" title="优达学城"></a>优达学城</h2><p><a target="_blank" rel="noopener" href="https://cn.udacity.com/courses/all">优达学城 Udacity</a> 是来自硅谷的前沿技术平台，由 Google无人车之父 Sebastian Thrun 创立，与 Google、Facebook、Amazon 等全球顶尖技术公司联合开发了一系列的专业认证项目，为前沿技术领域培育了数万名顶尖专业人才，已与百度、腾讯、滴滴出行等中国前沿技术企业开发了一系列的课程项目</p>
+<h2 id="中国大学mooc"><a href="#中国大学mooc" class="headerlink" title="中国大学mooc"></a>中国大学mooc</h2><p><a target="_blank" rel="noopener" href="https://www.icourse163.org/">中国大学mooc</a>是国内高校慕课平台，里面都是高校老师授课，还是免费的。让你在家学习高校课程。</p>
+<h2 id="学堂在线"><a href="#学堂在线" class="headerlink" title="学堂在线"></a>学堂在线</h2><p><a target="_blank" rel="noopener" href="https://next.xuetangx.com/">学堂在线</a>是由清华大学研发出的中文MOOC（大规模开放在线课程，简称慕课）平台，于2013年10月10日正式启动，面向全球提供在线课程。任何拥有上网条件的学生均可通过该平台，在网上学习课程视频。</p>
+<h2 id="极客时间"><a href="#极客时间" class="headerlink" title="极客时间"></a>极客时间</h2><p><a target="_blank" rel="noopener" href="https://time.geekbang.org/">极客时间</a>极客邦科技出品的 IT 类知识服务产品，内容包含专栏订阅、极客新闻、热点专题、直播、视频和音频等多种形式的知识服务。 [1]  产品形态包括移动 App，移动端网站、PC 端网站、微信平台等。</p>
+<p>不过极客时间是收费的，虽然不贵，学生还有半价优惠，平时也有活动。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html" class="post-title-link" itemprop="url">mysql索引详解-你的数据库用对索引了嘛</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-23 12:30:39" itemprop="dateCreated datePublished" datetime="2020-04-23T12:30:39+08:00">2020-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html" class="post-meta-item leancloud_visitors" data-flag-title="mysql索引详解-你的数据库用对索引了嘛" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql%E7%B4%A2%E5%BC%95%E8%AF%A6%E8%A7%A3-%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E5%AF%B9%E7%B4%A2%E5%BC%95%E4%BA%86%E5%98%9B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="mysql索引详解-你的数据库用对索引了嘛"><a href="#mysql索引详解-你的数据库用对索引了嘛" class="headerlink" title="mysql索引详解-你的数据库用对索引了嘛"></a>mysql索引详解-你的数据库用对索引了嘛</h1><p>mysql的索引一般分为主键索引，唯一索引，普通索引，联合索引，覆盖索引等。</p>
+<p>索引这么多，到底该怎么用，用哪个索引适合，需不需要索引呢？</p>
+<h2 id="innoDB的索引"><a href="#innoDB的索引" class="headerlink" title="innoDB的索引"></a>innoDB的索引</h2><p>innoDB里面一般采用b+树索引模型，当然还有其它比如哈希索引，全文索引，空间索引。但是常用的还是b+树索引。</p>
+<p>B+树是一个N叉平衡树。为什么不用二叉平衡树呢，因为二叉平衡树高度太高了，n叉平衡树可以控制树的高度，大概在3-4的高度，而树的根节点一般存在内存中，这样只需要做2-3次磁盘操作就可以了。大量的减少了磁盘操作。</p>
+<h4 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h4><p><code>主键索引</code>是一种聚簇索引，什么是<code>聚簇索引</code>呢，就是和数据放在一起的。b+树的叶子节点存放的是页，每个页的默认大小是16kb。主键索引树的叶子节点存放的是主键id和数据。一般我们都会用id做为主键。如果一个表不指定主键，Innodb会使用row id作为主键。</p>
+<p>我们使用主键查询数据，来看一下执行计划。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> auth_users <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/mysql03.png" alt="执行计划"></p>
+<p>可以看到里面key列显示的是primary，表示使用了主键索引。row列是1，表示扫描了一行。通过树搜索的方式快速定位了主键id的位置并且取出数据进行了返回。</p>
+<p>为什么主键推荐使用<code>递增id</code>呢，这是因为对索引树的增删改查要更加快速。所以一般使用自增主键。也避免了插入引起的<code>页分裂</code>和删除引起的<code>页合并</code>。</p>
+<p>如果现在表里有id&#x3D;4,5,6的数据，你插入了一条id&#x3D;3的数据。这时候存放id&#x3D;4,5,6数据的数据页满了，就需要页分裂，变成两个数据页。</p>
+<p>页合并就是相邻的两个数据页的数据都挺少的，可以合并到一起，那么就会页合并。</p>
+<p>使用自增主键则只需要不断往后写入就可以了，不需要担心中间的插入。而且自增主键占用的空间同样相对较小。</p>
+<h4 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h4><p><code>二级索引</code>也是<code>非聚簇索引</code>。包括<code>唯一索引</code>和<code>普通索引</code>。他们同样是b+树的方式存放，只是他们的叶子节点中存放的并不是真正的数据，而是主键id。那么通过这种索引怎么找到数据呢，其实是先找到对应的主键id，再去主键索引树中通过主键id找到对应的数据，也叫<code>回表</code>。</p>
+<p>唯一索引和普通索引的区别在于查询的时候，唯一索引查询到条件对应的数据后不会接着查询了，而普通索引会接着查询，直到不满足条件为止。</p>
+<h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p><code>覆盖索引</code>是一种优化的手段。覆盖索引也是一种<code>联合索引</code>。</p>
+<p>比如我们查询用户信息的时候，如果需要根据用户名查询用户名和密码。我们在用户名字段创建了一个索引。那么查询的时候就会走索引，但是查到的是id，还需要再去主键中找到数据，取出用户名和密码两个字段。</p>
+<p>如果我们在用户名的索引树中不仅存了id，还存了我们需要的密码字段，不就不需要再去回表了吗？那我们就需要创建一个<code>用户名和密码的联合索引</code>。这样我们就不需要再回表了，这也就是覆盖索引。覆盖了我们要查询的字段。当然，你通过索引查询的时候，执行计划显示的行数还是1.这是因为回表这个操作是在innoDB里面做的，mysql是感觉不到的。</p>
+<h4 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h4><p>索引下推也是一种优化。比如我们要查询<code>用户名是张三</code>，<code>密码是123456</code>的用户。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;张三&#x27;</span> <span class="keyword">and</span> pwd <span class="operator">=</span> <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在mysql5.6以前，只能查询到张三这个数据以后回表找到数据在判断密码。</p>
+<p>而mysqll5.6增加索引下推的优化之后，可以在索引遍历过程中，对name和pwd两个字段同时做判断。</p>
+<h2 id="唯一索引和普通索引"><a href="#唯一索引和普通索引" class="headerlink" title="唯一索引和普通索引"></a>唯一索引和普通索引</h2><p>这两个索引到底该怎么选择，比如用户名字段，用户名当然是不能重复的了。那么它应该使用唯一索引还是普通索引呢？</p>
+<p>一般用户注册的时候我们会判断用户名是否重复。所以用户名字段加唯一索引的价值并不大，我们的业务已经能保证它不重复了。</p>
+<p>我们在上面说过，查询的时候，唯一索引查询到数据直接就返回了，显然要比普通索引快一些。</p>
+<p>但是真的也就快了那么一点，因为InnoDB引擎在读取的时候，是读取一个数据页的数据。它会先把一个数据页读取到内存中，然后查询，那么在内存中多查一次其实没啥感觉。</p>
+<p>在看一下更新的时候。</p>
+<h4 id="数据在内存里面"><a href="#数据在内存里面" class="headerlink" title="数据在内存里面"></a>数据在内存里面</h4><p>如果数据在内存中，那么唯一索引会判断更新后是否会破坏唯一性，如果不破坏则更新。</p>
+<p>普通索引则直接更新。</p>
+<p>这里显示普通索引更好，不用判断。但是这个影响页很小，和上面一样，在内存中操作的。</p>
+<h4 id="数据不在内存中"><a href="#数据不在内存中" class="headerlink" title="数据不在内存中"></a>数据不在内存中</h4><p>如果数据不在内存中，那么唯一索引就需要从磁盘读取数据，然后判断，更新。</p>
+<p>普通索引则直接写入<code>change buffer</code>，然后就完成了，而change buffer则是在内存中，内存操作，少了磁盘操作。</p>
+<p>整体来看，普通索引貌似比唯一索引更友好，唯一索引为了唯一性牺牲了插入和修改的性能。</p>
+<h4 id="change-buffer"><a href="#change-buffer" class="headerlink" title="change buffer"></a>change buffer</h4><p>这个是一块内存中的空间，顾名思义，他就是为了修改而生的，如果你修改了数据，不需要直接更新磁盘，而是放入change buffer.change buffer满了，或者一定时间，或者当出现查询操作的时候，会merge数据，比如你更新了手机号，然后要查询这个用户的手机号。那么这时候内存中没有这个数据，从磁盘查询，磁盘查询到的是以前的手机号，因为数据没有更新到磁盘。这时候change buffer就会把更新数据合并到内存中的数据，使得查询到的是最新数据。</p>
+<p>那么为什么唯一索引不适用change buffer，因为他需要判断唯一性。</p>
+<p>但是向刚才举得例子，更新完立即查询，其实和唯一索引的更新没有啥区别了，反而因为change buffer还麻烦了。所以，change buffer更适合更新完不立即查询的场景。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E4%BA%8B%E5%8A%A1%E8%AF%A6%E8%A7%A3-4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%95%8C%E5%88%AB%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89%E6%8B%A9.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -715,840 +1438,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html" class="post-title-link" itemprop="url">vscode无法执行npm等脚本的问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-12 11:38:00" itemprop="dateCreated datePublished" datetime="2020-04-12T11:38:00+08:00">2020-04-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html" class="post-meta-item leancloud_visitors" data-flag-title="vscode无法执行npm等脚本的问题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="vscode无法执行npm等脚本的问题"><a href="#vscode无法执行npm等脚本的问题" class="headerlink" title="vscode无法执行npm等脚本的问题"></a>vscode无法执行npm等脚本的问题</h1><p>这是因为在windows系统上面powershell的执行策略问题。</p>
-<p>可以运行下面的命令查看当前执行策略</p>
-<blockquote>
-<p>Get-ExecutionPolicy</p>
-</blockquote>
-<p>使用下面的命令更改执行策略</p>
-<blockquote>
-<p>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</p>
-</blockquote>
-<p><code>-scope</code>参数是 限制在当前用户下面更改 策略更改为<code>RemoteSigned</code>策略。</p>
-<h5 id="RemoteSigned"><a href="#RemoteSigned" class="headerlink" title="RemoteSigned"></a>RemoteSigned</h5><ul>
-<li>Windows服务器计算机的默认执行策略。</li>
-<li>脚本可以运行。</li>
-<li>需要从可信任的发布者处获得从互联网下载的脚本和配置文件的数字签名，其中包括电子邮件和即时消息传递程序。</li>
-<li>不需要在本地计算机上编写且未从Internet下载的脚本上进行数字签名。</li>
-<li>如果脚本不受阻碍（例如使用Unblock-Filecmdlet），则运行从Internet下载且未签名的脚本。</li>
-<li>可能会运行来自Internet以外的其他来源的未签名脚本和可能有害的已签名脚本。</li>
-</ul>
-<h5 id="Restricted"><a href="#Restricted" class="headerlink" title="Restricted"></a>Restricted</h5><ul>
-<li>Windows客户端计算机的默认执行策略。</li>
-<li>允许使用单个命令，但不允许使用脚本。</li>
-<li>阻止运行所有脚本文件，包括格式和配置文件（.ps1xml），模块脚本文件（.psm1）和PowerShell配置文件（.ps1）。</li>
-</ul>
-<h5 id="Undefined"><a href="#Undefined" class="headerlink" title="Undefined"></a>Undefined</h5><ul>
-<li>当前范围中未设置执行策略。</li>
-<li>如果所有作用域中的执行策略均为Undefined，则有效的执行策略为Restricted，这是默认的执行策略。</li>
-</ul>
-<h5 id="Unrestricted"><a href="#Unrestricted" class="headerlink" title="Unrestricted"></a>Unrestricted</h5><ul>
-<li>非Windows计算机的默认执行策略，不能更改。</li>
-<li>未签名的脚本可以运行。有运行恶意脚本的风险。</li>
-<li>在运行非本地Intranet区域中的脚本和配置文件之前警告用户。</li>
-</ul>
-<p>更多问题可以参考<code>powershell</code>的官方文档</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7">https://docs.microsoft.com/zh-cn/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7</a></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%80%EF%BC%89-%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%80%EF%BC%89-%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE.html" class="post-title-link" itemprop="url">laravel+react实战打造企业级高并发分布式电商小程序（一）--基础建设</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-11 18:16:31" itemprop="dateCreated datePublished" datetime="2020-04-11T18:16:31+08:00">2020-04-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">laravel+react实战打造企业级高并发分布式电商小程序</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%80%EF%BC%89-%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE.html" class="post-meta-item leancloud_visitors" data-flag-title="laravel+react实战打造企业级高并发分布式电商小程序（一）--基础建设" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%80%EF%BC%89-%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%80%EF%BC%89-%E5%9F%BA%E7%A1%80%E5%BB%BA%E8%AE%BE.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="laravel-react实战打造企业级高并发分布式电商小程序（一）"><a href="#laravel-react实战打造企业级高并发分布式电商小程序（一）" class="headerlink" title="laravel+react实战打造企业级高并发分布式电商小程序（一）"></a>laravel+react实战打造企业级高并发分布式电商小程序（一）</h1><p>整体使用laravel7+react打造整个电商小程序。里面会涉及到高并发的知识，mysql的分库分表，主从读写分离的配置，redis集群的使用，缓存系统的使用，队列系统的使用等。</p>
-<p>先初始化一个laravel的项目。然后配置好<code>.env</code>文件。</p>
-<h2 id="基础建设"><a href="#基础建设" class="headerlink" title="基础建设"></a>基础建设</h2><p>我们使用前后端分离就要考虑跨域问题和安全问题。跨域使用<code>cors</code>解决，laravel7里面内置了<code>cors</code>的解决方案，我们只要修改<code>config/cors.php</code>配置文件就好了。</p>
-<p>把里面的值更改一下。修改这个值的原因是因为我们会使用jwt传一个token的请求头过来进行验证。这个时候还是报跨域的错误，所以将<code>supports_credentials</code>值修改为true，如果不报错就不需要修改了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">&#x27;supports_credentials&#x27;</span> =&gt; <span class="literal">true</span>,</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>把这个参数的值修改为true。</p>
-<p>安全问题使用<code>jwt</code>的解决方案，安装<code>jwt</code>的包。</p>
-<blockquote>
-<p>composer require lcobucci&#x2F;jwt</p>
-</blockquote>
-<p>在routes&#x2F;api.php路由文件中增加下面的路由</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//获取jwt token</span></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">post</span>(<span class="string">&#x27;/require_token&#x27;</span>, <span class="string">&#x27;JWT\RequireTokenController@requireToken&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在config下面新建<code>jwt.php</code>文件，里面内容如下</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> [</span><br><span class="line">    <span class="string">&#x27;JWT_SECRET&#x27;</span> =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;JWT_SECRET&#x27;</span>,<span class="string">&#x27;DvYUz+woS7vVJe6ldY+PqWoUbhIyY9rShzM0NAfzxdU=&#x27;</span>),</span><br><span class="line">    <span class="string">&#x27;JWT_EXP_TIME&#x27;</span> =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;JWT_EXP_TIME&#x27;</span>,<span class="string">&#x27;36000&#x27;</span>),</span><br><span class="line">];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在<code>.env</code>中增加下面的内容</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># jwt</span></span><br><span class="line">JWT_SECRET=DvYUz+woS7vVJe6ldY+PqWoUbhIyY9rShzM0NAfzxdU=   </span><br><span class="line">JWT_EXP_TIME=<span class="number">36000</span>  <span class="comment">//过期时间</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在<code>app/http/middleware</code>中创建中间件<code>jwtCheck.php</code>,内容如下</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Middleware</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Sys</span>\<span class="title">ErrorModel</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Closure</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Lcobucci</span>\<span class="title">JWT</span>\<span class="title">Parser</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Lcobucci</span>\<span class="title">JWT</span>\<span class="title">Signer</span>\<span class="title">Hmac</span>\<span class="title">Sha256</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jwtCheck</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Handle an incoming request.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  \Illuminate\Http\Request  $request</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  \Closure  $next</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params"><span class="variable">$request</span>, <span class="built_in">Closure</span> <span class="variable">$next</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="variable">$parser</span> = <span class="keyword">new</span> Parser;</span><br><span class="line">        <span class="variable">$signer</span> = <span class="keyword">new</span> Sha256;</span><br><span class="line">        <span class="variable">$secret</span> = <span class="title function_ invoke__">config</span>(<span class="string">&#x27;jwt.JWT_SECRET&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$request</span>-&gt;<span class="title function_ invoke__">hasHeader</span>(<span class="string">&#x27;Authorization&#x27;</span>))&#123;</span><br><span class="line">            <span class="variable">$token</span> = <span class="variable">$request</span>-&gt;<span class="title function_ invoke__">header</span>(<span class="string">&#x27;Authorization&#x27;</span>);</span><br><span class="line">            <span class="comment">//解析token</span></span><br><span class="line">            <span class="variable">$parse</span> = <span class="variable">$parser</span>-&gt;<span class="title function_ invoke__">parse</span>(<span class="variable">$token</span>);</span><br><span class="line">            <span class="comment">//验证token合法性</span></span><br><span class="line">            <span class="keyword">if</span> (!<span class="variable">$parse</span>-&gt;<span class="title function_ invoke__">verify</span>(<span class="variable">$signer</span>, <span class="variable">$secret</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="title function_ invoke__">response</span>()-&gt;<span class="title function_ invoke__">json</span>([<span class="string">&#x27;code&#x27;</span>=&gt;<span class="title class_">ErrorModel</span>::JWT_ERROR, <span class="string">&#x27;msg&#x27;</span>=&gt;<span class="string">&#x27;令牌错误！&#x27;</span>]);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//验证是否已经过期</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">$parse</span>-&gt;<span class="title function_ invoke__">isExpired</span>()) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="title function_ invoke__">response</span>()-&gt;<span class="title function_ invoke__">json</span>([<span class="string">&#x27;code&#x27;</span>=&gt;<span class="title class_">ErrorModel</span>::JWT_ERROR, <span class="string">&#x27;msg&#x27;</span>=&gt;<span class="string">&#x27;令牌过期！&#x27;</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">response</span>()-&gt;<span class="title function_ invoke__">json</span>([<span class="string">&#x27;code&#x27;</span>=&gt;<span class="title class_">ErrorModel</span>::JWT_ERROR, <span class="string">&#x27;msg&#x27;</span>=&gt;<span class="string">&#x27;令牌缺失！&#x27;</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//把token放到参数里面</span></span><br><span class="line">        <span class="title function_ invoke__">request</span>()-&gt;<span class="title function_ invoke__">offsetSet</span>(<span class="string">&#x27;token&#x27;</span>, <span class="variable">$token</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$next</span>(<span class="variable">$request</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在<code>app/http</code>下面的<code>Kernel.php</code>文件里面的<code>$routeMiddleware</code>变量里面增加下面内容，把中间件注册到系统中。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;jwtCheck&#x27;</span> =&gt; \App\Http\Middleware\jwt<span class="title class_">Check</span>::<span class="variable language_">class</span>,</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h4><p>创建控制器</p>
-<p>在<code>app/http/controller</code>下面创建<code>jwt</code>文件夹，然后在<code>jwt</code>文件夹里面创建<code>RequireTokenController.php</code>文件。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Controllers</span>\<span class="title class_">JWT</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Controllers</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Http</span>\<span class="title">Request</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Lcobucci</span>\<span class="title">JWT</span>\<span class="title">Builder</span>;</span><br><span class="line"><span class="keyword">use</span> \<span class="title">Lcobucci</span>\<span class="title">JWT</span>\<span class="title">Signer</span>\<span class="title">Hmac</span>\<span class="title">Sha256</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Redis</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RequireTokenController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">requireToken</span>(<span class="params">Builder <span class="variable">$builder</span>, Sha256 <span class="variable">$signer</span></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="variable">$secret</span> = <span class="title function_ invoke__">config</span>(<span class="string">&#x27;jwt.JWT_SECRET&#x27;</span>);</span><br><span class="line">        <span class="variable">$time</span> = <span class="title function_ invoke__">time</span>();</span><br><span class="line">        <span class="variable">$expTime</span> = <span class="title function_ invoke__">config</span>(<span class="string">&#x27;jwt.JWT_EXP_TIME&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="comment">//设置header和payload，以下的字段都可以自定义</span></span><br><span class="line">            <span class="variable">$builder</span>-&gt;<span class="title function_ invoke__">setIssuer</span>(<span class="string">&quot;cmp.wliot.com&quot;</span>) <span class="comment">//发布者</span></span><br><span class="line">                    -&gt;<span class="title function_ invoke__">setAudience</span>(<span class="string">&quot;cmp.wliot.com&quot;</span>) <span class="comment">//接收者</span></span><br><span class="line">                    -&gt;<span class="title function_ invoke__">setId</span>(<span class="string">&quot;abc&quot;</span>, <span class="literal">true</span>) <span class="comment">//对当前token设置的标识</span></span><br><span class="line">                    -&gt;<span class="title function_ invoke__">setIssuedAt</span>(<span class="variable">$time</span>) <span class="comment">//token创建时间</span></span><br><span class="line">                    -&gt;<span class="title function_ invoke__">setExpiration</span>(<span class="variable">$time</span> + <span class="variable">$expTime</span>) <span class="comment">//过期时间</span></span><br><span class="line">                    <span class="comment">// -&gt;setNotBefore($time + 5) //当前时间在这个时间前，token不能使用</span></span><br><span class="line">                    -&gt;<span class="title function_ invoke__">set</span>(<span class="string">&#x27;uid&#x27;</span>, <span class="number">30061</span>); <span class="comment">//自定义数据</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//设置签名</span></span><br><span class="line">            <span class="variable">$builder</span>-&gt;<span class="title function_ invoke__">sign</span>(<span class="variable">$signer</span>, <span class="variable">$secret</span>);</span><br><span class="line">            <span class="comment">//获取加密后的token，转为字符串</span></span><br><span class="line">            <span class="variable">$token</span> = (<span class="keyword">string</span>)<span class="variable">$builder</span>-&gt;<span class="title function_ invoke__">getToken</span>();</span><br><span class="line">        &#125; <span class="keyword">while</span> (<span class="title class_">Redis</span>::<span class="title function_ invoke__">exists</span>(<span class="variable">$token</span>));</span><br><span class="line">        <span class="comment">//存入redis</span></span><br><span class="line">        <span class="comment">// Redis::setex($token, $expTime, json_encode([]));</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">success</span>(<span class="variable">$token</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这里面使用到了<code>$this-&gt;success()</code>方法，这个方法来自controller类，我们需要编写这个方法。</p>
-<p>在<code>app/http</code>下面创建<code>Utils</code>文件夹，在里面创建<code>Success.php</code>文件。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Utils</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Sys</span>\<span class="title">ErrorModel</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Success</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">success</span>(<span class="params"><span class="variable">$data</span> = []</span>) </span>&#123;</span><br><span class="line">        <span class="variable">$res</span> = [<span class="string">&#x27;code&#x27;</span>=&gt;<span class="string">&#x27;0&#x27;</span>,<span class="string">&#x27;msg&#x27;</span>=&gt;<span class="string">&#x27;请求成功！&#x27;</span>, <span class="string">&#x27;data&#x27;</span>=&gt;<span class="variable">$data</span>];</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">response</span>()-&gt;<span class="title function_ invoke__">json</span>(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>修改<code>app/http/controllers/controller.php</code>文件</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Utils</span>\<span class="title">Success</span>;  <span class="comment">//引入刚才的文件</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Controller</span> <span class="keyword">extends</span> <span class="title">BaseController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">AuthorizesRequests</span>, <span class="title">DispatchesJobs</span>, <span class="title">ValidatesRequests</span>, <span class="title">Success</span>;  <span class="comment">//在这里添加Success 也就是刚才的文件。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>在这里面使用到了redis，所以我们需要启动你本地的redis服务器。启动之后就可以访问我们上面填写的路由了，使用postman访问你的路由。</p>
-<p><img src="/../images/laravel-react01.png" alt="Image text"></p>
-<p>可以看到返回了正确的token。</p>
-<p>在后面的访问请求中我们需要使用这个token。我们把它加入请求头。在请求头新建一个<code>Authorization</code>的key，他的值就是我们的token。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%BA%8C%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%BA%8C%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html" class="post-title-link" itemprop="url">laravel+react实战打造企业级高并发分布式电商小程序（二）--权限管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-11 18:16:31" itemprop="dateCreated datePublished" datetime="2020-04-11T18:16:31+08:00">2020-04-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">laravel+react实战打造企业级高并发分布式电商小程序</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%BA%8C%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html" class="post-meta-item leancloud_visitors" data-flag-title="laravel+react实战打造企业级高并发分布式电商小程序（二）--权限管理" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%BA%8C%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%BA%8C%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="laravel-react实战打造企业级高并发分布式电商小程序（二）"><a href="#laravel-react实战打造企业级高并发分布式电商小程序（二）" class="headerlink" title="laravel+react实战打造企业级高并发分布式电商小程序（二）"></a>laravel+react实战打造企业级高并发分布式电商小程序（二）</h1><p>整体使用laravel7+react打造整个电商小程序。里面会涉及到高并发的知识，mysql的分库分表，主从读写分离的配置，redis集群的使用，缓存系统的使用，队列系统的使用等。</p>
-<p>先初始化一个laravel的项目。然后配置好<code>.env</code>文件。</p>
-<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><p>既然是电商肯定有后台，要做权限管理这块。</p>
-<p>先创建表，这里使用<code>laravel</code>的<code>migration</code>。下面是后台用户表。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateUsersTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;auth_users&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;name&#x27;</span>, <span class="number">100</span>)-&gt;<span class="title function_ invoke__">unique</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;email&#x27;</span>, <span class="number">100</span>)-&gt;<span class="title function_ invoke__">unique</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamp</span>(<span class="string">&#x27;email_verified_at&#x27;</span>)-&gt;<span class="title function_ invoke__">nullable</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;password&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">rememberToken</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;auth_users&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是角色表</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateRolesTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;auth_roles&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;name&#x27;</span>, <span class="number">100</span>)-&gt;<span class="title function_ invoke__">unique</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;auth_roles&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是权限表</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreatePermissionsTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;auth_permissions&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;name&#x27;</span>,<span class="number">100</span>)-&gt;<span class="title function_ invoke__">unique</span>();</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;auth_permissions&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是用户角色关联表</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateUserRolesTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;auth_user_roles&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigInteger</span>(<span class="string">&#x27;user_id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigInteger</span>(<span class="string">&#x27;role_id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;auth_user_roles&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是角色和权限关联表</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateRolePerimissionsTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;auth_role_permissions&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigInteger</span>(<span class="string">&#x27;user_id&#x27;</span>)-&gt;<span class="keyword">default</span>(<span class="number">0</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigInteger</span>(<span class="string">&#x27;role_id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigInteger</span>(<span class="string">&#x27;perimission_id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;auth_role_permissions&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面这张是系统错误信息表，这里会返回错误信息，这些错误信息全部存放在这张表里。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Migrations</span>\<span class="title">Migration</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Schema</span>\<span class="title">Blueprint</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Schema</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateSysErrorsTable</span> <span class="keyword">extends</span> <span class="title">Migration</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">create</span>(<span class="string">&#x27;sys_errors&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">Blueprint <span class="variable">$table</span></span>) </span>&#123;</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">bigIncrements</span>(<span class="string">&#x27;id&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;code&#x27;</span>,<span class="number">100</span>)-&gt;<span class="title function_ invoke__">unique</span>()-&gt;<span class="title function_ invoke__">comment</span>(<span class="string">&#x27;错误编码&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="keyword">string</span>(<span class="string">&#x27;msg&#x27;</span>)-&gt;<span class="title function_ invoke__">comment</span>(<span class="string">&#x27;错误信息&#x27;</span>);</span><br><span class="line">            <span class="variable">$table</span>-&gt;<span class="title function_ invoke__">timestamps</span>();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Reverse the migrations.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title class_">Schema</span>::<span class="title function_ invoke__">dropIfExists</span>(<span class="string">&#x27;sys_errors&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>创建完这些执行迁移命令就可以了。</p>
-<blockquote>
-<p>php artisan migrate</p>
-</blockquote>
-<p>当然了，在这之前确保你的<code>.env</code>文件已经配置好了数据库连接。</p>
-<p>我们有了后台数据还需要一个管理员账户，使用<code>seed</code>填充。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Auth</span>\<span class="title">UserModel</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Seeder</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Hash</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UsersTableSeeder</span> <span class="keyword">extends</span> <span class="title">Seeder</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Run the database seeds.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">UserModel <span class="variable">$user</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$user</span>-&gt;name = <span class="string">&#x27;admin&#x27;</span>;</span><br><span class="line">        <span class="variable">$user</span>-&gt;email = <span class="string">&#x27;admin@admin.com&#x27;</span>;</span><br><span class="line">        <span class="variable">$user</span>-&gt;password = <span class="title class_">Hash</span>::<span class="title function_ invoke__">make</span>(<span class="string">&#x27;123456&#x27;</span>);</span><br><span class="line">        <span class="variable">$user</span>-&gt;<span class="title function_ invoke__">save</span>();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>运行填充命令</p>
-<blockquote>
-<p>php artisan db:seed</p>
-</blockquote>
-<h3 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h3><p>这里我们使用一个<code>laravel</code>的扩展包，使用composer安装他</p>
-<blockquote>
-<p>composer require thepatter&#x2F;query-common</p>
-</blockquote>
-<p>安装完后查看我的这个文章来使用这个包，根据文章里面做完之后再回来看下面的内容。</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105408363">https://blog.csdn.net/Thepatterraining/article/details/105408363</a></p>
-</blockquote>
-<p>接下来使用<code>artisan</code>命令创建我们的控制器。</p>
-<blockquote>
-<p>php artisan make:queryController Auth&#x2F;UserController</p>
-</blockquote>
-<p>创建完之后在创建model</p>
-<blockquote>
-<p>php artisan make:model Models&#x2F;Auth&#x2F;UserModel</p>
-</blockquote>
-<p>修改刚才的<code>Auth/UserModel</code>，在里面增加<code>table</code>属性。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Models</span>\<span class="title class_">Auth</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Eloquent</span>\<span class="title">Model</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserModel</span> <span class="keyword">extends</span> <span class="title">Model</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$table</span> = <span class="string">&#x27;auth_users&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>修改刚才的<code>Auth/UserController</code>控制器。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Controllers</span>\<span class="title class_">Auth</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">QueryCommon</span>\<span class="title">QueryController</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Auth</span>\<span class="title">UserModel</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Auth</span>\<span class="title">UserRoleModel</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserController</span> <span class="keyword">extends</span> <span class="title">QueryController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字典数组</span></span><br><span class="line"><span class="comment">     * [&#x27;表里的字段名&#x27; =&gt; &#x27;字典code&#x27;,...]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$dicArr</span> = [];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字段映射 可选，不填默认转成下划线格式</span></span><br><span class="line"><span class="comment">     * [&#x27;搜索字段&#x27; =&gt; &#x27;表字段&#x27;,...]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$filedsAdapter</span> = [];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建时候的字段映射 可选，不填默认转成下划线格式</span></span><br><span class="line"><span class="comment">     * [&#x27;输入字段&#x27; =&gt; &#x27;表字段&#x27;]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$createAdapter</span> = [</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span> =&gt; <span class="string">&#x27;name&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email&#x27;</span> =&gt; <span class="string">&#x27;email&#x27;</span>,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//定义表名 格式: table as t</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$shortTableName</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">getModel</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;model = <span class="keyword">new</span> UserModel;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;model;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这时候我们对用户的增删改查操作就完成了，是不是超级简单呢。这主要依赖于我们的<code>query-common</code>扩展包。</p>
-<p>我们接下来只需要添加对应的路由就可以了。在<code>routes</code>下面创建<code>Api/Auth</code>文件夹。在里面创建<code>index.php</code>路由文件。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Route</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">prefix</span>(<span class="string">&#x27;auth&#x27;</span>)-&gt;<span class="title function_ invoke__">namespace</span>(<span class="string">&#x27;Auth&#x27;</span>)-&gt;<span class="title function_ invoke__">group</span>(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//后台创建用户</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">post</span>(<span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;UserController@createInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//后台查询管理员列表</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">get</span>(<span class="string">&#x27;users&#x27;</span>, <span class="string">&#x27;UserController@queryList&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//后台更新管理员信息</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">put</span>(<span class="string">&#x27;user/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;UserController@updateInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//后台删除管理员</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">delete</span>(<span class="string">&#x27;user/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;UserController@deleteInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>添加完路由文件后我们需要自动加载路由文件，请看我的这篇文章，路由自动加载。</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105386868">https://blog.csdn.net/Thepatterraining/article/details/105386868</a></p>
-</blockquote>
-<p>接下来可以使用<code>postman</code>来测试了。</p>
-<p>获取用户列表</p>
-<p><img src="/../images/laravel-react02.png" alt="Image text"></p>
-<p>其他的就不放图了。</p>
-<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><p>有了用户就有角色了，我们的角色表在之前已经创建好了，我们现在同样的方法创建controller和model。</p>
-<p>执行下面的命令。<code>-m</code>参数是model，这里指定model后，如果model不存在会自动创建。</p>
-<blockquote>
-<p>php artisan make:queryController Auth&#x2F;RoleController -m Models&#x2F;Auth&#x2F;RoleModel</p>
-</blockquote>
-<p>修改刚才的<code>Auth/RoleModel</code>，在里面增加<code>table</code>属性。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Models</span>\<span class="title class_">Auth</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Eloquent</span>\<span class="title">Model</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RoleModel</span> <span class="keyword">extends</span> <span class="title">Model</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$table</span> = <span class="string">&#x27;auth_roles&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><code>app/Http/Controllers/Auth/RoleController</code>文件内容如下</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Http</span>\<span class="title class_">Controllers</span>\<span class="title class_">Auth</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">QueryCommon</span>\<span class="title">QueryController</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Auth</span>\<span class="title">RoleModel</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RoleController</span> <span class="keyword">extends</span> <span class="title">QueryController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字典数组</span></span><br><span class="line"><span class="comment">     * [&#x27;表里的字段名&#x27; =&gt; &#x27;字典code&#x27;,...]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$dicArr</span> = [];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字段映射 可选，不填默认转成下划线格式</span></span><br><span class="line"><span class="comment">     * [&#x27;搜索字段&#x27; =&gt; &#x27;表字段&#x27;,...]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$filedsAdapter</span> = [];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建时候的字段映射 可选，不填默认转成下划线格式</span></span><br><span class="line"><span class="comment">     * [&#x27;输入字段&#x27; =&gt; &#x27;表字段&#x27;]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$createAdapter</span> = [];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//定义表名 格式: table as t</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$shortTableName</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">getModel</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;model = <span class="keyword">new</span> <span class="title class_">RoleModel</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;model;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接着在刚才的<code>routes/Api/Auth/index</code>路由文件中增加下面的内容</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//后台查询角色列表</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">get</span>(<span class="string">&#x27;roles&#x27;</span>, <span class="string">&#x27;RoleController@queryList&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建角色</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">post</span>(<span class="string">&#x27;role&#x27;</span>, <span class="string">&#x27;RoleController@createInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//更新角色</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">put</span>(<span class="string">&#x27;role/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;RoleController@updateInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//删除角色</span></span><br><span class="line">    <span class="title class_">Route</span>::<span class="title function_ invoke__">delete</span>(<span class="string">&#x27;role/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;RoleController@deleteInfo&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>增加后是下图这样</p>
-<p><img src="/../images/laravel-react03.png" alt="Image text"></p>
-<p>同样使用postman测试。</p>
-<p><img src="/../images/laravel-react04.png" alt="Image text"></p>
-<h4 id="用户和角色关联"><a href="#用户和角色关联" class="headerlink" title="用户和角色关联"></a>用户和角色关联</h4><p>有了用户和角色就要把这两个关联起来了，我们通过在创建用户和修改用户的时候关联角色，在这时候就要更改之前的<code>Auth/UserController</code>了。</p>
-<p>增加下面的函数。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建完用户后执行的操作</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createAfter</span>(<span class="params"><span class="variable">$id</span></span>) </span>&#123;</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">userRole</span>(<span class="variable">$id</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新完主表之后可以进行的操作</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">updateAfter</span>(<span class="params"><span class="variable">$id</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//更新完用户信息需要更新用户角色关联</span></span><br><span class="line">    <span class="comment">//先删除所有关联，再重新创建</span></span><br><span class="line">    <span class="title class_">UserRoleModel</span>::<span class="title function_ invoke__">where</span>(<span class="string">&#x27;user_id&#x27;</span>, <span class="variable">$id</span>)-&gt;<span class="title function_ invoke__">delete</span>();</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">userRole</span>(<span class="variable">$id</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户角色操作，先删除用户的所有角色，再创建角色关联</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> int $id 用户id</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">userRole</span>(<span class="params"><span class="variable">$id</span></span>) </span>&#123;</span><br><span class="line">    <span class="variable">$ids</span> = <span class="variable language_">$this</span>-&gt;request-&gt;<span class="title function_ invoke__">input</span>(<span class="string">&#x27;roleIds&#x27;</span>);</span><br><span class="line">    <span class="comment">//组织数据</span></span><br><span class="line">    <span class="variable">$insertDatas</span> = [];</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$ids</span> <span class="keyword">as</span> <span class="variable">$roleId</span>) &#123;</span><br><span class="line">        <span class="variable">$insertData</span> = [];</span><br><span class="line">        <span class="variable">$insertData</span>[<span class="string">&#x27;user_id&#x27;</span>] = <span class="variable">$id</span>;</span><br><span class="line">        <span class="variable">$insertData</span>[<span class="string">&#x27;role_id&#x27;</span>] = <span class="variable">$roleId</span>;</span><br><span class="line">        <span class="variable">$insertData</span>[<span class="string">&#x27;created_at&#x27;</span>] = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d H:i:s&#x27;</span>);</span><br><span class="line">        <span class="variable">$insertDatas</span>[] = <span class="variable">$insertData</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//一次性插入</span></span><br><span class="line">    <span class="title class_">UserRoleModel</span>::<span class="title function_ invoke__">insert</span>(<span class="variable">$insertDatas</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>createAfter</code>方法是在创建完用户后执行的，<code>updateAfter</code>方法是更新完用户信息后执行的。传入用户id。我们在这里删除之前的用户和角色关联，把新的循环添加到数组中，一次性插入数据库。因为循环插入会进行多次<code>数据库io</code>操作，而数据库io是比较耗费资源和时间的，所以我们尽可能少进行数据库操作。</p>
-<p>在创建和更新时候我们还需要验证参数，我们再添加下面的方法。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 在创建之前调用，用来验证参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createBefore</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//检测页码和每页数量</span></span><br><span class="line">    <span class="variable">$rules</span> = [</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span> =&gt; <span class="string">&#x27;required|unique:auth_users,name&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email&#x27;</span> =&gt; <span class="string">&#x27;required|email|unique:auth_users,email&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;password&#x27;</span> =&gt; <span class="string">&#x27;required&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds&#x27;</span> =&gt; <span class="string">&#x27;required|array&#x27;</span>,</span><br><span class="line">    ];</span><br><span class="line">    <span class="variable">$messages</span> = [</span><br><span class="line">        <span class="string">&#x27;name.required&#x27;</span> =&gt; <span class="string">&#x27;用户名为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;name.unique&#x27;</span> =&gt; <span class="string">&#x27;用户已经存在&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email.required&#x27;</span> =&gt; <span class="string">&#x27;邮箱为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email.unique&#x27;</span> =&gt; <span class="string">&#x27;邮箱已经存在&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email.email&#x27;</span> =&gt; <span class="string">&#x27;请输入正确的邮箱格式&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;password.required&#x27;</span> =&gt; <span class="string">&#x27;密码为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds.required&#x27;</span> =&gt; <span class="string">&#x27;角色为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds.array&#x27;</span> =&gt; <span class="string">&#x27;角色必须是数组类型&#x27;</span>,</span><br><span class="line">    ];</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">valid</span>(<span class="variable">$rules</span>, <span class="variable">$messages</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断角色数组是不是在数据库都存在</span></span><br><span class="line">    <span class="variable">$roleNum</span> = <span class="title class_">RoleModel</span>::<span class="title function_ invoke__">whereIn</span>(<span class="string">&#x27;id&#x27;</span>, <span class="variable language_">$this</span>-&gt;request-&gt;roleIds)-&gt;<span class="title function_ invoke__">count</span>();</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$roleNum</span> != <span class="title function_ invoke__">count</span>(<span class="variable language_">$this</span>-&gt;request-&gt;roleIds)) &#123;</span><br><span class="line">        <span class="comment">//角色id不对</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">CommonException</span>(<span class="title class_">ErrorModel</span>::ROLE_NOT_FOUND);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 在创建之前调用，用来验证参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">updateBefore</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//检测页码和每页数量</span></span><br><span class="line">    <span class="variable">$rules</span> = [</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span> =&gt; <span class="string">&#x27;required&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email&#x27;</span> =&gt; <span class="string">&#x27;required|email&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds&#x27;</span> =&gt; <span class="string">&#x27;required|array&#x27;</span>,</span><br><span class="line">    ];</span><br><span class="line">    <span class="variable">$messages</span> = [</span><br><span class="line">        <span class="string">&#x27;name.required&#x27;</span> =&gt; <span class="string">&#x27;用户名为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email.required&#x27;</span> =&gt; <span class="string">&#x27;邮箱为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;email.email&#x27;</span> =&gt; <span class="string">&#x27;请输入正确的邮箱格式&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds.required&#x27;</span> =&gt; <span class="string">&#x27;角色为必填项&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;roleIds.array&#x27;</span> =&gt; <span class="string">&#x27;角色必须是数组类型&#x27;</span>,</span><br><span class="line">    ];</span><br><span class="line">    <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">valid</span>(<span class="variable">$rules</span>, <span class="variable">$messages</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断角色数组是不是在数据库都存在</span></span><br><span class="line">    <span class="variable">$roleNum</span> = <span class="title class_">RoleModel</span>::<span class="title function_ invoke__">whereIn</span>(<span class="string">&#x27;id&#x27;</span>, <span class="variable language_">$this</span>-&gt;request-&gt;roleIds)-&gt;<span class="title function_ invoke__">count</span>();</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$roleNum</span> != <span class="title function_ invoke__">count</span>(<span class="variable language_">$this</span>-&gt;request-&gt;roleIds)) &#123;</span><br><span class="line">        <span class="comment">//角色id不对</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">CommonException</span>(<span class="title class_">ErrorModel</span>::ROLE_NOT_FOUND);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>createBefore</code>方法在创建用户之前调用，<code>updateBefore</code>方法在更新之前调用，用来验证参数信息。验证角色在数据库中不存在后要返回错误，直接throw抛出异常即可，因为在外部已经用<code>try catch</code>捕获了，这里返回的是一个<code>error code</code>，在<code>Sys/ErrorModel</code>中定义一个错误信息。为了方便管理，所有的错误以常量的方式定义在errorModel里面。真正的错误信息在我们一开始创建的<code>sys_error</code>数据表中。我们在数据表中添加一条错误信息，<code>code</code>是100002的，<code>msg</code>是角色未定义！</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">ROLE_NOT_FOUND</span> = <span class="string">&#x27;100002&#x27;</span>; <span class="comment">//角色未定义！</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>我们可以传一些错误的角色id给到接口中，使用postman来测试一下。因为这个用户已经创建了，所以返回了用户已经存在的错误信息。</p>
-<p><img src="/../images/laravel-react05.png" alt="Image text"></p>
-<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>我们使用同样的方式创建权限的<code>controller</code>和<code>model</code>。</p>
-<blockquote>
-<p>php artisan make:queryController Auth&#x2F;PermissionController -m Models&#x2F;Auth&#x2F;PermissionModel</p>
-</blockquote>
-<p>和上面一样，修改刚才的<code>Auth/PermissionModel</code>，在里面增加<code>table</code>属性。后面的就不再说这里了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">App</span>\<span class="title class_">Models</span>\<span class="title class_">Auth</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Eloquent</span>\<span class="title">Model</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PermissionModel</span> <span class="keyword">extends</span> <span class="title">Model</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$table</span> = <span class="string">&#x27;auth_permissions&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>增加路由。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//后台查询权限列表</span></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">get</span>(<span class="string">&#x27;permissions&#x27;</span>, <span class="string">&#x27;PermissionController@queryList&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建权限</span></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">post</span>(<span class="string">&#x27;permission&#x27;</span>, <span class="string">&#x27;PermissionController@createInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新权限</span></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">put</span>(<span class="string">&#x27;permission/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;PermissionController@updateInfo&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//删除权限</span></span><br><span class="line"><span class="title class_">Route</span>::<span class="title function_ invoke__">delete</span>(<span class="string">&#x27;permission/&#123;id&#125;&#x27;</span>, <span class="string">&#x27;PermissionController@deleteInfo&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>使用postman测试。</p>
-<p><img src="/../images/laravel-react06.png" alt="Image text"></p>
-<p>现在呢，我们权限管理的后端接口就算做完了，当然了，后面还会根据需要调整。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%B8%A6%E4%BD%A0%E8%A7%A3%E5%AF%86laravel%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A8%E9%9D%99%E6%80%81%E6%B7%B7%E5%90%88%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E5%B8%A6%E4%BD%A0%E8%A7%A3%E5%AF%86laravel%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A8%E9%9D%99%E6%80%81%E6%B7%B7%E5%90%88%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86.html" class="post-title-link" itemprop="url">带你解密laravel数据库动静态混合调用的秘密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-09 15:28:49" itemprop="dateCreated datePublished" datetime="2020-04-09T15:28:49+08:00">2020-04-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E5%B8%A6%E4%BD%A0%E8%A7%A3%E5%AF%86laravel%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A8%E9%9D%99%E6%80%81%E6%B7%B7%E5%90%88%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86.html" class="post-meta-item leancloud_visitors" data-flag-title="带你解密laravel数据库动静态混合调用的秘密" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E5%B8%A6%E4%BD%A0%E8%A7%A3%E5%AF%86laravel%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A8%E9%9D%99%E6%80%81%E6%B7%B7%E5%90%88%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E5%B8%A6%E4%BD%A0%E8%A7%A3%E5%AF%86laravel%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A8%E9%9D%99%E6%80%81%E6%B7%B7%E5%90%88%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="laravel-orm"><a href="#laravel-orm" class="headerlink" title="laravel orm"></a>laravel orm</h1><p>laravel 使用 orm 调用数据库查询的时候很方便，我们只需要配置完数据库连接后创建model。</p>
-<p>比如我们查询用户，我们首先要有一个<code>user model</code>。</p>
-<p>可以使用 <code>artisan</code>创建</p>
-<blockquote>
-<p>php artisan make:model userModel</p>
-</blockquote>
-<p>如果我们需要查询一个用户信息，只需要这样</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">user<span class="title class_">Model</span>::<span class="title function_ invoke__">where</span>(<span class="string">&#x27;id&#x27;</span>, <span class="number">1</span>)-&gt;<span class="title function_ invoke__">first</span>();</span><br><span class="line">(<span class="keyword">new</span> userModel)-&gt;<span class="title function_ invoke__">where</span>(<span class="string">&#x27;id&#x27;</span>, <span class="number">1</span>)-&gt;<span class="title function_ invoke__">first</span>();</span><br></pre></td></tr></table></figure>
-
-<p>上面的两种方法都可以实现查询用户id为1的用户信息。那他们有什么区别呢？第一种方法更为优雅。</p>
-<p>那这个是怎么实现的呢，一般我们要么定义一个静态方法用来静态调用，要么定义一个对象方法需要使用对象调用。</p>
-<p>其实很简单，他只是用到了<code>php</code>的<code>魔术方法</code>。</p>
-<p>来看一下下面两个魔术方法：</p>
-<ul>
-<li>__call()</li>
-<li>__callStatic()</li>
-</ul>
-<p>看一下php文档中的介绍</p>
-<h3 id="call"><a href="#call" class="headerlink" title="__call()"></a>__call()</h3><p>在对象中调用一个不可访问方法时，__call() 会被调用。</p>
-<blockquote>
-<p>public __call ( string $name , array $arguments ) : mixed</p>
-</blockquote>
-<h3 id="callStatic"><a href="#callStatic" class="headerlink" title="__callStatic()"></a>__callStatic()</h3><p>在静态上下文中调用一个不可访问方法时，__callStatic() 会被调用。</p>
-<blockquote>
-<p>public static __callStatic ( string $name , array $arguments ) : mixed</p>
-</blockquote>
-<p>$name 参数是要调用的方法名称。$arguments 参数是一个枚举数组，包含着要传递给方法 $name 的参数。</p>
-<p>我们要让一个对象方法可以静态调用就要通过<code>__callStatic()</code>魔术方法了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__callStatic</span>(<span class="params"> <span class="keyword">string</span> <span class="variable">$name</span> , <span class="keyword">array</span> <span class="variable">$arguments</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> <span class="built_in">static</span>)-&gt;<span class="variable">$name</span>(...<span class="variable">$arguments</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这样的话当我们调用<code>userModel::where()</code>的时候实际上它内部会创建一个对象然后再对象调用<code>where</code>。</p>
-<p>但是这样会产生一个问题，如果当我们调用的方法不存在的时候怎么办呢。</p>
-<p>可以通过<code>try catch</code>来捕获错误进行错误处理。laravel内部就是这么实现的。在laravel的model文件下，是这么运用<code>__call()</code>的。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Handle dynamic method calls into the model.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  string  $method</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  array  $parameters</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span>(<span class="params"><span class="variable">$method</span>, <span class="variable">$parameters</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$method</span>, [<span class="string">&#x27;increment&#x27;</span>, <span class="string">&#x27;decrement&#x27;</span>])) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="variable">$method</span>(...<span class="variable">$parameters</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">forwardCallTo</span>(<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">newQuery</span>(), <span class="variable">$method</span>, <span class="variable">$parameters</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>他里面调用了<code>forwardCallTo</code>方法，我们来看一下这个方法。</p>
-<p>这个方法存在<code>ForwardsCalls</code>这个<code>trait</code>中。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Forward a method call to the given object.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  mixed  $object</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  string  $method</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  array  $parameters</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> \BadMethodCallException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">forwardCallTo</span>(<span class="params"><span class="variable">$object</span>, <span class="variable">$method</span>, <span class="variable">$parameters</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="variable">$object</span>-&gt;&#123;<span class="variable">$method</span>&#125;(...<span class="variable">$parameters</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="built_in">Error</span> | <span class="built_in">BadMethodCallException</span> <span class="variable">$e</span>) &#123;</span><br><span class="line">            <span class="variable">$pattern</span> = <span class="string">&#x27;~^Call to undefined method (?P&lt;class&gt;[^:]+)::(?P&lt;method&gt;[^\(]+)\(\)$~&#x27;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="variable">$pattern</span>, <span class="variable">$e</span>-&gt;<span class="title function_ invoke__">getMessage</span>(), <span class="variable">$matches</span>)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="variable">$e</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">$matches</span>[<span class="string">&#x27;class&#x27;</span>] != <span class="title function_ invoke__">get_class</span>(<span class="variable">$object</span>) ||</span><br><span class="line">                <span class="variable">$matches</span>[<span class="string">&#x27;method&#x27;</span>] != <span class="variable">$method</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="variable">$e</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">static</span>::<span class="title function_ invoke__">throwBadMethodCallException</span>(<span class="variable">$method</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>他在调用的时候通过try catch来捕获错误。</p>
-<p>还有另外一种方法同样可以判断这个类有没有这个方法，那就是先通过<code>get_class_methods($className)</code>这个函数获取到类的所有方法，然后我们就可以自己判断了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span>(<span class="params"><span class="variable">$method</span>, <span class="variable">$parameters</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$classFuns</span> = <span class="title function_ invoke__">get_class_methods</span>(<span class="variable language_">$this</span>);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">in_array</span>(<span class="variable">$method</span>, <span class="variable">$classFuns</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;没有这个方法&quot;</span>; <span class="comment">//返回错误</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="variable">$method</span>(...<span class="variable">$parameters</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样也不失为一种方法啊，大家还有其他好方法的话欢迎交流。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html" class="post-title-link" itemprop="url">laravel神器教你一秒搞定增删改查业务模块</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-08 17:56:47" itemprop="dateCreated datePublished" datetime="2020-04-08T17:56:47+08:00">2020-04-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html" class="post-meta-item leancloud_visitors" data-flag-title="laravel神器教你一秒搞定增删改查业务模块" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="laravel神器教你一秒搞定增删改查业务模块"><a href="#laravel神器教你一秒搞定增删改查业务模块" class="headerlink" title="laravel神器教你一秒搞定增删改查业务模块"></a>laravel神器教你一秒搞定增删改查业务模块</h1><p>还在为了不断写增删改查而烦恼不堪嘛？还在为了重复写代码而头疼嘛？这个laravel神器拯救你的大脑，解放你的双手。让你有更多的时间去写出更好的代码。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>首先使用composer安装</p>
-<blockquote>
-<p>composer require thepatter&#x2F;query-common</p>
-</blockquote>
-<p>安装之后创建一个command</p>
-<blockquote>
-<p>php artisan make:command MakeQueryCommand</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/laravel%E7%A5%9E%E5%99%A8%E6%95%99%E4%BD%A0%E4%B8%80%E7%A7%92%E6%90%9E%E5%AE%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html" class="post-title-link" itemprop="url">laravel路由自动加载</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-06 16:15:00" itemprop="dateCreated datePublished" datetime="2020-04-06T16:15:00+08:00">2020-04-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html" class="post-meta-item leancloud_visitors" data-flag-title="laravel路由自动加载" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="laravel路由自动加载"><a href="#laravel路由自动加载" class="headerlink" title="laravel路由自动加载"></a>laravel路由自动加载</h1><p>laravel 自带的路由文件有四个</p>
-<ul>
-<li>api.php 文件存放 api 路由，会自动加载api前缀和一些中间件。</li>
-<li>channels.php 文件用于注册应用支持的所有事件广播频道。</li>
-<li>console.php 文件用于定义所有基于闭包的控制台命令，每个闭包都被绑定到一个控制台命令并且允许与命令行 IO 方法进行交互，尽管这个文件并不定义 HTTP 路由，但是它定义了基于控制台的应用入口（路由）。</li>
-<li>web.php 如果应用无需提供无状态的、RESTful 风格的 API，那么路由基本上都要定义在 web.php 文件中。会自动加载web中间件。</li>
-</ul>
-<p>我们常用的无非是api和web路由，一开始我们可以都写在里面，那当程序不断扩大，路由达到几千个，几万个甚至更多，放在一个文件里显示难以维护，难以查找。</p>
-<p>这时候我们需要把路由分到不同的路由文件中去，我们在routes目录下创建api文件夹，来存放相关的api路由。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/laravel%E8%B7%AF%E7%94%B1%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/16/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/18/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/16/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/18/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1616,7 +1510,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1629,7 +1523,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL零基础教程表设计实战">
+<meta property="og:url" content="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445010.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445007.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445008.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445016.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445012.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-03-18T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-04-10T08:48:43.506Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-2.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL零基础教程表设计实战 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL零基础教程表设计实战
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-18 10:12:47" itemprop="dateCreated datePublished" datetime="2025-03-18T10:12:47+08:00">2025-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-10 16:48:43" itemprop="dateModified" datetime="2025-04-10T16:48:43+08:00">2025-04-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程表设计实战" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="索引设计"><a href="#索引设计" class="headerlink" title="索引设计"></a>索引设计</h2><p>之前已经讲过表设计了，这次来说说索引设计。</p>
+<p>索引设计也是一个比较重要的东西，可谓是<code>重中之重</code>。想要学好，很难。也是面试的常见问题。</p>
+<p><code>索引</code></p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
+<p>比如MySQL数据库的存储引擎，常用的就是<code>InnoDB</code>存储引擎了，他就是负责干这个事情的。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>像MySQL数据库使用的就是堆存储的方式了，所以我们主要看一下什么是堆存储。</p>
+<p>堆存储具有以下特点：</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory：说白了就是目录，记录了一些映射关系，在代码里面其实就是个Map。</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p>大体结构如图所示：<br><img src="https://thepatterraining.github.io/images/15445010.png" alt="010"></p>
+<p>page header：每个page里面都有一段空间用来存储这个page的一些相关信息，这段空间就叫做page header。</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<p>看到这里，其实你就明白了，我们在聊索引的时候，很多时候会说索引的叶子节点是一个page。不知道大家当时有没有疑问，这个page到底是什么？</p>
+<p>在这里我就给你讲明白，这个page到底是个什么东西。</p>
+<p>每个page里面除了包含<code>page header</code>以外，就是<code>page data</code>了。</p>
+<p>这些page里面的数据就是我们能看到的一行行的数据。</p>
+<p>我们通常称这样按照一行行数据来存储的数据库叫做<code>行式数据库</code>。比如MySQL就是。</p>
+<p>除此之外还有一些按照一列列数据存储的<code>列式数据库</code>。</p>
+<h3 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h3><p>我们在做表设计的时候还会考虑到字段的类型，那么如何选择类型呢？</p>
+<p>这些类型的底层存储有什么区别？</p>
+<p>上面我们已经知道了一个page里面存储了一行行的数据。那么一行数据是多长呢？</p>
+<p>这个一行数据的长度自然就是这一行数据所有字段长度的总和了。</p>
+<p>字段的长度分为两种类型</p>
+<ul>
+<li>固定长度的字段</li>
+<li>可变长度的字段</li>
+</ul>
+<p>固定长度的字段有下面这些：</p>
+<ul>
+<li>Int：整型，当然了这里也包括<code>TinyInt</code>、<code>SmallInt</code>、<code>BigInt</code>等。不同长度的Int类型只是所占的字节数不一样而已。</li>
+<li>Char：字符型，Char类型就是个字符串，你创建的时候给了多长，就是一个多长的字符串。</li>
+<li>Decimal：定点小数，也是最常用的小数类型。虽然运算速度慢一些，但是精度高。Flout和Double虽然也是小数，运算速度快但是会有精度丢失的问题。</li>
+<li>Date：时间类型，包括<code>DateTime</code>、<code>Time</code>等。固定长度用来存储时间。TimeStamp类型已经快要达到上限了，不要再使用了。</li>
+</ul>
+<p>可变长度的字段有下面这些，他们的长度会存储在header里面：</p>
+<ul>
+<li>Varchar: 可变的字符串类型，存储时只占用实际需要的字节数，对比Char类型而言，更加节省空间。</li>
+<li>VarBinary: 可变长度的二进制字符串类型，类似于 VARCHAR，但存储的是二进制数据。</li>
+<li>Text：可变长度的长文本类型，存储时占用的字节数取决于实际内容。</li>
+<li>BLOB：可变长度的二进制数据类型，存储时占用的字节数取决于实际内容。</li>
+</ul>
+<p>表设计中尤其要注意的几点：</p>
+<blockquote>
+<p>不要去使用TimeStamp类型了，使用DateTime或者Bigint来存储时间。<br>其次，避免去使用Flout和Double类型，而是使用Decimal来存储小数，或者使用Int类型来存储。<br>避免使用大值存储，比如Text和blob类型，而是使用Varchar来代替。</p>
+</blockquote>
+<p>通常说的<code>大值(large values)</code>也就是里面存储的内容过多。</p>
+<p>比如我们有一个字段是Text类型，这个字段的数据非常大，占据了Page的一半，再加上其他的数据，那么我们一个Page里面只能存储一行数据了，Page里面剩下的空间就会浪费掉了。</p>
+<p>对于这种情况，数据库的设计者也考虑到了，所以他们实际存储的是一个指针，这个指针指向另外一个Page页面。将这个字段的内容存储到另外一个单独的Page里面。这个单独的Page页面叫做<code>Overflow Page</code>。</p>
+<p>虽然这样解决了上面的问题，但是也引入了新的复杂度，比如对于这个额外的Page页面的维护管理。</p>
+<p>NULL存储，表设计中还有重要的一点处理就是NULL值，因此我们通常把字段设置为NOT NULL类型来避免NULL值。因为NULL值有如下问题：</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<h4 id="page是什么样子的"><a href="#page是什么样子的" class="headerlink" title="page是什么样子的"></a>page是什么样子的</h4><p>上面我们讲完了一行数据是什么样子的，那么一个Page里面又是什么样子的呢？</p>
+<p>一般想法，就是一行贴着一行直接存储，新的行数据直接在后面追加，但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="007"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的行数据</li>
+<li>支持可变长度的行数据</li>
+<li>但是会产生一些碎片空间，因为太小，一行数据放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="008"></p>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="016"></p>
+<h4 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h4><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445012.png" alt="012"></p>
+<p>还记得我们上面说过的吗，字段的顺序也是会影响性能的，如果你的字段顺序能满足数据对齐的要求，那么就可以避免空间的浪费，同一个page里面就可以存储更多的行数据，也就意味着我们每次获取一个page的时候，能从磁盘拿到更多的数据，因此我们获取大量数据的时候，IO次数就会减少，从而起到提升性能的效果。</p>
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>表设计要考虑的其实是比较多的，相信你看完上面的内容，对于如何设计表，应该有了一些自己的方法论。</p>
+<p>这里再讲一下实战中需要注意的事情吧。</p>
+<p>再开始设计表之前，我们肯定要先分析需求，然后才能知道我们需要存储哪些数据。</p>
+<p>比如，我们要做一个招聘网站，那么我们需要存储发布的职位信息。</p>
+<p>职位信息都放到一个表里面吗？</p>
+<p>职位信息其实还挺多的，不光是常见的职位名称、职位JD。还会涉及到比如职级信息、工资信息、面试轮次，是否支持视频面试、学历要求、学校要求、工作经历要求大厂等。</p>
+<p>这里面有一个冷热数据的概念。</p>
+<p>比如说，有一部分信息是经常要查询的，比如职位名称、学历要求、工作年限要求、工资、公司信息、招聘人头像、名称、标签等。</p>
+<p>首先、这些数据肯定放在多个表里面的，比如招聘人头像、名称是用户表的数据、标签信息是标签表的数据、公司信息是公司表的数据。但是其中职位名称、学历要求、工作年限、工资是属于职位的基本信息。而且是在职位列表、IM聊天中的职位卡片、职位详情、职位浏览、职位收藏等多个维度高曝光的职位信息。</p>
+<p>那么就代表这些职位信息属于热数据，会被经常一起查询。因此他们放到一个表里面是没有问题的。</p>
+<p>剩下的职位信息我们可以分成两类。</p>
+<ol>
+<li>在职位详情页面首屏展示的内容或者一些强依赖的内容，这些数据也可以和上面的放在一个表里面。</li>
+<li>一些其他不经常查询的数据，这些数据可以放在另外一个表里面。</li>
+</ol>
+<p>这样的话，每次查询热数据的时候从第一张职位信息表获取，查询到的page里面都是包含的有用的信息，就可以减少IO次数。</p>
+<p>因此，我们可以设计两个表来存储职位信息。</p>
+<ul>
+<li>职位信息表：存储职位的主要数据、热数据、提升查询速度。</li>
+<li>职位扩展信息表：存储职位的次要数据、冷数据、只在需要的时候进行查询。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>授人以鱼不如授人以渔</code>，相信经过上面的学习，你已经具备了一定的表设计的能力了。</p>
+<p>这里讲的主要是表的设计，而不是整个数据的设计。因为还缺少了一些，比如索引该如何设计？</p>
+<p>如何保证大量数据的查询？</p>
+<p>其实对于MySQL来说上索引以后就可以查询百万级的数据了，但是对于非常要求速度和更高量级的数据而言。还可以使用一些其他的方法，比如使用列式数据库来进行查询。</p>
+<p>这样的话可能还会涉及数据同步、数据清洗等等。</p>
+<p>相信你学完我的整个系列以后、对于更高量级的数据设计也会有一定的经验的。</p>
+<p>如果在面试中遇到类似的问题，你也可以游刃有余的回答面试官。</p>
+<p>在学习的过程中，我们也要做到<code>知其然也知其所以然</code>。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html" rel="prev" title="MySQL零基础教程表设计实战">
+      <i class="fa fa-chevron-left"></i> MySQL零基础教程表设计实战
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html" rel="next" title="chatGPT可以生成图片啦">
+      chatGPT可以生成图片啦 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.1.</span> <span class="nav-text">索引设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">表是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E7%A3%81%E7%9B%98%E4%B8%8A%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">如何表示磁盘上文件的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.1.3.</span> <span class="nav-text">数据表示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#page%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7%E5%AD%90%E7%9A%84"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">page是什么样子的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-innodb-%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">mysql innodb 压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AF%B9%E9%BD%90"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">数据对齐</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%88%98"><span class="nav-number">1.1.4.</span> <span class="nav-text">实战</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

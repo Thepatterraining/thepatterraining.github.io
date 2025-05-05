@@ -1,9 +1,714 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MCP详解</title>
+    <url>/MCP%E8%AF%A6%E8%A7%A3.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MCP"><a href="#MCP" class="headerlink" title="MCP"></a>MCP</h1><p>在AI技术大火的当下，各个公司都在搞AI-Agent技术。对于Agent来说，其实还处于一个早期的阶段，没有所谓的<code>最佳实践</code>。更没有一些<code>标准规则</code>。可谓是一片蓝海。</p>
+<p>大厂们也都在做着自己的一些尝试。但是总有人在建设底层规则。</p>
+<p>MCP就是一个标准化的产物。它定义了一些<code>标准</code>。</p>
+<p>Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标准，旨在为大型语言模型（LLM）应用提供统一的上下文交互接口，使其能够与外部数据源和工具进行无缝集成。​MCP采用客户端-主机-服务器架构，基于JSON-RPC 2.0协议，支持有状态连接和功能协商，允许AI模型访问文件、执行函数和处理上下文提示。</p>
+<p>截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Model Context Protocol (MCP) 遵循客户端-主机-服务器架构，每个主机可以运行多个客户端实例。此架构使用户能够在应用程序中集成 AI 功能，同时保持明确的安全边界和隔离关注点。基于 JSON-RPC，MCP 提供了一个有状态的会话协议，专注于上下文交换和客户端与服务器之间的采样协调。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-1.png" alt="MCP架构"></p>
+<h2 id="为什么使用MCP？"><a href="#为什么使用MCP？" class="headerlink" title="为什么使用MCP？"></a>为什么使用MCP？</h2><p>为什么要有MCP这个东西呢？我不用它是否可以？</p>
+<p>当然可以。MCP更像是一个USB接口的作用。不使用的话会有一些麻烦而已。我们来看两个案例。</p>
+<h3 id="案例一：USB接口案例"><a href="#案例一：USB接口案例" class="headerlink" title="案例一：USB接口案例"></a>案例一：USB接口案例</h3><p>我们先想象一下如果电脑没有USB接口，会怎么样？</p>
+<p>每个品牌的鼠标键盘显示器接口都不一样，比如</p>
+<ul>
+<li>罗技鼠标键盘使用罗技接口</li>
+<li>牧马人鼠标键盘使用牧马人接口</li>
+<li>雷蛇鼠标键盘使用雷蛇接口</li>
+<li>等等，每个品牌有自己的接口</li>
+</ul>
+<p>那现在我们买了一台戴尔的电脑，这个电脑只支持戴尔的接口和罗技的接口，这样就导致我们只能买这两个品牌的鼠标键盘显示器了。</p>
+<p>像下面这个图，我如果家里是华硕显示器，但是我买了一个戴尔的电脑，就用不了了，很不方便。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-2.png" alt="MCP架构"></p>
+<h3 id="案例二：充电接口案例"><a href="#案例二：充电接口案例" class="headerlink" title="案例二：充电接口案例"></a>案例二：充电接口案例</h3><p>现在很现实的一个问题就是苹果手机的充电接口。它的充电接口和安卓的充电接口是不一样的，因此两个手机的充电器无法共用。</p>
+<p>如果你从安卓换到苹果，你需要重新买一个充电器，如果你家里两个人用的是一个安卓一个苹果，那么你们出门需要带两个充电器。。。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-3.png" alt="MCP架构"></p>
+<h3 id="案例三：Agent案例"><a href="#案例三：Agent案例" class="headerlink" title="案例三：Agent案例"></a>案例三：Agent案例</h3><p>经过上面两个案例，我们应该明白了MCP解决了什么问题，也明白了为什么要使用MCP这种标准化协议。</p>
+<p>那么我们再看看对于Agent而言，MCP到底干了什么呢？</p>
+<p>我们当前Agent的现状如下：<br>我们实现了一个查询天气信息，并根据下雨下雪刮风等进行邮件通知预警的Agent。我们的Agent需要调用2个接口：</p>
+<ol>
+<li>获取天气信息</li>
+<li>发送邮件</li>
+</ol>
+<p>我们知道，这两个接口是不一样的，因此，我们需要实现<code>两套调用逻辑</code>。</p>
+<p>这样是很不方便的。甚至，如果说第一个获取天气信息的接口不好使了，我们要进行切换，其他的获取天气信息的接口也需要<code>重新实现</code>。</p>
+<p>但是，如果我们使用了<code>MCP</code>,那么我们只需要一套逻辑即可了。</p>
+<h2 id="MCP组件"><a href="#MCP组件" class="headerlink" title="MCP组件"></a>MCP组件</h2><p>接下来我们来了解一下MCP有哪些内容，包含什么东西。</p>
+<ul>
+<li>主机：也就是你的Agent，或者大模型。严格来说，这个并不属于MCP，因为这个是你必备的一个东西。只不过我们的Agent需要支持MCP才可以。</li>
+<li>MCP服务器：轻量级程序，每个程序都通过标准化的模型上下文协议公开特定的功能。MCP服务器就是一个提供接口程序的<code>服务器程序</code>，可以简单的理解为<code>HTTP服务器</code>，提供一些接口。比如我们上面提到的两个接口都放到这个服务器里面。</li>
+<li>MCP客户端：这个是<code>重中之重</code>。客户端程序负责调度<code>主机</code>和<code>MCP服务器</code>进行交互。</li>
+</ul>
+<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>资源表示 MCP 服务器希望提供给客户端的任何类型的数据。这可以包括：</p>
+<ul>
+<li>文件内容</li>
+<li>数据库记录</li>
+<li>API 响应</li>
+<li>实时系统数据</li>
+<li>屏幕截图和图像</li>
+<li>日志文件</li>
+<li>更多</li>
+</ul>
+<p>资源主要用来读取文件内容，比如我们经常使用大模型的时候会上传文件，还有使用Idea的时候可以直接让大模型获取我们的代码文件内容。</p>
+<p>资源可以包含两种类型的内容：</p>
+<ul>
+<li>文本资源<ul>
+<li>源代码</li>
+<li>配置文件</li>
+<li>日志文件</li>
+<li>JSON&#x2F;XML数据</li>
+<li>纯文本</li>
+</ul>
+</li>
+<li>二进制资源<ul>
+<li>图像</li>
+<li>PDF</li>
+<li>音频</li>
+<li>视频</li>
+<li>其他非文本格式</li>
+</ul>
+</li>
+</ul>
+<p>MCP服务器需要实现下面的接口来支持<code>资源</code>功能</p>
+<ul>
+<li>资源列表接口：接口地址必须是<code>resources/list</code>，返回内容需要包含4个信息，这个接口会告诉Agent我们拥有哪些资源<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  uri<span class="punctuation">:</span> string;            <span class="comment">//资源的URI</span></span><br><span class="line">  name<span class="punctuation">:</span> string;           <span class="comment">//资源的名称，方便人类看</span></span><br><span class="line">  description?<span class="punctuation">:</span> string;   <span class="comment">//可选的资源描述</span></span><br><span class="line">  mimeType?<span class="punctuation">:</span> string;      <span class="comment">//可选的资源类型</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>获取资源接口：接口地址必须是<code>resources/read</code>, 返回内容必须是以下格式，这个接口就是当Agent需要获取资源内容的时候进行调用的。<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  contents<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      uri<span class="punctuation">:</span> string;        <span class="comment">//资源的URI</span></span><br><span class="line">      mimeType?<span class="punctuation">:</span> string;  <span class="comment">//可选的资源类型</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// 根据资源类型进行返回的信息:</span></span><br><span class="line">      text?<span class="punctuation">:</span> string;      <span class="comment">// 文本资源的内容</span></span><br><span class="line">      blob?<span class="punctuation">:</span> string;      <span class="comment">// 二进制资源的内容</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>资源列表更新接口：接口地址必须是<code>notifications/resources/list_changed</code>，这个接口是当我们能获取的资源列表有变化的时候，服务器来通知客户端说列表改变了，你需要重新获取一下。</li>
+<li>资源内容更新接口：<ul>
+<li>客户端进行资源订阅，接口地址必须是<code>resources/subscribe</code></li>
+<li>当资源内容改变的时候，服务器会发送<code>notifications/resources/updated</code>来通知客户端资源内容变化了</li>
+<li>客户端可以重新调用获取资源接口来获取最新内容。</li>
+<li>客户端可以取消资源订阅，接口地址必须是<code>resources/unsubscribe</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><p>提示这个功能也是比较常见的，当你输入<code>/</code>以后，会出现一些提示的命令，很多大模型都支持这么做了。</p>
+<p>通过提示这个功能，我们自己的Agent也可以轻松支持这个功能了。</p>
+<p>提示符使服务器能够定义可重用的提示模板和工作流，客户端可以轻松地向用户和 LLM 显示。它们提供了一种强大的方式来标准化和共享常见的 LLM 交互。</p>
+<p>MCP服务器需要支持以下接口：</p>
+<ul>
+<li>提示列表接口：接口地址<code>prompts/list</code>.展示提示列表。返回内容如下：<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  prompts<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      name<span class="punctuation">:</span> <span class="string">&quot;analyze-code&quot;</span><span class="punctuation">,</span> <span class="comment">// 提示名称</span></span><br><span class="line">      description<span class="punctuation">:</span> <span class="string">&quot;Analyze code for potential improvements&quot;</span><span class="punctuation">,</span> <span class="comment">//提示描述</span></span><br><span class="line">      arguments<span class="punctuation">:</span> <span class="punctuation">[</span> <span class="comment">// 提示需要的参数列表</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          name<span class="punctuation">:</span> <span class="string">&quot;language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数名称</span></span><br><span class="line">          description<span class="punctuation">:</span> <span class="string">&quot;Programming language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数描述</span></span><br><span class="line">          required<span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">//是否必填</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>使用提示接口：接口地址<code>prompts/get</code>，服务器会返回一些信息如下，客户端可以将这个信息喂给服务器。<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Analyze Python code for potential improvements&quot;</span><span class="punctuation">,</span></span><br><span class="line">  messages<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      role<span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">      content<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type<span class="punctuation">:</span> <span class="string">&quot;text&quot;</span><span class="punctuation">,</span></span><br><span class="line">        text<span class="punctuation">:</span> <span class="string">&quot;Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p><code>工具</code>功能是MCP的核心功能，作用就是我们一开始讲的那个。通过这个功能我们可以接入所有支持MCP的工具。</p>
+<p>工具是模型上下文协议（MCP）中的一个强大的原语，它使服务器能够向客户端公开可执行功能。通过工具，LLM 可以与外部系统交互，执行计算，并在真实的世界中采取行动。</p>
+<p>MCP服务器需要实现以下接口：</p>
+<ul>
+<li>工具列表接口：接口地址是<code>tools/list</code>，作用是获取MCP服务器支持的所有工具列表。可以返回如下内容：<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  name<span class="punctuation">:</span> <span class="string">&quot;github_create_issue&quot;</span><span class="punctuation">,</span> <span class="comment">//工具名称</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Create a GitHub issue&quot;</span><span class="punctuation">,</span> <span class="comment">// 工具描述</span></span><br><span class="line">  inputSchema<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 输入参数</span></span><br><span class="line">    type<span class="punctuation">:</span> <span class="string">&quot;object&quot;</span><span class="punctuation">,</span> <span class="comment">// 参数类型</span></span><br><span class="line">    properties<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//详细的请求参数名称和类型</span></span><br><span class="line">      title<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      body<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      labels<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;array&quot;</span><span class="punctuation">,</span> items<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>工具调用接口：接口地址是<code>tools/call</code>，作用是调用指定的工具。客户端同样可以把调用工具的结果喂给大模型。</li>
+</ul>
+<h3 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h3><p>采样是一个强大的 MCP 功能，允许服务器通过客户端请求 LLM 完成，在维护安全和隐私的同时实现复杂的代理行为。</p>
+<p>采样流程如下：</p>
+<ol>
+<li>服务器请求客户端的接口<code>sampling/createMessage</code></li>
+<li>客户端检查请求并可以修改它</li>
+<li>客户端获取大模型的样本</li>
+<li>客户端复审样本信息</li>
+<li>客户端将结果返回给服务器</li>
+</ol>
+<p>服务器可以指定要采样的大模型，如果客户端没有这个大模型，服务器还可以指定一些<code>模型偏好</code>，也就是一些优先级，如果没有这个大模型，就按照服务器指定的优先级来选择一些其他的大模型进行采样。</p>
+<p>模型偏好设置</p>
+<ul>
+<li>hits:模型名称建议的数组，客户端可以使用它来选择合适的模型,客户端可以将提示映射到来自不同提供程序的等效模型,多个提示按优先级顺序进行评估</li>
+<li>costPriority: 降低成本的重要性,低成本的模型优先级更高</li>
+<li>speedPriority: 低延迟响应的重要性，速度更快的模型优先级更高</li>
+<li>intelligencePriority：高级模型功能的重要性，功能强大的模型优先级更高</li>
+</ul>
+<h3 id="根"><a href="#根" class="headerlink" title="根"></a>根</h3><p><code>根</code>是 MCP 中的一个概念，它定义了服务器可以操作的边界。它们为客户端提供了一种方法，可以将相关资源及其位置通知服务器。</p>
+<p>根是客户端建议服务器应该关注的 URI。当客户端连接到服务器时，它声明服务器应该使用哪些根。虽然主要用于文件系统路径，但根可以是任何有效的 URI，包括 HTTP URL。</p>
+<p>根有几个重要的用途：</p>
+<ul>
+<li>指导 ：它们通知服务器相关资源和位置</li>
+<li>清晰度 ：根目录清楚地表明哪些资源是您工作空间的一部分</li>
+<li>组织 ：多个根允许您同时使用不同的资源</li>
+</ul>
+<p>当客户端支持根时，它：</p>
+<ul>
+<li>在连接期间声明<code>根</code>功能</li>
+<li>向服务器提供建议的<code>根目录</code>列表</li>
+<li>根目录更改时通知服务器（如果支持）</li>
+</ul>
+<p>虽然根是信息性的，并不严格执行，但服务器应该：</p>
+<ul>
+<li>尊重提供的根</li>
+<li>使用根 URI 定位和访问资源</li>
+<li>优先考虑根边界内的操作</li>
+</ul>
+<p>根通常用于定义：</p>
+<ul>
+<li>项目目录</li>
+<li>存储库位置</li>
+<li>API 端点</li>
+<li>配置目录</li>
+<li>资源边界</li>
+</ul>
+<p>客户端应该返回如下根信息</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file:///home/user/projects/frontend&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Frontend Repository&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://api.example.com/v1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;API Endpoint&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MCP服务器"><a href="#MCP服务器" class="headerlink" title="MCP服务器"></a>MCP服务器</h3><p>MCP服务器作为接口的提供方。需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>需要支持上面的一些功能，主要是支持<code>工具</code>。至于资源和提示功能可以不支持。</p>
+<h3 id="MCP客户端"><a href="#MCP客户端" class="headerlink" title="MCP客户端"></a>MCP客户端</h3><p>MCP客户端作为接口的调用方。也需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>可以选择支持<code>采样</code>和<code>根</code>功能。</p>
+<p>MCP客户端还需要调用MCP服务器和大模型进行沟通。</p>
+<h3 id="MCP通信协议"><a href="#MCP通信协议" class="headerlink" title="MCP通信协议"></a>MCP通信协议</h3><p>所有传输都使用 <code>JSON-RPC2.0</code> 来交换消息。</p>
+<h4 id="JSON-RPC2-0"><a href="#JSON-RPC2-0" class="headerlink" title="JSON-RPC2.0"></a>JSON-RPC2.0</h4><p><code>JSON-RPC 2.0</code>是一个轻量级的远程过程调用（RPC）协议。它使用JSON格式的数据进行通信，这使得它非常易于理解和操作。下面是对JSON-RPC 2.0协议的详细解释以及案例说明：</p>
+<p>在JSON-RPC 2.0中，通信的基本单位是请求和响应。客户端发送请求给服务器，服务器处理请求后返回响应。</p>
+<p>一个典型的JSON-RPC 2.0请求格式如下：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span> <span class="comment">//要调用的方法名称，可以简单理解为接口地址</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//请求参数</span></span><br><span class="line">    <span class="attr">&quot;param1&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;param2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value2&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器处理请求以后，通常会返回以下两个格式：</p>
+<ul>
+<li>正确返回的格式。<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Success&quot;</span><span class="punctuation">,</span> <span class="comment">//成功的结果</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>如果出现错误，需要返回错误码和错误信息。<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 错误信息，包括错误码和错误描述</span></span><br><span class="line">    <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="number">-32601</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Method not found&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>除了正常的请求和返回以外，还有一种<code>通知</code>类型。作为单向消息从客户端发送到服务器，反之亦然。接收方不得发送响应。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;params?&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 请求参数</span></span><br><span class="line">    <span class="punctuation">[</span>key<span class="punctuation">:</span> string<span class="punctuation">]</span><span class="punctuation">:</span> unknown</span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="MCP传输方式"><a href="#MCP传输方式" class="headerlink" title="MCP传输方式"></a>MCP传输方式</h3><p>MCP 使用<code>JSON-RPC</code>对消息进行编码。<code>JSON-RPC</code>消息必须是 <code>UTF-8</code> 编码的。</p>
+<p>该协议目前为客户端-服务器通信定义了两种标准传输机制：</p>
+<ul>
+<li>STDIO: 通过标准输入输出来进行传输，通常用在MCP客户端和服务器都在同一主机的情况下。</li>
+<li>HTTP：通过HTTP来进行传输，这允许MCP客户端和服务器不在同一主机。</li>
+</ul>
+<p>客户端应尽可能支持<code>stdio</code>传输。</p>
+<h4 id="STDIO"><a href="#STDIO" class="headerlink" title="STDIO"></a>STDIO</h4><ul>
+<li>客户端将 <code>MCP服务器</code>作为子进程启动。</li>
+<li>服务器从其标准输入（stdin）读取 JSON-RPC 消息，并将消息发送到其标准输出（stdout）。</li>
+<li>消息可以是 JSON-RPC 请求、通知、响应或 JSON-RPC 包含一个或多个请求和&#x2F;或通知的批处理。</li>
+<li>消息由换行符分隔，并且不能包含嵌入的换行符。</li>
+<li>服务器可以将 UTF-8 字符串写入其标准错误（stderr）以进行日志记录。客户端可以捕获、转发或忽略此日志记录。</li>
+<li>服务器不能向它的 stdout 写入任何不是有效的 MCP 消息。</li>
+<li>客户端不得向服务器的 stdin 写入任何不是有效 MCP 消息的内容。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-6.png" alt="初始化"></p>
+<h4 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h4><p>在 <code>HTTP</code> 传输中，服务器作为一个独立的进程运行， 可以处理多个客户端连接。</p>
+<p>此传输使用HTTP<code>POST</code> 和 <code>GET</code> 请求。 </p>
+<p>服务器可以选择使用服务器发送的事件 （SSE）以流式传输多个服务器消息。</p>
+<p>这允许基本的 MCP 服务器，以及支持流媒体和服务器到客户端通知和请求的功能更丰富的服务器。</p>
+<h3 id="MCP生命周期"><a href="#MCP生命周期" class="headerlink" title="MCP生命周期"></a>MCP生命周期</h3><p>模型上下文协议（MCP）为客户端-服务器连接定义了严格的生命周期，以确保适当的能力协商和状态管理。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-5.png" alt="初始化"></p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p><img src="https://thepatterraining.github.io/images/ai/mcp1-4.png" alt="初始化"></p>
+<ul>
+<li>客户端发送包含<code>协议版本</code>和<code>功能</code>的<code>初始化请求</code></li>
+<li>服务器返回服务器支持的<code>协议版本</code>和<code>功能</code>进行响应</li>
+<li>客户端发送<code>初始化通知</code>作为确认</li>
+</ul>
+<p>此阶段要确认的内容如下：</p>
+<ul>
+<li>建立协议版本兼容性</li>
+<li>交换和谈判能力</li>
+<li>分享实施细节</li>
+</ul>
+<p>请求示例：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;initialize&quot;</span><span class="punctuation">,</span> <span class="comment">//初始化方法</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">// MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 支持的能力</span></span><br><span class="line">      <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//支持根</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">// 根变化的时候可以通知</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sampling&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span> <span class="comment">// 不支持采样</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;clientInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//客户端基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleClient&quot;</span><span class="punctuation">,</span> <span class="comment">//客户端名称</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span> <span class="comment">//客户端版本</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>对应的服务器接收到请求以后可以返回如下内容：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 返回结果</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">//MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器支持的能力</span></span><br><span class="line">      <span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="comment">// 日志能力</span></span><br><span class="line">      <span class="attr">&quot;prompts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 提示能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;resources&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 资源能力</span></span><br><span class="line">        <span class="attr">&quot;subscribe&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 工具能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;serverInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleServer&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;instructions&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Optional instructions for the client&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>成功初始化以后，客户端必须发送一个<code>初始化通知</code>来确认初始化完成。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;notifications/initialized&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在初始化请求中，客户端必须发送它支持的协议版本。这应该是客户端支持的最新版本。</p>
+<p>如果服务器支持请求的协议版本，它必须以相同的版本响应。否则，服务器必须使用它支持的另一个协议版本进行响应。这应该是服务器支持的最新版本。</p>
+<p>如果客户端不支持服务器响应中的版本，它应该 断开连接。</p>
+<h4 id="操作阶段"><a href="#操作阶段" class="headerlink" title="操作阶段"></a>操作阶段</h4><p>这个阶段表示已经初始化完成了，可以双方开始通信了。</p>
+<p>在这个阶段就可以开始上面说的交流了。</p>
+<p>这里应该注意</p>
+<ul>
+<li>尊重协商的协议版本</li>
+<li>仅使用已成功协商的功能</li>
+</ul>
+<h4 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h4><p>在关闭阶段，一方（通常是客户端）干净地终止协议连接。没有定义特定的关闭消息-相反，应该使用底层传输机制来发出连接终止的信号：</p>
+<p>​对于<code>STDIO</code>的传输方式来说，可以进行如下步骤关闭MCP：</p>
+<ul>
+<li>首先，关闭子进程（服务器）的输入流</li>
+<li>等待服务器退出，或者如果服务器没有在合理的时间内退出，则发送<code>SIGTERM</code>信号</li>
+<li>如果服务器<code>SIGTERM</code>之后的合理时间内没有退出，则发送<code>SIGKILL</code>信号<br>服务器可以通过关闭到客户端的输出流并退出来启动关机。</li>
+</ul>
+<p>对于 <code>HTTP</code>传输方式来说，通过关闭关联的 HTTP 连接就可以了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了MCP的概念，MCP的通信协议、通信方式、生命周期。MCP到底是什么东西，实现了哪些内容，使用场景以及为什么要使用MCP。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>chatGPT可以生成图片啦</title>
+    <url>/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html</url>
+    <content><![CDATA[<h1 id="OpenAI发布新文生图模型，免费、逼真到难以分辨"><a href="#OpenAI发布新文生图模型，免费、逼真到难以分辨" class="headerlink" title="OpenAI发布新文生图模型，免费、逼真到难以分辨"></a>OpenAI发布新文生图模型，免费、逼真到难以分辨</h1><p>25年3月底，OpenAI进行了技术直播，对GPT-4o和Sora进行了重大更新，提供了全新文生图（Text-to-Image）模型。</p>
+<p>除了文生图之外，该模型还支持自定义操作、连续发问、风格转换、图像PPT等超实用功能，例如，更改图片的宽高比、图像物体中的角度，用十六进制代码指定精确颜色等。</p>
+<p>尤其是生成图像的逼真度，肉眼几乎看不出任何破绽，在精细度、细节和文本遵循方面非常出色，可以媲美甚至在某些功能超过该领域的头部平台Midjourney。</p>
+<h2 id="OpenAI文生图的优势"><a href="#OpenAI文生图的优势" class="headerlink" title="OpenAI文生图的优势"></a>OpenAI文生图的优势</h2><p>ChatGPT的文生图功能自推出以来，迅速引起了广泛关注，其主要优势包括：​</p>
+<ul>
+<li>精准的文本渲染能力：​ChatGPT的文生图功能能够准确理解用户的文本描述，并在生成的图像中清晰地呈现文本内容。这对于需要在图像中包含特定文字信息的场景，如制作菜单、信息图表或徽标等，具有重要意义。 </li>
+<li>严格遵循用户指令：​该功能能够精确执行用户的指令，生成符合预期的图像。例如，用户可以要求生成特定风格、构图或包含特定元素的图像，ChatGPT会尽力满足这些要求。 ​</li>
+<li>深度知识调用与创意拓展：​ChatGPT不仅能够利用其广泛的知识库生成图像，还能在创意上进行拓展。例如，用户可以要求生成具有特定艺术风格或融合多种元素的图像，ChatGPT能够提供多样化的创意选项。 ​</li>
+<li>高效的图像生成速度：​在实际测试中，ChatGPT能够在约30秒内生成高质量的图像，速度远超预期。这使得用户能够迅速获取所需的图像，提升了创作效率。 ​</li>
+</ul>
+<p>需要注意的是，尽管ChatGPT的文生图功能在多个方面表现出色，但在处理非拉丁语系文字时仍存在一定局限性。 </p>
+<h2 id="文生图功能的发展历史"><a href="#文生图功能的发展历史" class="headerlink" title="文生图功能的发展历史"></a>文生图功能的发展历史</h2><p>文生图技术其实很早就有了，只是最近随着大模型的火热以及一些文生图的应用，迎来了一波爆发。</p>
+<p>我们也来看一下文生图的历史。​</p>
+<ol>
+<li><p>初期探索（2014年以前）<br>在深度学习兴起之前，文生图的尝试主要依赖于基本的图像处理技术，如将现有图像素材拼贴在一起，形成类似拼贴画的效果。​</p>
+</li>
+<li><p>深度学习引入（2014年-2018年）<br>随着卷积神经网络（CNN）等深度学习模型的成功应用，研究者开始尝试使用神经网络生成图像。​2015年，多伦多大学的研究人员提出了alignDRAW模型，这是第一个现代文生图模型，能够根据文本序列生成图像。​然而，这些早期模型生成的图像质量有限，通常较为模糊。​</p>
+</li>
+<li><p>GAN和Transformer的应用（2016年-2021年）<br>2016年，研究者开始将生成对抗网络（GAN）应用于文生图任务，取得了更好的生成效果。​2019年，Transformer架构被引入文生图模型，进一步提升了生成质量。​2021年，OpenAI发布了DALL·E模型，采用Transformer架构，能够根据文本描述生成高质量的图像。​</p>
+</li>
+<li><p>扩散模型的兴起（2021年至今）<br>2021年，以扩散模型（Diffusion Model）为基础的文生图技术取得了显著进展。​这种模型通过逐步添加噪声并学习反向过程，能够生成更高质量的图像。​例如，Stable Diffusion模型在2022年发布，提供了高质量且多样化的图像生成能力。​</p>
+</li>
+</ol>
+<h2 id="openAI文生图功能演示"><a href="#openAI文生图功能演示" class="headerlink" title="openAI文生图功能演示"></a>openAI文生图功能演示</h2><p>提示词如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">帮我生成一个图片，是一座科幻风格的城市，路上有一些未来的车辆，空中还有浮空设备，路上有一些行人，有机械改造的行人</span><br></pre></td></tr></table></figure>
+
+<p>来看一下生成的图片，很高清的一张图片，也符合描述。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai1.jpg" alt="ai"></p>
+<p>再换成其他的一些提示词。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">帮我生成一个图片，是一座赛博朋克风格的城市，路上有一些车辆，空中还有浮空船，路上有一些行人，有的行人装了机械假肢等。夜晚。</span><br></pre></td></tr></table></figure>
+
+<p>看一下效果。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai2.png" alt="ai"></p>
+<p>可以看到能实现的效果还是很棒的，我们在看一下图里面加上文字呢？</p>
+<p>提示词</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">帮我生成一个五一劳动节的海报，标题是“五一劳动节快乐”，背景是学校，学校门口有一些卖东西的学生</span><br></pre></td></tr></table></figure>
+
+<p>可以看到生成的图里面对于文字的支持还是比较好的，虽然有一些瑕疵，但是比其他的文生图软件要好一些。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai3.png" alt="ai"></p>
+<p>再来试试英文的文字呢？</p>
+<p>提示词</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">帮我生成一个五一劳动节的海报，标题是“5.1 vacation happy”，背景是学校，学校门口有一些卖东西的学生</span><br></pre></td></tr></table></figure>
+
+<p>图片效果</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai4.png" alt="ai"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>ChatGPT的文生图功能的推出，标志着内容创作进入了一个新的时代。​无论是微信公众号运营者，还是自媒体创作者，都可以借助这一功能，提升内容质量和创作效率。​随着技术的不断发展，未来的文生图功能将更加智能化、多样化，为创作者提供更多可能性。</p>
+<p>而且，OpenAI作为大模型界的老大，它的更新速度也是很快的，说不定过不了多久，其他的文生图软件就要被甩在后面了。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>ChatGPT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL零基础教程表设计实战</title>
+    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="索引设计"><a href="#索引设计" class="headerlink" title="索引设计"></a>索引设计</h2><p>之前已经讲过表设计了，这次来说说索引设计。</p>
+<p>索引设计也是一个比较重要的东西，可谓是<code>重中之重</code>。想要学好，很难。也是面试的常见问题。</p>
+<p><code>索引</code></p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
+<p>比如MySQL数据库的存储引擎，常用的就是<code>InnoDB</code>存储引擎了，他就是负责干这个事情的。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>像MySQL数据库使用的就是堆存储的方式了，所以我们主要看一下什么是堆存储。</p>
+<p>堆存储具有以下特点：</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory：说白了就是目录，记录了一些映射关系，在代码里面其实就是个Map。</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p>大体结构如图所示：<br><img src="https://thepatterraining.github.io/images/15445010.png" alt="010"></p>
+<p>page header：每个page里面都有一段空间用来存储这个page的一些相关信息，这段空间就叫做page header。</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<p>看到这里，其实你就明白了，我们在聊索引的时候，很多时候会说索引的叶子节点是一个page。不知道大家当时有没有疑问，这个page到底是什么？</p>
+<p>在这里我就给你讲明白，这个page到底是个什么东西。</p>
+<p>每个page里面除了包含<code>page header</code>以外，就是<code>page data</code>了。</p>
+<p>这些page里面的数据就是我们能看到的一行行的数据。</p>
+<p>我们通常称这样按照一行行数据来存储的数据库叫做<code>行式数据库</code>。比如MySQL就是。</p>
+<p>除此之外还有一些按照一列列数据存储的<code>列式数据库</code>。</p>
+<h3 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h3><p>我们在做表设计的时候还会考虑到字段的类型，那么如何选择类型呢？</p>
+<p>这些类型的底层存储有什么区别？</p>
+<p>上面我们已经知道了一个page里面存储了一行行的数据。那么一行数据是多长呢？</p>
+<p>这个一行数据的长度自然就是这一行数据所有字段长度的总和了。</p>
+<p>字段的长度分为两种类型</p>
+<ul>
+<li>固定长度的字段</li>
+<li>可变长度的字段</li>
+</ul>
+<p>固定长度的字段有下面这些：</p>
+<ul>
+<li>Int：整型，当然了这里也包括<code>TinyInt</code>、<code>SmallInt</code>、<code>BigInt</code>等。不同长度的Int类型只是所占的字节数不一样而已。</li>
+<li>Char：字符型，Char类型就是个字符串，你创建的时候给了多长，就是一个多长的字符串。</li>
+<li>Decimal：定点小数，也是最常用的小数类型。虽然运算速度慢一些，但是精度高。Flout和Double虽然也是小数，运算速度快但是会有精度丢失的问题。</li>
+<li>Date：时间类型，包括<code>DateTime</code>、<code>Time</code>等。固定长度用来存储时间。TimeStamp类型已经快要达到上限了，不要再使用了。</li>
+</ul>
+<p>可变长度的字段有下面这些，他们的长度会存储在header里面：</p>
+<ul>
+<li>Varchar: 可变的字符串类型，存储时只占用实际需要的字节数，对比Char类型而言，更加节省空间。</li>
+<li>VarBinary: 可变长度的二进制字符串类型，类似于 VARCHAR，但存储的是二进制数据。</li>
+<li>Text：可变长度的长文本类型，存储时占用的字节数取决于实际内容。</li>
+<li>BLOB：可变长度的二进制数据类型，存储时占用的字节数取决于实际内容。</li>
+</ul>
+<p>表设计中尤其要注意的几点：</p>
+<blockquote>
+<p>不要去使用TimeStamp类型了，使用DateTime或者Bigint来存储时间。<br>其次，避免去使用Flout和Double类型，而是使用Decimal来存储小数，或者使用Int类型来存储。<br>避免使用大值存储，比如Text和blob类型，而是使用Varchar来代替。</p>
+</blockquote>
+<p>通常说的<code>大值(large values)</code>也就是里面存储的内容过多。</p>
+<p>比如我们有一个字段是Text类型，这个字段的数据非常大，占据了Page的一半，再加上其他的数据，那么我们一个Page里面只能存储一行数据了，Page里面剩下的空间就会浪费掉了。</p>
+<p>对于这种情况，数据库的设计者也考虑到了，所以他们实际存储的是一个指针，这个指针指向另外一个Page页面。将这个字段的内容存储到另外一个单独的Page里面。这个单独的Page页面叫做<code>Overflow Page</code>。</p>
+<p>虽然这样解决了上面的问题，但是也引入了新的复杂度，比如对于这个额外的Page页面的维护管理。</p>
+<p>NULL存储，表设计中还有重要的一点处理就是NULL值，因此我们通常把字段设置为NOT NULL类型来避免NULL值。因为NULL值有如下问题：</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<h4 id="page是什么样子的"><a href="#page是什么样子的" class="headerlink" title="page是什么样子的"></a>page是什么样子的</h4><p>上面我们讲完了一行数据是什么样子的，那么一个Page里面又是什么样子的呢？</p>
+<p>一般想法，就是一行贴着一行直接存储，新的行数据直接在后面追加，但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="007"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的行数据</li>
+<li>支持可变长度的行数据</li>
+<li>但是会产生一些碎片空间，因为太小，一行数据放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="008"></p>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="016"></p>
+<h4 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h4><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445012.png" alt="012"></p>
+<p>还记得我们上面说过的吗，字段的顺序也是会影响性能的，如果你的字段顺序能满足数据对齐的要求，那么就可以避免空间的浪费，同一个page里面就可以存储更多的行数据，也就意味着我们每次获取一个page的时候，能从磁盘拿到更多的数据，因此我们获取大量数据的时候，IO次数就会减少，从而起到提升性能的效果。</p>
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>表设计要考虑的其实是比较多的，相信你看完上面的内容，对于如何设计表，应该有了一些自己的方法论。</p>
+<p>这里再讲一下实战中需要注意的事情吧。</p>
+<p>再开始设计表之前，我们肯定要先分析需求，然后才能知道我们需要存储哪些数据。</p>
+<p>比如，我们要做一个招聘网站，那么我们需要存储发布的职位信息。</p>
+<p>职位信息都放到一个表里面吗？</p>
+<p>职位信息其实还挺多的，不光是常见的职位名称、职位JD。还会涉及到比如职级信息、工资信息、面试轮次，是否支持视频面试、学历要求、学校要求、工作经历要求大厂等。</p>
+<p>这里面有一个冷热数据的概念。</p>
+<p>比如说，有一部分信息是经常要查询的，比如职位名称、学历要求、工作年限要求、工资、公司信息、招聘人头像、名称、标签等。</p>
+<p>首先、这些数据肯定放在多个表里面的，比如招聘人头像、名称是用户表的数据、标签信息是标签表的数据、公司信息是公司表的数据。但是其中职位名称、学历要求、工作年限、工资是属于职位的基本信息。而且是在职位列表、IM聊天中的职位卡片、职位详情、职位浏览、职位收藏等多个维度高曝光的职位信息。</p>
+<p>那么就代表这些职位信息属于热数据，会被经常一起查询。因此他们放到一个表里面是没有问题的。</p>
+<p>剩下的职位信息我们可以分成两类。</p>
+<ol>
+<li>在职位详情页面首屏展示的内容或者一些强依赖的内容，这些数据也可以和上面的放在一个表里面。</li>
+<li>一些其他不经常查询的数据，这些数据可以放在另外一个表里面。</li>
+</ol>
+<p>这样的话，每次查询热数据的时候从第一张职位信息表获取，查询到的page里面都是包含的有用的信息，就可以减少IO次数。</p>
+<p>因此，我们可以设计两个表来存储职位信息。</p>
+<ul>
+<li>职位信息表：存储职位的主要数据、热数据、提升查询速度。</li>
+<li>职位扩展信息表：存储职位的次要数据、冷数据、只在需要的时候进行查询。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>授人以鱼不如授人以渔</code>，相信经过上面的学习，你已经具备了一定的表设计的能力了。</p>
+<p>这里讲的主要是表的设计，而不是整个数据的设计。因为还缺少了一些，比如索引该如何设计？</p>
+<p>如何保证大量数据的查询？</p>
+<p>其实对于MySQL来说上索引以后就可以查询百万级的数据了，但是对于非常要求速度和更高量级的数据而言。还可以使用一些其他的方法，比如使用列式数据库来进行查询。</p>
+<p>这样的话可能还会涉及数据同步、数据清洗等等。</p>
+<p>相信你学完我的整个系列以后、对于更高量级的数据设计也会有一定的经验的。</p>
+<p>如果在面试中遇到类似的问题，你也可以游刃有余的回答面试官。</p>
+<p>在学习的过程中，我们也要做到<code>知其然也知其所以然</code>。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL零基础教程表设计实战</title>
+    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="表设计"><a href="#表设计" class="headerlink" title="表设计"></a>表设计</h2><p>表设计可以聊的点其实是比较多的，这个也比较看具体的业务、流量等。</p>
+<p>比如，某一个字段是否应该放在这张表里？一张表里应该有哪些字段？如何设计字段类型？</p>
+<p>甚至于，如何设计字段的顺序？</p>
+<p>这里很多人不知道的一个点在于，字段的顺序也会影响性能，至于为什么，这个就偏低层一些了，下面会讲到。</p>
+<p>想要做表设计，那你首先需要知道<code>表</code>是什么，所以我们先来看看表到底是什么东西。</p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
+<p>比如MySQL数据库的存储引擎，常用的就是<code>InnoDB</code>存储引擎了，他就是负责干这个事情的。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>像MySQL数据库使用的就是堆存储的方式了，所以我们主要看一下什么是堆存储。</p>
+<p>堆存储具有以下特点：</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory：说白了就是目录，记录了一些映射关系，在代码里面其实就是个Map。</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p>大体结构如图所示：<br><img src="https://thepatterraining.github.io/images/15445010.png" alt="010"></p>
+<p>page header：每个page里面都有一段空间用来存储这个page的一些相关信息，这段空间就叫做page header。</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<p>看到这里，其实你就明白了，我们在聊索引的时候，很多时候会说索引的叶子节点是一个page。不知道大家当时有没有疑问，这个page到底是什么？</p>
+<p>在这里我就给你讲明白，这个page到底是个什么东西。</p>
+<p>每个page里面除了包含<code>page header</code>以外，就是<code>page data</code>了。</p>
+<p>这些page里面的数据就是我们能看到的一行行的数据。</p>
+<p>我们通常称这样按照一行行数据来存储的数据库叫做<code>行式数据库</code>。比如MySQL就是。</p>
+<p>除此之外还有一些按照一列列数据存储的<code>列式数据库</code>。</p>
+<h3 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h3><p>我们在做表设计的时候还会考虑到字段的类型，那么如何选择类型呢？</p>
+<p>这些类型的底层存储有什么区别？</p>
+<p>上面我们已经知道了一个page里面存储了一行行的数据。那么一行数据是多长呢？</p>
+<p>这个一行数据的长度自然就是这一行数据所有字段长度的总和了。</p>
+<p>字段的长度分为两种类型</p>
+<ul>
+<li>固定长度的字段</li>
+<li>可变长度的字段</li>
+</ul>
+<p>固定长度的字段有下面这些：</p>
+<ul>
+<li>Int：整型，当然了这里也包括<code>TinyInt</code>、<code>SmallInt</code>、<code>BigInt</code>等。不同长度的Int类型只是所占的字节数不一样而已。</li>
+<li>Char：字符型，Char类型就是个字符串，你创建的时候给了多长，就是一个多长的字符串。</li>
+<li>Decimal：定点小数，也是最常用的小数类型。虽然运算速度慢一些，但是精度高。Flout和Double虽然也是小数，运算速度快但是会有精度丢失的问题。</li>
+<li>Date：时间类型，包括<code>DateTime</code>、<code>Time</code>等。固定长度用来存储时间。TimeStamp类型已经快要达到上限了，不要再使用了。</li>
+</ul>
+<p>可变长度的字段有下面这些，他们的长度会存储在header里面：</p>
+<ul>
+<li>Varchar: 可变的字符串类型，存储时只占用实际需要的字节数，对比Char类型而言，更加节省空间。</li>
+<li>VarBinary: 可变长度的二进制字符串类型，类似于 VARCHAR，但存储的是二进制数据。</li>
+<li>Text：可变长度的长文本类型，存储时占用的字节数取决于实际内容。</li>
+<li>BLOB：可变长度的二进制数据类型，存储时占用的字节数取决于实际内容。</li>
+</ul>
+<p>表设计中尤其要注意的几点：</p>
+<blockquote>
+<p>不要去使用TimeStamp类型了，使用DateTime或者Bigint来存储时间。<br>其次，避免去使用Flout和Double类型，而是使用Decimal来存储小数，或者使用Int类型来存储。<br>避免使用大值存储，比如Text和blob类型，而是使用Varchar来代替。</p>
+</blockquote>
+<p>通常说的<code>大值(large values)</code>也就是里面存储的内容过多。</p>
+<p>比如我们有一个字段是Text类型，这个字段的数据非常大，占据了Page的一半，再加上其他的数据，那么我们一个Page里面只能存储一行数据了，Page里面剩下的空间就会浪费掉了。</p>
+<p>对于这种情况，数据库的设计者也考虑到了，所以他们实际存储的是一个指针，这个指针指向另外一个Page页面。将这个字段的内容存储到另外一个单独的Page里面。这个单独的Page页面叫做<code>Overflow Page</code>。</p>
+<p>虽然这样解决了上面的问题，但是也引入了新的复杂度，比如对于这个额外的Page页面的维护管理。</p>
+<p>NULL存储，表设计中还有重要的一点处理就是NULL值，因此我们通常把字段设置为NOT NULL类型来避免NULL值。因为NULL值有如下问题：</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<h4 id="page是什么样子的"><a href="#page是什么样子的" class="headerlink" title="page是什么样子的"></a>page是什么样子的</h4><p>上面我们讲完了一行数据是什么样子的，那么一个Page里面又是什么样子的呢？</p>
+<p>一般想法，就是一行贴着一行直接存储，新的行数据直接在后面追加，但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="007"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的行数据</li>
+<li>支持可变长度的行数据</li>
+<li>但是会产生一些碎片空间，因为太小，一行数据放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="008"></p>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="016"></p>
+<h4 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h4><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445012.png" alt="012"></p>
+<p>还记得我们上面说过的吗，字段的顺序也是会影响性能的，如果你的字段顺序能满足数据对齐的要求，那么就可以避免空间的浪费，同一个page里面就可以存储更多的行数据，也就意味着我们每次获取一个page的时候，能从磁盘拿到更多的数据，因此我们获取大量数据的时候，IO次数就会减少，从而起到提升性能的效果。</p>
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>表设计要考虑的其实是比较多的，相信你看完上面的内容，对于如何设计表，应该有了一些自己的方法论。</p>
+<p>这里再讲一下实战中需要注意的事情吧。</p>
+<p>再开始设计表之前，我们肯定要先分析需求，然后才能知道我们需要存储哪些数据。</p>
+<p>比如，我们要做一个招聘网站，那么我们需要存储发布的职位信息。</p>
+<p>职位信息都放到一个表里面吗？</p>
+<p>职位信息其实还挺多的，不光是常见的职位名称、职位JD。还会涉及到比如职级信息、工资信息、面试轮次，是否支持视频面试、学历要求、学校要求、工作经历要求大厂等。</p>
+<p>这里面有一个冷热数据的概念。</p>
+<p>比如说，有一部分信息是经常要查询的，比如职位名称、学历要求、工作年限要求、工资、公司信息、招聘人头像、名称、标签等。</p>
+<p>首先、这些数据肯定放在多个表里面的，比如招聘人头像、名称是用户表的数据、标签信息是标签表的数据、公司信息是公司表的数据。但是其中职位名称、学历要求、工作年限、工资是属于职位的基本信息。而且是在职位列表、IM聊天中的职位卡片、职位详情、职位浏览、职位收藏等多个维度高曝光的职位信息。</p>
+<p>那么就代表这些职位信息属于热数据，会被经常一起查询。因此他们放到一个表里面是没有问题的。</p>
+<p>剩下的职位信息我们可以分成两类。</p>
+<ol>
+<li>在职位详情页面首屏展示的内容或者一些强依赖的内容，这些数据也可以和上面的放在一个表里面。</li>
+<li>一些其他不经常查询的数据，这些数据可以放在另外一个表里面。</li>
+</ol>
+<p>这样的话，每次查询热数据的时候从第一张职位信息表获取，查询到的page里面都是包含的有用的信息，就可以减少IO次数。</p>
+<p>因此，我们可以设计两个表来存储职位信息。</p>
+<ul>
+<li>职位信息表：存储职位的主要数据、热数据、提升查询速度。</li>
+<li>职位扩展信息表：存储职位的次要数据、冷数据、只在需要的时候进行查询。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>授人以鱼不如授人以渔</code>，相信经过上面的学习，你已经具备了一定的表设计的能力了。</p>
+<p>这里讲的主要是表的设计，而不是整个数据的设计。因为还缺少了一些，比如索引该如何设计？</p>
+<p>如何保证大量数据的查询？</p>
+<p>其实对于MySQL来说上索引以后就可以查询百万级的数据了，但是对于非常要求速度和更高量级的数据而言。还可以使用一些其他的方法，比如使用列式数据库来进行查询。</p>
+<p>这样的话可能还会涉及数据同步、数据清洗等等。</p>
+<p>相信你学完我的整个系列以后、对于更高量级的数据设计也会有一定的经验的。</p>
+<p>如果在面试中遇到类似的问题，你也可以游刃有余的回答面试官。</p>
+<p>在学习的过程中，我们也要做到<code>知其然也知其所以然</code>。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL零基础教程表设计实战</title>
+    <url>/%E5%A5%BD%E7%9A%84Prompt.html</url>
+    <content><![CDATA[<h1 id="好的Prompt事半功倍"><a href="#好的Prompt事半功倍" class="headerlink" title="好的Prompt事半功倍"></a>好的Prompt事半功倍</h1><p>万能公式：定义角色 + 需求背景 + 实现目标 + 补充要求 + 示例</p>
+<p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="表设计"><a href="#表设计" class="headerlink" title="表设计"></a>表设计</h2><p>表设计可以聊的点其实是比较多的，这个也比较看具体的业务、流量等。</p>
+<p>比如，某一个字段是否应该放在这张表里？一张表里应该有哪些字段？如何设计字段类型？</p>
+<p>甚至于，如何设计字段的顺序？</p>
+<p>这里很多人不知道的一个点在于，字段的顺序也会影响性能，至于为什么，这个就偏低层一些了，下面会讲到。</p>
+<p>想要做表设计，那你首先需要知道<code>表</code>是什么，所以我们先来看看表到底是什么东西。</p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
+<p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
+<p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
+<p>此外，还有一个方法，就是使用在线工具<a href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL零基础教程ER图</title>
     <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html</url>
-    <content><![CDATA[<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
 <p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
 <p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
 <h2 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h2><p>接下来讲讲ER图，这个是在实际工作中也会使用到的东西。</p>
@@ -33,7 +738,7 @@
 </ul>
 <p>简单来讲，实体就是一个表，属性就是表里面的一个字段。</p>
 <p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
-<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-1.png" alt="概念学习"></p>
 <ul>
 <li>关系（Relationship）：<ul>
 <li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
@@ -48,7 +753,7 @@
 </li>
 </ul>
 <p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
-<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-2.png" alt="概念学习"></p>
 <p><code>关系</code>这个东西，简单来说就是通过<code>两个字段</code>链接进行实现的。</p>
 <h4 id="多对多关系"><a href="#多对多关系" class="headerlink" title="多对多关系"></a>多对多关系</h4><p>比如我们有<code>角色</code>表和<code>管理员用户</code>表，这两个表，是多对多关系。</p>
 <p>所以我们就需要用一张单独的表来存储这个关系。比如我们新建第三个表叫<code>角色和管理员用户关系</code>表。</p>
@@ -219,14 +924,14 @@
 <li>关系：两个实体之间的多对多关系，多对多关系后期需要转换成一张关系表。</li>
 </ul>
 <p>我们首先画出第一个实体，<code>管理员实体</code>使用矩形表示。如下图。</p>
-<p><img src="/../images/mysql/mysql3-4.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-4.png" alt="概念学习"></p>
 <p>接下来我们给管理员实体增加属性，属性使用<code>椭圆</code>来表示，如下图。</p>
-<p><img src="/../images/mysql/mysql3-3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-3.png" alt="概念学习"></p>
 <p>现在我们画出第二个实体，<code>角色实体</code>和对应的属性。</p>
-<p><img src="/../images/mysql/mysql3-5.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-5.png" alt="概念学习"></p>
 <p>接下来我们画出关系，关系使用<code>棱形</code>来表示，并且使用线连接两个实体，表示是这两个实体之间的关系。多对多关系还需要在两边分别标记上<code>n</code>和<code>m</code>。</p>
 <p>此外，关系还要有一个名称，用来描述，比如<code>管理员拥有角色，角色被管理员拥有</code>。所以我们可以用<code>拥有</code>关系来描述这两个实体之间的关系。</p>
-<p><img src="/../images/mysql/mysql3-6.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-6.png" alt="概念学习"></p>
 <p>如此，我们就完成了一个多对多关系的ER图。</p>
 <h4 id="一对多关系的ER图"><a href="#一对多关系的ER图" class="headerlink" title="一对多关系的ER图"></a>一对多关系的ER图</h4><p>接下来再实践一次一对多关系的ER图，最好大家先动手画一次，再跟我们的结果来对比，只有自己实操了才行。</p>
 <p>实操时间。。。。。</p>
@@ -239,11 +944,11 @@
 <li>关系：两个实体之间的一对多关系，一对多关系可以是一个字段也可以是一个表。</li>
 </ul>
 <p>首先画出第一个实体和属性，也就是教师实体。</p>
-<p><img src="/../images/mysql/mysql3-7.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-7.png" alt="概念学习"></p>
 <p>接下来画出第二个实体和属性，也就是课程实体。课程实体这里有一个属性是<code>教师ID</code>，这代表我们使用这个字段，而不是增加了一个关系表。如果我们没有这个字段就代表我们要增加一个关系表。</p>
-<p><img src="/../images/mysql/mysql3-8.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-8.png" alt="概念学习"></p>
 <p>最后，画出关系并连线。这里关系名称我们选择教授，这个其实无所谓。能明白就好。重点是要标明一对多关系，可以看到<code>教师实体</code>上写的是1，<code>课程实体</code>上写的是n，代表一对多关系中，教师是1，课程是多。这个不能写反了。</p>
-<p><img src="/../images/mysql/mysql3-9.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-9.png" alt="概念学习"></p>
 <blockquote>
 <p>多对一关系的画起来是一样的，需要注意的就是关系上的1和n别写错了。</p>
 </blockquote>
@@ -254,16 +959,16 @@
 <li>关系：一对一关系，一个用户只能拥有一个用户账户。</li>
 </ul>
 <p>首先画出第一个实体，用户实体。属性包括ID、用户名称、手机号。</p>
-<p><img src="/../images/mysql/mysql3-10.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-10.png" alt="概念学习"></p>
 <p>接下来画出第二个实体，用户账户实体，属性包括ID、账户余额、用户ID。用户ID作为关联关系的字段，和一对多关系一样，就不需要单独加表了。</p>
-<p><img src="/../images/mysql/mysql3-11.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-11.png" alt="概念学习"></p>
 <p>最后，画出关系并连线，标上关系是一对一关系就可以了。</p>
-<p><img src="/../images/mysql/mysql3-12.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-12.png" alt="概念学习"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
 <p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
 <p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
 <p>此外，还有一个方法，就是使用在线工具<a href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
-<p><img src="/../images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-13.png" alt="概念学习"></p>
 <p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
@@ -331,20 +1036,158 @@
 <p><img src="https://thepatterraining.github.io/images/ddd/ddd1-3.png" alt="ddd1-3"></p>
 <p>一个<code>子领域</code>里面包含了多个<code>聚合</code>，每个聚合里又有一个<code>聚合根</code>作为入口，还有若干个<code>实体</code>和<code>值对象</code>。</p>
 <p><img src="https://thepatterraining.github.io/images/ddd/ddd1-4.png" alt="ddd1-4"></p>
-<p>通过DDD我们可以来拆分微服务。</p>
-<p>DDD是围绕<code>业务概念</code>来进行领域建模的，后续的接口也是根据业务概念来划分到对应的领域中。从而解决开发过程中，业务演进的问题。</p>
-<p>因为当业务改变了，那么领域就改变了，对应的代码也就跟着变就好了。</p>
-<p>所以DDD和微服务不一样，不是一种具体的架构，只是一种指导方法。</p>
-<p>它可以划分出清晰的<code>业务边界</code>也就是微服务的边界，从而让微服务的拆分更加符合业务。而不是乱拆分。</p>
-<p>他也有一些步骤</p>
+<p>那领域到底是什么？子领域又是什么？我们该如何划分领域？</p>
+<p>如果大家看过仙侠小说、电视剧等，应该听过一些词，比如<code>神之领域</code>、<code>绝对领域</code>、<code>恶魔的领地</code>、<code>领主</code>等等。</p>
+<p>我们可以简单的把<code>领域</code>理解成领地、封地、画地为牢。</p>
+<blockquote>
+<p>皇上将方圆百里的地分给你了，让你当这片封地的领主，那么这方圆百里就是你的领域了</p>
+</blockquote>
+<p>那服务的领域是什么样子的呢？</p>
+<p>同样的，我们把完整的服务想象成中国的领域，然后划分成各个省份。子领域就是每个省份下面的市区，再有子领域就是市区下面的县。</p>
+<p>关于子领域也有一些划分，比如</p>
 <ul>
-<li>战略设计：战略设计从业务的视角上看待问题，建立领域边界、划分领域、子领域等等。</li>
-<li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
-<li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
+<li>核心领域：核心领域是业务的核心竞争力所在，直接体现业务的独特价值。领域中的核心业务，核心竞争力，领域的重点。比如湖北省这个领域，他的核心子领域就是<code>武汉市</code>。</li>
+<li>通用领域：通用领域是指那些在多个业务中都可以复用的领域，通常不包含业务特有的逻辑。一个领域中通用的能力，可以放到通用领域。比如湖北省这个领域，他的通用领域就有<code>交通</code>。因为不管是哪个市，下面都会用到交通，交通还可以划分为地铁、公交、高铁、火车等。</li>
+<li>支撑领域：既不属于核心领域、也不是通用领域。但是又必不可少的领域。为核心领域提供支持的领域，虽然重要但不直接体现业务的核心价值。</li>
 </ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
-<p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
-<p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
+<h4 id="核心领域"><a href="#核心领域" class="headerlink" title="核心领域"></a>核心领域</h4><p>特征：</p>
+<ul>
+<li>对业务成功至关重要。</li>
+<li>具有高复杂性和高价值。</li>
+<li>通常需要投入最多的资源和精力。</li>
+<li>一个领域中的核心，业务的重点发展对象。</li>
+</ul>
+<p>为什么现在很多人开始使用DDD？无外乎是因为DDD更加契合业务，可以随着业务形态的改变，来带动代码的改变。</p>
+<p>比如一个电商公司，一开始是以产品质量作为卖点，那么他们的<code>核心领域</code>就是<code>产品质量领域</code>。或者说<code>商品领域</code>。而商品领域再进行划分子领域，他们的核心子领域就是<code>质量领域</code>。</p>
+<p>而另外一家公司虽然也是电商公司，但是主要依靠广告业务赚钱，那么他们的<code>核心领域</code>就是<code>广告领域</code>。</p>
+<p>同样的，核心领域是会变化的，比如第一家公司一开始的产品卖点是质量过硬。后来做大了以后主要依靠<code>流量</code>的增涨来扩大收益，那么核心领域就会变为<code>流量领域</code>。</p>
+<p>在演进到后面，可能如何为用户推荐合适的商品来促成交易就变成了业务重点，那么这个时候的<code>核心领域</code>就是<code>推荐算法领域</code>了。</p>
+<p>具体哪个领域是核心领域，需要大家一起讨论、深入了解公司的业务。</p>
+<p>这样才能决定出核心领域。</p>
+<h4 id="通用领域"><a href="#通用领域" class="headerlink" title="通用领域"></a>通用领域</h4><p>特征：</p>
+<ul>
+<li>低复杂性，易于复用。</li>
+<li>通常可以通过第三方工具或框架实现。</li>
+<li>不需要大量定制开发。</li>
+</ul>
+<p>通用领域顾名思义，就是提供一些通用能力的领域，比如发送消息、权限认证等等。</p>
+<p>这个根据公司的业务来看的。</p>
+<p>比如一些公司需要签合同使用<code>电子签章</code>，那么这也算是一个通用的功能，可以是一个通用领域。</p>
+<p>再比如常用的<code>限流功能</code>。也可以是一个通用领域。</p>
+<h4 id="支撑领域"><a href="#支撑领域" class="headerlink" title="支撑领域"></a>支撑领域</h4><p>特征：</p>
+<ul>
+<li>中等复杂性和中等价值。</li>
+<li>主要用于辅助核心领域的实现。</li>
+<li>可以通过一定程度的定制开发满足需求。</li>
+<li>支撑领域既不属于核心领域</li>
+</ul>
+<p>支撑领域和通用领域不同的点就在于它和业务有一些关系。</p>
+<p>比如，对于电商公司来说，核心可能是商品领域，那么为商品领域提供支撑的业务领域就是<code>订单领域</code>、<code>库存领域</code>、<code>物流领域</code>等。</p>
+<h4 id="如何划分不同的领域"><a href="#如何划分不同的领域" class="headerlink" title="如何划分不同的领域"></a>如何划分不同的领域</h4><ul>
+<li>关注业务价值<ul>
+<li>优先识别对业务成功最重要的部分，这通常是核心领域。</li>
+<li>核心领域的设计和实现需要投入最多的资源。</li>
+</ul>
+</li>
+<li>关注领域的独立性<ul>
+<li>每个领域应尽量独立，避免领域之间的强耦合。</li>
+<li>独立性强的领域更容易划分为限界上下文（Bounded Context）。</li>
+</ul>
+</li>
+<li>关注领域的复用性<ul>
+<li>通用领域应尽量复用现有的工具或框架，避免重复开发。</li>
+<li>支撑领域可以适当定制，但不应过度复杂化。</li>
+</ul>
+</li>
+<li>动态调整<ul>
+<li>领域划分并非一成不变，随着业务发展和需求变化，领域的类型可能需要重新评估和调整。</li>
+</ul>
+</li>
+</ul>
+<p>领域的划分是前期的重要工作，只有领域划分好了，后续的路才好走，如果领域划分的不对，那么后续还需要重构，就会比较浪费时间。</p>
+<p>一般来说，领域划分都是首先通过<code>事件风暴</code>来进行的，参与整个事件暴风的人包括领域专家、业务专家、研发、架构师、产品等等。</p>
+<p>须知人力有尽时，一个人的想法终归是有限的，只有集思广益，才是长久之道。大家在事件风暴之中应该畅所欲言、没有上下级的关系，如此方可，要不然很多人摄于上级的压迫，不敢说话，或是说了以后被上级否定，这样的话是不利于事件风暴进行的。</p>
+<p>在事件风暴之中应该<code>鼓励</code>大家发言，不要去盲目的否定，更不要搞什么一言堂。</p>
+<p>通过事件风暴我们可以识别出领域、子领域，还有聚合、事件等。</p>
+<p>接下来我们就需要判断哪些是核心领域，哪些是通用领域，哪些是支撑领域。</p>
+<p>有些人可能会问，为什么要划分出核心领域、支撑领域、通用领域呢？</p>
+<p>这是因为大家的精力有限，要把大部分的精力投入到最重要的事情上去，也就是放到核心领域的建设上面。至于通用领域和支撑领域，如果人手不够也可以通过外包解决。</p>
+<p>毕竟，核心领域才是最重要的领域。</p>
+<p>上面也说过了，公司的不同时期，关注的业务重点不同，那么核心领域也会变化。</p>
+<p>同样的，哪怕都是电商公司，他们的核心领域也不一定一样，一切都要看具体的业务。</p>
+<p>而我们的重点就是要放在核心领域的建设上面。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了领域的概念，包括如何划分，还有核心领域、通用领域以及支撑领域等。还介绍了一些DDD的基本概念。</p>
+<p>领域的核心思想就是两点</p>
+<ul>
+<li>将我们的业务自顶向下的进行细分，逐步的拆解。</li>
+<li>划分出不同的领域，将我们有限的精力投入到最重要的事情当中。</li>
+</ul>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>DDD</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>DDD</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DDD概念详解</title>
+    <url>/DDD%E8%81%9A%E5%90%88%E5%AE%9E%E4%BD%93%E8%AE%B2%E8%A7%A3.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
+<p>说人话就是：</p>
+<ul>
+<li>What: 它是一种设计思想、一种指导原则。</li>
+<li>When: 设计微服务的时候，或者说，不知道怎么拆分微服务的时候。</li>
+<li>Why：为什么要用它，上面其实说了，不知道怎么拆分微服务的时候，可以用它来指导你如何拆分微服务。</li>
+<li>How：这个后面讲。</li>
+</ul>
+<p>很多人都说，DDD是用来处理<code>复杂</code>业务逻辑的，那<code>多复杂</code>才算<code>复杂</code>业务呢？</p>
+<p>这个问题，其实和<code>微服务什么时候用</code>是一个问题。</p>
+<p>所有的技术都不是<code>银弹</code>。都有适合它的使用场景。</p>
+<p>拿微服务来说，你一个小公司，就两三个开发，硬要上微服务，拆好几个服务出来，有什么<code>意义</code>吗？</p>
+<p>是提升性能了？</p>
+<p>是增加开发效率了？</p>
+<p>都不是，你会发现拆分完以后，程序反而<code>三高</code>了。</p>
+<ul>
+<li>高复杂度：程序变得更加复杂了。</li>
+<li>高维护成本：程序的维护成本增加了、当有需求需要修改的时候、开发效率反而降低了。</li>
+<li>高运维成本：原来一台机器就满足了，你拆的服务多了，一台机器不够了。要么加机器性能要么加机器数量。</li>
+</ul>
+<p>所以，<code>适合</code>很重要。</p>
+<blockquote>
+<p>俗话说的好，见人说人话，见鬼说鬼话。技术也一样。</p>
+</blockquote>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>实体：使用充血模型实现的实体，既有属性、也有方法。</li>
+<li>值对象：只有属性的类。</li>
+<li>聚合根：一个特殊的实体，聚合的入口。</li>
+<li>聚合：聚合是一个概念、也可以理解成一个模块。聚合内包含了聚合根、实体、值对象。</li>
+<li>限界上下文：分割领域的边界、也是分割微服务的边界，通过这个边界明确这个接口属于哪个领域，也就是属于哪个微服务。每个领域有每个领域的上下文。</li>
+<li>领域：领域也就是我们的领域模型，也可以是一个微服务。</li>
+<li>子领域：一个领域可以分成多个子领域。这个就是粒度的问题了。</li>
+<li>领域事件：领域之间通信的方法。通过这个来调用其他的微服务。</li>
+</ul>
+<p>还有一些核心领域、支撑领域、通用领域等，都是领域的一种，作用不同而已。</p>
+<h3 id="聚合"><a href="#聚合" class="headerlink" title="聚合"></a>聚合</h3><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了领域的概念，包括如何划分，还有核心领域、通用领域以及支撑领域等。还介绍了一些DDD的基本概念。</p>
+<p>领域的核心思想就是两点</p>
+<ul>
+<li>将我们的业务自顶向下的进行细分，逐步的拆解。</li>
+<li>划分出不同的领域，将我们有限的精力投入到最重要的事情当中。</li>
+</ul>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
 </blockquote>

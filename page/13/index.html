@@ -196,6 +196,675 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ubuntu%E5%AE%89%E8%A3%85supervisor%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ubuntu%E5%AE%89%E8%A3%85supervisor%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B.html" class="post-title-link" itemprop="url">ubuntu安装supervisor守护进程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-09 10:12:47" itemprop="dateCreated datePublished" datetime="2020-12-09T10:12:47+08:00">2020-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B0%8F%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">小工具</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ubuntu%E5%AE%89%E8%A3%85supervisor%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ubuntu安装supervisor守护进程" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ubuntu%E5%AE%89%E8%A3%85supervisor%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ubuntu%E5%AE%89%E8%A3%85supervisor%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="supervisor"><a href="#supervisor" class="headerlink" title="supervisor"></a>supervisor</h1><p>supervisor是一个守护进程软件。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>ubuntu安装很简单。直接apt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install supervisor</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>修改配置项，加入我们的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/supervisor/conf.d/test.conf</span><br></pre></td></tr></table></figure>
+
+<p>复制下面的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[program:命令名称]</span><br><span class="line">;目录</span><br><span class="line">;directory=/test 这里我注释掉了，如果你加上以后报错可以注释掉试试</span><br><span class="line">;执行的命令如果没有配置环境变量或者软连接请使用全路径</span><br><span class="line">command=php /test/think queue:listen --queue im</span><br><span class="line">process_name=%(program_name)s_%(process_num)02d;</span><br><span class="line">numprocs = 3</span><br><span class="line">autostart = true</span><br><span class="line">startsecs = 5</span><br><span class="line">autorestart = true</span><br><span class="line">startretries = 3</span><br><span class="line">;执行的linux用户</span><br><span class="line">user=root</span><br><span class="line">redirect_stderr = true</span><br><span class="line">stdout_logfile_maxbytes = 50MB</span><br><span class="line">stdout_logfile_backups = 20</span><br><span class="line">;日志位置</span><br><span class="line">stdout_logfile = /var/log/supervisor/queue_worker.log</span><br><span class="line">loglevel=info</span><br></pre></td></tr></table></figure>
+
+<p>然后启动supervisor，因为是apt安装的，所以很好启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service supervisor start</span><br></pre></td></tr></table></figure>
+
+<p>查看启动了没有，有两种方法，一种status命令，还有一种查看linux进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service supervisor status</span><br></pre></td></tr></table></figure>
+
+<p>查看进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -aux |grep super</span><br></pre></td></tr></table></figure>
+
+<p>再查看我们的命令挂起来没有。我们执行的php命令所以直接查看php</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -aux|grep php</span><br></pre></td></tr></table></figure>
+<p>如果看见刚刚的命令就成功了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/php-simplexml%E8%A7%A3%E6%9E%90%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E5%9D%91.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/php-simplexml%E8%A7%A3%E6%9E%90%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E5%9D%91.html" class="post-title-link" itemprop="url">php-simplexml解析一个或多个结构的坑</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/php-simplexml%E8%A7%A3%E6%9E%90%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E5%9D%91.html" class="post-meta-item leancloud_visitors" data-flag-title="php-simplexml解析一个或多个结构的坑" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/php-simplexml%E8%A7%A3%E6%9E%90%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E5%9D%91.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/php-simplexml%E8%A7%A3%E6%9E%90%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E5%9D%91.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="php-simplexml解析一个或多个结构的坑"><a href="#php-simplexml解析一个或多个结构的坑" class="headerlink" title="php-simplexml解析一个或多个结构的坑"></a>php-simplexml解析一个或多个结构的坑</h1><p>php解析xml还是挺方便的，不管是正常的xml，还是加了一个命名空间或者前缀的xml。都可以通过<code>simplexml_load_string</code>函数来解析成数组或者对象。</p>
+<h2 id="simplexml-load-string"><a href="#simplexml-load-string" class="headerlink" title="simplexml_load_string"></a>simplexml_load_string</h2><p>来看一下使用方法。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$xml</span> = <span class="string">&quot;&lt;reports&gt;&lt;report&gt;&lt;id&gt;1&lt;/id&gt;&lt;name&gt;张三&lt;/name&gt;&lt;/report&gt;&lt;/reports&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$arr</span> = (<span class="keyword">array</span>)<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>);</span><br></pre></td></tr></table></figure>
+
+<p>是不是很简单，如果你的带啦前缀或者命名空间也可以使用。下面带了s前缀</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$xml</span> = <span class="string">&quot;&lt;s:reports&gt;&lt;s:report&gt;&lt;s:id&gt;1&lt;/id&gt;&lt;s:name&gt;张三&lt;/name&gt;&lt;/report&gt;&lt;/reports&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$arr</span> = (<span class="keyword">array</span>)<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>,<span class="string">&#x27;SimpleXMLElement&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;s&#x27;</span>,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+
+<p>但是如果带了多个前缀，这个函数就无能为力了，可以使用别的方法解析。</p>
+<h2 id="bug"><a href="#bug" class="headerlink" title="bug"></a>bug</h2><p>不过这个函数解析一个和多个结果是不一样的，这里解析出来一定要做判断！！！</p>
+<p>下面有两个report，解析出的结果是一个数组。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$xml</span> = <span class="string">&quot;&lt;reports&gt;&lt;report&gt;&lt;id&gt;1&lt;/id&gt;&lt;name&gt;张三&lt;/name&gt;&lt;/report&gt;&lt;report&gt;&lt;id&gt;1&lt;/id&gt;&lt;name&gt;张三&lt;/name&gt;&lt;/report&gt;&lt;/reports&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$arr</span> = (<span class="keyword">array</span>)<span class="title function_ invoke__">simplexml_load_string</span>(<span class="variable">$xml</span>);</span><br></pre></td></tr></table></figure>
+
+<p>而上面只有一个report的时候，解析出来就是一个对象！！！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/php-thinkphp-%E6%8A%A5%E9%94%99Creating%20default%20object%20from%20empty%20value.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/php-thinkphp-%E6%8A%A5%E9%94%99Creating%20default%20object%20from%20empty%20value.html" class="post-title-link" itemprop="url">php-thinkphp-报错Creating default object from empty value</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/php-thinkphp-%E6%8A%A5%E9%94%99Creating%20default%20object%20from%20empty%20value.html" class="post-meta-item leancloud_visitors" data-flag-title="php-thinkphp-报错Creating default object from empty value" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/php-thinkphp-%E6%8A%A5%E9%94%99Creating%20default%20object%20from%20empty%20value.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/php-thinkphp-%E6%8A%A5%E9%94%99Creating%20default%20object%20from%20empty%20value.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="php-thinkphp-报错Creating-default-object-from-empty-value"><a href="#php-thinkphp-报错Creating-default-object-from-empty-value" class="headerlink" title="php-thinkphp-报错Creating default object from empty value"></a>php-thinkphp-报错Creating default object from empty value</h1><p>报错第一步，打印，打印日志，在你用到对象的地方，把对象都打印出来看看，你以为他是个对象，但他。。。不一定是个对象！！！</p>
+<p>如果你确定你从数据库查询出来的没有错，是个对象，那么。。请看一下你别的对象是不是一个对象！！！</p>
+<p>要相信报错，一定是对象错了，但你不确定，所以，请打印日志，如果你这里没问题，别人那里有问题，那么可能是参数的问题。打印日志在别人那就能看到你想的对象可能在他那里不是一个对象！！！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" class="post-title-link" itemprop="url">thinkphp-queue队列使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" class="post-meta-item leancloud_visitors" data-flag-title="thinkphp-queue队列使用" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="thinkphp-queue队列使用"><a href="#thinkphp-queue队列使用" class="headerlink" title="thinkphp-queue队列使用"></a>thinkphp-queue队列使用</h1><p>在我们写程序的时候，经常会用到队列来完成一些操作，关于队列的介绍和使用场景，注意事项可以看我的这个文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105344675">你不知道的队列使用技巧</a></p>
+<h2 id="在tp里面使用队列"><a href="#在tp里面使用队列" class="headerlink" title="在tp里面使用队列"></a>在tp里面使用队列</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p><code>tp</code>框架提供了一个扩展包，叫做<code>think-queue</code>。我们先来安装这个扩展包。</p>
+<blockquote>
+<p>composer require topthink&#x2F;think-queue</p>
+</blockquote>
+<h3 id="配置消息队列"><a href="#配置消息队列" class="headerlink" title="配置消息队列"></a>配置消息队列</h3><p>等待安装完成之后，我们需要进行配置，消息队列的消息存放在哪里，可以配置成redis。</p>
+<p>配置在你的<code>config/queue.php</code>里面。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">&#x27;default&#x27;</span>     =&gt; <span class="string">&#x27;redis&#x27;</span>,  <span class="comment">//默认是sync，改成redis</span></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;connections&#x27;</span> =&gt; [</span><br><span class="line">        <span class="string">&#x27;redis&#x27;</span>    =&gt; [</span><br><span class="line">            <span class="string">&#x27;type&#x27;</span>       =&gt; <span class="string">&#x27;redis&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;queue&#x27;</span>      =&gt; <span class="string">&#x27;default&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;host&#x27;</span>       =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.host&#x27;</span>, <span class="string">&#x27;127.0.0.1&#x27;</span>),</span><br><span class="line">            <span class="string">&#x27;port&#x27;</span>       =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.port&#x27;</span>, <span class="number">6379</span>),</span><br><span class="line">            <span class="string">&#x27;password&#x27;</span>   =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.password&#x27;</span>, <span class="string">&#x27;&#x27;</span>),</span><br><span class="line">            <span class="string">&#x27;select&#x27;</span>     =&gt; <span class="number">0</span>,      <span class="comment">// 使用哪一个 db，默认为 db0</span></span><br><span class="line">            <span class="string">&#x27;timeout&#x27;</span>    =&gt; <span class="number">0</span>,      <span class="comment">// redis连接的超时时间</span></span><br><span class="line">            <span class="string">&#x27;persistent&#x27;</span> =&gt; <span class="literal">false</span>,  <span class="comment">// 是否是长连接</span></span><br><span class="line">        ],</span><br><span class="line">    ],</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建消息"><a href="#创建消息" class="headerlink" title="创建消息"></a>创建消息</h3><p>配置完成以后我们就可以开始使用了。</p>
+<p>在我们的<code>controller</code>里面把一个消息推送到队列里面。这里我们定义一个队列名称叫做<code>message</code>,定义一个处理队列消息的消费者类<code>app\common\queue\consumer</code>。然后调用<code>Queue</code>门面的<code>push</code>方法，把消费者，队列名称，数据传入进去就可以了。这个时候就会把数据放到<code>message</code>这个队列里面。然后消费者取出数据进行处理。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">app</span>\<span class="title class_">api</span>\<span class="title class_">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">app</span>\<span class="title">BaseController</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">facade</span>\<span class="title">Queue</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">extends</span> <span class="title">BaseController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$consumer</span> = <span class="string">&#x27;app\common\queue\consumer&#x27;</span>;  <span class="comment">//消费者类</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$queue</span> = <span class="string">&#x27;message&#x27;</span>; <span class="comment">//队列名称</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;request-&gt;<span class="title function_ invoke__">isPost</span>()) &#123;</span><br><span class="line">            <span class="comment">//要推送到队列里面的数据</span></span><br><span class="line">            <span class="variable">$jobData</span> = [];</span><br><span class="line">            <span class="variable">$jobData</span>[<span class="string">&quot;a&quot;</span>] = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">            <span class="variable">$jobData</span>[<span class="string">&#x27;b&#x27;</span>] = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="variable">$res</span> = <span class="title class_">Queue</span>::<span class="title function_ invoke__">push</span>(<span class="variable language_">$this</span>-&gt;consumer, <span class="variable">$data</span>, <span class="variable language_">$this</span>-&gt;queue);</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">json</span>([]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="消费消息"><a href="#消费消息" class="headerlink" title="消费消息"></a>消费消息</h3><p>我们接下来实现我们上面定义的消费者。来处理我们的逻辑。</p>
+<p>消费者<code>app\common\queue\consumer</code>类。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> <span class="keyword">namespace</span> <span class="title class_">app</span>\<span class="title class_">common</span>\<span class="title class_">queue</span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">use</span> <span class="title">think</span>\<span class="title">queue</span>\<span class="title">Job</span>;</span><br><span class="line"></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">consumer</span> </span>&#123;</span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * fire方法是消息队列默认调用的方法</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> Job            $job      当前的任务对象</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> array|mixed    $data     发布任务时自定义的数据</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fire</span>(<span class="params">Job <span class="variable">$job</span>,<span class="variable">$data</span></span>)</span></span><br><span class="line"><span class="function">     </span>&#123;</span><br><span class="line">         <span class="comment">// 有些消息在到达消费者时,可能已经不再需要执行了</span></span><br><span class="line">         <span class="variable">$isJobStillNeedToBeDone</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">check</span>(<span class="variable">$data</span>);</span><br><span class="line">         <span class="keyword">if</span>(!<span class="variable">$isJobStillNeedToBeDone</span>)&#123;</span><br><span class="line">             <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();  <span class="comment">//删除任务</span></span><br><span class="line">             <span class="keyword">return</span>;</span><br><span class="line">         &#125;</span><br><span class="line">       </span><br><span class="line">         <span class="comment">//执行任务</span></span><br><span class="line">         <span class="variable">$isJobDone</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doJob</span>(<span class="variable">$data</span>);</span><br><span class="line">       </span><br><span class="line">         <span class="keyword">if</span> (<span class="variable">$isJobDone</span>) &#123;</span><br><span class="line">             <span class="comment">// 如果任务执行成功， 记得删除任务</span></span><br><span class="line">             <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();</span><br><span class="line">         &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">             <span class="keyword">if</span> (<span class="variable">$job</span>-&gt;<span class="title function_ invoke__">attempts</span>() &gt; <span class="number">3</span>) &#123;</span><br><span class="line">                 <span class="comment">//通过这个方法可以检查这个任务已经重试了几次了</span></span><br><span class="line"> 				  <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     </span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 有些消息在到达消费者时,可能已经不再需要执行了</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> array|mixed    $data     发布任务时自定义的数据</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@return</span> boolean                 任务执行的结果</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"><span class="variable">$data</span></span>)</span>&#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 根据消息中的数据进行实际的业务处理...</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">doJob</span>(<span class="params"><span class="variable">$data</span></span>) </span></span><br><span class="line"><span class="function">     </span>&#123;</span><br><span class="line">         <span class="title function_ invoke__">dump</span>(<span class="variable">$data</span>);</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样我们就完成了代码的逻辑，也就是发布消息，消费消息。</p>
+<p>接下来我们启动这个队列。</p>
+<h3 id="启动队列"><a href="#启动队列" class="headerlink" title="启动队列"></a>启动队列</h3><p>启动队列有两种方式。</p>
+<ul>
+<li>work</li>
+<li>listen</li>
+</ul>
+<p><code>work</code>方式启动。这种方式是单进程运行。如果你更新了代码需要手动重启队列。</p>
+<blockquote>
+<p>php think queue:work –queue message  &#x2F;&#x2F;我们刚刚定义的队列名称</p>
+</blockquote>
+<p><code>listen</code>方式启动。这种方式是master-worker模型。一个master主进程来监听，当请求进来了启动一个work子进程来运行上面的work方式启动。</p>
+<blockquote>
+<p>php think queue:listen –queue message</p>
+</blockquote>
+<p>我更推荐listen方式来运行。这种方式更新代码后也不需要手动重启。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" class="post-title-link" itemprop="url">thinkphp-queue队列导致MySQL server has gone away</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" class="post-meta-item leancloud_visitors" data-flag-title="thinkphp-queue队列导致MySQL server has gone away" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="thinkphp-queue队列导致MySQL-server-has-gone-away"><a href="#thinkphp-queue队列导致MySQL-server-has-gone-away" class="headerlink" title="thinkphp-queue队列导致MySQL server has gone away"></a>thinkphp-queue队列导致MySQL server has gone away</h1><p>虽然队列一时爽，不过还是有缺点的，比如当队列运行时间长了会报错 MySQL server has gone away</p>
+<p>原因是使用<code>work</code>模式运行时间长了以后没有释放mysql数据库的链接，导致时间长了以后被mysql server端判断超时切断了链接。</p>
+<p>可以改用<code>listen</code>模式运行，这样每次都是启动一个新的work进程来运行程序，每次都会新链接数据库。</p>
+<p>可以使用tp的断线重连功能。修改配置文件<code>config/database.php</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 数据库连接配置信息</span></span><br><span class="line">    <span class="string">&#x27;connections&#x27;</span>     =&gt; [</span><br><span class="line">        <span class="string">&#x27;mysql&#x27;</span> =&gt; [</span><br><span class="line">            <span class="comment">// 是否需要断线重连</span></span><br><span class="line">            <span class="string">&#x27;break_reconnect&#x27;</span>   =&gt; <span class="literal">true</span>,</span><br><span class="line">        ],</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/php-mpdf%E6%89%A9%E5%B1%95%E5%8C%85%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/php-mpdf%E6%89%A9%E5%B1%95%E5%8C%85%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98.html" class="post-title-link" itemprop="url">php-mpdf扩展包中文乱码问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-24 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-24T10:12:47+08:00">2020-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/php-mpdf%E6%89%A9%E5%B1%95%E5%8C%85%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98.html" class="post-meta-item leancloud_visitors" data-flag-title="php-mpdf扩展包中文乱码问题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/php-mpdf%E6%89%A9%E5%B1%95%E5%8C%85%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/php-mpdf%E6%89%A9%E5%B1%95%E5%8C%85%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="php-mpdf扩展包中文乱码问题"><a href="#php-mpdf扩展包中文乱码问题" class="headerlink" title="php-mpdf扩展包中文乱码问题"></a>php-mpdf扩展包中文乱码问题</h1><p><a target="_blank" rel="noopener" href="http://mpdf.github.io/fonts-languages/fonts-in-mpdf-7-x.html">mpdf</a>是一个可以把html网页转换成pdf文件的扩展包。一开始使用的时候，发现中文乱码了。。在网上查了半天，好多方法都不管用。</p>
+<p>最后，在他的文档里面找到了问题原因。</p>
+<p>想要输出中文，有两个参数至关重要！！！</p>
+<ul>
+<li>autoLangToFont 这个值一定要设置为true才可以</li>
+<li>autoScriptToLang 这个值也一定要设置为true才可以</li>
+</ul>
+<p>只要上面两个设置为true，那么你的中文就可以正常输出了。相信我，不能正常输出你来打我。</p>
+<p>看一下mpdf文档上面的描述。</p>
+<p><img src="/images/mpdf1.png" alt="mpdf"></p>
+<p><img src="/images/mpdf2.png" alt="mpdf"></p>
+<p>可以看到默认值是false，所以我们使用的时候需要改成true。</p>
+<p>设置这两个值也很简单。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Mpdf</span>\<span class="title">Mpdf</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="variable">$pdf</span> = <span class="keyword">new</span> Mpdf;</span><br><span class="line">    <span class="variable">$pdf</span>-&gt;autoLangToFont = <span class="literal">true</span>;</span><br><span class="line">    <span class="variable">$pdf</span>-&gt;autoScriptToLang = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$pdf</span>-&gt;<span class="title function_ invoke__">writeHTML</span>(<span class="string">&#x27;&lt;h1&gt;123&lt;/h1&gt;&#x27;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="variable">$pdf</span>-&gt;<span class="title function_ invoke__">output</span>(<span class="string">&#x27;./test.pdf&#x27;</span>, <span class="string">&#x27;D&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实，mpdf的文档最开始是有错误的，他的文档中写的默认值是<code>true</code>而不是现在的<code>false</code>。不过从他的源码上可以看到他的默认值其实是<code>false</code>。</p>
+<p>源码位置：<code>vendor/mpdf/mpdf/src/Config/ConfigVariables.php</code>里面。<br>这个文件里面是很多变量的默认值，在这里面搜索可以看到这两个值是false。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// AUTOMATIC FONT SELECTION</span></span><br><span class="line"><span class="comment">// Based on script and/or language</span></span><br><span class="line"><span class="comment">// mPDF 6.0 (similar to previously using function SetAutoFont() )</span></span><br><span class="line"><span class="string">&#x27;autoScriptToLang&#x27;</span> =&gt; <span class="literal">false</span>,</span><br><span class="line"></span><br><span class="line"><span class="comment">// mPDF 6.0 (similar to old useLang)</span></span><br><span class="line"><span class="string">&#x27;autoLangToFont&#x27;</span> =&gt; <span class="literal">false</span>,</span><br></pre></td></tr></table></figure>
+
+<p>我给他们的github上面提了一个issue，他们才把文档改过来了。</p>
+<p><img src="/images/mpdf3.png" alt="mpdf"></p>
+<p>最后附上mpdf官方文档：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://mpdf.github.io/fonts-languages/fonts-in-mpdf-7-x.html">http://mpdf.github.io/fonts-languages/fonts-in-mpdf-7-x.html</a></p>
+</blockquote>
+<p>我给他们提的issue:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/mpdf/mpdf.github.io/issues/141">https://github.com/mpdf/mpdf.github.io/issues/141</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/thinkphp-tp6%E4%BD%BF%E7%94%A8chunk%E5%88%86%E5%9D%97%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E7%9A%84%E5%9D%91.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -717,819 +1386,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/wsl%E5%AE%89%E8%A3%85go%E7%8E%AF%E5%A2%83.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/wsl%E5%AE%89%E8%A3%85go%E7%8E%AF%E5%A2%83.html" class="post-title-link" itemprop="url">wsl安装go环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/wsl%E5%AE%89%E8%A3%85go%E7%8E%AF%E5%A2%83.html" class="post-meta-item leancloud_visitors" data-flag-title="wsl安装go环境" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/wsl%E5%AE%89%E8%A3%85go%E7%8E%AF%E5%A2%83.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/wsl%E5%AE%89%E8%A3%85go%E7%8E%AF%E5%A2%83.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="wsl"><a href="#wsl" class="headerlink" title="wsl"></a>wsl</h1><p>wsl是可以在windows里面运行linux的一个软件。是微软官方发行的。</p>
-<h2 id="安装go"><a href="#安装go" class="headerlink" title="安装go"></a>安装go</h2><p>先去到安装目录<code>/usr/local/src</code>。</p>
-<p>从go官网下载go tar包。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wget https://golang.org/dl/go1.16.3.linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>然后解压</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -zxvf go1.16.3.linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>接下来需要配置环境变量。可以设置在&#x2F;etc&#x2F;profile文件里面也可以设置在其他地方，我用的是zsh，所以我的环境变量配置在~&#x2F;.zshrc文件里面。</p>
-<p>执行<code>vim ~/.zshrc</code>。然后添加变量信息</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export GOROOT=&quot;/usr/local/src/go&quot;</span><br><span class="line">export PATH=&quot;$PATH:$GOROOT/bin&quot;</span><br></pre></td></tr></table></figure>
-
-<p>接下来重新加载一下配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
-
-<p>现在go就安装好了。可以执行<code>go version</code>查看go的版本。</p>
-<h2 id="创建第一个go-项目"><a href="#创建第一个go-项目" class="headerlink" title="创建第一个go 项目"></a>创建第一个go 项目</h2><p>我把项目放在<code>~/go</code>目录下。所以把这个目录添加到配置文件里面。因为这个目录也相当于<code>$HOME/go</code>。所以我们直接添加。</p>
-<p>执行<code>vim ~/.zshrc</code>。然后添加变量信息</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export GOPATH=&quot;$HOME/go&quot;</span><br></pre></td></tr></table></figure>
-
-
-<p>接下来重新加载一下配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.zshrc</span><br></pre></td></tr></table></figure>
-
-<p>在项目目录下面创建第一个文件。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/go/hello.go</span><br></pre></td></tr></table></figure>
-
-<p>添加下面的代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">package main</span><br><span class="line"></span><br><span class="line">import &quot;fmt&quot;</span><br><span class="line"></span><br><span class="line">func main () &#123;</span><br><span class="line">        fmt.Printf(&quot;hello world\n&quot;)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>进行编译</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build ~/go/hello.go</span><br></pre></td></tr></table></figure>
-
-<p>编译完成出现<code>hello</code>文件，直接执行。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/go/hello</span><br></pre></td></tr></table></figure>
-
-<p>就可以看到输出了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/wsl%E5%AE%89%E8%A3%85php%E7%8E%AF%E5%A2%83.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/wsl%E5%AE%89%E8%A3%85php%E7%8E%AF%E5%A2%83.html" class="post-title-link" itemprop="url">wsl安装php环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/wsl%E5%AE%89%E8%A3%85php%E7%8E%AF%E5%A2%83.html" class="post-meta-item leancloud_visitors" data-flag-title="wsl安装php环境" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/wsl%E5%AE%89%E8%A3%85php%E7%8E%AF%E5%A2%83.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/wsl%E5%AE%89%E8%A3%85php%E7%8E%AF%E5%A2%83.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="wsl"><a href="#wsl" class="headerlink" title="wsl"></a>wsl</h1><p>wsl是可以在windows里面运行linux的一个软件。是微软官方发行的。</p>
-<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>从php官网下载php tar包。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wget https://www.php.net/distributions/php-7.4.12.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>然后解压</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -zxvf php-7.4.12.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>接下来需要安装一些扩展来支持php。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gcc make pkg-config libxml2-dev libssl-dev libsqlite3-dev libcurl4-openssl-dev libonig-dev zlib1g-dev libffi-dev libpng-dev libzip-dev</span><br></pre></td></tr></table></figure>
-
-<p>不安装上面的扩展会导致接下来报错。</p>
-<p>切换目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd ./php-7.4.12</span><br></pre></td></tr></table></figure>
-
-<p>执行configure,注意这里<code>prefix</code>一定要是&#x2F;usr&#x2F;local&#x2F;php7，要不然找不到配置文件php.ini。这里有这个坑。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./configure --enable-fpm --with-mysql --with-pear --with-zip --enable-sockets --enable-soap --with-pdo-mysql  --enable-gd --enable-ftp --with-ffi  --with-zlib  --with-curl --with-openssl --enable-mbstring --prefix=/usr/local/php7 --with-config-file-path=/usr/local/php7 --with-external-gd --with-webp  --with-jpeg  --with-xpm  --with-freetype  --enable-bcmath</span><br></pre></td></tr></table></figure>
-
-<p>执行完上面一步如果没有错误就可以了。</p>
-<p>接下来执行make</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
-
-<p>复制一些配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /usr/local/src/php7/etc/php-fpm.conf.default /usr/local/src/php7/etc/php-fpm.conf</span><br><span class="line">sudo cp /usr/local/src/php7/etc/php-fpm.d/www.conf.default /usr/local/src/php7/etc/php-fpm.d/www.conf</span><br></pre></td></tr></table></figure>
-
-<p>修改php-fpm的用户</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/src/php7/etc/php-fpm.d/www.conf</span><br></pre></td></tr></table></figure>
-
-<p>找到 <code>user</code> 和 <code>group</code> 这两个参数，原来的值是 <code>nobody</code>改成<code>www-data</code>，然后保存退出。</p>
-<p>建立软连接或者环境变量。我们要配置全局的环境变量有两种方式。</p>
-<ul>
-<li>在环境变量目录里面增加软连接</li>
-<li>把php目录增加到环境变量里面</li>
-</ul>
-<p>我采用的是软连接的方式。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/local/php7/bin/php /usr/local/bin/php</span><br><span class="line">sudo ln -s /usr/local/php7/bin/phpize /usr/local/bin/phpize</span><br><span class="line">sudo ln -s /usr/local/php7/sbin/php-fpm /usr/local/bin/php-fpm</span><br></pre></td></tr></table></figure>
-
-<p>接下来就可以全局使用php命令了</p>
-<h3 id="php-fpm启动，重启方法"><a href="#php-fpm启动，重启方法" class="headerlink" title="php-fpm启动，重启方法"></a>php-fpm启动，重启方法</h3><p>启动</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo php-fpm</span><br></pre></td></tr></table></figure>
-
-<p>重启 先找到进程 然后发送<code>USR2</code>信号</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps -aux | grep php</span><br><span class="line"></span><br><span class="line">sudo kill -USR2 进程id</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="安装nginx"><a href="#安装nginx" class="headerlink" title="安装nginx"></a>安装nginx</h2><p>访问nginx的<a target="_blank" rel="noopener" href="https://nginx.org/en/download.html">官网</a>进行下载。</p>
-<p>复制下载地址。比如我下载的1.19.5,直接下载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wget https://nginx.org/download/nginx-1.19.5.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>然后解压</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -zxvf nginx-1.19.5.tar.gz</span><br></pre></td></tr></table></figure>
-
-<p>接下来需要安装一些扩展来支持php。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libpcre3 libpcre3-dev</span><br></pre></td></tr></table></figure>
-
-<p>切换目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd ./nginx-1.19.5</span><br></pre></td></tr></table></figure>
-
-<p>执行安装</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ./configure --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --prefix=/usr/local/src/nginx</span><br><span class="line">sudo make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
-
-<p>好了，安装完成。</p>
-<p>同意，建立软连接。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/local/src/nginx/sbin/nginx /usr/local/bin/nginx</span><br></pre></td></tr></table></figure>
-
-<p>接下来启动nginx看看效果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nginx</span><br></pre></td></tr></table></figure>
-
-<p>访问localhost就可以看到效果了。</p>
-<h2 id="配置网站"><a href="#配置网站" class="headerlink" title="配置网站"></a>配置网站</h2><p>接下来配置一下网站。</p>
-<p>修改nginx.conf</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/src/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
-
-<p>在http块里面加上这句话，引入其他的配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include     conf.d/*.conf;</span><br></pre></td></tr></table></figure>
-
-<p>然后我们创建这个目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /usr/local/src/nginx/conf/conf.d</span><br></pre></td></tr></table></figure>
-
-<p>配置我们的网站文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/src/nginx/conf/conf.d/test.com.conf</span><br></pre></td></tr></table></figure>
-
-<p>复制下面内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  test.com;</span><br><span class="line">        root   &quot;/home/wwwroot/test/public/&quot;;</span><br><span class="line">        location / &#123;</span><br><span class="line">            index index.php index.html error/index.html;</span><br><span class="line">            autoindex  off;</span><br><span class="line">            if (!-e $request_filename) &#123;</span><br><span class="line">                rewrite ^(.*)$ /index.php?s=/$1 last;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        location ~ \.php(.*)$ &#123;</span><br><span class="line">            fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">            fastcgi_index  index.php;</span><br><span class="line">            fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;</span><br><span class="line">            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">            fastcgi_param  PATH_INFO  $fastcgi_path_info;</span><br><span class="line">            fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_path_info;</span><br><span class="line">            include        fastcgi_params;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在修改hosts文件就好了。</p>
-<h2 id="redis扩展"><a href="#redis扩展" class="headerlink" title="redis扩展"></a>redis扩展</h2><p>如果要装redis扩展，那么手动下载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://pecl.php.net/package/redis</span><br></pre></td></tr></table></figure>
-
-<p>找到tar包下载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wget http://pecl.php.net/get/redis-5.3.2.tgz</span><br></pre></td></tr></table></figure>
-
-<p>解压缩</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar -zxvf redis-5.3.2.tgz</span><br></pre></td></tr></table></figure>
-
-<p>进去执行phpize</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ./redis-5.3.2</span><br><span class="line">sudo phpize</span><br></pre></td></tr></table></figure>
-
-<p>然后编译</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ./configure --with-php-config=/usr/local/php7/bin/php-config</span><br><span class="line">sudo make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
-
-<p>接下来会出现下面的目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/php7/lib/php/extensions/no-debug-non-zts-20190902</span><br></pre></td></tr></table></figure>
-
-<p>修改我们的php.ini</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/php7/lib/php.ini</span><br></pre></td></tr></table></figure>
-
-<p>修改下面这个</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">extension_dir=/usr/local/php7/lib/php/extensions/no-debug-non-zts-20190902</span><br></pre></td></tr></table></figure>
-
-<p>增加redis扩展</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">extension=&quot;redis.so&quot;</span><br></pre></td></tr></table></figure>
-
-<p>重启nginx和php-fpm就好了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90ssh-key.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90ssh-key.html" class="post-title-link" itemprop="url">如何生成ssh-key</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ssh/" itemprop="url" rel="index"><span itemprop="name">ssh</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90ssh-key.html" class="post-meta-item leancloud_visitors" data-flag-title="如何生成ssh-key" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90ssh-key.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90ssh-key.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="如何生成ssh-key"><a href="#如何生成ssh-key" class="headerlink" title="如何生成ssh-key"></a>如何生成ssh-key</h1><p>打开命令终端，或者使用<code>git bash</code>都可以。</p>
-<p>打开以后先查看你之前是否生成过<code>ssh-key</code>。生成之后会在目录<code>~/.ssh/</code>下面出现两个文件<code>id_rsa</code>私钥和<code>id_rsa.pub</code>公钥。</p>
-<blockquote>
-<p>cd ~&#x2F;.ssh&#x2F;<br>ls</p>
-</blockquote>
-<p>如果没看到这两个文件，那么开始执行生成指令。</p>
-<blockquote>
-<p> ssh-keygen -t rsa -C “你的邮箱” &#x2F;&#x2F;这里一般使用github的邮箱</p>
-</blockquote>
-<p>运行之后，会出现提示让你输入一些东西，这里不需要管，不需要输入，直接<code>回车</code>即可。</p>
-<p>一直回车。直到指令执行完。</p>
-<p>再次查看，发现已经生成了两个文件。接下来使用的时候只需要把公钥给到别人就可以了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-title-link" itemprop="url">深入理解计算机系统一--Amdahl定律</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--Amdahl定律" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Amdahl定律"><a href="#Amdahl定律" class="headerlink" title="Amdahl定律"></a>Amdahl定律</h1><p>Gene Amdal，计算领域的早期先锋之一，对提升系统某一部分性能所带来的效果做出了简单却有见地的观察。</p>
-<p>这个观察被称为<code>Amdahl定律</code>。该定律的主要思想是，当我们对系统的某个部分加速时，其对系统整体性能的影响取决于该部分的重要性和加速程度。</p>
-<p>若系统执行某应用程序需要时间为<code>T</code><sub><code>old</code></sub>。假设系统某部分执行所需时间与该时间的比例为<code>a</code>，而该部分性能提升比例为<code>k</code>。即该部分初始所需执行时间为<code>aT</code><sub><code>old</code></sub>，现在所需时间为(<code>aT</code><sub><code>old</code></sub>)&#x2F;<code>k</code>。因此，总的执行时间应为：</p>
-<blockquote>
-<p>T<sub>new</sub> &#x3D; (1 - a)T<sub>old</sub> + (aT<sub>old</sub>)&#x2F;k &#x3D; T<sub>old</sub> [(1 - a) + a&#x2F;k]</p>
-</blockquote>
-<p>由此，可以计算加速比 S &#x3D; T<sub>old</sub> &#x2F; T<sub>new</sub> 为</p>
-<blockquote>
-<p>S &#x3D; 1 &#x2F; [(1 - a) + a&#x2F;k]</p>
-</blockquote>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>考虑这样一种情况，系统的某个部分初始耗时比例为60%（a &#x3D; 0.6），其加速比例因子为3，也就是性能提升了300%。则我们可以获得的整体系统加速比为：</p>
-<blockquote>
-<p>1 &#x2F; [(1 - 0.6) + 0.6 &#x2F; 3] &#x3D; 1 &#x2F; (0.4 + 0.2) &#x3D; 1 &#x2F; 0.6 &#x3D; 1.66666666 约等于 1.67倍</p>
-</blockquote>
-<p>可以看到虽然我们优化的部分提升了3倍性能，但是整体性能只提升了1.67倍。</p>
-<p>虽然我们对系统的一个主要部分做了重大改进，但是获得的加速比却明显小于这部分的加速比。这就是<code>Amdahl</code>定律的主要观点–<code>要想显著加速整个系统，必须提升系统中相当大的部分的速度</code>。</p>
-<h2 id="练习题1-1"><a href="#练习题1-1" class="headerlink" title="练习题1.1"></a>练习题1.1</h2><p>假设你要把土豆从爱达荷州送到明尼苏达州，全程2500公里。在限速范围内，你估计平均速度为100公里&#x2F;小时，整个行程需要25个小时。</p>
-<blockquote>
-<p>A:新闻说蒙大拿州取消了限速，这使得行程有1500公里速度可以达到150公里&#x2F;小时，那么加速比是多少？</p>
-</blockquote>
-<p>答：根据题目可知：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a = 1500 / 2500 = 0.6 k = 1.5 求S</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line"></span><br><span class="line">S = 1 / (0.4 + 0.4)</span><br><span class="line">S = 1 / 0.8</span><br><span class="line">S = 1.25</span><br></pre></td></tr></table></figure>
-<p>加速比是 1.25倍</p>
-<blockquote>
-<p>B:你可以购买道具，想让加速比达到1.67倍，那么你必须以多快的速度通过蒙大拿州？</p>
-</blockquote>
-<p>答：根据题目可知：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">S = 1.67 a = 0.6 求k</span><br><span class="line"></span><br><span class="line">1.67 = 1 / (0.4 + 0.6 / k)</span><br><span class="line">1.67 * (0.4 + 0.6 / k) = 1</span><br><span class="line">0.668 + 1.002 / k = 1</span><br><span class="line">1.002 / k = 0.332</span><br><span class="line">k = 1.002 / 0.332</span><br><span class="line">k = 3.02</span><br></pre></td></tr></table></figure>
-<p>也就是蒙大拿州的速度必须达到 100 * 3.02 &#x3D; 302公里&#x2F;小时才行。</p>
-<h2 id="练习题1-2"><a href="#练习题1-2" class="headerlink" title="练习题1.2"></a>练习题1.2</h2><p>公司说下个版本的软件性能将提升2倍。这个任务分配给你，你已经确认只有80%的系统可以进行改进，那么，这部分需要改进多少才可以达到要求？</p>
-<p>根据题目可以知道:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a = 0.8, S = 2,求k</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line">2 = 1/ [(1 - 0.8) + 0.8/k]</span><br><span class="line">2 = 1 / (0.2 + 0.8 / k)</span><br><span class="line">2 (0.2 + 0.8 / k) = 1</span><br><span class="line">0.4 + 1.6 / k = 1</span><br><span class="line">1.6 / k = 0.6</span><br><span class="line">1.6 = 0.6k</span><br><span class="line">16 / 6 = k</span><br><span class="line">k = 2.67</span><br></pre></td></tr></table></figure>
-<p>所以我们需要改进这部分至少2.67倍才能达到要求。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-title-link" itemprop="url">深入理解计算机系统一--c程序发生了什么</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--c程序发生了什么" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><p>计算机系统是由硬件和系统软件组成的，它们共同工作来运行应用程序。。虽然系统的 具体实现方式随着时间不断变化，但是系统内在的概念却没有改变。所有计算机系统都有 相似的硬件和软件组件，它们又执行着相似的功能。</p>
-<h2 id="第一个c程序"><a href="#第一个c程序" class="headerlink" title="第一个c程序"></a>第一个c程序</h2><p>一般第一个程序都是输出<code>hello world</code>，这里我们使用c语言输出一个<code>hello world</code>。后面在来讲这里面都发生了什么。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最终程序都会被转成2进制代码，一般都根据ASCII码来转换，下图是上面的代码根据ASCII码转换成的二进制代码。</p>
-<p><img src="/../images/csapp1-1.png" alt="coursera"></p>
-<h2 id="程序被翻译成不同格式"><a href="#程序被翻译成不同格式" class="headerlink" title="程序被翻译成不同格式"></a>程序被翻译成不同格式</h2><p>计算机最后能执行的是二进制文件，所以需要把c文件转换成二进制文件，这是经过几个步骤的转换，而不是一次性转换成的。当然了，我们使用gcc编译的时候他是一下子执行了所有步骤的。</p>
-<p>分为4个阶段</p>
-<ul>
-<li>hello.c 经过 预处理器(cpp) 输出 hello.i (修改了的源程序)</li>
-<li>hello.i 经过 编译器(ccl) 输出 hello.s (汇编程序)</li>
-<li>hello.s 经过 汇编器(as) 输出 hello.o (可重定位目标程序)</li>
-<li>hello.o 和 引入的其他库的文件 经过 连接器(ld) 输出 hello.exe (可执行程序)</li>
-</ul>
-<h4 id="预处理阶段"><a href="#预处理阶段" class="headerlink" title="预处理阶段"></a>预处理阶段</h4><p>预处理器根据以字符<code>#</code>开头的命令，修改原始的c程序。把你引入的文件插入到原始文件中。生成新的hello.i文件。</p>
-<h4 id="编译阶段"><a href="#编译阶段" class="headerlink" title="编译阶段"></a>编译阶段</h4><p>编译器把hello.i这个c程序文件编译成汇编程序文件。生成新的hello.s文件。</p>
-<h4 id="汇编阶段"><a href="#汇编阶段" class="headerlink" title="汇编阶段"></a>汇编阶段</h4><p>汇编器把hello.s这个汇编程序翻译成机器语言指令，把这些指令打包成可重定位目标程序。生成新的hello.o文件，它包含的17个字节是函数main的指令编码。</p>
-<h4 id="链接阶段"><a href="#链接阶段" class="headerlink" title="链接阶段"></a>链接阶段</h4><p>我们的c程序调用了别的函数，调用了printf这个输出函数，这个函数是标准c库里面的函数，这个函数存在于printf.o这个预先编译好的文件里面，而我们要把这两个文件合并到一起，链接器就负责这种合并。最后得到一个可执行程序 hello.exe</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html" class="post-title-link" itemprop="url">深入理解计算机系统一--系统的硬件组成</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--系统的硬件组成" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="系统的硬件组成"><a href="#系统的硬件组成" class="headerlink" title="系统的硬件组成"></a>系统的硬件组成</h1><h2 id="总线"><a href="#总线" class="headerlink" title="总线"></a>总线</h2><p>总线贯穿整个计算机系统，负责在各个部件之间传递数据。通常总线被设计成传送定长的字节块，也就是字（word）。字中的字节数是一个基本的系统参数，现在大多数机器都是8个字节（64）位的了，4个字节（32）位的机器已经很少见了。</p>
-<h2 id="I-x2F-O设备"><a href="#I-x2F-O设备" class="headerlink" title="I&#x2F;O设备"></a>I&#x2F;O设备</h2><p>I&#x2F;O(输入&#x2F;输出)设备是系统和外部连接的通道。下图包括四个I&#x2F;O设备。分别是</p>
-<ul>
-<li>作为用户输入的键盘</li>
-<li>作为用户输入的鼠标</li>
-<li>作为用户输出的显示器</li>
-<li>存储数据和程序的磁盘<br>最开始，可执行程序就是存储在磁盘上面的。</li>
-</ul>
-<p>每个I&#x2F;O设备都通过适配器或者控制器和I&#x2F;O总线相连。控制器和适配器的区别主要在于封装方式上面。<code>控制器是I/O设备本身或者系统的主印制电路板（通常称作主板）</code>上的芯片组。而<code>适配器是一块插在主板插槽上的卡</code>。</p>
-<h2 id="主存"><a href="#主存" class="headerlink" title="主存"></a>主存</h2><p>主存是一个临时存储设备，在处理器执行程序时，用来存放数据。</p>
-<p>从物理上来说，主存是<code>一组动态随机存储器（DRAM）</code>芯片组成的。从逻辑上来说，存储器是<code>一个线性的字节数组，每个字节都有其唯一的地址，这些地址是从零开始的</code>。</p>
-<h2 id="处理器"><a href="#处理器" class="headerlink" title="处理器"></a>处理器</h2><p>中央处理单元（CPU），简称处理器。是解释或执行存储在主存中指令的引擎。处理器的核心是<code>一个大小为一个字的存储设备或寄存器，称为程序计数器（PC）</code>。在任何时刻，PC都指向主存中的某条指令。</p>
-<p>从电脑开机开始，PC就指向一条指令，执行指令后执行下一条指令，不断运行。</p>
-<p>这样的简单操作不多，都围绕着主存，寄存器文件和算术&#x2F;逻辑运算单元（ALU）进行。下面是一些简单操作的例子。</p>
-<ul>
-<li>加载：从主存复制一个字节到寄存器。</li>
-<li>存储：从寄存器复制一个字节到主存。以覆盖原来的值。</li>
-<li>操作：把两个寄存器的内容复制到ALU做运算，将结果存在一个寄存器中。</li>
-<li>跳转：从指令本身中抽取一个字，并将这个字复制到程序计数器（PC）中，覆盖PC原来的值。</li>
-</ul>
-<p><img src="/../images/csapp1-2.png" alt="coursera"></p>
-<h1 id="运行hello程序"><a href="#运行hello程序" class="headerlink" title="运行hello程序"></a>运行hello程序</h1><p>程序通过shell进行执行。</p>
-<blockquote>
-<p>.&#x2F;hello</p>
-</blockquote>
-<p>这个时候系统把这个字符通过<code>键盘</code>逐一读入寄存器，然后再放入主存。</p>
-<p>当我们按下回车，这个时候系统开始执行<code>hello</code>的内容，把<code>hello world</code>从磁盘读入主存。利用直接存储器存取技术（DMA），可以直接从磁盘读入主存，而不需要经过寄存器。</p>
-<p>把程序内容读入主存后，开始执行main函数的内容，把<code>hello world</code>从主存复制到寄存器，最后显示在<code>屏幕</code>上面。</p>
-<h1 id="高速缓存"><a href="#高速缓存" class="headerlink" title="高速缓存"></a>高速缓存</h1><p>这个运行过程说明程序多次在主存和寄存器之间复制移动代码。这些重复操作如果能变得更快，那么整个程序就能变得更快。这就是高速缓存的作用。</p>
-<p>根据机械原理，较大的设备比较小的设备速度慢，而快速设备的造价也远高于低速设备。比如，磁盘的容量可以比主存大1000倍，但是主存的速度可能比磁盘大1000万倍。同样的，寄存器比主存的速度也要更快。</p>
-<p>针对这些速度的差异，系统的设计者采用了高速缓存设备，作为暂时的集结区域，存放处理器近期可能会需要的信息。系统有L1,L2,L3三级缓存。L1最快最小，L3最慢最大，</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/12/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/14/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/12/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/14/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1597,7 +1458,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1610,7 +1471,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

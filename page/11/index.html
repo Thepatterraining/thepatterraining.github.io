@@ -196,6 +196,881 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-Dynamic%20Mapping.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-Dynamic%20Mapping.html" class="post-title-link" itemprop="url">ElasticSearch十一--Dynamic Mapping和常见字段类型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-Dynamic%20Mapping.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十一--Dynamic Mapping和常见字段类型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-Dynamic%20Mapping.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-Dynamic%20Mapping.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Dynamic-Mapping和常见字段类型"><a href="#Dynamic-Mapping和常见字段类型" class="headerlink" title="Dynamic Mapping和常见字段类型"></a>Dynamic Mapping和常见字段类型</h1><h2 id="Mapping"><a href="#Mapping" class="headerlink" title="Mapping"></a>Mapping</h2><p>Mapping 类似数据库中的 <code>schema</code>的定义，作用如下：</p>
+<ul>
+<li>定义索引中的字段的名称</li>
+<li>定义字段的数据类型，例如字符串，数字，布尔等</li>
+<li>字段，倒排索引的相关配置</li>
+</ul>
+<p>Mapping 会把 JSON 文档映射成 Lucene 所需要的扁平格式</p>
+<p>一个Mapping 属于一个索引的 Type</p>
+<ul>
+<li>每个文档都属于一个Type</li>
+<li>一个 Type 有一个 Mapping 定义</li>
+<li>7.0开始，不需要在 Mapping 定义中指定 Type信息</li>
+</ul>
+<h3 id="字段的数据类型"><a href="#字段的数据类型" class="headerlink" title="字段的数据类型"></a>字段的数据类型</h3><h5 id="简单类型"><a href="#简单类型" class="headerlink" title="简单类型"></a>简单类型</h5><ul>
+<li>Text&#x2F;Keyword</li>
+<li>Date</li>
+<li>Interger&#x2F;Floating</li>
+<li>Boolean</li>
+<li>IPv4 &amp; IPv6</li>
+</ul>
+<h5 id="复杂类型"><a href="#复杂类型" class="headerlink" title="复杂类型"></a>复杂类型</h5><ul>
+<li>对象类型</li>
+<li>嵌套类型</li>
+</ul>
+<h5 id="特殊类型"><a href="#特殊类型" class="headerlink" title="特殊类型"></a>特殊类型</h5><p>geo 是用于存储地理位置信息的类型</p>
+<ul>
+<li>geo_point &amp; geo_shape&#x2F; percolator</li>
+</ul>
+<h3 id="Dynamic-Mapping"><a href="#Dynamic-Mapping" class="headerlink" title="Dynamic Mapping"></a>Dynamic Mapping</h3><p>这个就是动态的Mapping，可以不需要手动指定，由 ES 动态识别数据类型，来生成对应的Mapping。</p>
+<p>但是这样生成的 Mappping 不一定正确。</p>
+<p>如果想要修改Mapping</p>
+<ul>
+<li>新增加字段<ul>
+<li>Dynamic 设为 true,一旦有新字段，Mapping会自动更新</li>
+<li>Dynamic 设为 false,一旦有新字段，Mapping不会更新，新增加的字段无法被索引，但是_source里面有数据</li>
+<li>Dynamic 设为 Strict,文档写入失败</li>
+</ul>
+</li>
+<li>已有字段，一旦已经有数据就不支持修改了<ul>
+<li>Lucene实现的倒排索引，一旦生成就不能修改</li>
+</ul>
+</li>
+<li>如果想要修改，需要Reindex API ，重建索引</li>
+</ul>
+<p>原因：</p>
+<ul>
+<li>如果修改了字段的数据类型，会导致已被索引的数据无法被搜索</li>
+<li>但是如果是增加新的字段，就不会有这种情况</li>
+</ul>
+<p>注意!!!：<br>如果<code>Dynamic</code>设为false,那么新增字段无法被索引，也就意味着不能拿这个字段去搜索，比如新增加一个<code>name</code>字段，那么无法搜索<code>name</code>这个字段，比如你想搜索name是张三的，是搜索不出来的。</p>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-title-link" itemprop="url">ElasticSearch九--RequestBody和Query DSL简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch九--RequestBody和Query DSL简介" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RequestBody和Query-DSL简介"><a href="#RequestBody和Query-DSL简介" class="headerlink" title="RequestBody和Query DSL简介"></a>RequestBody和Query DSL简介</h1><p>通过RequestBody 实现搜索</p>
+<p>参数：</p>
+<ul>
+<li>q:指定查询语句，使用Query String Syntax</li>
+<li>df:默认字段，不指定会对所有字段进行查询</li>
+<li>sort:排序</li>
+<li>from&#x2F;size: 用来分页</li>
+<li>Profile 可以查看查询是如何被执行的</li>
+</ul>
+<p>这个方法的参数和URI是一样的，比如我们在kibana里面执行下面的指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;from&quot;:0,</span><br><span class="line">  &quot;size&quot;:10,</span><br><span class="line">  &quot;sort&quot;:[&#123;&quot;id&quot;:&quot;desc&quot;&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询指定字段"><a href="#查询指定字段" class="headerlink" title="查询指定字段"></a>查询指定字段</h2><p>这种方式还可以查询指定字段，通过<code>_source</code>参数来指定。支持通配符</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="脚本字段"><a href="#脚本字段" class="headerlink" title="脚本字段"></a>脚本字段</h2><p>可以进行一些简单运算，拼接字符串等操作</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;script_fields&quot;:&#123;</span><br><span class="line">    &quot;new_field&quot;:&#123;</span><br><span class="line">      &quot;script&quot;:&#123;</span><br><span class="line">        &quot;lang&quot;:&quot;painless&quot; //使用这个脚本</span><br><span class="line">        &quot;source&quot;: &quot;doc[&#x27;job_name&#x27;].value+&#x27;_hello&#x27;&quot; //在职位名称后面拼接_hello</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;fields&quot;:&#123;</span><br><span class="line">  &quot;new_fields&quot;:[</span><br><span class="line">    &quot;产品_hello&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="query-DSL"><a href="#query-DSL" class="headerlink" title="query DSL"></a>query DSL</h2><p>通过DSL查询产品怎么办呢，可以使用query参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;:&quot;产品&quot;  //这里就相当于出现产 或者 品 都会搜出来 左边的 job_name 就是搜索的字段</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果想使用<code>AND</code>可以增加参数，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;operator&quot;:&quot;AND&quot;  //这里指定AND OR NOT</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="短语搜索-match-phrase"><a href="#短语搜索-match-phrase" class="headerlink" title="短语搜索 match phrase"></a>短语搜索 match phrase</h3><p>这里就是短语，单词搜索，等价于URI的phrase search</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_phrase&quot;:&#123;   //使用match_phrase</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;slop&quot;:1, //代表可以有一个错误</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-Search%20API.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-Search%20API.html" class="post-title-link" itemprop="url">ElasticSearch七--ES--Search API</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-Search%20API.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch七--ES--Search API" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-Search%20API.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-Search%20API.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Search-API"><a href="#Search-API" class="headerlink" title="Search API"></a>Search API</h1><h2 id="两种方法"><a href="#两种方法" class="headerlink" title="两种方法"></a>两种方法</h2><p>URI Search</p>
+<ul>
+<li>通过Url参数来进行查询</li>
+</ul>
+<p>url指定参数q&#x3D;field:搜索内容</p>
+<p>例子：<br><a target="_blank" rel="noopener" href="http://localhost:9200/%7Bindex%7D/_search?q=%7Bfield%7D:%E6%90%9C%E7%B4%A2%E5%86%85%E5%AE%B9">http://localhost:9200/{index}/_search?q={field}:搜索内容</a></p>
+<p>url:<br><a target="_blank" rel="noopener" href="http://localhost:9200/test_home/_search?q=job_name:php">http://localhost:9200/test_home/_search?q=job_name:php</a></p>
+<p>Request Body Search</p>
+<ul>
+<li>通过ES提供的JSON格式的DSL语句进行查询</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">语法</th>
+<th align="left">范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">&#x2F;_search</td>
+<td align="left">集群上所有索引</td>
+</tr>
+<tr>
+<td align="left">&#x2F;{index}&#x2F;_search</td>
+<td align="left">对应index上的数据</td>
+</tr>
+<tr>
+<td align="left">&#x2F;{index},{index}&#x2F;_search</td>
+<td align="left">对应多个index上的数据</td>
+</tr>
+<tr>
+<td align="left">&#x2F;test*&#x2F;_search</td>
+<td align="left">所有test开头的index上的数据</td>
+</tr>
+</tbody></table>
+<p>支持GET POST两种方式</p>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET/POST test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="搜索返回的结果"><a href="#搜索返回的结果" class="headerlink" title="搜索返回的结果"></a>搜索返回的结果</h2><ul>
+<li>took: 查询花的时间</li>
+<li>hits-total: 符合条件的总文档数</li>
+<li>hints: 结果集</li>
+<li>_score: 相关度评分</li>
+</ul>
+<h3 id="相关度"><a href="#相关度" class="headerlink" title="相关度"></a>相关度</h3><p>Infomation Retrieval</p>
+<ul>
+<li>Precision(查准率) - 尽可能返回较少的无关文档</li>
+<li>Recall (查全率) - 尽量返回较多的相关文档</li>
+<li>Ranking - 是否能按相关度进行排序</li>
+</ul>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html" class="post-title-link" itemprop="url">ElasticSearch八--ES--URI Search 详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch八--ES--URI Search 详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-URI%20Search%20%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="URI-Search"><a href="#URI-Search" class="headerlink" title="URI Search"></a>URI Search</h1><p>通过URI query 实现搜索</p>
+<p>参数：</p>
+<ul>
+<li>q:指定查询语句，使用Query String Syntax</li>
+<li>df:默认字段，不指定会对所有字段进行查询</li>
+<li>sort:排序</li>
+<li>from&#x2F;size: 用来分页</li>
+<li>Profile 可以查看查询是如何被执行的</li>
+</ul>
+<h2 id="Query-String-Syntax"><a href="#Query-String-Syntax" class="headerlink" title="Query String Syntax"></a>Query String Syntax</h2><p>指定字段和泛查询</p>
+<h3 id="泛查询"><a href="#泛查询" class="headerlink" title="泛查询"></a>泛查询</h3><p>q参数后面只跟着查询内容会对所有字段进行搜索，可以看到返回值里面<code>profile</code>-<code>query</code>-<code>type</code>是 <code>DisjunctionMaxQuery</code>。 <code>description</code>是<code>(customer_name.keyword:产品 | (job_name:产 job_name:品) | job_name.keyword:产品 | (customer_name:产 customer_name:品) | MatchNoDocsQuery(&quot;failed [id] query, caused by number_format_exception:[For input string: &quot;产品&quot;]&quot;) | (city_names:产 city_names:品) | city_names.keyword:产品)</code></p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=产品</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="指定字段"><a href="#指定字段" class="headerlink" title="指定字段"></a>指定字段</h3><p>指定字段有两种方式，一种是df参数</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=产品&amp;df=job_name</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有一种是q参数使用冒号<code>：</code>来分隔</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:产品</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定字段的返回参数可以看到<code>type</code>是<code>BooleanQuery</code>,<code>description</code>是<code>job_name:产 job_name:品</code></p>
+<h2 id="term-query-amp-PhraseQuery"><a href="#term-query-amp-PhraseQuery" class="headerlink" title="term query &amp; PhraseQuery"></a>term query &amp; PhraseQuery</h2><p>term query 是 or的关系，比如上面搜索产品，只要包含<code>产</code>或者<code>品</code>就都会搜索出来，可以用()小括号把搜索内容括起来</p>
+<p>phrase query 是 and 的关系，需要再搜索内容上加双引号。这样只会搜索出<code>产品</code>的结果。</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:&quot;产品&quot;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="boolean-query"><a href="#boolean-query" class="headerlink" title="boolean query"></a>boolean query</h2><p>boolean query可以用<code>AND</code>,<code>OR</code>,<code>NOT</code>来操作<br>比如既要<code>产</code>又要<code>品</code><br>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:(产 AND 品)</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如只有一个就行<br>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:(产 OR 品)</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如只有品没有产</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:(品 NOT 产)</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="范围查询"><a href="#范围查询" class="headerlink" title="范围查询"></a>范围查询</h2><p>区间表示  []闭区间 {}开区间</p>
+<ul>
+<li>year:[2019 TO 2.18]</li>
+</ul>
+<h2 id="算术符号"><a href="#算术符号" class="headerlink" title="算术符号"></a>算术符号</h2><p>可以使用<code>&gt;</code>,<code>&lt;</code>,<code>=</code>等数学符号</p>
+<h2 id="通配符查询"><a href="#通配符查询" class="headerlink" title="通配符查询"></a>通配符查询</h2><p>通配符查询效率低，占用内存大，不建议使用。</p>
+<h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p>可以用正则进行匹配搜索查询</p>
+<ul>
+<li>job_name:[bt]oy</li>
+</ul>
+<h2 id="模糊匹配与近似查询"><a href="#模糊匹配与近似查询" class="headerlink" title="模糊匹配与近似查询"></a>模糊匹配与近似查询</h2><p>模糊查询允许用户输错<code>查询关键字</code></p>
+<p>比如上面的查询<code>产品</code>，用户打错了，输成了<code>品阶</code>。我们通过模糊匹配依旧可以查询出来内容.就是通过在查询内容后面输入<code>~1</code>代表允许1个字的错误</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search?q=job_name:品阶~1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-queryString.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-queryString.html" class="post-title-link" itemprop="url">ElasticSearch十--ES--query string和simple query string</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-queryString.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十--ES--query string和simple query string" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-queryString.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-queryString.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="query-string和simple-query-string"><a href="#query-string和simple-query-string" class="headerlink" title="query string和simple query string"></a>query string和simple query string</h1><h2 id="query-string"><a href="#query-string" class="headerlink" title="query string"></a>query string</h2><p>类似URI query</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;query_string&quot;:&#123;</span><br><span class="line">      &quot;default_field&quot;:&quot;job_name&quot;,  //相当于URI的 df</span><br><span class="line">      &quot;query&quot;:&quot;产品&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还可以搜索多个字段</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;query_string&quot;:&#123;</span><br><span class="line">      &quot;query&quot;:&quot;产品&quot;,</span><br><span class="line">      &quot;fields&quot;:[&#x27;job_name&#x27;] //搜索job_name是产品的</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还可以直接在query里面使用<code>AND</code>,<code>OR</code>,<code>NOT</code>的操作符</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;query_string&quot;:&#123;</span><br><span class="line">      &quot;query&quot;:&quot;产 OR 品&quot;,</span><br><span class="line">      &quot;fields&quot;:[&#x27;job_name&#x27;] //搜索job_name是产品的</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="simple-query-string"><a href="#simple-query-string" class="headerlink" title="simple query string"></a>simple query string</h2><p>类似 <code>query string</code> ，但是会忽略错误的语法，同时只支持部分查询语法</p>
+<ul>
+<li>不支持AND OR NOT ，会当做字符处理</li>
+<li>Term 之间默认的关系是OR，可以指定 <code>operator</code></li>
+<li>支持 部分逻辑<ul>
+<li>+代替AND</li>
+<li>|代替OR</li>
+<li>-代替NOT</li>
+</ul>
+</li>
+</ul>
+<p>这里如果使用了<code>+</code>或者<code>AND</code>还有<code>OR</code>，那么会使用<code>AND</code>，而<code>OR</code>不生效。</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;query_string&quot;:&#123;</span><br><span class="line">      &quot;query&quot;:&quot;产-品&quot;, //这里-代表OR</span><br><span class="line">      &quot;fields&quot;:[&#x27;job_name&#x27;] //搜索job_name是产品的</span><br><span class="line">      &quot;default_operator&quot;: &quot;OR&quot;  //指定默认操作符</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-title-link" itemprop="url">ElasticSearch五--ES--倒排索引</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch五--ES--倒排索引" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="正排索引和倒排索引"><a href="#正排索引和倒排索引" class="headerlink" title="正排索引和倒排索引"></a>正排索引和倒排索引</h1><h2 id="正排索引"><a href="#正排索引" class="headerlink" title="正排索引"></a>正排索引</h2><p>正排索引就是通过索引id找到内容，比如通过书本的目录找到内容。</p>
+<h2 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h2><p>倒排索引就是把正排索引倒过来，通过内容找到索引id.</p>
+<h3 id="建立一个倒排索引"><a href="#建立一个倒排索引" class="headerlink" title="建立一个倒排索引"></a>建立一个倒排索引</h3><table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">php java go</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">php es</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">php 开发</td>
+</tr>
+</tbody></table>
+<p>把上面的内容可以建立成下面的倒排索引</p>
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">Count</th>
+<th align="left">id</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">php</td>
+<td align="left">3</td>
+<td align="left">1:0,2:0,3:0</td>
+</tr>
+<tr>
+<td align="left">java</td>
+<td align="left">1</td>
+<td align="left">1:1</td>
+</tr>
+<tr>
+<td align="left">go</td>
+<td align="left">1</td>
+<td align="left">1:2</td>
+</tr>
+<tr>
+<td align="left">es</td>
+<td align="left">1</td>
+<td align="left">2:1</td>
+</tr>
+<tr>
+<td align="left">开发</td>
+<td align="left">1</td>
+<td align="left">3:1</td>
+</tr>
+</tbody></table>
+<h3 id="倒排索引的核心组成"><a href="#倒排索引的核心组成" class="headerlink" title="倒排索引的核心组成"></a>倒排索引的核心组成</h3><p><code>单词词典</code> 记录所有文档的单词 记录单词到倒排列表的关联关系。<br>单词词典一般比较大，可以通过B+树或hash拉链法实现，以满足高性能的插入和查询</p>
+<p><code>倒排列表</code>记录了单词对应的文档结合，由倒排索引项组成</p>
+<p><code>倒排索引项</code></p>
+<ul>
+<li>文档id</li>
+<li>词频 该单词在文档中出现的次数，用于相关性评分</li>
+<li>位置 单词在文档中分词的位置。用于语句搜索</li>
+<li>偏移 记录单词的开始结束位置，实现高亮显示</li>
+</ul>
+<h2 id="ES中的倒排索引"><a href="#ES中的倒排索引" class="headerlink" title="ES中的倒排索引"></a>ES中的倒排索引</h2><p>ES的JSON文档中的每个字段，都有自己的倒排索引<br>可以指定对某些字段不做索引</p>
+<ul>
+<li>优点：节省存储空间</li>
+<li>缺点：字段无法被搜索</li>
+</ul>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E6%98%BE%E5%BC%8Fmapping.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -875,1227 +1750,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--kibana%E5%AE%89%E8%A3%85.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--kibana%E5%AE%89%E8%A3%85.html" class="post-title-link" itemprop="url">ElasticSearch二--ES-Kibana安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-01T00:00:00+08:00">2021-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--kibana%E5%AE%89%E8%A3%85.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch二--ES-Kibana安装" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--kibana%E5%AE%89%E8%A3%85.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--kibana%E5%AE%89%E8%A3%85.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Kibana安装"><a href="#Kibana安装" class="headerlink" title="Kibana安装"></a>Kibana安装</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>从官网（<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/kibana)%E5%8F%AF%E4%BB%A5%E8%BF%9B%E8%A1%8C%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85">https://www.elastic.co/cn/downloads/kibana)可以进行下载安装</a></p>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/kibana</span><br></pre></td></tr></table></figure>
-
-<p>启动后可以访问 <code>localhost:5601</code> 进行查看信息</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%AE%89%E8%A3%85.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E5%AE%89%E8%A3%85.html" class="post-title-link" itemprop="url">ElasticSearch二--ES安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-25 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-25T00:00:00+08:00">2021-03-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E5%AE%89%E8%A3%85.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch二--ES安装" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E5%AE%89%E8%A3%85.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%AE%89%E8%A3%85.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="ES–安装"><a href="#ES–安装" class="headerlink" title="ES–安装"></a>ES–安装</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
-<li><p>运行ElasticSearch, 需安装并配置JDK</p>
-<ul>
-<li>设置 $JAVA_HOME</li>
-</ul>
-</li>
-<li><p>各个版本对 Java的依赖</p>
-<ul>
-<li>ElasticSearch 5 需要 Java 8 以上的版本</li>
-<li>ElasticSearch 从6.5开始支持 Java 11</li>
-<li><a target="_blank" rel="noopener" href="https://www.elastic.co/support/matrix#matrix_jvm">https://www.elastic.co/support/matrix#matrix_jvm</a></li>
-<li>7.0开始，内置了Java环境</li>
-</ul>
-</li>
-</ul>
-<p>从官网（<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/elasticsearch)%E5%8F%AF%E4%BB%A5%E8%BF%9B%E8%A1%8C%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85">https://www.elastic.co/cn/downloads/elasticsearch)可以进行下载安装</a></p>
-<h2 id="目录说明"><a href="#目录说明" class="headerlink" title="目录说明"></a>目录说明</h2><ul>
-<li>bin : 脚本文件，包括启动 ElasticSearch，安装插件。运行统计数据等。</li>
-<li>config : 配置文件：elasticsearch.yml。集群配置文件，user,role based相关配置</li>
-<li>JDK: Java运行环境</li>
-<li>data: path.data 数据文件</li>
-<li>lib : Java类库</li>
-<li>logs: path.log 日志文件</li>
-<li>modules: 包含所有ES模块</li>
-<li>plugins: 包含所有已安装插件</li>
-</ul>
-<h2 id="JVM配置"><a href="#JVM配置" class="headerlink" title="JVM配置"></a>JVM配置</h2><ul>
-<li><p>修改JVM - config&#x2F;jvm.options</p>
-<ul>
-<li>7.1 下载的默认设置是1GB</li>
-</ul>
-</li>
-<li><p>配置的建议</p>
-<ul>
-<li>Xmx 和 Xms设置成一样</li>
-<li>Xmx 不要超过机器内存的50%</li>
-<li>不要超过 30GB - <a target="_blank" rel="noopener" href="https://www.elastic.co/blog/a-heap-of-trouble">https://www.elastic.co/blog/a-heap-of-trouble</a></li>
-</ul>
-</li>
-</ul>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><h4 id="单节点启动"><a href="#单节点启动" class="headerlink" title="单节点启动"></a>单节点启动</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch</span><br></pre></td></tr></table></figure>
-
-<p>启动后可以访问 <code>localhost:9200</code> 进行查看信息</p>
-<h4 id="多节点启动"><a href="#多节点启动" class="headerlink" title="多节点启动"></a>多节点启动</h4><p>cluster.name 指定同一个集群，node.name指定每个节点的名称，path.data指定数据存放位置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch -E node.name=node1 -E cluster.name=test -E path.data=node1_data -d</span><br><span class="line">/bin/elasticsearch -E node.name=node2 -E cluster.name=test -E path.data=node2_data -d</span><br><span class="line">/bin/elasticsearch -E node.name=node3 -E cluster.name=test -E path.data=node3_data -d</span><br></pre></td></tr></table></figure>
-
-<p>启动完成以后可以直接访问<code>localhost:9200/_cat/nodes</code>查看node信息</p>
-<h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p>使用elasticsearch-plugin进行插件的安装和查看</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch-plugin list   //查询已安装的插件列表</span><br><span class="line">/bin/elasticsearch-plugin install analysis-icu  //安装analysis-icu插件</span><br></pre></td></tr></table></figure>
-
-<p>还可以通过api进行查看已安装的插件，访问<code>localhost:9200/_cat/plugins</code>可以查看已安装的插件</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E7%AE%80%E4%BB%8B.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E7%AE%80%E4%BB%8B.html" class="post-title-link" itemprop="url">ElasticSearch一--ES简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-19 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-19T00:00:00+08:00">2021-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E7%AE%80%E4%BB%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch一--ES简介" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E7%AE%80%E4%BB%8B.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E7%AE%80%E4%BB%8B.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="ES–简介"><a href="#ES–简介" class="headerlink" title="ES–简介"></a>ES–简介</h1><h2 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h2><p>ES起源于Lucene.Lucene是基于JAVA开发的搜索引擎类库。</p>
-<p>Lucene具有高性能，易扩展的优点。</p>
-<p>Lucene的局限性：</p>
-<ol>
-<li>只能基于JAVA开发</li>
-<li>类库的接口学习曲线陡峭</li>
-<li>原生并不支持水平扩展</li>
-</ol>
-<h2 id="ES的诞生"><a href="#ES的诞生" class="headerlink" title="ES的诞生"></a>ES的诞生</h2><p>ES的创始人<code>Shay Banon</code>说过：<code>Search is something that any application should have</code>。</p>
-<p>2004年基于Lucene开发了 Compass</p>
-<p>2010年重写了 Compass ，取名 ElasticSearch</p>
-<ul>
-<li>支持分布式，可水平扩展</li>
-<li>降低全文检索的学习曲线，可以被任何编程语言调用</li>
-</ul>
-<h2 id="ES的分布式架构"><a href="#ES的分布式架构" class="headerlink" title="ES的分布式架构"></a>ES的分布式架构</h2><p>集群规模可以从单个扩展至数百个节点</p>
-<p>高可用 &amp; 水平扩展<br>    - 服务和数据两个维度</p>
-<p>支持不同的节点类型<br>    - 支持 Hot &amp; Warm架构</p>
-<h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ul>
-<li><p>海量数据的分布式存储以及集群管理</p>
-<ul>
-<li>服务与数据的高可用，水平扩展</li>
-</ul>
-</li>
-<li><p>近实时搜索，性能卓越</p>
-<ul>
-<li>结构化&#x2F;全文&#x2F;地理位置&#x2F;自动完成</li>
-</ul>
-</li>
-<li><p>海量数据的近实时分析</p>
-<ul>
-<li>聚合功能</li>
-</ul>
-</li>
-</ul>
-<h3 id="新特性5-x"><a href="#新特性5-x" class="headerlink" title="新特性5.x"></a>新特性5.x</h3><ul>
-<li>Lucene 6.x ，性能提升，默认打分机制从TF-IDF改为BM25</li>
-<li>支持Ingest节点&#x2F; Painless Scripting &#x2F; Completion suggested 支持&#x2F; 原生的JAVA REST客户端</li>
-<li>Type 标记成 deprecated ，支持了keyword类型</li>
-<li>性能优化<ul>
-<li>内部引擎移除了避免同一文档并发更新的竞争锁，带来15 - 20%的性能提升</li>
-<li>Instant aggregation，支持分片上聚合的缓存</li>
-<li>新增了Profile API</li>
-</ul>
-</li>
-</ul>
-<h3 id="新特性6-x"><a href="#新特性6-x" class="headerlink" title="新特性6.x"></a>新特性6.x</h3><ul>
-<li>Lucene 7.x</li>
-<li>新功能<ul>
-<li>跨集群复制（CCR）</li>
-<li>索引生命周期管理</li>
-<li>SQL的支持</li>
-</ul>
-</li>
-<li>更友好的升级及数据迁移<ul>
-<li>在主要版本之间的迁移更为简化，体验升级</li>
-<li>全新的基于操作的数据复制框架，可加快回复数据。</li>
-</ul>
-</li>
-<li>性能优化<ul>
-<li>有效存储稀疏字段的新方法，降低了存储成本</li>
-<li>在索引时进行排序，可加快排序的查询性能</li>
-</ul>
-</li>
-</ul>
-<h3 id="新特性7-x"><a href="#新特性7-x" class="headerlink" title="新特性7.x"></a>新特性7.x</h3><ul>
-<li>Lucene 8.x</li>
-<li>重大改进 - 正式废除单个索引下多Type的支持</li>
-<li>7.1开始，Security功能免费使用</li>
-<li>ECK - ElasticSearch Operator on Kubernetes</li>
-<li>新功能<ul>
-<li>New Cluster coordination</li>
-<li>Feature-Complete High Level Rest Client</li>
-<li>Script Score Query</li>
-</ul>
-</li>
-<li>性能优化<ul>
-<li>默认的Primary Shard 数从5变为1，避免Over Sharding</li>
-<li>性能优化，更快的Top K</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" class="post-title-link" itemprop="url">数据链路层CRC(循环冗余码)差错校验码详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-26 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-26T15:28:49+08:00">2020-12-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="数据链路层CRC(循环冗余码)差错校验码详解" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据链路层CRC-循环冗余码-差错校验码详解"><a href="#数据链路层CRC-循环冗余码-差错校验码详解" class="headerlink" title="数据链路层CRC(循环冗余码)差错校验码详解"></a>数据链路层CRC(循环冗余码)差错校验码详解</h1><p><code>CRC</code>差错校验码是数据链路层用来进行差错校验的一个码。</p>
-<h3 id="CRC编码过程"><a href="#CRC编码过程" class="headerlink" title="CRC编码过程"></a>CRC编码过程</h3><p>假设要编码的<code>数据D</code>，有<code>d个比特</code>，发送节点要将它发送给接收节点。发送方和接收方要先协商一个<code>r + 1</code>比特模式，成为<code>生成多项式</code>。我们将其表示为<code>G</code>。我们将要求G的最高有效位（最左边）的比特是1。</p>
-<p>我们要有一个数据D，比如 1001<br>这个数据有d个比特，也就是4个比特<br>需要附加 r 个比特作为校验码 R<br>编码过后会变成数据会变成D + R<br>数据有d + r个比特<br>使得得到的数据D+R进行模2运算恰好能被G整除</p>
-<h3 id="CRC差错检测过程"><a href="#CRC差错检测过程" class="headerlink" title="CRC差错检测过程"></a>CRC差错检测过程</h3><p>接收方用G去除接收到的D+R数据，如果余数为非0，则有差错，如果余数为0，则无差错</p>
-<h3 id="CRC计算"><a href="#CRC计算" class="headerlink" title="CRC计算"></a>CRC计算</h3><p>所有CRC计算采用模2算术来做，在加法中不进位，在减法中不借位。这意味着加法和减法是相同的，而且这两种操作等价于<code>异或</code>（XOR）操作。</p>
-<p>1011 XOR 0101 &#x3D; 1110</p>
-<p><code>异或</code>操作：不同的为1，相同为0。也就是0 XOR 0 &#x3D; 0,1 XOR 1 &#x3D; 0,0 XOR 1 &#x3D; 1。</p>
-<p>乘法和除法是相同的。</p>
-<p>给定D 和 R, D * 2<sup>r</sup> XOR R就等于 D + R数据。</p>
-<h3 id="如何计算R"><a href="#如何计算R" class="headerlink" title="如何计算R"></a>如何计算R</h3><p>我们要求出R使得对于n有：<br>D * 2<sup>r</sup> XOR R &#x3D; nG</p>
-<p>也就是说，我们要选择 R 使得G能除 D * 2<sup>r</sup> XOR R 而没有余数。如果对上面的等式两边都 XOR R.</p>
-<p>D * 2<sup>r</sup> &#x3D; nG XOR R</p>
-<p>根据上面的等式可以得出，如果我们用G 除 D * 2<sup>r</sup>，余数刚好是R</p>
-<p>R &#x3D; remainder (D * 2<sup>r</sup> &#x2F; G)</p>
-<p>也就是使用D * 2<sup>r</sup>去除以 G。余数就是R。</p>
-<h3 id="如何计算G"><a href="#如何计算G" class="headerlink" title="如何计算G"></a>如何计算G</h3><p>G 作为多项式，有两种写法，一种是x<sup>2</sup> + x + 1的写法，一种是二进制写法 111。</p>
-<p>我们需要用 D * 2<sup>r</sup> 除以 G 。所以我们需要求出G的二进制写法，才能做除法运算。</p>
-<p>这个转换的方法：</p>
-<ol>
-<li>首先把末尾的1看成x<sup>0</sup>，也就是x的0次幂</li>
-<li>这样提取出x的所有幂</li>
-<li>对应幂的位置填1，如果没有对应幂的位置则填0</li>
-</ol>
-<h5 id="转换例子1"><a href="#转换例子1" class="headerlink" title="转换例子1"></a>转换例子1</h5><p>G &#x3D; x<sup>4</sup> + x + 1</p>
-<p>提取出来的幂分别是 4,1,0。<br>没有的幂是3,2。<br>在对应的位置填上1或0。<br>4 3(无) 2(无) 1 0<br>1 0     0     1 1<br>这个G的二进制就是 10011。</p>
-<p>其实很简单，0次幂对应个位，1次幂对应十位，一直往上加就行了，有1次幂十位就是1，没有就是0.</p>
-<h5 id="转换例子2"><a href="#转换例子2" class="headerlink" title="转换例子2"></a>转换例子2</h5><p>G &#x3D; x<sup>6</sup> + x<sup>4</sup> + x<sup>2</sup> + 1</p>
-<p>6 5(无) 4 3(无) 2 1(无) 0<br>1 0     1 0     1 0     1</p>
-<p>对应的二进制就是 1010101</p>
-<h3 id="计算CRC编码"><a href="#计算CRC编码" class="headerlink" title="计算CRC编码"></a>计算CRC编码</h3><p>给定 D &#x3D; 101110, G &#x3D; 1001, d &#x3D; 6, r &#x3D; 3。计算D的CRC编码后的数据</p>
-<p>首先求R。</p>
-<p>用D&#x2F;G可以得出结果为101011，余数为011，余数就是R。</p>
-<p>然后把R放到D后面。</p>
-<p>编码后就是 101110 011</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" class="post-title-link" itemprop="url">网络原理自顶向下四网络层</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-26 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-26T15:28:49+08:00">2020-12-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下四网络层" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h1><p>网络层核心功能：转发与路由</p>
-<p>转发：将分组从路由器的输入端口转移到合适的输出端口</p>
-<p>转发表确定在本路由器如何转发分组</p>
-<p>路由：确定分组从源到目的经过的路径。</p>
-<ul>
-<li>路由算法：确定通过网络的端到端路径。</li>
-</ul>
-<p>某些网络的重要功能：连接建立</p>
-<p>数据分组传输前需要建立连接，和运输层不一样的是所有网络设备路由器都会参与建立连接。</p>
-<p>网络层是两个主机建立连接</p>
-<p>运输层是两个应用进程建立连接</p>
-<p>无连接服务</p>
-<ul>
-<li>不事先为分组确定传输路径</li>
-<li>每个分组独立路径</li>
-<li>不同分组可能传输路径不同</li>
-<li>数据报网络</li>
-</ul>
-<p>连接服务：</p>
-<ul>
-<li>首先为分组确定传输路径</li>
-<li>沿这个路径传输</li>
-<li>系列分组传输路径相同</li>
-<li>传输结束后拆除</li>
-<li>虚电路网络</li>
-</ul>
-<p><code>数据报网络</code>和<code>虚电路网络</code>是典型两类分组交换网络。</p>
-<p>类似UDP和TCP。但是网络层是<code>主机到主机</code>.<code>网络核心实现</code>.</p>
-<h3 id="虚电路"><a href="#虚电路" class="headerlink" title="虚电路"></a>虚电路</h3><p>一条从源主机到目的主机，类似于电路的路径。</p>
-<ul>
-<li>分组交换</li>
-<li>每个分组的传输利用链路的全部带宽</li>
-<li>源主机到目的主机的所有网络设备完成虚电路连接和功能</li>
-</ul>
-<p>通信过程：</p>
-<ul>
-<li>呼叫建立（call setup） -》 数据传输 -》 拆除呼叫</li>
-<li>每个分组携带虚电路标识（VC ID），而不是目的主机地址</li>
-<li>虚电路经过的每个网络设备，维护每条经过他的虚电路连接状态</li>
-<li>链路，网络设备资源可以面向VC进行预分配<ul>
-<li>预分配资源 &#x3D; 可预期服务性能</li>
-<li>如ATM的电路仿真（CBR）</li>
-</ul>
-</li>
-</ul>
-<p>每条虚电路包括：</p>
-<ul>
-<li>从源主机到目的主机的一条路径</li>
-<li>虚电路号（VCID），沿路每段链路一个编号</li>
-<li>沿路每个网络层设备，利用转发表记录经过的每条虚电路</li>
-</ul>
-<p>分组携带虚电路号VCID，而不是目的地址。<br>同一条VC,在每段链路上的VCID通常不同。</p>
-<ul>
-<li>路由器转发分组时依据转发表改写&#x2F;替换虚电路号</li>
-</ul>
-<h5 id="虚电路信令协议"><a href="#虚电路信令协议" class="headerlink" title="虚电路信令协议"></a>虚电路信令协议</h5><p>用于VC的建立，维护与拆除</p>
-<ul>
-<li>路径选择</li>
-</ul>
-<p>应用于虚电路网络</p>
-<ul>
-<li>如ATM</li>
-</ul>
-<p>目前的internet不采用</p>
-<h3 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络"></a>数据报网络</h3><ul>
-<li>无连接</li>
-<li>每个分组携带目的地址</li>
-<li>路由器根据分组的目的地址转发分组<ul>
-<li>基于路由协议&#x2F;算法构建转发表</li>
-<li>检索转发表</li>
-<li>每个分组独立选路</li>
-</ul>
-</li>
-<li>Internet网络是数据报网络</li>
-<li>路由算法<ul>
-<li>根据地址范围进行转发</li>
-<li>最长前缀匹配优先</li>
-</ul>
-</li>
-</ul>
-<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>Internet(数据报网络) </p>
-<ul>
-<li>计算机之间的数据交换<ul>
-<li>弹性服务，没有严格要求</li>
-</ul>
-</li>
-<li>链路类型众多<ul>
-<li>特点性能各异</li>
-<li>同一服务困难</li>
-</ul>
-</li>
-</ul>
-<p>ATM(虚电路网络)</p>
-<ul>
-<li>电话网络演变而来</li>
-<li>核心业务是实时对话<ul>
-<li>严格的时间，可靠性需求</li>
-<li>需要有保障的服务</li>
-</ul>
-</li>
-<li>非智能端系统<ul>
-<li>电话机</li>
-<li>传真机</li>
-</ul>
-</li>
-</ul>
-<h2 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h2><p>路由协议</p>
-<ul>
-<li>路径选择</li>
-<li>RIP OSPF BGP</li>
-</ul>
-<p>IP协议</p>
-<ul>
-<li>寻址规约</li>
-<li>数据报格式</li>
-<li>分组处理规约</li>
-</ul>
-<p>ICMP协议</p>
-<ul>
-<li>差错报告</li>
-<li>路由器“信令”</li>
-</ul>
-<h3 id="IP数据报"><a href="#IP数据报" class="headerlink" title="IP数据报"></a>IP数据报</h3><ul>
-<li>首部<ul>
-<li>版本号 4比特 ipv4就是4</li>
-<li>首部长度 4比特 首部的长度，以4字节为单位 默认是5 表示20字节</li>
-<li>服务类型 8比特 期望获得哪种类型的服务 只有在网络提供区分服务时使用 通常是0</li>
-<li>总长度 16比特 IP数据报的长度（首部 + 数据），以字节为单位， 最大IP分组总长度 65535B 最小分组首部 20B IP分组数据最大可以是 65515B</li>
-<li>标识 16比特 ID，计数器+1</li>
-<li>标志位 3比特 保留1比特 DF &#x3D; 1禁止分片 0 允许分片 MF &#x3D; 1非最后一片 0 最后一片或未分片</li>
-<li>片偏移 13比特 IP分组分片封装原IP分组数据的相对偏移量 以8字节为单位</li>
-<li>生存时间 8比特 IP分组在网络中可以通过的路由器数（跳步数）</li>
-<li>协议 8比特 指示IP分组封装的是哪个协议的数据包 6是TCP或者17是UDP</li>
-<li>首部校验和 16比特 IP分组首部的差错检测 逐步计算</li>
-<li>源IP地址 32比特  </li>
-<li>目的IP地址 32比特</li>
-<li>选项字段 变长 范围 1 - 40B 携带安全，源选路径，时间戳和路由记录等内容 实际很少被使用</li>
-<li>填充字段 变长 范围 0 - 3B 补齐整个首部，保证32位对齐</li>
-</ul>
-</li>
-<li>数据</li>
-</ul>
-<h3 id="IP分片"><a href="#IP分片" class="headerlink" title="IP分片"></a>IP分片</h3><p>链路最大数据单元MTU。如果现在的IP分组大于下个链路的MTU就可以进行分片。</p>
-<ul>
-<li>如果进行分片就分片，然后重组</li>
-<li>如果不可以分片则丢弃分组</li>
-</ul>
-<p>分片过程：<br>假设IP分组长L，带转发MTU为M<br>若L &gt; M且DF &#x3D; 0,则可以分片<br>分片时每个分片的标识复制原IP分组的标识<br>通常分片时，除最后一个分片，都为MTU允许的最大分片<br>一个最大分片可封装的应该是 8 的倍数。<br>d &#x3D; M - 20 &#x2F; 8 * 8<br>n &#x3D; L - 20 &#x2F; d<br>分片偏移量<br>Fi &#x3D; d &#x2F; 8 * (i - 1)<br>每片总长度<br>d + 20<br>最后一个<br>L - （n - 1）d</p>
-<h3 id="IP编址"><a href="#IP编址" class="headerlink" title="IP编址"></a>IP编址</h3><p>32比特（IPv4） 11011111 00000001 00000001 00000001 &#x3D; 233.1.1.1<br>IP地址与每个接口关联</p>
-<ul>
-<li>网络号：高位比特</li>
-<li>主机号：低位比特</li>
-</ul>
-<h3 id="IP子网"><a href="#IP子网" class="headerlink" title="IP子网"></a>IP子网</h3><p>IP子网：</p>
-<ul>
-<li>IP地址具有相同的网络号</li>
-<li>不跨越路由器可以彼此物理联通</li>
-<li>233.1.1.0&#x2F;24</li>
-</ul>
-<p><code>有类编址</code><br>A类地址：</p>
-<ul>
-<li>网络号 8比特 主机号 24比特 50% 0.0.0.0 - 127.255.255.255<br>B类地址：</li>
-<li>网络号 16比特 主机号 16比特 25% 128.0.0.0 - 191.255.255.255<br>C类地址：</li>
-<li>网络号 24比特 主机号 8比特 12.5% 192。0.0.0 - 223.255.255.255<br>D类地址：</li>
-<li>6.25% 224.0.0.0 - 239.255.255.255<br>E类地址：</li>
-<li>6.25% 240.0.0.0 - 255.255.255.255</li>
-</ul>
-<p>私有IP地址：</p>
-<ul>
-<li>A类：网络号10开头的 10.<em>.</em>.*</li>
-<li>B类：172.16 - 172.31 16个</li>
-<li>C类：192.168.0 - 192.168.255</li>
-</ul>
-<p>IP地址：</p>
-<ul>
-<li>网络号：高位比特</li>
-<li>子网号：原主机号的部分</li>
-<li>主机号：地位比特</li>
-</ul>
-<p>子网掩码：网络号和子网号取255，主机号取0</p>
-<ul>
-<li>A类网络子网掩码 255.255.255.0</li>
-</ul>
-<p>子网地址 + 子网掩码 &#x3D; 准确确定子网大小</p>
-<h4 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h4><p>子网 201.2.3.0 子网掩码 255.255.255.0，划分为4个等长的子网。</p>
-<ul>
-<li>201.2.3.0 &#x3D; 201.2.3.00000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
-<li>201.2.3.64 &#x3D; 201.2.3.01000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
-<li>201.2.3.128 &#x3D; 201.2.3.10000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
-<li>201.2.3.192 &#x3D; 201.2.3.11000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
-</ul>
-<p>将IP分组的目的IP地址与子网掩码<code>按位与</code>运算，提取子网地址。<br>目的IP:172.32.1.112 &#x3D; 10101100.00100000.00000001.01110000<br>子网掩码：255.255.254.0 &#x3D; 11111111.11111111.11111110.00000000<br>子网地址：10101100.00100000.00000000.00000000 &#x3D; 172.32.0.0<br>地址范围：172.32.0.0 - 172.32.1.255<br>可分配地址范围：172.32.0.1 - 172.32.1.254<br>广播地址：172.32.1.255</p>
-<h3 id="CIDR与路由聚合"><a href="#CIDR与路由聚合" class="headerlink" title="CIDR与路由聚合"></a>CIDR与路由聚合</h3><p>无类域间路由CIDR</p>
-<ul>
-<li>消除传统的A类，B类，C类地址划分</li>
-<li>网络号 + 子网号 &#x3D; 网络前缀 可以任意长度</li>
-<li>融合子网地址和子网掩码，方便子网划分<ul>
-<li>无类地址格式：a.b.c.d&#x2F;x 其中x为网络前缀长度</li>
-</ul>
-</li>
-<li>提高IPv4地址空间分配效率</li>
-<li>提高路由效率<ul>
-<li>将多个子网构成一个大的子网</li>
-<li>构造超网</li>
-<li>路由聚合</li>
-</ul>
-</li>
-</ul>
-<p>例如：<br>前23位是网络前缀，后9位是主机号<br>11001000 00010111 00010000 00000000<br>200.23.16.0&#x2F;23</p>
-<p>11001000.00010111.00010010.00000000<br>200.23.18.0&#x2F;23</p>
-<p>11001000.00010111.00010100.00000000<br>200.23.20.0&#x2F;23<br>聚合成超网：<br>11001000 00010111 00010000 00000000<br>200.23.16.0&#x2F;20</p>
-<p>如果有一个子网不在也没事，路由记录两条信息。根据<code>最长前缀匹配优先</code>。不会出错。</p>
-<h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h3><p>动态分配路由协议：<br>客户：DHCP discover</p>
-<ul>
-<li>src:0.0.0.0:68</li>
-<li>dest:255.255.255.255:67 广播</li>
-<li>yiaddr:0.0.0.0</li>
-<li>transactionID:654</li>
-</ul>
-<p>DHCP服务器：DHCP offer</p>
-<ul>
-<li>src:223.1.2.5:67 DHCP服务器的IP</li>
-<li>dest:255.255.255.255:68 广播</li>
-<li>yiaddr:223.1.2.4  分配的IP</li>
-<li>transactionID:654</li>
-<li>lifetime:3600 secs</li>
-</ul>
-<p>客户：DHCP req</p>
-<ul>
-<li>src:0.0.0.0:68</li>
-<li>dest:255.255.255.255:67 广播</li>
-<li>yiaddr:223.1.2.4  分配的IP</li>
-<li>transactionID:655</li>
-<li>lifetime:3600 secs</li>
-</ul>
-<p>DHCP服务器：DHCP ACK</p>
-<ul>
-<li>src:223.1.2.5:67 DHCP服务器的IP</li>
-<li>dest:255.255.255.255:68 广播</li>
-<li>yiaddr:223.1.2.4  分配的IP</li>
-<li>transactionID:655</li>
-<li>lifetime:3600 secs</li>
-</ul>
-<h3 id="网络地址转换NAT"><a href="#网络地址转换NAT" class="headerlink" title="网络地址转换NAT"></a>网络地址转换NAT</h3><p>子网使用一个公共IP。发送网络数据的时候路由器替换源IP地址。</p>
-<p>动机：</p>
-<ul>
-<li>只需从ISP申请一个IP地址<ul>
-<li>IPv4地址耗尽</li>
-</ul>
-</li>
-<li>本地网络地址是私有的，局部的，IP地址变更根外界没有影响</li>
-<li>变更ISP时候，无需修改内部网络IP</li>
-<li>内部网络设备对外界网络不可见，更加安全</li>
-</ul>
-<p>实现：</p>
-<ul>
-<li>替换<ul>
-<li>利用（NAT IP地址，新端口号）替换每一个<code>外出IP数据报</code>的（源IP地址，源端口号）</li>
-</ul>
-</li>
-<li>记录<ul>
-<li>将每对（NAT IP地址，新端口号）和（源IP地址，源端口号）记录在<code>NAT转换表</code>中</li>
-</ul>
-</li>
-<li>替换<ul>
-<li>根据<code>NAT转换表</code>，利用（源IP地址，源端口号）替换（NAT IP地址，新端口号）</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html" class="post-title-link" itemprop="url">网络原理自顶向下四网络层</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-26 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-26T15:28:49+08:00">2020-12-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下四网络层" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h1><p>负责通过一条链路从一个节点向另一个物理链路直接相连的相邻节点传送数据报</p>
-<p>组帧</p>
-<ul>
-<li>封装数据报，加首部和尾部</li>
-<li>帧同步</li>
-</ul>
-<p>链路接入</p>
-<ul>
-<li>如果是共享介质，需要解决信道接入</li>
-<li>帧首部的MAC地址，用于标识帧的源和目的，不同于IP地址</li>
-</ul>
-<p>相邻节点间可靠交付</p>
-<ul>
-<li>在低误码率的有线链路上很少采用（如光纤，某些双绞线）</li>
-<li>无线链路：误码率高，需要可靠交付</li>
-</ul>
-<p>流量控制</p>
-<ul>
-<li>协调相邻的发送和接受</li>
-</ul>
-<p>差错检测</p>
-<ul>
-<li>信号衰减和噪声会引起差错</li>
-<li>接收端检测到差错<ul>
-<li>通知发送端重传或丢弃</li>
-</ul>
-</li>
-</ul>
-<p>差错纠正</p>
-<ul>
-<li>接收端直接纠正比特差错</li>
-</ul>
-<p>全双工和半双工通信控制</p>
-<ul>
-<li>全双工:链路两端节点同时双向传输数据</li>
-<li>半双工：链路两端节点交替双向传输数据</li>
-</ul>
-<h2 id="差错检测：差错编码"><a href="#差错检测：差错编码" class="headerlink" title="差错检测：差错编码"></a>差错检测：差错编码</h2><p>差错编码基本原理：<br>D -&gt; D<code>R</code> ，其中R为差错检测与纠正比特</p>
-<p>差错编码分为<code>检错码</code>和<code>纠错码</code><br>对于检错码：如果编码集的汉明距离ds &#x3D; r + 1，则可以检测r位的错误<br>对于纠错码：ds &#x3D; 2r + 1则可以检测r位的错误</p>
-<h2 id="MAC协议"><a href="#MAC协议" class="headerlink" title="MAC协议"></a>MAC协议</h2><p>两类<code>链路</code></p>
-<p>点对点链路</p>
-<ul>
-<li>拨号接入的PPP</li>
-<li>以太网交换机与主机间的点对点链路</li>
-</ul>
-<p>广播链路（共享介质）</p>
-<ul>
-<li>早期的总线以太网</li>
-<li>HFC的上行链路</li>
-<li>802.11 无线网</li>
-</ul>
-<p>单一共享广播信道</p>
-<ul>
-<li>两个或者两个以上节点同时传输：干扰</li>
-<li>冲突：节点同时接收到两个或者多个信号 &#x3D;》 接收失败</li>
-</ul>
-<p>多路访问控制协议MAC解决这些问题：</p>
-<ul>
-<li>采用分布式算法决定节点如何共享信道，及决策节点何时可以传输数据</li>
-<li>必须基于信道本身，通信信道共享协调信息<ul>
-<li>无带外信道协调</li>
-</ul>
-</li>
-</ul>
-<h4 id="理想MAC协议"><a href="#理想MAC协议" class="headerlink" title="理想MAC协议"></a>理想MAC协议</h4><p>给定：速率为R bps的广播信道<br>期望：</p>
-<ol>
-<li>当只有一个节点希望传输数据时，他可以以速率R发送</li>
-<li>当有M个节点发送，每个节点R&#x2F;M速率</li>
-<li>完全分散控制<ul>
-<li>无需特定节点协调</li>
-<li>无需时钟、时隙同步</li>
-</ul>
-</li>
-<li>简单</li>
-</ol>
-<h4 id="MAC协议分类"><a href="#MAC协议分类" class="headerlink" title="MAC协议分类"></a>MAC协议分类</h4><p>三大类：</p>
-<ul>
-<li>信道划分MAC协议<ul>
-<li>多路复用</li>
-<li>TDMA,FDMA,CDMA,WDMA等</li>
-</ul>
-</li>
-<li>随机访问MAC协议<ul>
-<li>信道不划分，允许冲突</li>
-<li>采用<code>冲突</code>恢复机制</li>
-</ul>
-</li>
-<li>轮转MAC协议<ul>
-<li>节点轮流使用信道</li>
-</ul>
-</li>
-</ul>
-<h5 id="随机访问MAC协议"><a href="#随机访问MAC协议" class="headerlink" title="随机访问MAC协议"></a>随机访问MAC协议</h5><p>发送时候使用信道全部速率</p>
-<p>需要定义：</p>
-<ul>
-<li>如果检测冲突</li>
-<li>如何从冲突恢复（通过延迟重传）</li>
-</ul>
-<p>典型的协议</p>
-<ul>
-<li>时隙 ALOHA</li>
-<li>ALOHA</li>
-<li>CSMA CSMA&#x2F;CD CSMA&#x2F;CA</li>
-</ul>
-<h6 id="时隙-ALOHA"><a href="#时隙-ALOHA" class="headerlink" title="时隙 ALOHA"></a>时隙 ALOHA</h6><p>假定：</p>
-<ul>
-<li>所有帧大小相同</li>
-<li>时间被划分为等长的时隙</li>
-<li>节点只能在时隙开始时刻发送数据</li>
-<li>节点间时钟同步</li>
-<li>如果2个或2个以上节点在同一时隙发送帧，节点就检测到冲突</li>
-</ul>
-<p>运行：</p>
-<ul>
-<li>当节点有新的帧时，在下一个时隙发送<ul>
-<li>无冲突：发送成功</li>
-<li>冲突：节点在下一个时隙以概率P重传该帧，直至成功</li>
-</ul>
-</li>
-</ul>
-<p>优点：</p>
-<ul>
-<li>单个节点活动时，可以连续以信道全部速率发送</li>
-<li>高度分散化：只需同步时隙</li>
-<li>简单</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>冲突，浪费时隙</li>
-<li>空闲时隙</li>
-<li>节点也许能以远小于分组传输时间检测到冲突</li>
-</ul>
-<p>最大效率<code>0.37</code></p>
-<h6 id="ALOHA"><a href="#ALOHA" class="headerlink" title="ALOHA"></a>ALOHA</h6><p>非时隙，更简单，无需同步<br>当有新的帧，立即发送<br>冲突可能增大</p>
-<p>最大效率<code>0.18</code></p>
-<h6 id="CSMA"><a href="#CSMA" class="headerlink" title="CSMA"></a>CSMA</h6><p>载波监听多路访问协议</p>
-<ul>
-<li>发送帧之前，监听信道（载波）<ul>
-<li>信道空闲：发送完整帧</li>
-<li>信道忙：推迟发送<ul>
-<li>1-坚持CSMA 一直监听信道</li>
-<li>非坚持CSMA 随机等待一段时间再监听信道</li>
-<li>P-坚持CSMA 以概率P监听信道，概率1-P不监听信道</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>冲突仍可能发生：</p>
-<ul>
-<li>信号传播延迟</li>
-</ul>
-<p>继续发送冲突帧：浪费信道资源</p>
-<h6 id="CSMA-x2F-CD"><a href="#CSMA-x2F-CD" class="headerlink" title="CSMA&#x2F;CD"></a>CSMA&#x2F;CD</h6><p>带有冲突检测的载波监听多路访问协议</p>
-<ul>
-<li>短时间内可以检测到冲突</li>
-<li>冲突后传输中止，减少信道浪费</li>
-</ul>
-<p>运行：</p>
-<ol>
-<li>适配器从网络获取一条数据报，准备链路层帧，并放入帧适配器缓存中。</li>
-<li>如果适配器侦听到信道空闲（即无信号能量从信道进入适配器），他开始传输帧。另一方面，如果适配器侦听到信道正在忙，他将等待，直到侦听到没有信号能量时才开始传输帧。</li>
-<li>在传输过程中，适配器监视来自其他使用该广播信道的适配器的信号能量的存在。</li>
-<li>如果适配器传输整个帧而未检测到来自其他适配器的信号能量，该适配器就完成了该帧。另一方面，如果适配器在传输时检测到来自其他适配器的信号能量，他中指传输（即他停止了传输帧）</li>
-<li>中止传输后，适配器等待一个随机时间量，然后返回步骤2.<ul>
-<li>等待一个随机（而不是固定）的时间量的需求是明确的–如果两个结点同时传输帧，然后这两个结点等待相同固定的时间量，他们将持续碰撞下去。但选择随机回退时间的时间间隔多大为好呢？如果时间间隔大而碰撞结点数量小，在重复“侦听-当空闲时传输”的步骤前。</li>
-</ul>
-</li>
-</ol>
-<p>冲突检测</p>
-<ul>
-<li>有线局域网易于实现：测量信号强度，比较发射信号与接收信号</li>
-<li>无线信号很难实现：接收信号强度淹没在本地发射信号强度下</li>
-</ul>
-<p>边发送边监听，不发送就不监听</p>
-<p>网络带宽：R bps<br>数据帧最小长度：Lmin(bits)<br>信号传播速度：V(m&#x2F;s)<br>信道长度：Dmax</p>
-<p>满足：<br>L &#x2F;R &gt;&#x3D; 2 Dmax &#x2F; V<br>Lmin &#x2F; R &#x3D; 2 Dmax &#x2F; V<br>Lmin &#x2F; R &#x3D; RTT max</p>
-<p>远优于ALOAH，并且简单，分散。</p>
-<h5 id="轮转MAC"><a href="#轮转MAC" class="headerlink" title="轮转MAC"></a>轮转MAC</h5><p>轮询：</p>
-<ul>
-<li>主节点轮流“邀请”从属节点发送数据</li>
-<li>典型应用：<ul>
-<li>“哑”从属设备</li>
-</ul>
-</li>
-</ul>
-<p>优点：</p>
-<ul>
-<li>不会冲突</li>
-<li>使用全部带宽</li>
-</ul>
-<p>问题：</p>
-<ul>
-<li>轮询开销</li>
-<li>等待延迟</li>
-<li>单点故障</li>
-</ul>
-<h6 id="令牌传递"><a href="#令牌传递" class="headerlink" title="令牌传递"></a>令牌传递</h6><p>控制令牌依次从一个节点传递到下一个节点<br>令牌：特殊帧<br>获取令牌才可以发送数据</p>
-<p>优点：</p>
-<ul>
-<li>不会冲突</li>
-<li>使用全部带宽</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>令牌开销</li>
-<li>等待延迟</li>
-<li>单点故障</li>
-</ul>
-<h5 id="MAC协议总结"><a href="#MAC协议总结" class="headerlink" title="MAC协议总结"></a>MAC协议总结</h5><p>信道划分协议：<br>优点：网络负载高，利用率高，性能高<br>缺点：网络负载低，利用率低，性能低</p>
-<p>随机访问MAC协议：<br>优点：网络负载低，利用率高，性能高<br>缺点：网络负载高，会冲突</p>
-<p>轮转MAC:<br>主节点轮询：令牌传递<br>结合两者优点，不是最好也不是最坏</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2163,7 +1822,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2176,7 +1835,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

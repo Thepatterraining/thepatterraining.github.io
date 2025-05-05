@@ -24,12 +24,12 @@
     var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="MySQL零基础教程本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。基础概念和SQL已经更新完成。 接下来是应用篇，应用篇的内容大致如下图所示。  ER图接下来讲讲ER图，这个是在实际工作中也会使用到的东西。 大家应该都听过ER图，全称是（Entity Relationship）实体关系图。 借用维基百科的介绍：  ER模型，全称为实体联系模型、实体关系模型或实体联">
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL零基础教程ER图">
 <meta property="og:url" content="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
 <meta property="og:site_name" content="dream">
-<meta property="og:description" content="MySQL零基础教程本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。基础概念和SQL已经更新完成。 接下来是应用篇，应用篇的内容大致如下图所示。  ER图接下来讲讲ER图，这个是在实际工作中也会使用到的东西。 大家应该都听过ER图，全称是（Entity Relationship）实体关系图。 借用维基百科的介绍：  ER模型，全称为实体联系模型、实体关系模型或实体联">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-2.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql3-1.png">
@@ -50,7 +50,7 @@
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
 <meta property="article:published_time" content="2025-03-05T02:12:47.000Z">
-<meta property="article:modified_time" content="2025-03-17T06:08:27.410Z">
+<meta property="article:modified_time" content="2025-03-17T06:14:39.066Z">
 <meta property="article:author" content="Thepatter">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="数据库原理">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-03-17 14:08:27" itemprop="dateModified" datetime="2025-03-17T14:08:27+08:00">2025-03-17</time>
+                <time title="修改时间：2025-03-17 14:14:39" itemprop="dateModified" datetime="2025-03-17T14:14:39+08:00">2025-03-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -297,7 +297,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
 <p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
 <p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
 <h2 id="ER图"><a href="#ER图" class="headerlink" title="ER图"></a>ER图</h2><p>接下来讲讲ER图，这个是在实际工作中也会使用到的东西。</p>
@@ -327,7 +333,7 @@
 </ul>
 <p>简单来讲，实体就是一个表，属性就是表里面的一个字段。</p>
 <p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
-<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-1.png" alt="概念学习"></p>
 <ul>
 <li>关系（Relationship）：<ul>
 <li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
@@ -342,7 +348,7 @@
 </li>
 </ul>
 <p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
-<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-2.png" alt="概念学习"></p>
 <p><code>关系</code>这个东西，简单来说就是通过<code>两个字段</code>链接进行实现的。</p>
 <h4 id="多对多关系"><a href="#多对多关系" class="headerlink" title="多对多关系"></a>多对多关系</h4><p>比如我们有<code>角色</code>表和<code>管理员用户</code>表，这两个表，是多对多关系。</p>
 <p>所以我们就需要用一张单独的表来存储这个关系。比如我们新建第三个表叫<code>角色和管理员用户关系</code>表。</p>
@@ -513,14 +519,14 @@
 <li>关系：两个实体之间的多对多关系，多对多关系后期需要转换成一张关系表。</li>
 </ul>
 <p>我们首先画出第一个实体，<code>管理员实体</code>使用矩形表示。如下图。</p>
-<p><img src="/../images/mysql/mysql3-4.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-4.png" alt="概念学习"></p>
 <p>接下来我们给管理员实体增加属性，属性使用<code>椭圆</code>来表示，如下图。</p>
-<p><img src="/../images/mysql/mysql3-3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-3.png" alt="概念学习"></p>
 <p>现在我们画出第二个实体，<code>角色实体</code>和对应的属性。</p>
-<p><img src="/../images/mysql/mysql3-5.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-5.png" alt="概念学习"></p>
 <p>接下来我们画出关系，关系使用<code>棱形</code>来表示，并且使用线连接两个实体，表示是这两个实体之间的关系。多对多关系还需要在两边分别标记上<code>n</code>和<code>m</code>。</p>
 <p>此外，关系还要有一个名称，用来描述，比如<code>管理员拥有角色，角色被管理员拥有</code>。所以我们可以用<code>拥有</code>关系来描述这两个实体之间的关系。</p>
-<p><img src="/../images/mysql/mysql3-6.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-6.png" alt="概念学习"></p>
 <p>如此，我们就完成了一个多对多关系的ER图。</p>
 <h4 id="一对多关系的ER图"><a href="#一对多关系的ER图" class="headerlink" title="一对多关系的ER图"></a>一对多关系的ER图</h4><p>接下来再实践一次一对多关系的ER图，最好大家先动手画一次，再跟我们的结果来对比，只有自己实操了才行。</p>
 <p>实操时间。。。。。</p>
@@ -533,11 +539,11 @@
 <li>关系：两个实体之间的一对多关系，一对多关系可以是一个字段也可以是一个表。</li>
 </ul>
 <p>首先画出第一个实体和属性，也就是教师实体。</p>
-<p><img src="/../images/mysql/mysql3-7.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-7.png" alt="概念学习"></p>
 <p>接下来画出第二个实体和属性，也就是课程实体。课程实体这里有一个属性是<code>教师ID</code>，这代表我们使用这个字段，而不是增加了一个关系表。如果我们没有这个字段就代表我们要增加一个关系表。</p>
-<p><img src="/../images/mysql/mysql3-8.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-8.png" alt="概念学习"></p>
 <p>最后，画出关系并连线。这里关系名称我们选择教授，这个其实无所谓。能明白就好。重点是要标明一对多关系，可以看到<code>教师实体</code>上写的是1，<code>课程实体</code>上写的是n，代表一对多关系中，教师是1，课程是多。这个不能写反了。</p>
-<p><img src="/../images/mysql/mysql3-9.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-9.png" alt="概念学习"></p>
 <blockquote>
 <p>多对一关系的画起来是一样的，需要注意的就是关系上的1和n别写错了。</p>
 </blockquote>
@@ -548,16 +554,16 @@
 <li>关系：一对一关系，一个用户只能拥有一个用户账户。</li>
 </ul>
 <p>首先画出第一个实体，用户实体。属性包括ID、用户名称、手机号。</p>
-<p><img src="/../images/mysql/mysql3-10.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-10.png" alt="概念学习"></p>
 <p>接下来画出第二个实体，用户账户实体，属性包括ID、账户余额、用户ID。用户ID作为关联关系的字段，和一对多关系一样，就不需要单独加表了。</p>
-<p><img src="/../images/mysql/mysql3-11.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-11.png" alt="概念学习"></p>
 <p>最后，画出关系并连线，标上关系是一对一关系就可以了。</p>
-<p><img src="/../images/mysql/mysql3-12.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-12.png" alt="概念学习"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
 <p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
 <p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
 <p>此外，还有一个方法，就是使用在线工具<a target="_blank" rel="noopener" href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
-<p><img src="/../images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-13.png" alt="概念学习"></p>
 <p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
@@ -590,7 +596,10 @@
     <a href="/DDD%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3.html" rel="prev" title="DDD概念详解">
       <i class="fa fa-chevron-left"></i> DDD概念详解
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/%E5%A5%BD%E7%9A%84Prompt.html" rel="next" title="MySQL零基础教程表设计实战">
+      MySQL零基础教程表设计实战 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -667,7 +676,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -680,7 +689,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

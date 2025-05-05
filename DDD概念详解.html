@@ -38,7 +38,7 @@
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
 <meta property="article:published_time" content="2025-03-03T08:51:30.000Z">
-<meta property="article:modified_time" content="2025-03-03T09:17:06.152Z">
+<meta property="article:modified_time" content="2025-03-20T09:54:27.379Z">
 <meta property="article:author" content="Thepatter">
 <meta property="article:tag" content="架构">
 <meta property="article:tag" content="DDD">
@@ -231,10 +231,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-03-03 16:51:30 / 修改时间：17:17:06" itemprop="dateCreated datePublished" datetime="2025-03-03T16:51:30+08:00">2025-03-03</time>
+              <time title="创建时间：2025-03-03 16:51:30" itemprop="dateCreated datePublished" datetime="2025-03-03T16:51:30+08:00">2025-03-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-20 17:54:27" itemprop="dateModified" datetime="2025-03-20T17:54:27+08:00">2025-03-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -322,20 +328,92 @@
 <p><img src="https://thepatterraining.github.io/images/ddd/ddd1-3.png" alt="ddd1-3"></p>
 <p>一个<code>子领域</code>里面包含了多个<code>聚合</code>，每个聚合里又有一个<code>聚合根</code>作为入口，还有若干个<code>实体</code>和<code>值对象</code>。</p>
 <p><img src="https://thepatterraining.github.io/images/ddd/ddd1-4.png" alt="ddd1-4"></p>
-<p>通过DDD我们可以来拆分微服务。</p>
-<p>DDD是围绕<code>业务概念</code>来进行领域建模的，后续的接口也是根据业务概念来划分到对应的领域中。从而解决开发过程中，业务演进的问题。</p>
-<p>因为当业务改变了，那么领域就改变了，对应的代码也就跟着变就好了。</p>
-<p>所以DDD和微服务不一样，不是一种具体的架构，只是一种指导方法。</p>
-<p>它可以划分出清晰的<code>业务边界</code>也就是微服务的边界，从而让微服务的拆分更加符合业务。而不是乱拆分。</p>
-<p>他也有一些步骤</p>
+<p>那领域到底是什么？子领域又是什么？我们该如何划分领域？</p>
+<p>如果大家看过仙侠小说、电视剧等，应该听过一些词，比如<code>神之领域</code>、<code>绝对领域</code>、<code>恶魔的领地</code>、<code>领主</code>等等。</p>
+<p>我们可以简单的把<code>领域</code>理解成领地、封地、画地为牢。</p>
+<blockquote>
+<p>皇上将方圆百里的地分给你了，让你当这片封地的领主，那么这方圆百里就是你的领域了</p>
+</blockquote>
+<p>那服务的领域是什么样子的呢？</p>
+<p>同样的，我们把完整的服务想象成中国的领域，然后划分成各个省份。子领域就是每个省份下面的市区，再有子领域就是市区下面的县。</p>
+<p>关于子领域也有一些划分，比如</p>
 <ul>
-<li>战略设计：战略设计从业务的视角上看待问题，建立领域边界、划分领域、子领域等等。</li>
-<li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
-<li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
+<li>核心领域：核心领域是业务的核心竞争力所在，直接体现业务的独特价值。领域中的核心业务，核心竞争力，领域的重点。比如湖北省这个领域，他的核心子领域就是<code>武汉市</code>。</li>
+<li>通用领域：通用领域是指那些在多个业务中都可以复用的领域，通常不包含业务特有的逻辑。一个领域中通用的能力，可以放到通用领域。比如湖北省这个领域，他的通用领域就有<code>交通</code>。因为不管是哪个市，下面都会用到交通，交通还可以划分为地铁、公交、高铁、火车等。</li>
+<li>支撑领域：既不属于核心领域、也不是通用领域。但是又必不可少的领域。为核心领域提供支持的领域，虽然重要但不直接体现业务的核心价值。</li>
 </ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
-<p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
-<p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
+<h4 id="核心领域"><a href="#核心领域" class="headerlink" title="核心领域"></a>核心领域</h4><p>特征：</p>
+<ul>
+<li>对业务成功至关重要。</li>
+<li>具有高复杂性和高价值。</li>
+<li>通常需要投入最多的资源和精力。</li>
+<li>一个领域中的核心，业务的重点发展对象。</li>
+</ul>
+<p>为什么现在很多人开始使用DDD？无外乎是因为DDD更加契合业务，可以随着业务形态的改变，来带动代码的改变。</p>
+<p>比如一个电商公司，一开始是以产品质量作为卖点，那么他们的<code>核心领域</code>就是<code>产品质量领域</code>。或者说<code>商品领域</code>。而商品领域再进行划分子领域，他们的核心子领域就是<code>质量领域</code>。</p>
+<p>而另外一家公司虽然也是电商公司，但是主要依靠广告业务赚钱，那么他们的<code>核心领域</code>就是<code>广告领域</code>。</p>
+<p>同样的，核心领域是会变化的，比如第一家公司一开始的产品卖点是质量过硬。后来做大了以后主要依靠<code>流量</code>的增涨来扩大收益，那么核心领域就会变为<code>流量领域</code>。</p>
+<p>在演进到后面，可能如何为用户推荐合适的商品来促成交易就变成了业务重点，那么这个时候的<code>核心领域</code>就是<code>推荐算法领域</code>了。</p>
+<p>具体哪个领域是核心领域，需要大家一起讨论、深入了解公司的业务。</p>
+<p>这样才能决定出核心领域。</p>
+<h4 id="通用领域"><a href="#通用领域" class="headerlink" title="通用领域"></a>通用领域</h4><p>特征：</p>
+<ul>
+<li>低复杂性，易于复用。</li>
+<li>通常可以通过第三方工具或框架实现。</li>
+<li>不需要大量定制开发。</li>
+</ul>
+<p>通用领域顾名思义，就是提供一些通用能力的领域，比如发送消息、权限认证等等。</p>
+<p>这个根据公司的业务来看的。</p>
+<p>比如一些公司需要签合同使用<code>电子签章</code>，那么这也算是一个通用的功能，可以是一个通用领域。</p>
+<p>再比如常用的<code>限流功能</code>。也可以是一个通用领域。</p>
+<h4 id="支撑领域"><a href="#支撑领域" class="headerlink" title="支撑领域"></a>支撑领域</h4><p>特征：</p>
+<ul>
+<li>中等复杂性和中等价值。</li>
+<li>主要用于辅助核心领域的实现。</li>
+<li>可以通过一定程度的定制开发满足需求。</li>
+<li>支撑领域既不属于核心领域</li>
+</ul>
+<p>支撑领域和通用领域不同的点就在于它和业务有一些关系。</p>
+<p>比如，对于电商公司来说，核心可能是商品领域，那么为商品领域提供支撑的业务领域就是<code>订单领域</code>、<code>库存领域</code>、<code>物流领域</code>等。</p>
+<h4 id="如何划分不同的领域"><a href="#如何划分不同的领域" class="headerlink" title="如何划分不同的领域"></a>如何划分不同的领域</h4><ul>
+<li>关注业务价值<ul>
+<li>优先识别对业务成功最重要的部分，这通常是核心领域。</li>
+<li>核心领域的设计和实现需要投入最多的资源。</li>
+</ul>
+</li>
+<li>关注领域的独立性<ul>
+<li>每个领域应尽量独立，避免领域之间的强耦合。</li>
+<li>独立性强的领域更容易划分为限界上下文（Bounded Context）。</li>
+</ul>
+</li>
+<li>关注领域的复用性<ul>
+<li>通用领域应尽量复用现有的工具或框架，避免重复开发。</li>
+<li>支撑领域可以适当定制，但不应过度复杂化。</li>
+</ul>
+</li>
+<li>动态调整<ul>
+<li>领域划分并非一成不变，随着业务发展和需求变化，领域的类型可能需要重新评估和调整。</li>
+</ul>
+</li>
+</ul>
+<p>领域的划分是前期的重要工作，只有领域划分好了，后续的路才好走，如果领域划分的不对，那么后续还需要重构，就会比较浪费时间。</p>
+<p>一般来说，领域划分都是首先通过<code>事件风暴</code>来进行的，参与整个事件暴风的人包括领域专家、业务专家、研发、架构师、产品等等。</p>
+<p>须知人力有尽时，一个人的想法终归是有限的，只有集思广益，才是长久之道。大家在事件风暴之中应该畅所欲言、没有上下级的关系，如此方可，要不然很多人摄于上级的压迫，不敢说话，或是说了以后被上级否定，这样的话是不利于事件风暴进行的。</p>
+<p>在事件风暴之中应该<code>鼓励</code>大家发言，不要去盲目的否定，更不要搞什么一言堂。</p>
+<p>通过事件风暴我们可以识别出领域、子领域，还有聚合、事件等。</p>
+<p>接下来我们就需要判断哪些是核心领域，哪些是通用领域，哪些是支撑领域。</p>
+<p>有些人可能会问，为什么要划分出核心领域、支撑领域、通用领域呢？</p>
+<p>这是因为大家的精力有限，要把大部分的精力投入到最重要的事情上去，也就是放到核心领域的建设上面。至于通用领域和支撑领域，如果人手不够也可以通过外包解决。</p>
+<p>毕竟，核心领域才是最重要的领域。</p>
+<p>上面也说过了，公司的不同时期，关注的业务重点不同，那么核心领域也会变化。</p>
+<p>同样的，哪怕都是电商公司，他们的核心领域也不一定一样，一切都要看具体的业务。</p>
+<p>而我们的重点就是要放在核心领域的建设上面。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了领域的概念，包括如何划分，还有核心领域、通用领域以及支撑领域等。还介绍了一些DDD的基本概念。</p>
+<p>领域的核心思想就是两点</p>
+<ul>
+<li>将我们的业务自顶向下的进行细分，逐步的拆解。</li>
+<li>划分出不同的领域，将我们有限的精力投入到最重要的事情当中。</li>
+</ul>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
 </blockquote>
@@ -362,8 +440,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html" rel="prev" title="为什么大厂都开始使用DDD了">
-      <i class="fa fa-chevron-left"></i> 为什么大厂都开始使用DDD了
+    <a href="/DDD%E8%81%9A%E5%90%88%E5%AE%9E%E4%BD%93%E8%AE%B2%E8%A7%A3.html" rel="prev" title="DDD概念详解">
+      <i class="fa fa-chevron-left"></i> DDD概念详解
     </a></div>
       <div class="post-nav-item">
     <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html" rel="next" title="MySQL零基础教程ER图">
@@ -429,7 +507,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1DDD"><span class="nav-number">1.</span> <span class="nav-text">什么是领域驱动设计DDD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">领域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1DDD"><span class="nav-number">1.</span> <span class="nav-text">什么是领域驱动设计DDD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">领域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">核心领域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">通用领域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%AF%E6%92%91%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">支撑领域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%E4%B8%8D%E5%90%8C%E7%9A%84%E9%A2%86%E5%9F%9F"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">如何划分不同的领域</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -445,7 +523,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">195</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -458,7 +536,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
