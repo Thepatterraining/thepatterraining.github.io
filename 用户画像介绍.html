@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么是用户画像，抖音如何做到让你看你喜欢的">
+<meta property="og:url" content="https://thepatterraining.github.io/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-05-10T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-05-15T02:05:45.112Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/bottom1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>什么是用户画像，抖音如何做到让你看你喜欢的 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          什么是用户画像，抖音如何做到让你看你喜欢的
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-10 10:12:47" itemprop="dateCreated datePublished" datetime="2025-05-10T10:12:47+08:00">2025-05-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-15 10:05:45" itemprop="dateModified" datetime="2025-05-15T10:05:45+08:00">2025-05-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" class="post-meta-item leancloud_visitors" data-flag-title="什么是用户画像，抖音如何做到让你看你喜欢的" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<h1 id="抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！"><a href="#抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！" class="headerlink" title="抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！"></a>抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！</h1><p>“救命！这说的不就是我吗？”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">“晚上11点，你躺在床上打开抖音，心想‘就刷10分钟’——结果一抬头，凌晨1点半了🙃。”</span><br><span class="line"></span><br><span class="line">“明明只想看个搞笑视频，却被推送了‘如何暴瘦20斤’，你吓得手机一抖：它怎么知道我最近胖了？！”</span><br><span class="line"></span><br><span class="line">“更离谱的是，你刚和朋友聊到想养猫，第二天抖音就塞给你100个猫片，仿佛在你家装了窃听器…”</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>“抖音人均‘熬夜冠军’：90%的用户每天刷视频超过1小时，60%的人会因‘再刷一条’熬夜到凌晨。”</li>
+<li>“但比熬夜更可怕的是——它总能猜中你心里那点小秘密：暗恋的人、想买的东西、甚至你妈都不知道的生活习惯！”</li>
+</ul>
+<p>你是否有以下疑问？</p>
+<blockquote>
+<p>“明明没填过年龄、职业、爱好，抖音为啥比亲妈还懂你？”<br>“真相是：它早就在你眼皮底下，偷偷画了一张‘数字分身’的像！”<br>“今天我们就来扒一扒，抖音是怎么‘算计’你的——看完你可能再也不敢乱点赞了…”</p>
+</blockquote>
+<p>“别慌！这不是科幻片，3分钟带你看懂背后的套路——从此刷抖音，你才是操控算法的人👊。”</p>
+<h2 id="什么是用户画像？——用“人话”解释专业概念"><a href="#什么是用户画像？——用“人话”解释专业概念" class="headerlink" title="什么是用户画像？——用“人话”解释专业概念"></a>什么是用户画像？——用“人话”解释专业概念</h2><ol>
+<li>先举个“栗子”，秒懂用户画像</li>
+</ol>
+<p>“你网购时的样子，就是用户画像的答案！”</p>
+<ul>
+<li><p>场景1：你经常买咖啡豆、搜“办公室提神神器” → 淘宝立马给你贴标签：“熬夜打工人，咖啡续命党”。</p>
+</li>
+<li><p>场景2：你总看母婴测评、收藏育儿干货 → 小红书默默标记你：“新手宝妈，爱囤货的细节控”。</p>
+</li>
+</ul>
+<p>一句话总结：</p>
+<p>用户画像 &#x3D; 平台用你的<code>行为数据</code>，“拼”出的一本<code>个人说明书</code>，上面写满了你的<code>喜好</code>、<code>习惯</code>，甚至小心思。</p>
+<ol start="2">
+<li>别怕！它画的不是你的脸，而是你的“影子”</li>
+</ol>
+<ul>
+<li>误区澄清：<ul>
+<li>“画像不是偷拍你的身份证，也不会知道你叫张三李四。”</li>
+<li>它只关心<code>你做了什么</code>，而不是<code>你是谁</code>。</li>
+</ul>
+</li>
+<li>举个反向例子🌰：<ul>
+<li>如果你用爸妈手机刷了一天广场舞视频 → 抖音可能误判机主是<code>退休阿姨</code>，第二天狂推<code>养生茶</code>和<code>丝巾</code>（爸妈：？？？）。</li>
+<li>结论：用户画像可能出错，但它会跟着你的行为“随时改作业”！</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>你的“数字分身”是怎么被画出来的？</li>
+</ol>
+<ul>
+<li>第一步：暗中观察你的“蛛丝马迹”<ul>
+<li>明面操作：点赞、评论、关注 → 你主动告诉平台“我爱这个！”</li>
+<li>暗地追踪：<ul>
+<li>你在一只柯基视频上停留了20秒 → 系统：“这人喜欢狗，记下来！”</li>
+<li>你总在晚上11点后刷美食视频 → 系统：“夜宵爱好者，深夜放毒目标用户！”</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>第二步：给你贴满“隐形标签”<ul>
+<li>标签类型：<ul>
+<li>基础款：性别年龄（猜的）、地理位置（比如“北京通州打工人”）。</li>
+<li>进阶款：“社恐宅家党”“刘畊宏女孩”“甄嬛传十级学者”。</li>
+</ul>
+</li>
+<li>终极目标：用无数个标签把你“拆解”得明明白白。</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li>用户画像能有多离谱？网友亲身经历炸锅</li>
+</ol>
+<p>爆笑案例：</p>
+<ul>
+<li>网友A：搜过一次“痔疮膏”，从此抖音推荐全是“肛肠医院专家号”（本人：我只是手滑！）。</li>
+<li>网友B：借朋友手机看了一次挖掘机视频，结果算法认定他是“蓝翔潜在学员”（朋友：你害我！）。</li>
+</ul>
+<p>严肃提醒：</p>
+<p>用户画像不一定100%准确，但会像牛皮糖一样粘着你——你越刷，它越懂（或越瞎猜）。</p>
+<ol start="5">
+<li>为什么平台非要给你“画像”？真相扎心了</li>
+</ol>
+<p>对你：</p>
+<ul>
+<li>方便！不用手动搜索，喜欢的内容自动喂到嘴边。</li>
+</ul>
+<p>对平台：</p>
+<ul>
+<li>留住你：让你刷到停不下来 → 增加广告曝光 → 赚更多钱。</li>
+</ul>
+<p>说白了：</p>
+<blockquote>
+<p>你以为在刷视频，其实是你的“画像”在帮抖音“打工”！</p>
+</blockquote>
+<h2 id="抖音如何“偷摸”给你画像？——3步拆解"><a href="#抖音如何“偷摸”给你画像？——3步拆解" class="headerlink" title="抖音如何“偷摸”给你画像？——3步拆解"></a>抖音如何“偷摸”给你画像？——3步拆解</h2><h3 id="步骤1：暗中观察——你的“小动作”全被记在小本本上"><a href="#步骤1：暗中观察——你的“小动作”全被记在小本本上" class="headerlink" title="步骤1：暗中观察——你的“小动作”全被记在小本本上"></a>步骤1：暗中观察——你的“小动作”全被记在小本本上</h3><p>你以为你在玩手机？不，你在给抖音“交作业”！</p>
+<ul>
+<li>明面上的“送分题”：<ul>
+<li>点赞 → “这个视频我超爱！”</li>
+<li>收藏 → “好东西必须囤着！”</li>
+<li>关注 → “这博主是我亲爹&#x2F;妈！”</li>
+</ul>
+</li>
+<li>暗地里的“监控大法”：<ul>
+<li>停留时长：<ul>
+<li>看帅哥<code>美女</code>视频停留30秒 → 系统：“这人<code>好色</code>，记下来！”</li>
+<li>看科普视频3秒就划走 → 系统：“学渣，下次少推！”</li>
+</ul>
+</li>
+<li>重复观看：<ul>
+<li>同一条修狗视频看了5遍 → 系统：“狗党实锤，明天首页全变宠物乐园！”</li>
+</ul>
+</li>
+<li>搜索关键词：<ul>
+<li>搜过“脱发自救” → 第二天推荐生发液广告+秃头博主励志故事（扎心了💔）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="步骤2：算法“算命”——找到你的“网络双胞胎”"><a href="#步骤2：算法“算命”——找到你的“网络双胞胎”" class="headerlink" title="步骤2：算法“算命”——找到你的“网络双胞胎”"></a>步骤2：算法“算命”——找到你的“网络双胞胎”</h3><p>套路1：协同过滤——拉群找“同类”</p>
+<ul>
+<li>“你爱看腹肌男，我也爱看→咱俩就是异父异母的亲兄弟！”<ul>
+<li>你点赞了“刘畊宏跳操” → 抖音找到100个同样爱健身的人 → 把她们喜欢的蛋白粉广告、瑜伽裤测评全塞给你。</li>
+</ul>
+</li>
+<li>副作用：<ul>
+<li>不小心点了一次广场舞视频 → 接下来一周都是“老年Disco”（年轻人：救救我😇）。</li>
+</ul>
+</li>
+</ul>
+<p>套路2：深度学习——系统比你更懂你</p>
+<ul>
+<li>“你连刷10条露营视频？懂了，你上辈子是棵树！”<ul>
+<li>系统发现你爱看“野外生存” → 自动关联推荐帐篷、烧烤架，甚至防狼喷雾（虽然你可能只是云露营）。</li>
+</ul>
+</li>
+<li>离谱案例：<ul>
+<li>网友@小陈：拍过一次穿<code>JK制服</code>的照片 → 抖音判定她是“二次元宅女”，狂推动漫混剪和手办福袋（实际是帮妹妹拍的）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="步骤3：24小时“PUA”——越刷越上瘾的终极陷阱"><a href="#步骤3：24小时“PUA”——越刷越上瘾的终极陷阱" class="headerlink" title="步骤3：24小时“PUA”——越刷越上瘾的终极陷阱"></a>步骤3：24小时“PUA”——越刷越上瘾的终极陷阱</h3><p>实时更新画像：今天你是宝妈，明天变驴友</p>
+<ul>
+<li>周一刷美妆教程 → 画像：“精致都市丽人”。</li>
+<li>周二突然看育儿知识 → 画像秒变：“新手妈妈”（哪怕你单身🐶）。</li>
+<li>系统逻辑：宁可错杀一千，绝不放过一个！</li>
+</ul>
+<p>多维度“绑架”你的注意力：</p>
+<ul>
+<li>BGM操控：你常听周杰伦 → 同类音乐视频优先推送。</li>
+<li>时间陷阱：发现你每晚10点活跃 → 准时投放“助眠神器”广告（结果你越看越精神）。</li>
+<li>地域追踪：IP在北京 → 推荐“环球影城攻略”；切换到老家县城 → 立刻变成“相亲神曲合集”。</li>
+</ul>
+<h3 id="举个真实场景，让你脊背发凉"><a href="#举个真实场景，让你脊背发凉" class="headerlink" title="举个真实场景，让你脊背发凉"></a>举个真实场景，让你脊背发凉</h3><p>“一条视频引发的血案”：</p>
+<p>你偶然点开“考研英语”视频，看了15秒 → 系统标记“潜在考生”。</p>
+<p>第二天首页出现“考研逆袭故事” → 你忍不住看完。</p>
+<p>一周后，抖音开始推荐“考研辅导班”“防脱发洗发水”，甚至“二战考研租房攻略”……</p>
+<p>结果：你本来只想随便看看，现在满脑子都是“我是不是该考研了？”</p>
+<h3 id="总结：抖音的“画像公式”"><a href="#总结：抖音的“画像公式”" class="headerlink" title="总结：抖音的“画像公式”"></a>总结：抖音的“画像公式”</h3><p>你的行为数据 + 算法的“脑补” &#x3D; 一个比你妈还操心的“数字管家”</p>
+<ul>
+<li>温馨提示：</li>
+</ul>
+<p>如果不想被“画像”绑架，试试这招👇：</p>
+<p>长按视频 → 点击“不感兴趣” → 让算法怀疑人生！</p>
+<p>（但大概率你会继续刷，因为——真香！）</p>
+<h2 id="为什么我们心甘情愿被“操控”？——人性的弱点"><a href="#为什么我们心甘情愿被“操控”？——人性的弱点" class="headerlink" title="为什么我们心甘情愿被“操控”？——人性的弱点"></a>为什么我们心甘情愿被“操控”？——人性的弱点</h2><h3 id="多巴胺陷阱：下一个视频永远在“勾引”你"><a href="#多巴胺陷阱：下一个视频永远在“勾引”你" class="headerlink" title="多巴胺陷阱：下一个视频永远在“勾引”你"></a>多巴胺陷阱：下一个视频永远在“勾引”你</h3><p>“像赌博一样上瘾”：</p>
+<ul>
+<li>每次下滑都像“开盲盒”——可能是搞笑段子、萌宠暴击，或是心动帅哥，这种不确定的惊喜感让大脑疯狂分泌多巴胺。</li>
+</ul>
+<p>案例：</p>
+<blockquote>
+<p>网友@小鱼：“明明困得要死，但总感觉下一个视频会更精彩，结果刷到天亮……我像个赌徒！”</p>
+</blockquote>
+<p>生理真相：</p>
+<ul>
+<li>刷抖音时的大脑活跃区和吸毒时高度相似——你不是在玩手机，是在“嗑电子药”。</li>
+</ul>
+<h3 id="即时满足：快乐来得太容易，谁还愿意“吃苦”？"><a href="#即时满足：快乐来得太容易，谁还愿意“吃苦”？" class="headerlink" title="即时满足：快乐来得太容易，谁还愿意“吃苦”？"></a>即时满足：快乐来得太容易，谁还愿意“吃苦”？</h3><p>“3秒一个爽点，谁扛得住？”</p>
+<ul>
+<li>看书要专注1小时，追剧要等更新，但抖音的快乐“即刷即有”：</li>
+<li>想放松？10秒就能笑到喷饭。</li>
+<li>想学习？1分钟“速成”Excel技巧（虽然转头就忘）。</li>
+</ul>
+<p>对比伤害：</p>
+<p>现实中的努力需要坚持，但抖音的快乐“一键直达”——人天生偏爱“捷径”。</p>
+<h3 id="信息茧房：温柔地“杀死”你的好奇心"><a href="#信息茧房：温柔地“杀死”你的好奇心" class="headerlink" title="信息茧房：温柔地“杀死”你的好奇心"></a>信息茧房：温柔地“杀死”你的好奇心</h3><p>“你以为你在选内容？其实是算法给你造了个温室”：</p>
+<ul>
+<li>爱看美妆就推全妆教程，爱看游戏就塞电竞直播……你越满意，系统越不敢让你看别的。</li>
+</ul>
+<p>副作用：</p>
+<blockquote>
+<p>网友@阿凯：“刷了3个月抖音，我以为全世界都爱看钓鱼，直到发现我妈的首页全是婆媳伦理剧……”</p>
+</blockquote>
+<p>心理机制：</p>
+<ul>
+<li>人本能地抗拒“认知失调”——看到不同观点会难受，而抖音让你永远“舒适”。</li>
+</ul>
+<h3 id="社交货币：不刷抖音，你就“没朋友”"><a href="#社交货币：不刷抖音，你就“没朋友”" class="headerlink" title="社交货币：不刷抖音，你就“没朋友”"></a>社交货币：不刷抖音，你就“没朋友”</h3><p>“梗都不知道，还怎么混圈子？”：</p>
+<ul>
+<li>当全网都在跳“科目三”、玩“小土豆梗”时，你不刷抖音&#x3D;聊天插不上话&#x3D;被社交圈抛弃。</li>
+</ul>
+<p>案例：</p>
+<blockquote>
+<p>大学生@露露：“室友们讨论抖音热梗哈哈大笑，我只能假装听懂，默默打开手机开刷……”</p>
+</blockquote>
+<p>平台心机：</p>
+<ul>
+<li>抖音刻意制造“全民爆梗”，让你觉得：不参与&#x3D;落伍&#x3D;孤独。</li>
+</ul>
+<h3 id="虚拟认同：点赞和关注，成了“电子氧气”"><a href="#虚拟认同：点赞和关注，成了“电子氧气”" class="headerlink" title="虚拟认同：点赞和关注，成了“电子氧气”"></a>虚拟认同：点赞和关注，成了“电子氧气”</h3><p>“现实中当小透明，抖音里当赛博顶流”：</p>
+<ul>
+<li>发一条自拍视频，收到100个点赞 → 感觉自己被全世界喜爱（尽管陌生人根本不认识你）。</li>
+</ul>
+<p>心理补偿：</p>
+<ul>
+<li>工作被老板骂？感情不顺？抖音里发条视频，评论区总有人夸你“姐妹好美！”——这种即时认同让人欲罢不能。</li>
+</ul>
+<h3 id="偷走时间还不让你愧疚：碎片化的“正当理由”"><a href="#偷走时间还不让你愧疚：碎片化的“正当理由”" class="headerlink" title="偷走时间还不让你愧疚：碎片化的“正当理由”"></a>偷走时间还不让你愧疚：碎片化的“正当理由”</h3><p>“我就刷5分钟，放松一下怎么了？”：</p>
+<ul>
+<li>等公交、上厕所、吃饭……所有碎片时间都被抖音填满，你以为在“高效利用时间”，实际是被切割成无法专注的废片。</li>
+</ul>
+<p>真实伤害：</p>
+<ul>
+<li>研究显示：频繁切换注意力，会导致记忆力下降、焦虑加剧——但你根本停不下来，因为“5分钟”太容易骗过自己。</li>
+</ul>
+<h3 id="总结：我们不是输给抖音，是输给人性"><a href="#总结：我们不是输给抖音，是输给人性" class="headerlink" title="总结：我们不是输给抖音，是输给人性"></a>总结：我们不是输给抖音，是输给人性</h3><p>“抖音不可怕，可怕的是它比你还懂你”：</p>
+<ul>
+<li>它利用人性的懒惰、贪婪、虚荣、恐惧，织了一张温柔的网——你明知道是陷阱，却自愿跳进去。</li>
+</ul>
+<p>终极矛盾：</p>
+<ul>
+<li>我们既渴望抖音提供的快乐，又厌恶被控制的无力感，最后在“真香”和“戒断”之间反复横跳。</li>
+</ul>
+<h2 id="警惕！被“画像”背后的代价"><a href="#警惕！被“画像”背后的代价" class="headerlink" title="警惕！被“画像”背后的代价"></a>警惕！被“画像”背后的代价</h2><h3 id="你以为的“贴心”，可能是“掏空你”的陷阱"><a href="#你以为的“贴心”，可能是“掏空你”的陷阱" class="headerlink" title="你以为的“贴心”，可能是“掏空你”的陷阱"></a>你以为的“贴心”，可能是“掏空你”的陷阱</h3><p>代价1：隐私裸奔——你的生活成了“透明超市”</p>
+<p>案例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">和朋友微信聊“想买吸尘器”，第二天抖音就推荐10款 → “它怎么听到的？！”（其实是通过输入法、跨APP数据共享）。</span><br><span class="line"></span><br><span class="line">搜过“租房攻略”，立刻被中介广告轰炸 → 你的焦虑成了别人赚钱的工具。</span><br></pre></td></tr></table></figure>
+
+<p>扎心真相：</p>
+<ul>
+<li>免费刷视频的代价，可能是你的隐私被“标价售卖”——广告主花钱就能精准找到你。</li>
+</ul>
+<p>代价2：信息茧房——活成“数字井底之蛙”</p>
+<ul>
+<li>“你看到的世界，是算法想让你看到的”：<ul>
+<li>爱看正能量 → 首页全是人间美好 → 你以为社会一片和谐。</li>
+<li>爱看负面新闻 → 推送越来越极端 → 你变得焦虑、厌世。</li>
+</ul>
+</li>
+</ul>
+<p>网友自嘲：</p>
+<ul>
+<li>“在抖音待了3年，我以为全国女生都月入5万，只有我穷得真实😭”</li>
+</ul>
+<p>代价3：钱包被“绑架”——算法让你花钱更上头</p>
+<p>套路拆解：</p>
+<ul>
+<li>先给你推“普通人逆袭”故事（制造焦虑）。</li>
+<li>再塞给你“3天速成副业”课程（提供希望）。</li>
+<li>最后弹出“限时折扣”支付页面（逼你冲动下单）。</li>
+</ul>
+<p>血泪教训：</p>
+<blockquote>
+<p>网友@娜娜：“刷抖音学了‘配音赚钱’，花2998元买课，最后只赚了9块8……”</p>
+</blockquote>
+<h3 id="防坑指南——普通人如何“反杀”算法？"><a href="#防坑指南——普通人如何“反杀”算法？" class="headerlink" title="防坑指南——普通人如何“反杀”算法？"></a>防坑指南——普通人如何“反杀”算法？</h3><p>招式1：给算法“喂假饭”</p>
+<p>操作手册：</p>
+<ul>
+<li>偶尔故意乱刷：猛看完全不感兴趣的内容（比如广场舞、拖拉机维修）。</li>
+<li>随机点赞：给宠物视频点❤️，再给财经分析点❤️ → 让系统怀疑人生。</li>
+</ul>
+<p>效果：</p>
+<ul>
+<li>算法画像混乱 → 推荐内容“精神分裂”，你成功隐身！</li>
+</ul>
+<p>招式2：关闭“监控开关”（以抖音为例）</p>
+<p>步骤：</p>
+<ul>
+<li>点击“我”→右上角三条杠→【设置】。</li>
+<li>找到【隐私设置】→ 关闭【个性化内容推荐】。</li>
+<li>【广告偏好设置】→ 关闭【程序化广告展示】。</li>
+</ul>
+<p>副作用预警：</p>
+<blockquote>
+<p>首页会变成无聊大杂烩（但至少你的数据安全了）。</p>
+</blockquote>
+<p>招式3：定期“数据大扫除”</p>
+<ul>
+<li>清理缓存：设置→清理占用空间→勾选【临时文件】【资源文件】。</li>
+<li>重置广告ID（安卓&#x2F;苹果通用）：</li>
+<li>手机设置→隐私→广告→重置广告标识符 → 让平台重新“认识你”。</li>
+</ul>
+<h3 id="终极灵魂拷问：逃离算法，我们能赢吗？"><a href="#终极灵魂拷问：逃离算法，我们能赢吗？" class="headerlink" title="终极灵魂拷问：逃离算法，我们能赢吗？"></a>终极灵魂拷问：逃离算法，我们能赢吗？</h3><p>现实很骨感：</p>
+<ul>
+<li>你可以关掉抖音，但外卖APP、购物平台、甚至导航软件都在给你画像 → “全网皆牢笼”。</li>
+</ul>
+<p>清醒一点：</p>
+<ul>
+<li>完全抵制不现实，但可以“让算法为我所用”：</li>
+<li>想学习？主动搜索干货 → 让系统推荐知识类视频。</li>
+<li>想戒剁手？多刷差评揭露视频 → 算法帮你“拔草”。</li>
+</ul>
+<blockquote>
+<p>你的人生不该被“标签”定义</p>
+</blockquote>
+<ul>
+<li>“抖音里的你，是爱吃瓜的乐子人、是职场小白、是深夜emo怪……但那只是数据的‘碎片’。”</li>
+<li>“真实的你，远比算法想象的更丰富、更自由——别让屏幕里的‘画像’，框住你的人生。”</li>
+</ul>
+<blockquote>
+<p>“试过以上防坑招式的，评论区举手！没试过的……现在立刻去关掉个性化推荐，回来打卡！”</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>把选择权“抢”回自己手里.</p>
+<ul>
+<li>“刷抖音时，到底是你在找快乐，还是算法在‘投喂’快乐？”</li>
+<li>用算法看世界 → 世界越来越小，小到只剩你喜欢的“巴掌大”。</li>
+<li>自己探索世界 → 可能踩雷，但会发现更多意想不到的惊喜。</li>
+</ul>
+<blockquote>
+<p>“别让算法替你决定‘该看什么’——你的人生，不该活成数据的提线木偶。”</p>
+</blockquote>
+<p>“你是哪种抖音‘上头人’？对号入座👇<br>1️⃣ “永远在等下一个更香” 多巴胺赌徒<br>2️⃣ “不刷梗就社恐” 跟风焦虑党<br>3️⃣ “被算法PUA还夸它贴心” 清醒沉沦者<br>❤️ 评论区认领你的身份，找找同类！”</p>
+<p>“关不掉抖音？至少可以‘反操控’它！”</p>
+<ul>
+<li>神操作：长按视频 → 【不感兴趣】 → 连点10次，算法会哭着求你别走。</li>
+</ul>
+<blockquote>
+<p>“你在抖音的每一次滑动，都在为你的‘数字画像’描边——是时候告诉自己：我的人生，绝不止算法定义的这一个版本。”</p>
+</blockquote>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MCP%E5%AE%9E%E6%88%98.html" rel="prev" title="MCP实战">
+      <i class="fa fa-chevron-left"></i> MCP实战
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%96%E9%9F%B3%E4%B8%BA%E5%95%A5%E6%80%BB%E8%AE%A9%E4%BD%A0%E2%80%9C%E4%B8%8A%E5%A4%B4%E2%80%9D%EF%BC%9F%E6%8F%AD%E7%A7%98%E5%AE%83%E5%81%B7%E6%91%B8%E7%BB%99%E4%BD%A0%E2%80%9C%E7%94%BB%E5%83%8F%E2%80%9D%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%81"><span class="nav-number">1.</span> <span class="nav-text">抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%EF%BC%9F%E2%80%94%E2%80%94%E7%94%A8%E2%80%9C%E4%BA%BA%E8%AF%9D%E2%80%9D%E8%A7%A3%E9%87%8A%E4%B8%93%E4%B8%9A%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">什么是用户画像？——用“人话”解释专业概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%96%E9%9F%B3%E5%A6%82%E4%BD%95%E2%80%9C%E5%81%B7%E6%91%B8%E2%80%9D%E7%BB%99%E4%BD%A0%E7%94%BB%E5%83%8F%EF%BC%9F%E2%80%94%E2%80%943%E6%AD%A5%E6%8B%86%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">抖音如何“偷摸”给你画像？——3步拆解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41%EF%BC%9A%E6%9A%97%E4%B8%AD%E8%A7%82%E5%AF%9F%E2%80%94%E2%80%94%E4%BD%A0%E7%9A%84%E2%80%9C%E5%B0%8F%E5%8A%A8%E4%BD%9C%E2%80%9D%E5%85%A8%E8%A2%AB%E8%AE%B0%E5%9C%A8%E5%B0%8F%E6%9C%AC%E6%9C%AC%E4%B8%8A"><span class="nav-number">1.2.1.</span> <span class="nav-text">步骤1：暗中观察——你的“小动作”全被记在小本本上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A42%EF%BC%9A%E7%AE%97%E6%B3%95%E2%80%9C%E7%AE%97%E5%91%BD%E2%80%9D%E2%80%94%E2%80%94%E6%89%BE%E5%88%B0%E4%BD%A0%E7%9A%84%E2%80%9C%E7%BD%91%E7%BB%9C%E5%8F%8C%E8%83%9E%E8%83%8E%E2%80%9D"><span class="nav-number">1.2.2.</span> <span class="nav-text">步骤2：算法“算命”——找到你的“网络双胞胎”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A43%EF%BC%9A24%E5%B0%8F%E6%97%B6%E2%80%9CPUA%E2%80%9D%E2%80%94%E2%80%94%E8%B6%8A%E5%88%B7%E8%B6%8A%E4%B8%8A%E7%98%BE%E7%9A%84%E7%BB%88%E6%9E%81%E9%99%B7%E9%98%B1"><span class="nav-number">1.2.3.</span> <span class="nav-text">步骤3：24小时“PUA”——越刷越上瘾的终极陷阱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BE%E4%B8%AA%E7%9C%9F%E5%AE%9E%E5%9C%BA%E6%99%AF%EF%BC%8C%E8%AE%A9%E4%BD%A0%E8%84%8A%E8%83%8C%E5%8F%91%E5%87%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">举个真实场景，让你脊背发凉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E6%8A%96%E9%9F%B3%E7%9A%84%E2%80%9C%E7%94%BB%E5%83%8F%E5%85%AC%E5%BC%8F%E2%80%9D"><span class="nav-number">1.2.5.</span> <span class="nav-text">总结：抖音的“画像公式”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E5%BF%83%E7%94%98%E6%83%85%E6%84%BF%E8%A2%AB%E2%80%9C%E6%93%8D%E6%8E%A7%E2%80%9D%EF%BC%9F%E2%80%94%E2%80%94%E4%BA%BA%E6%80%A7%E7%9A%84%E5%BC%B1%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">为什么我们心甘情愿被“操控”？——人性的弱点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%B7%B4%E8%83%BA%E9%99%B7%E9%98%B1%EF%BC%9A%E4%B8%8B%E4%B8%80%E4%B8%AA%E8%A7%86%E9%A2%91%E6%B0%B8%E8%BF%9C%E5%9C%A8%E2%80%9C%E5%8B%BE%E5%BC%95%E2%80%9D%E4%BD%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">多巴胺陷阱：下一个视频永远在“勾引”你</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B3%E6%97%B6%E6%BB%A1%E8%B6%B3%EF%BC%9A%E5%BF%AB%E4%B9%90%E6%9D%A5%E5%BE%97%E5%A4%AA%E5%AE%B9%E6%98%93%EF%BC%8C%E8%B0%81%E8%BF%98%E6%84%BF%E6%84%8F%E2%80%9C%E5%90%83%E8%8B%A6%E2%80%9D%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">即时满足：快乐来得太容易，谁还愿意“吃苦”？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E8%8C%A7%E6%88%BF%EF%BC%9A%E6%B8%A9%E6%9F%94%E5%9C%B0%E2%80%9C%E6%9D%80%E6%AD%BB%E2%80%9D%E4%BD%A0%E7%9A%84%E5%A5%BD%E5%A5%87%E5%BF%83"><span class="nav-number">1.3.3.</span> <span class="nav-text">信息茧房：温柔地“杀死”你的好奇心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BE%E4%BA%A4%E8%B4%A7%E5%B8%81%EF%BC%9A%E4%B8%8D%E5%88%B7%E6%8A%96%E9%9F%B3%EF%BC%8C%E4%BD%A0%E5%B0%B1%E2%80%9C%E6%B2%A1%E6%9C%8B%E5%8F%8B%E2%80%9D"><span class="nav-number">1.3.4.</span> <span class="nav-text">社交货币：不刷抖音，你就“没朋友”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E8%AE%A4%E5%90%8C%EF%BC%9A%E7%82%B9%E8%B5%9E%E5%92%8C%E5%85%B3%E6%B3%A8%EF%BC%8C%E6%88%90%E4%BA%86%E2%80%9C%E7%94%B5%E5%AD%90%E6%B0%A7%E6%B0%94%E2%80%9D"><span class="nav-number">1.3.5.</span> <span class="nav-text">虚拟认同：点赞和关注，成了“电子氧气”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%B7%E8%B5%B0%E6%97%B6%E9%97%B4%E8%BF%98%E4%B8%8D%E8%AE%A9%E4%BD%A0%E6%84%A7%E7%96%9A%EF%BC%9A%E7%A2%8E%E7%89%87%E5%8C%96%E7%9A%84%E2%80%9C%E6%AD%A3%E5%BD%93%E7%90%86%E7%94%B1%E2%80%9D"><span class="nav-number">1.3.6.</span> <span class="nav-text">偷走时间还不让你愧疚：碎片化的“正当理由”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E6%88%91%E4%BB%AC%E4%B8%8D%E6%98%AF%E8%BE%93%E7%BB%99%E6%8A%96%E9%9F%B3%EF%BC%8C%E6%98%AF%E8%BE%93%E7%BB%99%E4%BA%BA%E6%80%A7"><span class="nav-number">1.3.7.</span> <span class="nav-text">总结：我们不是输给抖音，是输给人性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AD%A6%E6%83%95%EF%BC%81%E8%A2%AB%E2%80%9C%E7%94%BB%E5%83%8F%E2%80%9D%E8%83%8C%E5%90%8E%E7%9A%84%E4%BB%A3%E4%BB%B7"><span class="nav-number">1.4.</span> <span class="nav-text">警惕！被“画像”背后的代价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%A0%E4%BB%A5%E4%B8%BA%E7%9A%84%E2%80%9C%E8%B4%B4%E5%BF%83%E2%80%9D%EF%BC%8C%E5%8F%AF%E8%83%BD%E6%98%AF%E2%80%9C%E6%8E%8F%E7%A9%BA%E4%BD%A0%E2%80%9D%E7%9A%84%E9%99%B7%E9%98%B1"><span class="nav-number">1.4.1.</span> <span class="nav-text">你以为的“贴心”，可能是“掏空你”的陷阱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E5%9D%91%E6%8C%87%E5%8D%97%E2%80%94%E2%80%94%E6%99%AE%E9%80%9A%E4%BA%BA%E5%A6%82%E4%BD%95%E2%80%9C%E5%8F%8D%E6%9D%80%E2%80%9D%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">防坑指南——普通人如何“反杀”算法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%88%E6%9E%81%E7%81%B5%E9%AD%82%E6%8B%B7%E9%97%AE%EF%BC%9A%E9%80%83%E7%A6%BB%E7%AE%97%E6%B3%95%EF%BC%8C%E6%88%91%E4%BB%AC%E8%83%BD%E8%B5%A2%E5%90%97%EF%BC%9F"><span class="nav-number">1.4.3.</span> <span class="nav-text">终极灵魂拷问：逃离算法，我们能赢吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.6.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

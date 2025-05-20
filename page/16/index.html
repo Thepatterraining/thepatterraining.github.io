@@ -196,6 +196,366 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%89%93%E5%8D%B0%E6%9C%BA%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%89%93%E5%8D%B0%E6%9C%BA%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86.html" class="post-title-link" itemprop="url">设计模式之原型模式--打印机快速复制的原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-04 13:00:07" itemprop="dateCreated datePublished" datetime="2020-05-04T13:00:07+08:00">2020-05-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%89%93%E5%8D%B0%E6%9C%BA%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之原型模式--打印机快速复制的原理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%89%93%E5%8D%B0%E6%9C%BA%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%89%93%E5%8D%B0%E6%9C%BA%E5%BF%AB%E9%80%9F%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="设计模式之原型模式–打印机快速复制的原理"><a href="#设计模式之原型模式–打印机快速复制的原理" class="headerlink" title="设计模式之原型模式–打印机快速复制的原理"></a>设计模式之原型模式–打印机快速复制的原理</h1><p><code>原型模式</code>是一个克隆模式，以一个原型进行克隆，复制。</p>
+<blockquote>
+<p>用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。</p>
+</blockquote>
+<h2 id="为什么要使用原型模式"><a href="#为什么要使用原型模式" class="headerlink" title="为什么要使用原型模式"></a>为什么要使用原型模式</h2><p>因为原型模式可以克隆整个对象而不用重新生成。</p>
+<p>如果有一个订单对象，你要是重新生成，需要再次查询数据库，这是一个很耗时的操作，如果直接复制就不需要耗时了。</p>
+<p>在php里面实现很简单，每个类有<code>__clone</code>魔术方法，实现这个方法就好了。</p>
+<p>先看不实现这个方法的克隆。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 原型模式</span></span><br><span class="line"><span class="comment"> * 实现__clone魔术方法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Prototype</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$name</span> = <span class="string">&#x27;张三&#x27;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$arr</span> = [<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$obj1</span> = <span class="keyword">new</span> PrototypeClass;</span><br><span class="line"><span class="title function_ invoke__">dump</span>(<span class="variable">$obj1</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$obj2</span> = <span class="keyword">clone</span> <span class="variable">$obj1</span>;</span><br><span class="line"><span class="variable">$obj2</span>-&gt;name = <span class="string">&#x27;456&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">dump</span>(<span class="variable">$obj2</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/prototype.png" alt="原型模式"></p>
+<p>可以看到成功克隆过来了，两个对象互不影响。</p>
+<p>我们看一下修改第二个对象的<code>arr</code>属性呢</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$obj1</span> = <span class="keyword">new</span> PrototypeClass;</span><br><span class="line"><span class="title function_ invoke__">dump</span>(<span class="variable">$obj1</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$obj2</span> = <span class="keyword">clone</span> <span class="variable">$obj1</span>;</span><br><span class="line"><span class="variable">$obj2</span>-&gt;name = <span class="string">&#x27;456&#x27;</span>;</span><br><span class="line"><span class="variable">$obj2</span>-&gt;arr = [<span class="string">&#x27;1&#x27;</span>];</span><br><span class="line"><span class="title function_ invoke__">dump</span>(<span class="variable">$obj2</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/prototype2.png" alt="原型模式"></p>
+<p>修改数组也没问题，也就是说，直接使用clone就可以完成深复制的拷贝操作。php本身通过clone关键字完成了原型模式。</p>
+<p>代码放在了我的github上面。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-%E6%AF%94%E5%B7%A5%E5%8E%82%E6%9B%B4%E7%B2%BE%E7%BB%86%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%94%9F%E6%88%90.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-%E6%AF%94%E5%B7%A5%E5%8E%82%E6%9B%B4%E7%B2%BE%E7%BB%86%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%94%9F%E6%88%90.html" class="post-title-link" itemprop="url">设计模式之建造者模式--比工厂更精细的流水线生成</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-04 10:09:38" itemprop="dateCreated datePublished" datetime="2020-05-04T10:09:38+08:00">2020-05-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-%E6%AF%94%E5%B7%A5%E5%8E%82%E6%9B%B4%E7%B2%BE%E7%BB%86%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%94%9F%E6%88%90.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之建造者模式--比工厂更精细的流水线生成" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-%E6%AF%94%E5%B7%A5%E5%8E%82%E6%9B%B4%E7%B2%BE%E7%BB%86%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%94%9F%E6%88%90.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-%E6%AF%94%E5%B7%A5%E5%8E%82%E6%9B%B4%E7%B2%BE%E7%BB%86%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%94%9F%E6%88%90.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="设计模式之建造者模式–比工厂更精细的流水线生成"><a href="#设计模式之建造者模式–比工厂更精细的流水线生成" class="headerlink" title="设计模式之建造者模式–比工厂更精细的流水线生成"></a>设计模式之建造者模式–比工厂更精细的流水线生成</h1><p><code>建造者模式</code>是创建一个稳定流程的复杂对象，隐藏创建的具体流程、过程、细节。</p>
+<blockquote>
+<p>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+</blockquote>
+<h2 id="为什么要使用建造者模式"><a href="#为什么要使用建造者模式" class="headerlink" title="为什么要使用建造者模式"></a>为什么要使用建造者模式</h2><p><strong>当你需要创建一些复杂的对象，这些对象内部构建间的建造顺序通常是稳定的，但对象内部的构建通常面临着复杂的变化</strong>。</p>
+<p>建造者分离了构建和表示，他把如何创建隐藏了起来，你只要告诉建造者你需要什么，他就会给你建造什么。</p>
+<h3 id="建造者模式和工厂模式有什么区别"><a href="#建造者模式和工厂模式有什么区别" class="headerlink" title="建造者模式和工厂模式有什么区别"></a>建造者模式和工厂模式有什么区别</h3><p>工厂模式更像一个大工厂，比如<code>口罩工厂</code>负责生产<code>雾霾口罩</code>，<code>防毒口罩</code>等等。<strong>根据你需要的类型来判断给你什么</strong>。</p>
+<p>那<code>雾霾口罩</code>怎么生产呢？假设需要123三个步骤，那么建造者就是负责这三个步骤的，你告诉建造者你需要<code>雾霾口罩</code>，那么他会给你一个完整的，建造好的<code>雾霾口罩</code>而不是<code>口罩半成品</code>。</p>
+<p>所以建造者更像一个完整的流水线，按照步骤建造好成品给你。</p>
+<p>再比如你去饭店点餐，<code>工厂模式</code>是你点哪个菜就给你哪个菜。<code>建造者模式</code>是你点的菜怎么做。你点了<code>鱼香肉丝</code>，建造者会按照步骤，哪一步该放肉，哪一步该放盐，最后做好了把菜给你。</p>
+<p><code>建造者模式</code>还有一个作用就是<code>约束</code>。抽象出的建造流程不可改变，<code>口罩</code>不能少个过滤网，<code>饭菜</code>不能没有放盐。</p>
+<p><code>建造者模式</code>也避免了复杂对象创建流程的缺失。</p>
+<h3 id="php实现建造者模式"><a href="#php实现建造者模式" class="headerlink" title="php实现建造者模式"></a>php实现建造者模式</h3><p>假设现在有一个对接第三方支付的需求。使用建造者模式。</p>
+<p>我们要先抽象出一个建造流程。使用抽象类，对接第三方支付大概需要一个加密，一个读取配置信息，然后把这些参数合并发送出去。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 建造者模式</span></span><br><span class="line"><span class="comment"> * 建造者抽象类</span></span><br><span class="line"><span class="comment"> * 抽象出整个建造流程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Build</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加密流程</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">function</span> <span class="title">buildHash</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 读取配置流程，比如appid这些</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">function</span> <span class="title">buildConfig</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们的第三方支付类继承这个抽象建造者来实现具体的第三方支付建造者。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 建造者模式</span></span><br><span class="line"><span class="comment"> * 建造者抽象类</span></span><br><span class="line"><span class="comment"> * 抽象出整个建造流程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadBuild</span> <span class="keyword">extends</span> <span class="title">Build</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加密流程</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">buildHash</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">//省略加密代码</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;hash&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 读取配置流程，比如appid这些</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">buildConfig</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">//省略配置代码</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;config&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 发送http请求流程</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">http</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">//省略发送代码</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;success&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了建造者，我们现在需要一个组装这整个建造流程的<code>监工</code>，<code>指挥者</code>。来保证整个流程不出错。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 建造者模式</span></span><br><span class="line"><span class="comment"> * 指挥者类</span></span><br><span class="line"><span class="comment"> * 按照流程建造，返回建造后的类。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Director</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createBuild</span>(<span class="params">Build <span class="variable">$build</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable">$build</span>-&gt;<span class="title function_ invoke__">buildHash</span>();</span><br><span class="line">        <span class="variable">$build</span>-&gt;<span class="title function_ invoke__">buildConfig</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$build</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们的客户端调用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$threadPay</span> = <span class="title class_">Director</span>::<span class="title function_ invoke__">createBuild</span>(<span class="keyword">new</span> <span class="title class_">ThreadBuild</span>());  </span><br><span class="line"><span class="variable">$threadPay</span>-&gt;<span class="title function_ invoke__">http</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果接入了别的第三方支付，那么我们只需要增加具体建造者就可以了，如果和抽象建造者冲突，那么说明没有抽象好。在客户端只需要更改具体建造者就可以了。</p>
+<p>代码放在了我的github上面。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E6%9B%B4%E5%8A%A0%E7%AC%A6%E5%90%88%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E6%9B%B4%E5%8A%A0%E7%AC%A6%E5%90%88%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.html" class="post-title-link" itemprop="url">设计模式之工厂方法模式--更加符合开闭原则的工厂模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-03 17:08:15" itemprop="dateCreated datePublished" datetime="2020-05-03T17:08:15+08:00">2020-05-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E6%9B%B4%E5%8A%A0%E7%AC%A6%E5%90%88%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之工厂方法模式--更加符合开闭原则的工厂模式" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E6%9B%B4%E5%8A%A0%E7%AC%A6%E5%90%88%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F-%E6%9B%B4%E5%8A%A0%E7%AC%A6%E5%90%88%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%E7%9A%84%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="设计模式之工厂方法模式–更加符合开闭原则的工厂模式"><a href="#设计模式之工厂方法模式–更加符合开闭原则的工厂模式" class="headerlink" title="设计模式之工厂方法模式–更加符合开闭原则的工厂模式"></a>设计模式之工厂方法模式–更加符合开闭原则的工厂模式</h1><p><code>工厂方法模式</code>是简单工厂模式的升级版本，更加符合开闭原则。</p>
+<blockquote>
+<p>定义一个创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。</p>
+</blockquote>
+<h2 id="为什么要使用工厂方法模式"><a href="#为什么要使用工厂方法模式" class="headerlink" title="为什么要使用工厂方法模式"></a>为什么要使用工厂方法模式</h2><p>之前说了<code>简单工厂模式</code>，<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105904797">简单工厂模式</a>的工厂类是这样的。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//简单工厂类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">factory</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">static</span> <span class="title">createPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (小程序) &#123;</span><br><span class="line">            <span class="comment">//小程序支付</span></span><br><span class="line">            <span class="variable">$pay</span> = <span class="keyword">new</span> miniWechatPay;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (公众号) &#123;</span><br><span class="line">            <span class="comment">//公众号支付</span></span><br><span class="line">            <span class="variable">$pay</span> = <span class="keyword">new</span> jsAPIPay;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pc) &#123;</span><br><span class="line">            <span class="comment">//扫码支付</span></span><br><span class="line">            <span class="variable">$pay</span> = <span class="keyword">new</span> nativePay;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$pay</span>;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的工厂类是违反了开闭原则的，如果需要增加支付方法就需要修改这个工厂类，<strong>工厂方法模式就是解决这个问题的，使用工厂方法模式后不需要修改工厂类，只需要新增工厂类</strong>。</p>
+<h2 id="改成工厂方法模式"><a href="#改成工厂方法模式" class="headerlink" title="改成工厂方法模式"></a>改成工厂方法模式</h2><p>为了符合开闭原则，我们需要创建多个工厂类和一个工厂接口。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IFactory</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createPay</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">miniFactory</span> <span class="keyword">implements</span> <span class="title">IFactory</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> miniWechatPay;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jsAPIFactory</span> <span class="keyword">implements</span> <span class="title">IFactory</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> jsAPIPay;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">nativeFactory</span> <span class="keyword">implements</span> <span class="title">IFactory</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> nativePay;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>好了，我们把实例化放到了这些子类中，如果增加实例化的需求只需要增加工厂类就可以了。这就是工厂方法模式。</p>
+<p>相比简单工厂来说，这有一个缺点就是需要修改的时候虽然不需要修改工厂类了，但是需要修改客户端了。</p>
+<p>下面的是原来的客户端。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//微信支付方法 省略了类</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wechatPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...省略</span></span><br><span class="line">    <span class="variable">$pay</span> = factory::<span class="title function_ invoke__">createPay</span>();</span><br><span class="line">    <span class="variable">$pay</span>-&gt;<span class="title function_ invoke__">pay</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面的是工厂方法模式的客户端</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//微信支付方法 省略了类</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wechatPay</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...省略</span></span><br><span class="line">    <span class="variable">$pay</span> = mini<span class="title class_">Factory</span>::<span class="title function_ invoke__">createPay</span>(); <span class="comment">//需要修改这里</span></span><br><span class="line">    <span class="variable">$pay</span>-&gt;<span class="title function_ invoke__">pay</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果不想修改客户端也可以再增加一个简单工厂类来实例化工厂方法模式的类。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">factory</span></span>&#123;</span><br><span class="line">    <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">createFactory</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (小程序) &#123;</span><br><span class="line">            <span class="keyword">return</span> mini<span class="title class_">Factory</span>::<span class="title function_ invoke__">createPay</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//省略其他判断和实例化</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但是我觉得这样还不如直接用简单工厂来的好。</p>
+<p>总的来说，简单工厂和工厂方法模式各有优缺点吧，不过对于php来说我觉得简单工厂就足以，虽然有修改代码的风险。但是也还好，而且通过封装成数组来实例化也不需要这一堆if-else。</p>
+<p>代码放在了我的github上面。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%A7%A3%E5%86%B3composer-npm%E7%AD%89%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B8%8B%E8%BD%BD%E5%A4%B1%E8%B4%A5%E7%9A%84%E9%97%AE%E9%A2%98.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1006,349 +1366,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99-%E5%AD%90%E7%B1%BB%E5%8F%AF%E4%BB%A5%E6%9B%BF%E6%8D%A2%E7%88%B6%E7%B1%BB%E5%90%97.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99-%E5%AD%90%E7%B1%BB%E5%8F%AF%E4%BB%A5%E6%9B%BF%E6%8D%A2%E7%88%B6%E7%B1%BB%E5%90%97.html" class="post-title-link" itemprop="url">设计原则之里氏替换原则--子类可以替换父类吗</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-01 17:44:19" itemprop="dateCreated datePublished" datetime="2020-05-01T17:44:19+08:00">2020-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99-%E5%AD%90%E7%B1%BB%E5%8F%AF%E4%BB%A5%E6%9B%BF%E6%8D%A2%E7%88%B6%E7%B1%BB%E5%90%97.html" class="post-meta-item leancloud_visitors" data-flag-title="设计原则之里氏替换原则--子类可以替换父类吗" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99-%E5%AD%90%E7%B1%BB%E5%8F%AF%E4%BB%A5%E6%9B%BF%E6%8D%A2%E7%88%B6%E7%B1%BB%E5%90%97.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99-%E5%AD%90%E7%B1%BB%E5%8F%AF%E4%BB%A5%E6%9B%BF%E6%8D%A2%E7%88%B6%E7%B1%BB%E5%90%97.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计原则之里氏替换原则–子类可以替换父类吗"><a href="#设计原则之里氏替换原则–子类可以替换父类吗" class="headerlink" title="设计原则之里氏替换原则–子类可以替换父类吗"></a>设计原则之里氏替换原则–子类可以替换父类吗</h1><p><code>里氏替换原则（Liskov Substitution Principle）LSP</code>，这个原则是说子类应该可以替换父类进行使用。</p>
-<p>这个原则的英文描述是<code>functions that use pointers of references to base classes must be able to use objects of derived classes without knowing it</code>。子类对象能够替换程序中父类对象出现的任何地方，并且保证原来程序的逻辑行为不变及正确性不被破坏。</p>
-<h2 id="为什么要使用里氏替换原则"><a href="#为什么要使用里氏替换原则" class="headerlink" title="为什么要使用里氏替换原则"></a>为什么要使用里氏替换原则</h2><p>在我们的日常开发中很常用<code>依赖注入</code>，简单来说就是通过外部传入对象而不是内部<code>new</code>对象。传入参数的时候我们可以通过标识父类或者接口。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">demo</span>(<span class="params">Idemo <span class="variable">$demo</span></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$demo</span>-&gt;<span class="title function_ invoke__">run</span>();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这个函数中，我不关心你传进来的是个什么玩意，只要你实现了Idemo这个接口的对象就可以。或者是继承了Idemo这个类的自类对象也可以，只要你实现了run这个方法，并且属于Idemo这个类或者接口。我们经常使用这个方法来增加程序的测试行，扩展性，灵活性。比如我们需要一个支付接口的时候。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">buy</span>(<span class="params">Payment <span class="variable">$payment</span></span>) </span>&#123;</span><br><span class="line">    <span class="variable">$payment</span>-&gt;<span class="title function_ invoke__">pay</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们购买东西的时候，只要知道我要支付就可以了，至于你传进来的是支付宝支付还是微信支付我不需要知道。</p>
-<p>在这里面，支付宝或者微信支付就是具体的自类，而<code>Payment</code>就是他们的父类。这些子类对象可以替换他们的父类对象，并且保证原来程序的逻辑行为不变及正确性不被破坏。</p>
-<h2 id="里氏替换和多态"><a href="#里氏替换和多态" class="headerlink" title="里氏替换和多态"></a>里氏替换和多态</h2><p>其实我们上面使用的就是面向对象里面的<code>多态</code>。但是多态并不是里氏替换。类的多态特性允许我们重新实现父类的函数，我们可以根据不同的需求来改写。但是里氏替换原则要求不能修改原来的逻辑行为和正确性。</p>
-<p>比如父类中这个函数返回了异常而子类没有，那么这就违反了里氏替换原则。</p>
-<p>比如原来内容是123，而子类改成了456，那么同样违反了里氏替换原则。</p>
-<p>参考资料：</p>
-<ul>
-<li>大话设计模式</li>
-<li>极客时间设计模式之美</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99-%E5%AF%B9%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E5%AF%B9%E4%BF%AE%E6%94%B9%E5%85%B3%E9%97%AD.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99-%E5%AF%B9%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E5%AF%B9%E4%BF%AE%E6%94%B9%E5%85%B3%E9%97%AD.html" class="post-title-link" itemprop="url">设计原则之开闭原则--对扩展开发对修改关闭</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-01 16:56:35" itemprop="dateCreated datePublished" datetime="2020-05-01T16:56:35+08:00">2020-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99-%E5%AF%B9%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E5%AF%B9%E4%BF%AE%E6%94%B9%E5%85%B3%E9%97%AD.html" class="post-meta-item leancloud_visitors" data-flag-title="设计原则之开闭原则--对扩展开发对修改关闭" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99-%E5%AF%B9%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E5%AF%B9%E4%BF%AE%E6%94%B9%E5%85%B3%E9%97%AD.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99-%E5%AF%B9%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E5%AF%B9%E4%BF%AE%E6%94%B9%E5%85%B3%E9%97%AD.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计原则之开闭原则–对扩展开发对修改关闭"><a href="#设计原则之开闭原则–对扩展开发对修改关闭" class="headerlink" title="设计原则之开闭原则–对扩展开发对修改关闭"></a>设计原则之开闭原则–对扩展开发对修改关闭</h1><p><code>开闭原则(Open Closed Principle) OCP</code>，这个原则是说对扩展可以开放，但是对修改要关闭。</p>
-<p>这个原则的英文描述是<code>software entities(modules,classes,functions,etc.) should be open for extension, but closed for modification.</code>。</p>
-<h2 id="为什么要使用开闭原则"><a href="#为什么要使用开闭原则" class="headerlink" title="为什么要使用开闭原则"></a>为什么要使用开闭原则</h2><p>引用<code>大话设计模式</code>书中的故事。在香港澳门回归的时候，我国使用了<code>一国两制</code>的方针。<strong>这其实就是没有修改任何地方，但却扩展了我国的领土。</strong>这也就是对修改关闭，对扩展开放。</p>
-<p><code>开放封闭原则</code>，是说软件实体应该可以扩展，但是不可修改。</p>
-<p>在现在的开发中，改需求是一个很常见的事情，我们经常需要<strong>这个需求要改成这样，明天上线！！</strong>这种事情。这时候我们加班加点改完一个类实现了新需求。这个时候发现由于这个类的依赖太多，我们的修改引起了其他地方的bug，那我们需要整体测试，然后各种修改，还可能引起更多的bug，如此耗时耗力。</p>
-<p>在思考另外一个场景，同样我们实现了需求，这个时候没出其他问题，但是！！！<strong>这个需求要改回去，你把之前的代码拿出来吧</strong>。我相信你一定很不爽的，如果我们可以通过git来回滚到之前的代码还好，如果我们之前的代码在本地没有提交这个时候我们又修改完了，那，呵呵，再改回去吧，鬼知道之前代码啥样。</p>
-<p>如果我们遵循<code>开闭原则</code>，不是通过修改类来完成，而是通过扩展类的方式来完成这个新需求，那么我们就避免了这些问题，扩展不会引起其他的未知bug。不会影响到其他的类。如果要改回去我们原来的代码也还在。这就是开闭原则的好处了。</p>
-<h2 id="如何使用开闭原则"><a href="#如何使用开闭原则" class="headerlink" title="如何使用开闭原则"></a>如何使用开闭原则</h2><p>无论模块是多么的封闭，都会存在一些无法对之封闭的变化。既然不可能完全封闭，设计人员必须对于他设计的模块应该对那种变化封闭做出选择。<strong>它必须先猜测出最有可能发生的变化种类，然后构造抽象来隔离哪些变化</strong>。</p>
-<p>我们开发中，最开始的时候，很难预测接下来的变化。但是，一旦发生变化我们可以根据变化来采取行动，进行抽象重构。使得接下来通过扩展和少量的必要修改来应对需求的变化。</p>
-<p>开闭原则是面向对象设计的核心所在。<strong>遵循这个原则可以带来面向对象技术所生成的巨大好处，也就是可维护，可扩展，可复用，灵活性好。</strong>我们应该仅对程序中呈现出频繁变化的那些部分做出抽象，然而，对于程序中的每个部分都刻意的进行抽象同样不是一个好主意。拒绝不成熟的抽象和抽象本身一样重要。</p>
-<p>我们可以在开发的开始阶段对接下来能预测到的变化留出扩展空间，然后再不断的持续重构开发代码中一直遵循开闭原则。</p>
-<p>很多设计模式都是以提高扩展性为目的。最常用的方法有：多态，依赖注入，基于接口编程等。</p>
-<p>参考资料：</p>
-<ul>
-<li>大话设计模式</li>
-<li>极客时间设计模式之美</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%88%90%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%88%90%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3.html" class="post-title-link" itemprop="url">设计原则之单一职责--为什么要设计成单一职责</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-01 15:46:47" itemprop="dateCreated datePublished" datetime="2020-05-01T15:46:47+08:00">2020-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%88%90%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="设计原则之单一职责--为什么要设计成单一职责" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%88%90%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%E4%B9%8B%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%88%90%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计原则之单一职责–为什么要设计成单一职责"><a href="#设计原则之单一职责–为什么要设计成单一职责" class="headerlink" title="设计原则之单一职责–为什么要设计成单一职责"></a>设计原则之单一职责–为什么要设计成单一职责</h1><p><code>单一职责原则(Single Responsibility Principle) SRP</code>的意思是，就一个类而言，应该仅有一个引起他变化的原因。</p>
-<p>这个原则的英文描述是<code>A class or module should have a single reponsibility</code>。一个类或者模块只有一个职责。</p>
-<h2 id="为什么要使用单一职责"><a href="#为什么要使用单一职责" class="headerlink" title="为什么要使用单一职责"></a>为什么要使用单一职责</h2><p>借用<code>大话设计模式</code>一书中使用的例子。比如现在科技高度发达，<code>手机</code>成为了日常使用中不可替代的产品。手机的功能很多，可以拍照，可以上网，可以打电话，聊天，打游戏等。假设我们没有手机，那么我们拍照需要摄像机，打游戏需要游戏机，听歌需要mp3，但是现在不用带这么多东西，只需要一个手机就搞定了。觉得很方便。但是呢，手机的拍照功能并没有单反好，游戏性能和游戏数量也比不上ps4和xbox以及ns。</p>
-<p>如果放在代码中就是你的所有代码都写在一起，像一团乱麻一样。严重影响了可读性，扩展性，维护性等。相信没有人喜欢看到这样的代码。所以这就是<code>单一职责</code>。对代码要有结构，要清晰明了，其实代码中到处都体现了这个原则。比如<code>mvc</code>的分层架构，比如前后端分离，比如<code>docker</code>的兴起，比如我们日常使用的框架也分离了我们的职责，使得我们只需要关注一些实现就好了。再生活中也有比如公司分成了各个部门，人类分成了男人女人，由各个职业。每个人只需要关注自己的事情，简单明了。这就是单一职责的好处。</p>
-<p>如果一个类承担的<code>职责</code>过多，就等于把这些职责耦合在一起，一个变化会引起其他意想不到的变化，使得整个程序脆弱不堪。我们经常说要写<code>高内聚，低耦合</code>的代码，如果违反了单一职责那么就只能写出高耦合的代码了。</p>
-<h2 id="如何使用单一职责"><a href="#如何使用单一职责" class="headerlink" title="如何使用单一职责"></a>如何使用单一职责</h2><p><strong>如果你能想到多于一个的动机去改变一个类，那么这个类就具有多于一个的职责</strong>。如果类的职责多了，我们就需要把他们分离开来，当然了，这个原则比较具有主观性。有的人觉得这个类不是单一职责，有的人觉得是单一职责。</p>
-<p>判断是否单一职责要结合具体的业务场景和使用，如果你有多个引起这个类变化的地方，那么就需要重新考虑一下这个类是否符合单一职责了。</p>
-<p>在我们平常开发中，没必要一开始纠结是否符合单一职责，随着开发的演进，程序越来越庞大，我们需要随着业务的发展将类分的越来越细才好，要持续重构。一定不要等到已经往一个类里面塞了很多代码才考虑划分成单一职责。那样的话拆分起来很费劲而且耗时耗力。<strong>在添加新功能的时候要想一想这个功能应该添加到哪里，是否符合单一职责</strong>。</p>
-<p>开发中可以根据下面几点来判断是否满足单一职责：</p>
-<ul>
-<li>类中的代码过多，影响了代码的可读性和维护性。</li>
-<li>和这个类有依赖关系的类比较多，耦合过高。</li>
-<li>比较难给类命名，不清楚这个类是干啥的了。</li>
-<li>类中大量的方法都是集中操作类的某几个属性。</li>
-</ul>
-<h2 id="类的职责是否越单一越好"><a href="#类的职责是否越单一越好" class="headerlink" title="类的职责是否越单一越好"></a>类的职责是否越单一越好</h2><p>显然不是的，如果一个类过于职责单一，比如加密类，有一个加密方法和解密方法。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">hash</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">encode</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">decode</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果我们执着于单一职责，要把这个类拆分成两个类。一个加密类一个解密类。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">hashDecode</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">decode</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">hashEncode</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">encode</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>如果这时候根据新的需求，我们的加密算法需要改变，那么解密算法也需要改变，我们要同时改变两个类，如果忘记其中一个，那么整个程序就会崩溃。我们的最终目标是写出<code>高内聚低耦合</code>的代码。而不是生搬硬套某一个设计原则或者设计模式。<strong>设计原则是总结出来指导我们进行程序设计的方针。合理使用可以使得我们的程序更加健壮</strong>。</p>
-<p>参考资料：</p>
-<ul>
-<li>大话设计模式</li>
-<li>极客时间设计模式之美</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1421,7 +1438,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-count">198</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

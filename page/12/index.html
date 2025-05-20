@@ -196,6 +196,550 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-title-link" itemprop="url">ElasticSearch四--ES--基本操作和批量操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch四--ES--基本操作和批量操作" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h1><h2 id="文档的CRUD"><a href="#文档的CRUD" class="headerlink" title="文档的CRUD"></a>文档的CRUD</h2><ul>
+<li>Create 如果id 已经存在，会失败</li>
+<li>Index 如果id不存在，创建新的文档。否则先删除在创建新的，版本会增加</li>
+<li>Update 文档必须已经存在，更新只会对相应字段做增量修改</li>
+</ul>
+<h3 id="Create"><a href="#Create" class="headerlink" title="Create"></a>Create</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125;?op_type=create  //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125; //创建或更新</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_create/&#123;id&#125; //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">POST &#123;index&#125;/_doc/  //只是创建 自动生成id</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果通过op_type参数指定<code>create</code>那么就只会创建，如果存在会报错</li>
+<li>支持自动生成文档ID，和指定ID两种方式</li>
+<li>通过调用 <code>POST /index/_doc</code>.不指定ID系统就会自动生成</li>
+<li>使用 HTTP PUT index&#x2F;_create&#x2F;1 创建，URI中显式指定 <code>_create</code>,如果该ID的文档已经存在，则操作失败。</li>
+</ul>
+<p><img src="/../images/ES01.png" alt="ES"></p>
+<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br></pre></td></tr></table></figure>
+
+<p>找到文档。HTTP 200,找不到就返回 404</p>
+<p>元信息</p>
+<ul>
+<li>_index&#x2F;_type</li>
+<li>版本信息，同一个ID的文档，即使被删除，Version也会不断增加</li>
+<li>_source 中默认包含了文档的所有原始信息</li>
+</ul>
+<p><img src="/../images/ES02.png" alt="ES"></p>
+<h3 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br><span class="line">&#123;JSON&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Index和Create不一样的地方就在于存在就删除在创建，并且版本号增加。</p>
+<h3 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h3><p> Update 是直接更新</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_update/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;doc&quot;:&#123;JSON&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> <img src="/../images/ES03.png" alt="ES"></p>
+<h3 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h3><p> Delete是删除操作</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE &#123;index&#125;/_doc/&#123;id&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="批量操作-Bulk-API"><a href="#批量操作-Bulk-API" class="headerlink" title="批量操作 Bulk API"></a>批量操作 Bulk API</h2><p> 支持一次调用，对不同的索引进行操作<br> 支持</p>
+<ul>
+<li>Index</li>
+<li>Create</li>
+<li>Update</li>
+<li>Delete</li>
+</ul>
+<p> 只有一次网络请求，单条失败不会影响其他操作结果</p>
+<p> 返回结果包括每一条的执行结果</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST _bulk</span><br><span class="line">&#123; &quot;index&quot;:&#123;&quot;_index&quot;:&quot;test&quot;, &quot;_id&quot;:&quot;1&quot;&#125; &#125;  //指定index和_id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value1&quot; &#125;                     //index 的数据</span><br><span class="line">&#123; &quot;delete&quot; : &#123;&quot;_index&quot;:&quot;test&quot; &quot;_id&quot;:&quot;2&quot;&#125;&#125; //delete 的 index 和id</span><br><span class="line">&#123; &quot;create&quot;: &#123;&quot;_index&quot;:&quot;test2&quot;,&quot;_id&quot;:1&#125;&#125;              //create 的index id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value3&quot;&#125;                      //create 的数据</span><br><span class="line">&#123; &quot;update&quot;:&#123;&quot;_id&quot;:1,&quot;_index&quot;:&quot;test&quot;&#125;&#125;     //update 的id index</span><br><span class="line">&#123; &quot;doc&quot;:&#123;&quot;field2&quot;:&quot;value2&quot;&#125;&#125;              //update 的数据</span><br></pre></td></tr></table></figure></p>
+<p>  <img src="/../images/ES04.png" alt="ES"></p>
+<h2 id="批量获取-mget"><a href="#批量获取-mget" class="headerlink" title="批量获取 mget"></a>批量获取 mget</h2><p>批量操作，可减少网络开销</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST _mget</span><br><span class="line">&#123;</span><br><span class="line">    &quot;docs&quot;:[</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;_index&quot;:&quot;user&quot;</span><br><span class="line">            &quot;_id&quot;:1</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  <img src="/../images/ES05.png" alt="ES"></p>
+<h2 id="批量查询-msearch"><a href="#批量查询-msearch" class="headerlink" title="批量查询 msearch"></a>批量查询 msearch</h2><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_msearch</span><br><span class="line">&#123;&#125;                             //注意这里需要加上这个 不加会报错</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br><span class="line">&#123;&quot;index&quot;: user &#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  <img src="/../images/ES06.png" alt="ES"></p>
+<h2 id="常见错误返回"><a href="#常见错误返回" class="headerlink" title="常见错误返回"></a>常见错误返回</h2><table>
+<thead>
+<tr>
+<th align="left">问题</th>
+<th align="left">原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">无法连接</td>
+<td align="left">网络故障或集群挂了</td>
+</tr>
+<tr>
+<td align="left">连接无法关闭</td>
+<td align="left">网络故障或节点出错</td>
+</tr>
+<tr>
+<td align="left">429</td>
+<td align="left">集群过于繁忙</td>
+</tr>
+<tr>
+<td align="left">4xx</td>
+<td align="left">请求体格式有错</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">集群内部错误</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" class="post-title-link" itemprop="url">ElasticSearch三--ES-基本概念-节点集群分片副本</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch三--ES-基本概念-节点集群分片副本" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="分布式系统的可用性与扩展性"><a href="#分布式系统的可用性与扩展性" class="headerlink" title="分布式系统的可用性与扩展性"></a>分布式系统的可用性与扩展性</h2><p>高可用性</p>
+<ul>
+<li>服务可用性：允许有节点停止服务。</li>
+<li>数据可用性：部分节点丢失，不会丢失数据。</li>
+</ul>
+<p>可扩展性</p>
+<ul>
+<li>请求量提升&#x2F;数据的不断增长（将数据分布到所有节点上）</li>
+</ul>
+<h2 id="分布式特性"><a href="#分布式特性" class="headerlink" title="分布式特性"></a>分布式特性</h2><p>Elasticsearch 的分布式架构好处</p>
+<ul>
+<li>存储的水平扩容</li>
+<li>提高系统的可用性，部分节点停止服务，整个集群的服务不受影响</li>
+</ul>
+<p>Elasticsearch的分布式架构</p>
+<ul>
+<li>不同的集群通过不同的名字来区分，默认名字“Elasticsearch”</li>
+<li>通过配置文件修改，或者在命令行中 -E cluster.name&#x3D;xxx来设置</li>
+<li>一个集群可以有一个或多个节点</li>
+</ul>
+<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>节点是一个Elasticsearch 的实例</p>
+<ul>
+<li>本质上就是一个JAVA进程</li>
+<li>一台机器上可以运行多个Elasticsearch进程，但是线上建议一个机器一个节点</li>
+</ul>
+<p>每一个节点都有名字，通过配置文件配置，或者启动时 -E node.name&#x3D;xxx 来设置</p>
+<p>每个节点在启动之后会有一个UID，保存在data目录下</p>
+<h3 id="Master-eligible-nodes-和-Master-Node"><a href="#Master-eligible-nodes-和-Master-Node" class="headerlink" title="Master-eligible nodes 和 Master Node"></a>Master-eligible nodes 和 Master Node</h3><p>每个节点启动后，默认是一个 Master eligible 节点。</p>
+<ul>
+<li>可以设置 node.master:false 禁止<br>Master-eligible 节点可以参加选主流程，成为 master 节点</li>
+</ul>
+<p>当第一个节点启动时候，它会将自己选举成为 master 节点</p>
+<p>每个节点上都保存了集群的状态，只有 master 节点才能修改。</p>
+<ul>
+<li>集群状态(Cluster State)，维护了一个集群中必要的信息<ul>
+<li>所有的节点信息</li>
+<li>所有的索引和其相关的 Mapping 与 Settings 信息</li>
+<li>分片的路由信息</li>
+</ul>
+</li>
+<li>任意节点都可以修改会导致数据的不一致</li>
+</ul>
+<h3 id="Data-Node-和-Coordinating-Node"><a href="#Data-Node-和-Coordinating-Node" class="headerlink" title="Data Node 和 Coordinating Node"></a>Data Node 和 Coordinating Node</h3><p>Data Node</p>
+<ul>
+<li>可以保存数据的节点，叫做Data Node。 负责保存分片数据。在数据扩展上起到了至关重要的作用。</li>
+</ul>
+<p>Coordinating Node</p>
+<ul>
+<li>负责接受Client 的请求，将请求分发到合适的节点，最终把结果汇集到一起。</li>
+<li>每个节点默认都起到了Coordinating Node的职责</li>
+</ul>
+<h3 id="其他的节点类型"><a href="#其他的节点类型" class="headerlink" title="其他的节点类型"></a>其他的节点类型</h3><p>Hot &amp; Warm Node</p>
+<ul>
+<li>不同硬件配置的Data Node ，用来实现 Hot &amp; Warm 架构，降低集群部署的成本。</li>
+</ul>
+<p>Machine Learning Node</p>
+<ul>
+<li>负责跑机器学习的Job,用来做异常检测</li>
+</ul>
+<p>Tribe Node</p>
+<ul>
+<li>(5.3开始使用 Cross Cluster Search) Tribe Node 连接到不同的Elasticsearch 集群，并且支持将这些集群当成一个单独的集群处理</li>
+</ul>
+<h3 id="配置节点类型"><a href="#配置节点类型" class="headerlink" title="配置节点类型"></a>配置节点类型</h3><p>生产环境建议一个节点担任一个角色</p>
+<table>
+<thead>
+<tr>
+<th align="left">节点类型</th>
+<th align="left">配置参数</th>
+<th align="left">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">maste eligible</td>
+<td align="left">node.master</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">data</td>
+<td align="left">node.data</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">ingest</td>
+<td align="left">node.ingest</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">coordinating only</td>
+<td align="left">无</td>
+<td align="left">每个节点默认都是coordinating节点，设置其他类型全部为false</td>
+</tr>
+<tr>
+<td align="left">machine learning</td>
+<td align="left">node.ml</td>
+<td align="left">true(需要 enable x-pack)</td>
+</tr>
+</tbody></table>
+<h2 id="分片（Primary-Shard-amp-Replica-Shard）"><a href="#分片（Primary-Shard-amp-Replica-Shard）" class="headerlink" title="分片（Primary Shard &amp; Replica Shard）"></a>分片（Primary Shard &amp; Replica Shard）</h2><p>主分片，用以解决数据水平扩展的问题。通过主分片，可以将数据分布到集群内的所有节点之上。</p>
+<ul>
+<li>一个分片是一个运行的Lucene的实例</li>
+<li>主分片数在索引创建时指定，后续不允许修改，除非Reindex</li>
+</ul>
+<p>副本，用以解决数据高可用的问题。分片是主分片的拷贝</p>
+<ul>
+<li>副本分片数，可以动态调整</li>
+<li>增加副本数，还可以在一定程度上提高服务的可用性（读取的吞吐）</li>
+</ul>
+<h3 id="分片的设定"><a href="#分片的设定" class="headerlink" title="分片的设定"></a>分片的设定</h3><p>对于生产环境，需要提前做好容量规划</p>
+<p>分片数设置过小</p>
+<ul>
+<li>导致后续无法增加节点实现水平扩展</li>
+<li>单个分片的数据量太大，导致数据重新分配耗时</li>
+</ul>
+<p>分片数设置过大，7.0开始，默认分片设置为1，解决了over-sharding的问题</p>
+<ul>
+<li>影响搜索结果的相关性打分，影响统计结果的准确性</li>
+<li>单个节点上过多的分片，会导致资源浪费，同时也会影响性能</li>
+</ul>
+<h3 id="查询集群的健康状态"><a href="#查询集群的健康状态" class="headerlink" title="查询集群的健康状态"></a>查询集群的健康状态</h3><p>使用GET方法访问 _cluster&#x2F;health</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_cluster/health</span><br></pre></td></tr></table></figure>
+
+<p>或者访问 <code>http://localhost:9200/_cluster/health</code></p>
+<p>Green : 集群健康<br>Yello : 主分片分配，副本未分配<br>Red   : 主分片未分配</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" class="post-title-link" itemprop="url">ElasticSearch三--ES-基本概念-索引文档REST API</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch三--ES-基本概念-索引文档REST API" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="文档-Document"><a href="#文档-Document" class="headerlink" title="文档(Document)"></a>文档(Document)</h2><p>Elasticsearch 是面向<code>文档</code>的，文档是所有可搜索数据的最小单位。</p>
+<ul>
+<li>日志文件中的日志项。</li>
+<li>电影的具体信息&#x2F;唱片的具体信息</li>
+<li>MP3播放器里的一首歌&#x2F;一篇PDF文档中的具体内容</li>
+</ul>
+<p>文档会被序列化成 JSON 格式，保存在Elasticsearch中。</p>
+<ul>
+<li>JSON对象由字段组成</li>
+<li>每个字段都有对应的字段类型（字符串&#x2F;数值&#x2F;布尔&#x2F;日期&#x2F;二进制&#x2F;范围类型）</li>
+</ul>
+<p>每个文档都有一个Unique ID</p>
+<ul>
+<li>你可以自己指定ID</li>
+<li>或者通过Elasticsearch自己生成</li>
+</ul>
+<h3 id="文档的元数据"><a href="#文档的元数据" class="headerlink" title="文档的元数据"></a>文档的元数据</h3><ul>
+<li>元数据，用于标注文档的相关信息<ul>
+<li>_index - 文档所属的索引名</li>
+<li>_type - 文档所属的类型名</li>
+<li>_id - 文档唯一的ID</li>
+<li>_source - 文档的原始JSON数据</li>
+<li>_all - 整合所有字段内容到该字段，已被废除</li>
+<li>_version - 文档的版本信息</li>
+<li>_score - 相关性打分</li>
+</ul>
+</li>
+</ul>
+<h2 id="索引（Index）"><a href="#索引（Index）" class="headerlink" title="索引（Index）"></a>索引（Index）</h2><p><code>索引</code>是<code>文档</code>的容器，是一类文档的集合。</p>
+<ul>
+<li>Index 体现了逻辑空间的概念：每个索引都有自己的Mapping定义，用于定义包含的文档的字段名和字段类型</li>
+<li>Shard 体现了物理空间的概念：索引中的数据分散在Shard上</li>
+</ul>
+<p>索引的 Mapping 和 Settings</p>
+<ul>
+<li>Mapping 定义文档字段的类型</li>
+<li>Setting 定义不同的数据分布</li>
+</ul>
+<h4 id="索引的不同语意"><a href="#索引的不同语意" class="headerlink" title="索引的不同语意"></a>索引的不同语意</h4><ul>
+<li>名词：一个Elasticsearch中，有多个不同的索引。</li>
+<li>动词：保存一个文档到Elasticsearch的过程也叫索引（indexing）<ul>
+<li>ES中，创建一个倒排索引的过程</li>
+</ul>
+</li>
+<li>名词：一个B树索引，一个倒排索引</li>
+</ul>
+<h2 id="类型Type"><a href="#类型Type" class="headerlink" title="类型Type"></a>类型Type</h2><ul>
+<li>7.0 开始 每个索引只能 创建一个 Type - “_doc”</li>
+</ul>
+<h2 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h2><p>Elasticsearch提供了REST API的方式进行调用，这样不管什么语言都可以通过HTTP的方式进行调用。</p>
+<p>这些API的文档可以在<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html">Elasticsearch的文档</a>里面找到.</p>
+<p>可以在Kibana里面的<code>dev tools</code>进行REST API的测试。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--kibana%E5%AE%89%E8%A3%85.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1542,544 +2086,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" class="post-title-link" itemprop="url">网络原理自顶向下三可靠数据传输原理实现SR选择重传协议</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-12 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-12T15:28:49+08:00">2020-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议"><a href="#网络原理自顶向下三可靠数据传输原理实现SR选择重传协议" class="headerlink" title="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议"></a>网络原理自顶向下三可靠数据传输原理实现SR选择重传协议</h1><h3 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h3><p>在SR中，和GBN不同，SR是给每一个分组设置定时器，发送端只确认重传当前分组，而不是所有分组。接收端在接收到乱序的分组的时候会进行缓存，当前面的分组到达以后一起提交给应用层。</p>
-<h4 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h4><ul>
-<li>等待上层调用。这里和GBN一样</li>
-<li>超时。超时哪个重传哪个</li>
-<li>收到ACK。如果收到的是最小序号的ACK，那么base可以往前移动，也就是窗口滑动。如果收到其他序号的ACK。那么把这些ACK缓存。</li>
-</ul>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$base</span> = <span class="number">1</span>;</span><br><span class="line"><span class="variable">$nextSeqNum</span> = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span>[<span class="variable">$nextSeqNum</span>] = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$nextSeqNum</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>[<span class="variable">$nextSeqNum</span>]);</span><br><span class="line">    <span class="comment">//每个启动一个定时器</span></span><br><span class="line">    <span class="title function_ invoke__">start_timer</span>(<span class="variable">$nextSeqNum</span>);    </span><br><span class="line">    <span class="comment">//如果超时</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$timeNum</span> = <span class="title function_ invoke__">timeout</span>()) &#123;</span><br><span class="line">        <span class="comment">//重传超时的分组</span></span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>[<span class="variable">$timeNum</span>]);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>() &amp;&amp; <span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>)) &#123;</span><br><span class="line">        <span class="comment">//等待接收方回传ack 并且没有出现错误</span></span><br><span class="line">        <span class="comment">//获取确认的序号</span></span><br><span class="line">        <span class="variable">$ackNum</span> = <span class="title function_ invoke__">getAckNum</span>(<span class="variable">$isAck</span>);</span><br><span class="line">        <span class="title function_ invoke__">stop_timer</span>(<span class="variable">$ackNum</span>);</span><br><span class="line">        <span class="comment">//判断这个ACK是不是base</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$ackNum</span> == <span class="variable">$base</span>) &#123;</span><br><span class="line">            ++<span class="variable">$base</span>;</span><br><span class="line">            <span class="comment">//判断缓存有没有</span></span><br><span class="line">            <span class="keyword">while</span>(<span class="title function_ invoke__">array_key_exists</span>(++<span class="variable">$ackNum</span>, <span class="variable">$cache</span>)) &#123;</span><br><span class="line">                <span class="comment">//如果下一个ack已经收到了，那么就把base接着往前移动</span></span><br><span class="line">                ++<span class="variable">$base</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//缓存起来</span></span><br><span class="line">            <span class="variable">$cache</span>[<span class="variable">$ackNum</span>] = <span class="variable">$ackNum</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h4><ul>
-<li>序号在rcv_base 至 rcv_base + N - 1内的分组被正确接受。如果该分组不是期望的分组，那么缓存，如果是，那么给应用层并且看缓存里面有没有后续，有就直接一起给应用层</li>
-<li>序号在rcv_base - N 至 rcv_base - 1内的分组被正确接受。返回一个确认ACK。表示我已经收到了。</li>
-<li>其他情况。忽略分组</li>
-</ul>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//期望的序号</span></span><br><span class="line"><span class="variable">$expackNum</span> = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测通过了并且报文序号正确</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] &gt; <span class="variable">$expackNum</span> &amp;&amp; <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] &lt; <span class="variable">$expackNum</span> + N - <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$expackNum</span>) &#123;</span><br><span class="line">                <span class="comment">//是我们期望的，直接给应用层</span></span><br><span class="line">                <span class="comment">//解析报文</span></span><br><span class="line">                <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">                <span class="comment">//序号对的</span></span><br><span class="line">                <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">                <span class="comment">//把数据给应用层</span></span><br><span class="line">                <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">                <span class="comment">//回传ACK</span></span><br><span class="line">                <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$expackNum</span>);</span><br><span class="line">                <span class="variable">$expackNum</span>++;</span><br><span class="line">                <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">                <span class="comment">//查询缓存里面有没有</span></span><br><span class="line">                <span class="variable">$key</span> = <span class="variable">$expackNum</span> + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">while</span>(<span class="title function_ invoke__">array_key_exists</span>(<span class="variable">$key</span>, <span class="variable">$cache</span>)) &#123;</span><br><span class="line">                    <span class="comment">//如果下一个分组已经收到了，那么给应用层，并且滑动窗口</span></span><br><span class="line">                    <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$cache</span>[<span class="variable">$expackNum</span>]);</span><br><span class="line">                    ++<span class="variable">$expackNum</span>;</span><br><span class="line">                    <span class="variable">$key</span>++;</span><br><span class="line">                &#125;   </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//缓存分组</span></span><br><span class="line">                <span class="variable">$cache</span>[<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>]] = <span class="variable">$packet</span>;</span><br><span class="line">                <span class="comment">//回传ACK</span></span><br><span class="line">                <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>]);</span><br><span class="line">                <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没通过差错检测或者序号错误，我们回传一个上一个ack，告诉发送端上一个分组我们收到了，当前分组没收到。</span></span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$expackNum</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html" class="post-title-link" itemprop="url">网络原理自顶向下三可靠数据传输原理实现停等协议</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-12 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-12T15:28:49+08:00">2020-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下三可靠数据传输原理实现停等协议" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E5%81%9C%E7%AD%89%E5%8D%8F%E8%AE%AE.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="网络原理自顶向下三可靠数据传输原理实现停等协议"><a href="#网络原理自顶向下三可靠数据传输原理实现停等协议" class="headerlink" title="网络原理自顶向下三可靠数据传输原理实现停等协议"></a>网络原理自顶向下三可靠数据传输原理实现停等协议</h1><p>这里仅考虑<code>单向可靠数据传输</code>。而不是<code>双向可靠数据传输</code>。</p>
-<h2 id="构造可靠数据传输协议"><a href="#构造可靠数据传输协议" class="headerlink" title="构造可靠数据传输协议"></a>构造可靠数据传输协议</h2><h3 id="经完全可靠信道的可靠数据传输-rdt1-0版本"><a href="#经完全可靠信道的可靠数据传输-rdt1-0版本" class="headerlink" title="经完全可靠信道的可靠数据传输 rdt1.0版本"></a>经完全可靠信道的可靠数据传输 rdt1.0版本</h3><p>首先考虑最简单的版本，底层信道完全可靠。</p>
-<h4 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h4><p>发送端应用层只需要调用<code>rdt_send</code>函数。网络层提供了一个函数<code>udt_send</code>来给运输层调用。现在假设<code>udt_send</code>是可靠的。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输</span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h4><p>接收端网络层只需要调用<code>rdt_rev</code>函数。应用层提供了一个<code>deliver_data</code>函数来接受运输层的数据。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//解析报文</span></span><br><span class="line">    <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//把数据给应用层</span></span><br><span class="line">    <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="有限状态机"><a href="#有限状态机" class="headerlink" title="有限状态机"></a>有限状态机</h4><p>再来画一下对应的有限状态机（FSM）.</p>
-<p>发送端只有一个状态，<code>等待调用</code>。</p>
-<p><img src="/"></p>
-<p>接收端也只有一个状态，<code>等待调用</code>。</p>
-<p><img src="/"></p>
-<h3 id="经比特差错信道的可靠数据传输rdt2-0"><a href="#经比特差错信道的可靠数据传输rdt2-0" class="headerlink" title="经比特差错信道的可靠数据传输rdt2.0"></a>经比特差错信道的可靠数据传输rdt2.0</h3><p>现在底层信道有可能造成比特的错误。</p>
-<p>回想一下打电话的时候，如果我们说的话对方没听清，会怎么样。会<code>再说一遍</code>也就是<code>重传</code>。</p>
-<p>那么什么情况下会<code>重传</code>。当接收方说<code>我没听清</code>的时候。</p>
-<p>所以在<code>rdt2.0</code>里面我们让接收方接受完信息后回传一个标志，告诉我们<code>正确</code>还是<code>错误</code>。</p>
-<p>如果正确，那么我们继续等待调用。</p>
-<p>如果错误，那么我们<code>重传</code>。</p>
-<p>基于这样重传机制的可靠数据传输协议称为<code>自动重传请求协议</code>（Automatic Repeat reQuest）ARQ,需要下面三个功能</p>
-<ul>
-<li>差错检测</li>
-<li>接收方回传ack或者nak</li>
-<li>重传</li>
-</ul>
-<h4 id="发送端-1"><a href="#发送端-1" class="headerlink" title="发送端"></a>发送端</h4><p>看一下发送端的简单实现</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack或者nak</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//判断ack</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//收到了Nak分组，需要重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端-1"><a href="#接收端-1" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="comment">//解析报文</span></span><br><span class="line">        <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">        <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">        <span class="comment">//把数据给应用层</span></span><br><span class="line">        <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//有错，回传一个nak，不交付数据</span></span><br><span class="line">        <span class="variable">$nak</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$nak</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h4><p>现在发送端有两个状态</p>
-<ul>
-<li>等待调用</li>
-<li>等待返回ack或nak</li>
-</ul>
-<p>接收端还是一个状态</p>
-<ul>
-<li>等待调用</li>
-</ul>
-<p>rdt2.0也被称为<code>停等协议</code>。因为发送端处于<code>等待ack</code>状态是不能被上层调用的。</p>
-<h3 id="ack受损rdt2-1"><a href="#ack受损rdt2-1" class="headerlink" title="ack受损rdt2.1"></a>ack受损rdt2.1</h3><p>从上面的代码可以看出来，接收端发送<code>ack</code>使用的是<code>udt_send</code>函数，这个函数是不可靠的。那么如果我们的<code>ack</code>或者<code>nak</code>损坏了怎么办。</p>
-<p>这时候可以像处理损坏分组一样。我们校验ack是否受损，如果受损，那么我们重传分组。</p>
-<p>可是重传分组就会造成接收方不知道这个分组我有没有收到过。所以我们需要增加<code>分组序号</code>。</p>
-<p>对于停等协议来说，0和1就够用了。因为停等协议只有两个状态，发完会等待ack。</p>
-<h4 id="发送端-2"><a href="#发送端-2" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack或者nak</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>)) &#123;</span><br><span class="line">        <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">        <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">        <span class="comment">//判断ack</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//收到了Nak分组，需要重传</span></span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端-2"><a href="#接收端-2" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="comment">//判断报文序号</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="comment">//解析报文</span></span><br><span class="line">            <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">            <span class="comment">//序号对的</span></span><br><span class="line">            <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">            <span class="comment">//把数据给应用层</span></span><br><span class="line">            <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">            <span class="comment">//回传ACK</span></span><br><span class="line">            <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">            <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//序号错了，说明这不是我们要的，我们回传一个ack，告诉发送端这个分组我们收到了。</span></span><br><span class="line">            <span class="comment">//回传ACK</span></span><br><span class="line">            <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">            <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//有错，回传一个nak，不交付数据</span></span><br><span class="line">        <span class="variable">$nak</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">0</span>, <span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$nak</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="状态机-1"><a href="#状态机-1" class="headerlink" title="状态机"></a>状态机</h4><p>发送端有4个状态</p>
-<ul>
-<li>等待调用0</li>
-<li>等待ack0或者nak0</li>
-<li>等待调用1</li>
-<li>等待ack1或者nak1</li>
-</ul>
-<p>接收端有2个状态</p>
-<ul>
-<li>等待调用0</li>
-<li>等待调用1</li>
-</ul>
-<h3 id="去掉nak分组的rdt2-2"><a href="#去掉nak分组的rdt2-2" class="headerlink" title="去掉nak分组的rdt2.2"></a>去掉nak分组的rdt2.2</h3><p>从上面的代码可以看出来，发送端在接收到<code>nak</code>的时候和丢失<code>ack</code>或者<code>nak</code>的时候都是重传。<br>所以我们只需要判断<code>ack</code>就可以了。那么同样接收方只需要回传<code>ack</code>就可以了。<br>这样一来，代码更见简单了。</p>
-<h4 id="发送端-3"><a href="#发送端-3" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//等待接收方回传ack</span></span><br><span class="line">    <span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>();</span><br><span class="line">    <span class="comment">//差错检测</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>) &amp;&amp; <span class="variable">$isAck</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">        <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">        <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">        <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端-3"><a href="#接收端-3" class="headerlink" title="接收端"></a>接收端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测通过了并且报文序号正确</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>) &amp;&amp; <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">        <span class="comment">//解析报文</span></span><br><span class="line">        <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">        <span class="comment">//序号对的</span></span><br><span class="line">        <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">        <span class="comment">//把数据给应用层</span></span><br><span class="line">        <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没通过差错检测或者序号错误，我们回传一个上一个ack，告诉发送端上一个分组我们收到了，当前分组没收到。</span></span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, !<span class="variable">$num</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h4 id="状态机-2"><a href="#状态机-2" class="headerlink" title="状态机"></a>状态机</h4><p>发送端有4个状态</p>
-<ul>
-<li>等待调用0</li>
-<li>等待ack0或者nak0</li>
-<li>等待调用1</li>
-<li>等待ack1或者nak1</li>
-</ul>
-<p>接收端有2个状态</p>
-<ul>
-<li>等待调用0</li>
-<li>等待调用1</li>
-</ul>
-<h3 id="经具有比特差错的丢包信道的可靠数据传输rdt3-0"><a href="#经具有比特差错的丢包信道的可靠数据传输rdt3-0" class="headerlink" title="经具有比特差错的丢包信道的可靠数据传输rdt3.0"></a>经具有比特差错的丢包信道的可靠数据传输rdt3.0</h3><p>现在底层信道除了会出错，还会丢包了。</p>
-<p>如果遇到丢包怎么办呢，也就是接收方接收不到数据了。这个时候也就回传不了<code>ack</code>。</p>
-<p>那么可以在发送端加上超时机制。如果长时间没收到<code>ack</code>。那么就重传分组。</p>
-<h4 id="发送端-4"><a href="#发送端-4" class="headerlink" title="发送端"></a>发送端</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$num</span> = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$num</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>);</span><br><span class="line">    <span class="comment">//启动一个定时器</span></span><br><span class="line">    <span class="title function_ invoke__">start_timer</span>();</span><br><span class="line">    <span class="comment">//等待接收方回传ack 并且没有超时</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>() &amp;&amp; !<span class="title function_ invoke__">timeout</span>()) &#123;</span><br><span class="line">        <span class="comment">//差错检测</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>) &amp;&amp; <span class="variable">$isAck</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="comment">//没出问题，那么把改变序号</span></span><br><span class="line">            <span class="variable">$num</span> = !<span class="variable">$num</span>;</span><br><span class="line">            <span class="comment">//收到了Ack分组，可以结束了</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//ack出问题了，那么这个时候重传</span></span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没接收到ack或者超时 重发</span></span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">rdt_send</span>(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端-4"><a href="#接收端-4" class="headerlink" title="接收端"></a>接收端</h4><p>无变化</p>
-<h4 id="状态机-3"><a href="#状态机-3" class="headerlink" title="状态机"></a>状态机</h4><p>发送端</p>
-<h2 id="流水线可靠数据传输协议"><a href="#流水线可靠数据传输协议" class="headerlink" title="流水线可靠数据传输协议"></a>流水线可靠数据传输协议</h2><p>停等协议的缺点是性能受限。因为每次要等待上一个ack回来才能发送下一个报文。</p>
-<p>而采用<code>流水线</code>就是不等待ack直接发送下一个报文。</p>
-<p>这样会有下面的影响</p>
-<ul>
-<li>必须增加序号范围，因为每个分组必须有序号</li>
-<li>协议的发送方和接收方两端也许不得不缓存多个分组。</li>
-<li>所需序号范围和对缓冲的要求取决于数据传输协议如何处理丢失，损坏及时延大的分组。解决流水线的差错恢复有两种基本方法：<ul>
-<li>回退N步（Go Back N）GBN</li>
-<li>选择重传（Selective Repeat）SR</li>
-</ul>
-</li>
-</ul>
-<h3 id="GBN"><a href="#GBN" class="headerlink" title="GBN"></a>GBN</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/111138785">滑动窗口协议</a></p>
-<h3 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/111138684">选择重传协议</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html" class="post-title-link" itemprop="url">网络原理自顶向下三运输层</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-12 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-12T15:28:49+08:00">2020-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下三运输层" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E8%BF%90%E8%BE%93%E5%B1%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h1><h2 id="运输层和网络层的关系"><a href="#运输层和网络层的关系" class="headerlink" title="运输层和网络层的关系"></a>运输层和网络层的关系</h2><p>网络层是主机到主机，端到端的逻辑传输。</p>
-<p>运输层是应用到应用，端口到端口的逻辑传输。</p>
-<p>先由网络层送到主机，再通过运输层送到对应的端口程序中。</p>
-<p>运输层将应用层报文封装成报文段交给网络层</p>
-<p>将主机间交付扩展到进程间交付被称为<code>运输层的多路复用和多路分解</code></p>
-<p>UDP提供不可靠服务</p>
-<ul>
-<li>差错检测</li>
-<li>数据交付</li>
-</ul>
-<p>TCP提供可靠服务</p>
-<ul>
-<li>流量控制</li>
-<li>序号</li>
-<li>确认</li>
-<li>定时器</li>
-<li>拥塞控制</li>
-</ul>
-<h2 id="多路复用和多路分解"><a href="#多路复用和多路分解" class="headerlink" title="多路复用和多路分解"></a>多路复用和多路分解</h2><p>源主机使用多路复用把多个套接字进程的报文发送给目的主机</p>
-<p>目的主机使用多路分解把报文发送给多个套接字进程</p>
-<p>运输层需要再首部信息加入</p>
-<ul>
-<li>源端口号</li>
-<li>目的端口号</li>
-</ul>
-<p>通过端口号来区分进程</p>
-<p>UDP套接字通过二元组来标识</p>
-<ul>
-<li>目的端口号</li>
-<li>目的ip<br>只要你的目的ip和端口号相同就算你的源ip和端口不一样，也会分解到同一个套接字</li>
-</ul>
-<p>TCP通过四元组来标识</p>
-<ul>
-<li>源ip</li>
-<li>源端口</li>
-<li>目的Ip</li>
-<li>目的端口</li>
-</ul>
-<p>这是因为TCP会创建链接，一个TCP进程有一个“欢迎套接字”，用来等待程序过来，然后创建一个新的套接字来进行通信。</p>
-<p>如果四元组一致会分解到一个套接字，不一致，会分解到另外的套接字。</p>
-<h3 id="web服务器和TCP"><a href="#web服务器和TCP" class="headerlink" title="web服务器和TCP"></a>web服务器和TCP</h3><p>现在的计算机有线程的概念，所以TCP链接一般也不会创建多个进程来服务不同的客户端，而是创建多个线程套接字，通过分解到不同的线程套接字来服务多个客户端。</p>
-<h2 id="无连接运输：UDP"><a href="#无连接运输：UDP" class="headerlink" title="无连接运输：UDP"></a>无连接运输：UDP</h2><p>UDP只提供了运输层最低限度的东西。</p>
-<ul>
-<li>差错检测</li>
-<li>复用分解</li>
-</ul>
-<p>DNS是使用UDP的一个应用层协议.</p>
-<p>UDP存在的意义及优势：</p>
-<ul>
-<li>关于发送什么数据以及何时发送的应用层控制更为精细。<br>采用UDP时，只要应用将数据给UDP,UDP就会直接传递给IP网络层。TCP有<code>拥塞控制</code>和重发机制，但是这样会需要更长的时间。因为实时应用通常要求最小的发送速率，不希望过分的延迟报文段的传送，且能容忍一部分数据丢失，TCP服务模型并不是特别适合这些应用的需要。这些应用使用UDP，并可以再应用层实现所需的，超出UDP的额外功能。</li>
-<li>无需链接建立<br>TCP需要三次握手建立链接，UDP不需要。因此没有建立链接的时延。</li>
-<li>无连接状态<br>TCP需要再端系统中维护链接状态。此链接状态包括接受和发送缓存，拥塞控制参数以及序号与确认号的参数。UDP一般能支持更多的活跃用户。</li>
-<li>分组首部开销小<br>每个TCP报文段首部有20字节，UDP只有8字节</li>
-</ul>
-<p>UDP也可以通过应用层实现<code>可靠性传输</code>。比如chrome的<code>QUIC协议</code>。</p>
-<h3 id="UDP报文段结构"><a href="#UDP报文段结构" class="headerlink" title="UDP报文段结构"></a>UDP报文段结构</h3><ul>
-<li>首部字段 8字节<ul>
-<li>源端口号 2字节</li>
-<li>目的端口号 2字节</li>
-<li>长度 2字节 数据长度</li>
-<li>校验和 2字节 差错检测</li>
-</ul>
-</li>
-<li>数据</li>
-</ul>
-<h3 id="UDP校验和"><a href="#UDP校验和" class="headerlink" title="UDP校验和"></a>UDP校验和</h3><p>发送方的UDP对报文段中的所有16比特字的和进行反码运算，求和时候遇到的任何溢出都被回卷。得到的结果被放在UDP报文段中的校验和字段。</p>
-<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p>如果有三个16比特的字：</p>
-<p>0110011001100000<br>0101010101010101<br>1000111100001100</p>
-<p>计算他们的和</p>
-<p> 0110011001100000<br>+0101010101010101<br>&#x3D;1011101110110101<br>+1000111100001100<br>&#x3D;0100101011000001</p>
-<p>这个时候溢出了，把溢出的1加到后面<br>&#x3D;0100101011000010</p>
-<p>进行反码运输，把1变0，0变1<br>&#x3D;1011010100111101</p>
-<p>这就变成了校验和。</p>
-<p>接收方将三个16比特和校验和加在一起，如果全是1，那么就没问题。如果有0，那么就有差错。</p>
-<p>把上面的和加上校验和算一下<br> 0100101011000010<br>+1011010100111101<br>&#x3D;1111111111111111</p>
-<p>UDP虽然实现了<code>差错检测</code>，但是没有<code>差错恢复</code>。他只是丢弃受损的报文段。其他实现是将受损的报文段交给应用程序并给出警告。</p>
-<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><p>TCP提供<code>全双工服务</code>。双方都可以发送数据。</p>
-<p>TCP首先建立连接。然后把数据引导到<code>发送缓存</code>中。从发送缓存中取出数据进行发送。取出的数量受限于<code>最大报文段长度</code>MSS。MSS一般根据<code>最大链路层帧长度</code>MTU。以太网和PPP链路层都具有1500MTU。所以MSS的典型值在1460 + 40字节的TCP&#x2F;IP首部长度。</p>
-<p>TCP报文段结构：</p>
-<ul>
-<li>源端口号 16比特</li>
-<li>目的端口号 16比特</li>
-<li>序号 32比特</li>
-<li>确认号 32比特</li>
-<li>接收窗口 16比特 用于流量控制</li>
-<li>首部长度 4比特</li>
-<li>选项字段 可选变长</li>
-<li>标志字段 6比特<ul>
-<li>ACK用于确认</li>
-<li>RST, SYN, FIN用于连接建立和删除</li>
-<li>拥塞通告中使用 CWR和ECE字段</li>
-<li>PSH置位标识接收方应立即将数据交给上层</li>
-<li>URG用来指示紧急数据</li>
-</ul>
-</li>
-<li>紧急数据指针字段 16比特</li>
-<li>校验和 16比特</li>
-</ul>
-<h3 id="往返时间的估计与超时"><a href="#往返时间的估计与超时" class="headerlink" title="往返时间的估计与超时"></a>往返时间的估计与超时</h3><h4 id="估计往返时间"><a href="#估计往返时间" class="headerlink" title="估计往返时间"></a>估计往返时间</h4><p>估计一个SampleRTT作为样本，根据SampleRTT取平均值，也就是EstimatedRTT。</p>
-<p>EstimatedRTT &#x3D; (1 - a) * EstimatedRTT + a * SmapleRTT</p>
-<p>a的推荐值是0.125。</p>
-<p>RTT的偏差用DevRTT表示</p>
-<p>DevRTT &#x3D; (1 - b) * DevRTT + b * |SampleRTT - EstimatedRTT|</p>
-<p>b的推荐值是0.25</p>
-<h4 id="设置和管理重传超时间隔"><a href="#设置和管理重传超时间隔" class="headerlink" title="设置和管理重传超时间隔"></a>设置和管理重传超时间隔</h4><p>超时间隔应该 &gt;&#x3D; EstimatedRTT。但是也不能大太多</p>
-<p>TimeoutInterval &#x3D; EstimatedRTT + 4 * DevRTT</p>
-<p>TCP设置单一的定时器，每当超时一次超时时间会加倍，以免造成网络拥塞。</p>
-<p>TCP收到同一个ACK三次，会进行快速重传而不等待定时器超时。</p>
-<p>TCP采用的是GBN和SR的混合体。</p>
-<h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><p>TCP有发送缓存和接收缓存。接收方把数据放入接收缓存，然后读取到应用层。</p>
-<p>当发送数据太多，为防止接收缓存装不下，需要控制发送端发送数量。</p>
-<p><code>接收窗口</code>字段就是这个作用，用来控制接收方还有多少空间。发送方就可以根据这个调整发送数量。</p>
-<p>如果接收缓存已经满了。那么发送方依旧会发送1比特的数据。这样才能知道接收方变化后的接收缓存大小。</p>
-<h3 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h3><ul>
-<li>第一步：发送一个SYN &#x3D; 1 Seq &#x3D; 随机序号</li>
-<li>第二步：返回一个SYN &#x3D; 1 Seq &#x3D; 随机序号 Ack &#x3D; Seq + 1</li>
-<li>第三步：SYN &#x3D; 0 Seq &#x3D; Ack Ack &#x3D; Seq + 1 可以携带数据</li>
-</ul>
-<h3 id="关闭连接"><a href="#关闭连接" class="headerlink" title="关闭连接"></a>关闭连接</h3><ul>
-<li>第一步：发送一个FIN &#x3D; 1</li>
-<li>第二步：接收一个ACK</li>
-<li>第三步：接收一个FIN &#x3D; 1</li>
-<li>第四步：发送一个ACK</li>
-</ul>
-<h3 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h3><ul>
-<li><p>端到端的拥塞控制。网络层不提供支持，端系统观察网络层得到结果。</p>
-</li>
-<li><p>网络辅助的拥塞控制。</p>
-</li>
-<li><p>丢失的报文段表示拥塞，降低发送速率。</p>
-</li>
-<li><p>确认报文段表示顺利，提高发送速率</p>
-</li>
-<li><p>带宽检测，逐步提高发送速率，如果丢失超时就降低然后接着提高。</p>
-</li>
-</ul>
-<h4 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h4><p>开始速率较小。大概MSS&#x2F;RTT.<br>每当收到一个确认，就增加一个MSS。也就是指数级增长，不断翻倍。<br>何时结束？</p>
-<ul>
-<li>遇到丢包超时</li>
-<li>达到一个阈值</li>
-</ul>
-<p>结束慢启动进入拥塞避免模式</p>
-<h4 id="拥塞避免模式"><a href="#拥塞避免模式" class="headerlink" title="拥塞避免模式"></a>拥塞避免模式</h4><p>不再郑家指数级，而是一个一个增长。线性增长</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2152,7 +2158,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-count">198</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

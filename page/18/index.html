@@ -196,6 +196,387 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" class="post-title-link" itemprop="url">mysql事务怎么实现的，什么是两阶段提交</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-17 18:34:10" itemprop="dateCreated datePublished" datetime="2020-04-17T18:34:10+08:00">2020-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" class="post-meta-item leancloud_visitors" data-flag-title="mysql事务怎么实现的，什么是两阶段提交" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql%E4%BA%8B%E5%8A%A1%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="mysql事务怎么实现的，什么是两阶段提交"><a href="#mysql事务怎么实现的，什么是两阶段提交" class="headerlink" title="mysql事务怎么实现的，什么是两阶段提交"></a>mysql事务怎么实现的，什么是两阶段提交</h1><p>我们都知道使用mysql的事务，准确来说是innoDB引擎的事务，可以保证数据的一致性，原子性等。那么为什么呢？</p>
+<h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>innoDB里面用到了一个叫做<code>redo log</code>（重做日志）的东西。</p>
+<p>当你进行数据库操作的时候，innoDB并不会直接操作磁盘数据，因为这样很慢很慢。它使用了<code>wal</code>的机制，所有的操作先记录在redo log。等没事干了或者redo log满了再把数据刷到磁盘里面。这样的话他刷盘的时候就是顺序io，避免了使用随机io。redo log的大小我们可以通过参数设置。</p>
+<h3 id="缓冲池"><a href="#缓冲池" class="headerlink" title="缓冲池"></a>缓冲池</h3><p>在innoDB里面还有一个缓冲池，buffer_pool，这个缓冲池是在内存中的。为啥有缓冲池，因为磁盘的速度太慢了，如果每次都直接操作磁盘，那就完犊子了。就需要用到内存来缓冲一下，提升性能。</p>
+<p>从innoDB里面读取数据的时候，实际上读取的是缓冲池，只有当缓冲池中没有记录的时候，才会读取磁盘，并且将记录放入缓冲池方便下次读取。</p>
+<p>缓冲池的大小可以通过<code>innodb_buffer_pool_size</code>参数来指定。</p>
+<p>缓存池中基本有以下组件：</p>
+<ul>
+<li>索引页</li>
+<li>数据页</li>
+<li>undo页</li>
+<li>插入缓冲（insert buffer)</li>
+<li>自适应哈希索引</li>
+<li>锁信息</li>
+<li>数据字典</li>
+<li>redo log buffer</li>
+</ul>
+<p>缓冲池既然是在内存中，有固定大小，就会有淘汰机制，缓冲池使用的是LRU机制，也就是最近最少使用的会被淘汰掉。</p>
+<p>这里面还有一个redo log buffer，这里面存储的就是上面说的redo log的信息了，会先写入这个buffer，然后再刷入redo log里面。有一个参数<code>innodb_log_buffer_size</code>来控制redo log buffer的大小。这个不用太大，因为一般每秒都会把这里面的刷新到redo log。</p>
+<p>redo log buffer刷新到redo log的三种情况：</p>
+<ul>
+<li>每秒刷新</li>
+<li>事务提交时候刷新</li>
+<li>当redo log buffer剩余空间少于一半的时候刷新</li>
+</ul>
+<h3 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h3><p>redo log是innoDB引擎的日志，那mysql自己同样有日志，就是这个binlog日志。binlog 里面记载了mysql的所有变化，可以用来恢复数据库，创建备库，从库等。可以查看我的<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105248917">mysql读写分离</a>。</p>
+<p>那为什么有两个日志呢，这是因为mysql最开始默认使用的是myisam引擎，myisam引擎没有redo log，mysql就有自己的binlog。innoDB引擎是后来加入mysql的。所以他们各自有各自的日志。</p>
+<p>这两个日志有什么区别呢？</p>
+<ol>
+<li>rodo log是innoDB引擎的，binlog 是mysql的，binlog所有引擎都可以使用。</li>
+<li>redo log记录的是“再某个数据页上修改了啥”，binlog记录的是你的sql。</li>
+<li>redo log是固定大小，循环写入的，binlog没有大小限制，不断追加。</li>
+</ol>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>那一个事务怎么执行的呢，比如更新一个登录时间。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> login_time <span class="operator">=</span> ? <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>走完了前面的连接器，分析器，优化器，执行器。执行器会去innoDB更新数据了。</li>
+<li>他会先取出这条数据，取出id &#x3D; 1的数据，id是主键索引，和数据在一起。innoDB直接查找主键索引树找到对应数据就返回了。当然，如果数据再缓冲池，那么直接返回了。</li>
+<li>执行器拿到以后再修改登陆时间，然后再次调用innoDB引擎的接口。</li>
+<li>innoDB把数据更新到内存中，同时更新redo log，把redo log标记成待提交状态。</li>
+<li>执行器写入binlog。</li>
+<li>执行器调用innoDB引擎的接口，innoDB把redo log标记成提交状态。</li>
+</ul>
+<p>这个时候整个更新事务完成。</p>
+<p>为什么要这么做呢？</p>
+<p>因为有两个日志的原因，所以两个日志都要写入，要保证这两个日志的一致性。那么如果不使用两阶段提交的方式，直接写入redo log然后写入binlog有什么问题呢？</p>
+<p>假设，写完redo log，系统挂了。那么重启后innoDB引擎会根据redo log日志来恢复数据库。这时候数据库里面的数据是正确的。但是binlog丢失了啊。如果你有从库，那么从库的数据就错误了。因为从库的数据是通过binlog同步的。</p>
+<p>如果把这两个步骤反过来呢，先写入binlog 再写入redo log呢？</p>
+<p>那么就会redo log丢失，数据库实际上没有更新。但是从库通过binlog更新了。还是数据不一致。</p>
+<p>所以需要<code>两阶段提交</code>来保证数据一致性。如果这时候写完redo log后挂掉了，因为redo log和binlog都没有数据，所以会回滚事务。<br>如果binlog和redo log都写入了，但是没有提交，那么重启后会提交事务。这样binlog和数据库就都有数据了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html" class="post-title-link" itemprop="url">一条mysql语句的奇幻之旅</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-14 14:57:59" itemprop="dateCreated datePublished" datetime="2020-04-14T14:57:59+08:00">2020-04-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html" class="post-meta-item leancloud_visitors" data-flag-title="一条mysql语句的奇幻之旅" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E4%B8%80%E6%9D%A1mysql%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%A5%87%E5%B9%BB%E4%B9%8B%E6%97%85.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="一条mysql语句的奇幻之旅"><a href="#一条mysql语句的奇幻之旅" class="headerlink" title="一条mysql语句的奇幻之旅"></a>一条mysql语句的奇幻之旅</h1><p>我们平常都会用到mysql，但是你真的知道sql语句是怎么执行的吗？</p>
+<p>比如下面的sql</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users;</span><br></pre></td></tr></table></figure>
+
+<p>这条sql语句大致会经过下面的阶段：</p>
+<ol>
+<li>连接器 – 连接器负责建立，管理mysql的连接，你首先要连接到mysql服务器，才能操作mysql。</li>
+<li>分析器 – 分析器会进行词法分析和语法分析，语法错误会在这个阶段被返回。</li>
+<li>优化器 – 优化器会自动优化我们的sql语句，如果它发现你的sql语句可以进行优化的话。优化器选择是否使用索引，索引怎么用。优化器还会选择更优的执行计划，最后会输出一个执行计划。</li>
+<li>执行器 – 执行器会根据输出的执行计划进行最终的执行。他会调用底层存储引擎的接口，比如innoDB引擎。</li>
+</ol>
+<p>当我们最开始连接数据库实例的时候，我们要输入用户名密码，这时候连接器会从数据库的用户信息中判断你是否有<code>权限</code>连接数据库进行操作，有哪些权限。</p>
+<p>如果你输入的用户名密码错误或者没有权限，那么你会收到下面的报错信息</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Access denied <span class="keyword">for</span> <span class="keyword">user</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>(<span class="keyword">using</span> password: YES)</span><br></pre></td></tr></table></figure>
+
+<p>这里我们要搞清楚一个概念，数据库和数据库实例，我们使用的都是数据库实例，用实例来操作数据库。</p>
+<p>连接成功以后开始执行上面的查询语句。<code>分析器</code>会分析这个语句的词法，语法，语义这些信息。通俗来讲就是看到<code>select</code>,<code>update</code>这些关键字，知道你要来干啥，看看你是不是来搞破坏的，来捣蛋的。看看你是查询哪个表啊，有什么条件啊，这些玩意。最后会输出一个词法树。当然了这一步还会分析你的语法有没有错误，比如你把<code>select</code>打错试试。打成<code>elect</code>，会出现下面的报错信息</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">You have an error <span class="keyword">in</span> your <span class="keyword">SQL</span> syntax: <span class="keyword">check</span> the maual that corresponds <span class="keyword">to</span> your MySQL server version <span class="keyword">for</span> the <span class="keyword">right</span> syntax <span class="keyword">to</span> use near <span class="string">&#x27;elect * from users&#x27;</span> <span class="keyword">at</span> line <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>遇到这种<code>sql</code>语法错误，他会告诉你在哪出现了错误，其实就是分析器往后分析的时候发现，这不对啊，这不是我要的东西啊，你这偷梁换柱啊。</p>
+<p>当这一步的考验你也通过了，那么骚年，你离飞升不远了。。。</p>
+<p>进入优化器阶段，优化器接过语法树，会调整你的语法，比如他觉得你这么写它执行起来慢，执行的不爽，那么他会换个姿势再来一次。包括你的语法，执行的顺序，使用的索引，连表怎么连。最终优化完成会输出一个执行计划。</p>
+<p>这个执行计划我们可以通过<code>explain</code>关键字查看，比如执行下面的语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users;</span><br></pre></td></tr></table></figure>
+
+<p>他会输出下面的信息。我们可以看到<code>type</code>这一列是<code>all</code>。这代表全表扫描。</p>
+<p><img src="/../images/mysql01.png" alt="Image text"></p>
+<p>我们现在在执行另外一个看看。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>看看这个执行结果。可以看到<code>type</code>这一列是<code>const</code>。这代表是常量。还有<code>key</code>这一列是<code>primary</code>，这代表我们这次使用了主键索引。而主键索引是聚簇索引，他的<code>page</code>页里面存储的就是这一行信息，所以只会查询一次。</p>
+<p><img src="/../images/mysql02.png" alt="Image text"></p>
+<p>上面输出的执行计划会最终由执行器来执行，执行器会调用<code>存储引擎</code>层的接口。</p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>其实，在这中间还有一个缓存组件。最开始查询的时候会先查询缓存组件的信息，如果没有缓存，才会走到分析器，然后往下走。如果命中缓存，那么直接返回，也就没后面什么事情了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%89%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E7%9A%84%E5%89%8D%E7%AB%AF.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%89%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E7%9A%84%E5%89%8D%E7%AB%AF.html" class="post-title-link" itemprop="url">laravel-react实战打造企业级高并发分布式电商小程序（三）--权限管理的前端</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-13 16:30:15" itemprop="dateCreated datePublished" datetime="2020-04-13T16:30:15+08:00">2020-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F/" itemprop="url" rel="index"><span itemprop="name">laravel+react实战打造企业级高并发分布式电商小程序</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%89%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E7%9A%84%E5%89%8D%E7%AB%AF.html" class="post-meta-item leancloud_visitors" data-flag-title="laravel-react实战打造企业级高并发分布式电商小程序（三）--权限管理的前端" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%89%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E7%9A%84%E5%89%8D%E7%AB%AF.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/laravel-react%E5%AE%9E%E6%88%98%E6%89%93%E9%80%A0%E4%BC%81%E4%B8%9A%E7%BA%A7%E9%AB%98%E5%B9%B6%E5%8F%91%E5%88%86%E5%B8%83%E5%BC%8F%E7%94%B5%E5%95%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%EF%BC%88%E4%B8%89%EF%BC%89-%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E7%9A%84%E5%89%8D%E7%AB%AF.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="laravel-react实战打造企业级高并发分布式电商小程序（三）–权限管理的前端"><a href="#laravel-react实战打造企业级高并发分布式电商小程序（三）–权限管理的前端" class="headerlink" title="laravel-react实战打造企业级高并发分布式电商小程序（三）–权限管理的前端"></a>laravel-react实战打造企业级高并发分布式电商小程序（三）–权限管理的前端</h1><h2 id="react"><a href="#react" class="headerlink" title="react"></a>react</h2><p>我们前端使用<code>react</code>来做，我们这个后台基于<code>antd pro</code>。使用<code>npm</code>创建它。</p>
+<blockquote>
+<p>npm create umi</p>
+</blockquote>
+<p>选择 <code>ant-design-pro</code></p>
+<hr>
+<p> Select the boilerplate type (Use arrow keys)<br>❯ ant-design-pro  - Create project with an layout-only ant-design-pro boilerplate, use together with umi block.<br>  app             - Create project with a simple boilerplate, support typescript.<br>  block           - Create a umi block.<br>  library         - Create a library with umi.<br>  plugin          - Create a umi plugin.</p>
+<hr>
+<p>Ant Design Pro 脚手架将会自动安装。</p>
+<h5 id="本地开发"><a href="#本地开发" class="headerlink" title="本地开发"></a>本地开发</h5><blockquote>
+<p>npm install<br>npm start</p>
+</blockquote>
+<p>启动完成后会自动打开浏览器访问 <a href="http://localhost:8000，你看到下面的页面就代表成功了。">http://localhost:8000，你看到下面的页面就代表成功了。</a></p>
+<p><img src="/../images/laravel-react07.png" alt="Image text"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/vscode%E6%97%A0%E6%B3%95%E6%89%A7%E8%A1%8Cnpm%E7%AD%89%E8%84%9A%E6%9C%AC%E7%9A%84%E9%97%AE%E9%A2%98.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1128,337 +1509,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-title-link" itemprop="url">你不知道的队列使用技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-27 16:34:31" itemprop="dateCreated datePublished" datetime="2020-03-27T16:34:31+08:00">2020-03-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">队列</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-meta-item leancloud_visitors" data-flag-title="你不知道的队列使用技巧" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><blockquote>
-<p>队列是一种先进先出的数据结构</p>
-</blockquote>
-<p>我们的程序在什么情况下会用到队列呢？<code>异步处理</code>。</p>
-<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>我们一般写的web程序都是同步执行的，比如前端发送一个登录请求，后端一步一步的处理，查询用户，判断密码等等，返回登陆成功或者错误信息，前端阻塞等到后端返回后进行下一步处理。</p>
-<p>那么这种程序有一个什么问题呢，首先，前后端建立的http连接是有超时时间的，当后端处理请求时间过长会返回超时错误。</p>
-<p>就算没有超时的限制，对于用户体验来讲，当你的程序响应很慢，那么用户就会觉得，这什么玩意，真垃圾！！！</p>
-<h3 id="导出场景"><a href="#导出场景" class="headerlink" title="导出场景"></a>导出场景</h3><p>基于这些原因，我们可以需要快速的处理用户请求。像导出大文件的时候，没办法很快的给用户响应怎么办呢，我们可以用异步的方式处理，先给用户返回正在导出，或者导出成功。</p>
-<p>这个时候我们后台程序真的导出了嘛？没有，我们可以将这个导出请求放入一个队列中，等待另外一个处理程序将队列中的数据取出进行处理，这个处理程序一直监听队列，如果发现队列有消息，就去取出来进行处理。在处理程序中可以根据数据类型的不同，把它送到具体的处理类中，比如导出数据，处理程序会分发给导出类进行处理，由导出类处理完成后，返回处理完成。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html" class="post-title-link" itemprop="url">布隆过滤器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-26 16:11:05" itemprop="dateCreated datePublished" datetime="2020-03-26T16:11:05+08:00">2020-03-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构和算法</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html" class="post-meta-item leancloud_visitors" data-flag-title="布隆过滤器" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h1><p>上一节提到了缓存穿透的问题，如果查询不存在的值怎么办，布隆过滤器可以完美解决这个问题。</p>
-<p>当查询的时候，我们只需要确定这个值不存在，那我们就不用再查询了，也就减少了数据库，缓存的压力，减少了服务器压力，避免了一些攻击。</p>
-<p><code>布隆过滤器</code>是个什么东西呢，它是由一串<code>二进制</code>组成的串，这个串中，只有<code>0</code>和<code>1</code>。</p>
-<p>0代表不存在，1代表存在。</p>
-<p>我们用hash算法计算之后，对布隆过滤器的长度进行取余操作，确定这个值应该存在布隆过滤器的哪个位置上。确定之后，将这个位置的值设置为<code>1</code>。</p>
-<p>例如：</p>
-<p>有一个长度为32的布隆过滤器</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html" class="post-title-link" itemprop="url">你真的会用缓存吗</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-24 21:17:38" itemprop="dateCreated datePublished" datetime="2020-03-24T21:17:38+08:00">2020-03-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html" class="post-meta-item leancloud_visitors" data-flag-title="你真的会用缓存吗" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="缓存的使用"><a href="#缓存的使用" class="headerlink" title="缓存的使用"></a>缓存的使用</h1><p>当数据的读取量非常大的时候，为了缓解数据库的压力，会大量的使用到缓存。</p>
-<p>那什么是缓存呢，我觉得是这样的</p>
-<blockquote>
-<p>两种存储介质a,b，只要a比b快，就可以用a来做b的缓存</p>
-</blockquote>
-<p>数据库一般都是存储在磁盘上面，但是磁盘的访问速度比较慢，当我们想快速获取到数据的时候，显然磁盘已经满足不了我们的需求了。</p>
-<p>这时候我们一般会用到Redis, Memchached这种把数据存放在内存之中的NoSql数据库，用他们来缓存我们的数据，因为内存中的读取要比磁盘快的多。</p>
-<p>那么缓存到底要怎么用呢？是只要把数据放到Redis里面，然后读取就可以了吗？</p>
-<p>如果只是这么简单就好了，在缓存的时候我们要考虑几点东西。</p>
-<p>缓存既然是在内存中，那么他们能存储的量就不大，那么哪些数据要放在缓存中呢？缓存的命中率应该达到多少呢？</p>
-<p>在什么时候写入缓存呢？该怎么读取缓存呢？</p>
-<p>怎么防止缓存穿透和缓存雪崩呢？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/%E4%BD%A0%E7%9C%9F%E7%9A%84%E4%BC%9A%E7%94%A8%E7%BC%93%E5%AD%98%E5%90%97.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1531,7 +1581,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">195</span>
+          <span class="site-state-item-count">198</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

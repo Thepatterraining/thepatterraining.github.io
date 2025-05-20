@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP实战">
+<meta property="og:url" content="https://thepatterraining.github.io/MCP%E5%AE%9E%E6%88%98.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/mcp2-7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-05-06T08:51:30.000Z">
+<meta property="article:modified_time" content="2025-05-20T10:39:44.259Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/ai/mcp2-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/MCP%E5%AE%9E%E6%88%98.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MCP实战 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MCP%E5%AE%9E%E6%88%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MCP实战
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-06 16:51:30" itemprop="dateCreated datePublished" datetime="2025-05-06T16:51:30+08:00">2025-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-20 18:39:44" itemprop="dateModified" datetime="2025-05-20T18:39:44+08:00">2025-05-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MCP%E5%AE%9E%E6%88%98.html" class="post-meta-item leancloud_visitors" data-flag-title="MCP实战" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MCP%E5%AE%9E%E6%88%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MCP%E5%AE%9E%E6%88%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MCP"><a href="#MCP" class="headerlink" title="MCP"></a>MCP</h1><p>在AI技术大火的当下，各个公司都在搞AI-Agent技术。对于Agent来说，其实还处于一个早期的阶段，没有所谓的<code>最佳实践</code>。更没有一些<code>标准规则</code>。可谓是一片蓝海。</p>
+<p>大厂们也都在做着自己的一些尝试。但是总有人在建设底层规则。</p>
+<p>MCP就是一个标准化的产物。它定义了一些<code>标准</code>。</p>
+<p>Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标准，旨在为大型语言模型（LLM）应用提供统一的上下文交互接口，使其能够与外部数据源和工具进行无缝集成。​MCP采用客户端-主机-服务器架构，基于JSON-RPC 2.0协议，支持有状态连接和功能协商，允许AI模型访问文件、执行函数和处理上下文提示。</p>
+<p>截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。</p>
+<h2 id="MCP服务器开发"><a href="#MCP服务器开发" class="headerlink" title="MCP服务器开发"></a>MCP服务器开发</h2><p>许多大模型目前没有能力获取预报和恶劣天气警报。让我们使用<code>MCP</code> 来解决这个问题！</p>
+<p>我们将构建一个公开两个工具的服务器：<code>get-alerts</code> 和 <code>get-forecast</code>。然后我们将服务器连接到 <code>MCP</code> 主机（在本例中，Claude for Desktop）：</p>
+<p>MCP本身提供了一些语言的SDK，包括：</p>
+<ul>
+<li>Python</li>
+<li>Node.js</li>
+<li>Java</li>
+<li>C#</li>
+<li>Kotlin</li>
+</ul>
+<p>以Java为例，要求如下：</p>
+<ul>
+<li>Java 17 或更高版本</li>
+<li>Spring Boot 3.3.x或更高版本</li>
+</ul>
+<p>使用SDK可以大大简化我们的开发过程，比如JAVA里面的，我们只需要一个注解<code>@Tool</code>就可以搞定了。</p>
+<p>需要添加Maven依赖：</p>
+<ul>
+<li>spring-web:web开发依赖</li>
+<li>spring-ai-starter-mcp-server：MCP服务器开发依赖<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.ai<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-ai-starter-mcp-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>我们增加一个<code>Service</code>类，该类有两个方法，这两个方法提供了我们上面说的两个工具的能力。</p>
+<ul>
+<li>getWeatherForecastByLocation: 提供给Agent或者大模型的工具，输入参数是精度和纬度，根据经纬度获取天气预报。</li>
+<li>getAlerts：提供给Agent或者大模型的工具，输入参数是地区，获取该地区的天气警报。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeatherService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestClient restClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WeatherService</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restClient = RestClient.builder()</span><br><span class="line">                .baseUrl(<span class="string">&quot;https://api.weather.gov&quot;</span>)</span><br><span class="line">                .defaultHeader(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;application/geo+json&quot;</span>)</span><br><span class="line">                .defaultHeader(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;WeatherApiClient/1.0 (your@email.com)&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Points</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Props properties) &#123;</span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Props</span><span class="params">(@JsonProperty(&quot;forecast&quot;)</span> String forecast) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Forecast</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Props properties) &#123;</span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Props</span><span class="params">(@JsonProperty(&quot;periods&quot;)</span> List&lt;Period&gt; periods) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Period</span><span class="params">(@JsonProperty(&quot;number&quot;)</span> Integer number, <span class="meta">@JsonProperty(&quot;name&quot;)</span> String name,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;startTime&quot;)</span> String startTime, <span class="meta">@JsonProperty(&quot;endTime&quot;)</span> String endTime,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;isDaytime&quot;)</span> Boolean isDayTime, <span class="meta">@JsonProperty(&quot;temperature&quot;)</span> Integer temperature,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;temperatureUnit&quot;)</span> String temperatureUnit,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;temperatureTrend&quot;)</span> String temperatureTrend,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;probabilityOfPrecipitation&quot;)</span> Map probabilityOfPrecipitation,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;windSpeed&quot;)</span> String windSpeed, <span class="meta">@JsonProperty(&quot;windDirection&quot;)</span> String windDirection,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;icon&quot;)</span> String icon, <span class="meta">@JsonProperty(&quot;shortForecast&quot;)</span> String shortForecast,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;detailedForecast&quot;)</span> String detailedForecast) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Alert</span><span class="params">(@JsonProperty(&quot;features&quot;)</span> List&lt;Feature&gt; features) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Feature</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Properties properties) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Properties</span><span class="params">(@JsonProperty(&quot;event&quot;)</span> String event, <span class="meta">@JsonProperty(&quot;areaDesc&quot;)</span> String areaDesc,</span><br><span class="line">                                 <span class="meta">@JsonProperty(&quot;severity&quot;)</span> String severity, <span class="meta">@JsonProperty(&quot;description&quot;)</span> String description,</span><br><span class="line">                                 <span class="meta">@JsonProperty(&quot;instruction&quot;)</span> String instruction) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get weather forecast for a specific latitude/longitude&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getWeatherForecastByLocation</span><span class="params">(</span></span><br><span class="line"><span class="params">            <span class="type">double</span> latitude,   // Latitude coordinate</span></span><br><span class="line"><span class="params">            <span class="type">double</span> longitude   // Longitude coordinate</span></span><br><span class="line"><span class="params">    )</span> &#123;</span><br><span class="line">        <span class="comment">// 使用 RestClient 发起 GET 请求，获取指定经纬度的点信息</span></span><br><span class="line">        <span class="type">var</span> <span class="variable">points</span> <span class="operator">=</span> restClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/points/&#123;latitude&#125;,&#123;longitude&#125;&quot;</span>, latitude, longitude) <span class="comment">// 构建请求 URI，替换占位符为具体的经纬度</span></span><br><span class="line">                .retrieve() <span class="comment">// 执行请求并获取响应</span></span><br><span class="line">                .body(Points.class); <span class="comment">// 将响应体解析为 Points 类型的对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用 RestClient 发起 GET 请求，获取点信息中的天气预报 URL 对应的天气预报数据</span></span><br><span class="line">        <span class="type">var</span> <span class="variable">forecast</span> <span class="operator">=</span> restClient.get()</span><br><span class="line">                .uri(points.properties().forecast()) <span class="comment">// 从点信息中提取天气预报 URL</span></span><br><span class="line">                .retrieve() <span class="comment">// 执行请求并获取响应</span></span><br><span class="line">                .body(Forecast.class); <span class="comment">// 将响应体解析为 Forecast 类型的对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历天气预报的各个时间段，生成格式化的天气预报文本</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">forecastText</span> <span class="operator">=</span> forecast.properties().periods().stream().map(p -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> String.format(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">					%s:</span></span><br><span class="line"><span class="string">					Temperature: %s %s</span></span><br><span class="line"><span class="string">					Wind: %s %s</span></span><br><span class="line"><span class="string">					Forecast: %s</span></span><br><span class="line"><span class="string">					&quot;&quot;&quot;</span>, </span><br><span class="line">                    p.name(), <span class="comment">// 时间段名称</span></span><br><span class="line">                    p.temperature(), <span class="comment">// 温度值</span></span><br><span class="line">                    p.temperatureUnit(), <span class="comment">// 温度单位</span></span><br><span class="line">                    p.windSpeed(), <span class="comment">// 风速</span></span><br><span class="line">                    p.windDirection(), <span class="comment">// 风向</span></span><br><span class="line">                    p.detailedForecast()); <span class="comment">// 详细天气预报</span></span><br><span class="line">        &#125;).collect(Collectors.joining()); <span class="comment">// 将所有时间段的天气预报文本拼接为一个字符串</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回生成的天气预报文本</span></span><br><span class="line">        <span class="keyword">return</span> forecastText;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get weather alerts for a US state&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getAlerts</span><span class="params">(</span></span><br><span class="line"><span class="params">            <span class="meta">@ToolParam(description =  &quot;Two-letter US state code (e.g. CA, NY&quot;) String state</span></span></span><br><span class="line"><span class="meta"><span class="params">    )</span> &#123;</span></span><br><span class="line"><span class="params">        // 使用 RestClient 发起 GET 请求，获取指定州的天气警报信息</span></span><br><span class="line"><span class="params">        Alert alert = restClient.get()</span>.uri(<span class="string">&quot;/alerts/active/area/&#123;state&#125;&quot;</span>, state).retrieve().body(Alert.class);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历警报信息的特性列表，将每个特性格式化为字符串并拼接为最终的警报信息文本</span></span><br><span class="line">        <span class="keyword">return</span> alert.features()</span><br><span class="line">                .stream()</span><br><span class="line">                .map(f -&gt; String.format(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">					Event: %s</span></span><br><span class="line"><span class="string">					Area: %s</span></span><br><span class="line"><span class="string">					Severity: %s</span></span><br><span class="line"><span class="string">					Description: %s</span></span><br><span class="line"><span class="string">					Instructions: %s</span></span><br><span class="line"><span class="string">					&quot;&quot;&quot;</span>,</span><br><span class="line">                    <span class="comment">// 获取警报事件名称</span></span><br><span class="line">                    f.properties().event(),</span><br><span class="line">                    <span class="comment">// 获取警报影响区域描述</span></span><br><span class="line">                    f.properties.areaDesc(),</span><br><span class="line">                    <span class="comment">// 获取警报严重程度</span></span><br><span class="line">                    f.properties.severity(),</span><br><span class="line">                    <span class="comment">// 获取警报详细描述</span></span><br><span class="line">                    f.properties.description(),</span><br><span class="line">                    <span class="comment">// 获取警报的操作指令</span></span><br><span class="line">                    f.properties.instruction()))</span><br><span class="line">                <span class="comment">// 将所有警报信息拼接为一个字符串，以换行符分隔</span></span><br><span class="line">                .collect(Collectors.joining(<span class="string">&quot;\n&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再通过MCP提供的MethodToolCallbackProvider 工具类来将 <code>@Tool</code> 标记的方法转换成统一的方法，对外部提供工具。</p>
+<p>这是因为MCP服务器规定要给外部提供<code>统一</code>的接口、返回值、参数。所以要转换成符合<code>MCP规范</code>的接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> ToolCallbackProvider <span class="title function_">weatherTools</span><span class="params">(WeatherService weatherService)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span>  MethodToolCallbackProvider.builder().toolObjects(weatherService).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来构建服务器，运行成功以后，会在target目录下生成一个jar包，运行该jar包应该能成功启动：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mvnw clean install</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们无需启动这个<code>jar包</code>，直接使用<code>Claude 桌面版客户端</code>即可。</p>
+<p>可以在这里下载：<a target="_blank" rel="noopener" href="https://claude.ai/download">claude 桌面版下载</a></p>
+<p>下载以后，打开应用，登陆上去，选择 Claude -》 Settings</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-1.png" alt="settings"></p>
+<p>选择Developer -〉<code>Edit Config</code>。会自动创建一个MCP的配置文件。如果已经存在了则不会创建。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-2.png" alt="Config"></p>
+<p>创建的配置文件名称如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude_desktop_config.json</span><br></pre></td></tr></table></figure>
+
+<p>修改这个配置文件，内容如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;spring-ai-mcp-weather&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// MCP服务器名称，可以随便输入</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;java&quot;</span><span class="punctuation">,</span> <span class="comment">// 使用java命令启动MCP服务器</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="comment">// java后面跟的参数</span></span><br><span class="line">          <span class="string">&quot;-Dspring.ai.mcp.server.stdio=true&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="string">&quot;-jar&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="string">&quot;/mcpServer/target/mcpServer-0.0.1-SNAPSHOT.jar&quot;</span> <span class="comment">//jar包的绝对路径地址</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来重新启动Claude桌面版即可。在启动Claude的时候，Claude会根据上述配置文件来启动MCP服务器。启动命令类似：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Dspring.ai.mcp.server.stdio=<span class="literal">true</span> -jar /mcpServer/target/mcpServer-<span class="number">0.0</span><span class="number">.1</span>-SNAPSHOT.jar</span><br></pre></td></tr></table></figure>
+
+<p>如果通过jps命令，可以看到jar包启动成功。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jps -l</span><br></pre></td></tr></table></figure>
+
+<p>在Claude桌面版上可以看到我们刚刚配置的MCP服务器名称和提供的工具。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-3.png" alt="mcp server"></p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-4.png" alt="mcp server tool"></p>
+<p>可以自主启用和禁用工具。</p>
+<p>接下来我们和Claude大模型交流的时候，大模型会自己判断需不需要调用工具，调用哪个工具，如何调用。当调用的时候，会让你进行确认。</p>
+<p>来试试输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">纽约的天气怎么样？</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-5.png" alt="mcp server tool"></p>
+<p>可以看到大模型自己调用了我们的工具，并展示了输入输出。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-6.png" alt="mcp server tool"></p>
+<p>看到这里我们可以得出MCP+大模型的运行流程图。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp2-7.png" alt="mcp server tool"></p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><p>如果需要查看日志信息，可以到如下目录：<code>~/Library/Logs/Claude</code></p>
+<p>有多个文件：</p>
+<ul>
+<li>mcp.log : 包含了MCP所有的日志</li>
+<li>mcp-server-xxxxx.log: 一个MCP服务一个日志文件，记录了这个服务相关的所有日志</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了MCP的概念，MCP的通信协议、通信方式、生命周期。MCP到底是什么东西，实现了哪些内容，使用场景以及为什么要使用MCP。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MCP%E8%AF%A6%E8%A7%A3.html" rel="prev" title="MCP详解">
+      <i class="fa fa-chevron-left"></i> MCP详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" rel="next" title="什么是用户画像，抖音如何做到让你看你喜欢的">
+      什么是用户画像，抖音如何做到让你看你喜欢的 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MCP"><span class="nav-number">1.</span> <span class="nav-text">MCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MCP%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%8F%91"><span class="nav-number">1.1.</span> <span class="nav-text">MCP服务器开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.1.</span> <span class="nav-text">日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
