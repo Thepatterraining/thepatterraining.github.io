@@ -29,465 +29,262 @@ Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标�
 
 截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。
 
-## 架构
+## MCP服务器开发
 
-Model Context Protocol (MCP) 遵循客户端-主机-服务器架构，每个主机可以运行多个客户端实例。此架构使用户能够在应用程序中集成 AI 功能，同时保持明确的安全边界和隔离关注点。基于 JSON-RPC，MCP 提供了一个有状态的会话协议，专注于上下文交换和客户端与服务器之间的采样协调。
+许多大模型目前没有能力获取预报和恶劣天气警报。让我们使用`MCP` 来解决这个问题！
 
-![MCP架构](https://thepatterraining.github.io/images/ai/mcp1-1.png)
+我们将构建一个公开两个工具的服务器：`get-alerts` 和 `get-forecast`。然后我们将服务器连接到 `MCP` 主机（在本例中，Claude for Desktop）：
 
-## 为什么使用MCP？
+MCP本身提供了一些语言的SDK，包括：
+- Python
+- Node.js
+- Java
+- C#
+- Kotlin
 
-为什么要有MCP这个东西呢？我不用它是否可以？
+以Java为例，要求如下：
+- Java 17 或更高版本
+- Spring Boot 3.3.x或更高版本
 
-当然可以。MCP更像是一个USB接口的作用。不使用的话会有一些麻烦而已。我们来看两个案例。
+使用SDK可以大大简化我们的开发过程，比如JAVA里面的，我们只需要一个注解`@Tool`就可以搞定了。
 
-### 案例一：USB接口案例
+需要添加Maven依赖：
+- spring-web:web开发依赖
+- spring-ai-starter-mcp-server：MCP服务器开发依赖
+```xml
+<dependencies>
+      <dependency>
+          <groupId>org.springframework.ai</groupId>
+          <artifactId>spring-ai-starter-mcp-server</artifactId>
+      </dependency>
 
-我们先想象一下如果电脑没有USB接口，会怎么样？
-
-每个品牌的鼠标键盘显示器接口都不一样，比如
-- 罗技鼠标键盘使用罗技接口
-- 牧马人鼠标键盘使用牧马人接口
-- 雷蛇鼠标键盘使用雷蛇接口
-- 等等，每个品牌有自己的接口
-
-那现在我们买了一台戴尔的电脑，这个电脑只支持戴尔的接口和罗技的接口，这样就导致我们只能买这两个品牌的鼠标键盘显示器了。
-
-像下面这个图，我如果家里是华硕显示器，但是我买了一个戴尔的电脑，就用不了了，很不方便。
-
-![MCP架构](https://thepatterraining.github.io/images/ai/mcp1-2.png)
-
-### 案例二：充电接口案例
-
-现在很现实的一个问题就是苹果手机的充电接口。它的充电接口和安卓的充电接口是不一样的，因此两个手机的充电器无法共用。
-
-如果你从安卓换到苹果，你需要重新买一个充电器，如果你家里两个人用的是一个安卓一个苹果，那么你们出门需要带两个充电器。。。
-
-
-![MCP架构](https://thepatterraining.github.io/images/ai/mcp1-3.png)
-
-### 案例三：Agent案例
-
-经过上面两个案例，我们应该明白了MCP解决了什么问题，也明白了为什么要使用MCP这种标准化协议。
-
-那么我们再看看对于Agent而言，MCP到底干了什么呢？
-
-我们当前Agent的现状如下：
-我们实现了一个查询天气信息，并根据下雨下雪刮风等进行邮件通知预警的Agent。我们的Agent需要调用2个接口：
-1. 获取天气信息
-2. 发送邮件
-
-我们知道，这两个接口是不一样的，因此，我们需要实现`两套调用逻辑`。
-
-这样是很不方便的。甚至，如果说第一个获取天气信息的接口不好使了，我们要进行切换，其他的获取天气信息的接口也需要`重新实现`。
-
-但是，如果我们使用了`MCP`,那么我们只需要一套逻辑即可了。
-
-## MCP组件
-
-接下来我们来了解一下MCP有哪些内容，包含什么东西。
-
-- 主机：也就是你的Agent，或者大模型。严格来说，这个并不属于MCP，因为这个是你必备的一个东西。只不过我们的Agent需要支持MCP才可以。
-- MCP服务器：轻量级程序，每个程序都通过标准化的模型上下文协议公开特定的功能。MCP服务器就是一个提供接口程序的`服务器程序`，可以简单的理解为`HTTP服务器`，提供一些接口。比如我们上面提到的两个接口都放到这个服务器里面。
-- MCP客户端：这个是`重中之重`。客户端程序负责调度`主机`和`MCP服务器`进行交互。
-
-### 资源
-
-资源表示 MCP 服务器希望提供给客户端的任何类型的数据。这可以包括：
-
-- 文件内容
-- 数据库记录
-- API 响应
-- 实时系统数据
-- 屏幕截图和图像
-- 日志文件
-- 更多
-
-资源主要用来读取文件内容，比如我们经常使用大模型的时候会上传文件，还有使用Idea的时候可以直接让大模型获取我们的代码文件内容。
-
-资源可以包含两种类型的内容：
-- 文本资源
-    - 源代码
-    - 配置文件
-    - 日志文件
-    - JSON/XML数据
-    - 纯文本
-- 二进制资源
-    - 图像
-    - PDF
-    - 音频
-    - 视频
-    - 其他非文本格式
-
-MCP服务器需要实现下面的接口来支持`资源`功能
-- 资源列表接口：接口地址必须是`resources/list`，返回内容需要包含4个信息，这个接口会告诉Agent我们拥有哪些资源
-```json
-{
-  uri: string;            //资源的URI
-  name: string;           //资源的名称，方便人类看
-  description?: string;   //可选的资源描述
-  mimeType?: string;      //可选的资源类型
-}
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+      </dependency>
+</dependencies>
 ```
-- 获取资源接口：接口地址必须是`resources/read`, 返回内容必须是以下格式，这个接口就是当Agent需要获取资源内容的时候进行调用的。
-```json
-{
-  contents: [
-    {
-      uri: string;        //资源的URI
-      mimeType?: string;  //可选的资源类型
 
-      // 根据资源类型进行返回的信息:
-      text?: string;      // 文本资源的内容
-      blob?: string;      // 二进制资源的内容
+我们增加一个`Service`类，该类有两个方法，这两个方法提供了我们上面说的两个工具的能力。
+- getWeatherForecastByLocation: 提供给Agent或者大模型的工具，输入参数是精度和纬度，根据经纬度获取天气预报。
+- getAlerts：提供给Agent或者大模型的工具，输入参数是地区，获取该地区的天气警报。
+
+```java
+@Service
+public class WeatherService {
+    private final RestClient restClient;
+
+    public WeatherService() {
+        this.restClient = RestClient.builder()
+                .baseUrl("https://api.weather.gov")
+                .defaultHeader("Accept", "application/geo+json")
+                .defaultHeader("User-Agent", "WeatherApiClient/1.0 (your@email.com)")
+                .build();
     }
-  ]
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Points(@JsonProperty("properties") Props properties) {
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public record Props(@JsonProperty("forecast") String forecast) {
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Forecast(@JsonProperty("properties") Props properties) {
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public record Props(@JsonProperty("periods") List<Period> periods) {
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public record Period(@JsonProperty("number") Integer number, @JsonProperty("name") String name,
+                             @JsonProperty("startTime") String startTime, @JsonProperty("endTime") String endTime,
+                             @JsonProperty("isDaytime") Boolean isDayTime, @JsonProperty("temperature") Integer temperature,
+                             @JsonProperty("temperatureUnit") String temperatureUnit,
+                             @JsonProperty("temperatureTrend") String temperatureTrend,
+                             @JsonProperty("probabilityOfPrecipitation") Map probabilityOfPrecipitation,
+                             @JsonProperty("windSpeed") String windSpeed, @JsonProperty("windDirection") String windDirection,
+                             @JsonProperty("icon") String icon, @JsonProperty("shortForecast") String shortForecast,
+                             @JsonProperty("detailedForecast") String detailedForecast) {
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Alert(@JsonProperty("features") List<Feature> features) {
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public record Feature(@JsonProperty("properties") Properties properties) {
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public record Properties(@JsonProperty("event") String event, @JsonProperty("areaDesc") String areaDesc,
+                                 @JsonProperty("severity") String severity, @JsonProperty("description") String description,
+                                 @JsonProperty("instruction") String instruction) {
+        }
+    }
+
+    @Tool(description = "Get weather forecast for a specific latitude/longitude")
+    public String getWeatherForecastByLocation(
+            double latitude,   // Latitude coordinate
+            double longitude   // Longitude coordinate
+    ) {
+        // 使用 RestClient 发起 GET 请求，获取指定经纬度的点信息
+        var points = restClient.get()
+                .uri("/points/{latitude},{longitude}", latitude, longitude) // 构建请求 URI，替换占位符为具体的经纬度
+                .retrieve() // 执行请求并获取响应
+                .body(Points.class); // 将响应体解析为 Points 类型的对象
+
+        // 使用 RestClient 发起 GET 请求，获取点信息中的天气预报 URL 对应的天气预报数据
+        var forecast = restClient.get()
+                .uri(points.properties().forecast()) // 从点信息中提取天气预报 URL
+                .retrieve() // 执行请求并获取响应
+                .body(Forecast.class); // 将响应体解析为 Forecast 类型的对象
+
+        // 遍历天气预报的各个时间段，生成格式化的天气预报文本
+        String forecastText = forecast.properties().periods().stream().map(p -> {
+            return String.format("""
+					%s:
+					Temperature: %s %s
+					Wind: %s %s
+					Forecast: %s
+					""", 
+                    p.name(), // 时间段名称
+                    p.temperature(), // 温度值
+                    p.temperatureUnit(), // 温度单位
+                    p.windSpeed(), // 风速
+                    p.windDirection(), // 风向
+                    p.detailedForecast()); // 详细天气预报
+        }).collect(Collectors.joining()); // 将所有时间段的天气预报文本拼接为一个字符串
+
+        // 返回生成的天气预报文本
+        return forecastText;
+    }
+
+    @Tool(description = "Get weather alerts for a US state")
+    public String getAlerts(
+            @ToolParam(description =  "Two-letter US state code (e.g. CA, NY") String state
+    ) {
+        // 使用 RestClient 发起 GET 请求，获取指定州的天气警报信息
+        Alert alert = restClient.get().uri("/alerts/active/area/{state}", state).retrieve().body(Alert.class);
+
+        // 遍历警报信息的特性列表，将每个特性格式化为字符串并拼接为最终的警报信息文本
+        return alert.features()
+                .stream()
+                .map(f -> String.format("""
+					Event: %s
+					Area: %s
+					Severity: %s
+					Description: %s
+					Instructions: %s
+					""",
+                    // 获取警报事件名称
+                    f.properties().event(),
+                    // 获取警报影响区域描述
+                    f.properties.areaDesc(),
+                    // 获取警报严重程度
+                    f.properties.severity(),
+                    // 获取警报详细描述
+                    f.properties.description(),
+                    // 获取警报的操作指令
+                    f.properties.instruction()))
+                // 将所有警报信息拼接为一个字符串，以换行符分隔
+                .collect(Collectors.joining("\n"));
+    }
 }
 ```
-- 资源列表更新接口：接口地址必须是`notifications/resources/list_changed`，这个接口是当我们能获取的资源列表有变化的时候，服务器来通知客户端说列表改变了，你需要重新获取一下。
-- 资源内容更新接口：
-    - 客户端进行资源订阅，接口地址必须是`resources/subscribe`
-    - 当资源内容改变的时候，服务器会发送`notifications/resources/updated`来通知客户端资源内容变化了
-    - 客户端可以重新调用获取资源接口来获取最新内容。
-    - 客户端可以取消资源订阅，接口地址必须是`resources/unsubscribe`。
 
-### 提示
+再通过MCP提供的MethodToolCallbackProvider 工具类来将 `@Tool` 标记的方法转换成统一的方法，对外部提供工具。
 
-提示这个功能也是比较常见的，当你输入`/`以后，会出现一些提示的命令，很多大模型都支持这么做了。
+这是因为MCP服务器规定要给外部提供`统一`的接口、返回值、参数。所以要转换成符合`MCP规范`的接口。
 
-通过提示这个功能，我们自己的Agent也可以轻松支持这个功能了。
+```java
+@Bean
+public ToolCallbackProvider weatherTools(WeatherService weatherService) {
+  return  MethodToolCallbackProvider.builder().toolObjects(weatherService).build();
+}
+```
 
-提示符使服务器能够定义可重用的提示模板和工作流，客户端可以轻松地向用户和 LLM 显示。它们提供了一种强大的方式来标准化和共享常见的 LLM 交互。
+接下来构建服务器，运行成功以后，会在target目录下生成一个jar包，运行该jar包应该能成功启动：
 
-MCP服务器需要支持以下接口：
-- 提示列表接口：接口地址`prompts/list`.展示提示列表。返回内容如下：
+```java
+./mvnw clean install
+```
+
+接下来我们无需启动这个`jar包`，直接使用`Claude 桌面版客户端`即可。
+
+可以在这里下载：[claude 桌面版下载](https://claude.ai/download)
+
+下载以后，打开应用，登陆上去，选择 Claude -》 Settings
+
+![settings](https://thepatterraining.github.io/images/ai/mcp2-1.png)
+
+选择Developer -〉`Edit Config`。会自动创建一个MCP的配置文件。如果已经存在了则不会创建。
+
+![Config](https://thepatterraining.github.io/images/ai/mcp2-2.png)
+
+创建的配置文件名称如下：
+```
+claude_desktop_config.json
+```
+
+修改这个配置文件，内容如下
 ```json
 {
-  prompts: [
-    {
-      name: "analyze-code", // 提示名称
-      description: "Analyze code for potential improvements", //提示描述
-      arguments: [ // 提示需要的参数列表
-        {
-          name: "language", //参数名称
-          description: "Programming language", //参数描述
-          required: true //是否必填
-        }
+  "mcpServers": {
+    "spring-ai-mcp-weather": { // MCP服务器名称，可以随便输入
+      "command": "java", // 使用java命令启动MCP服务器
+      "args": [ // java后面跟的参数
+          "-Dspring.ai.mcp.server.stdio=true",
+          "-jar",
+          "/mcpServer/target/mcpServer-0.0.1-SNAPSHOT.jar" //jar包的绝对路径地址
       ]
     }
-  ]
-}
-```
-- 使用提示接口：接口地址`prompts/get`，服务器会返回一些信息如下，客户端可以将这个信息喂给服务器。
-```json
-{
-  description: "Analyze Python code for potential improvements",
-  messages: [
-    {
-      role: "user",
-      content: {
-        type: "text",
-        text: "Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```"
-      }
-    }
-  ]
-}
-```
-
-### 工具
-
-`工具`功能是MCP的核心功能，作用就是我们一开始讲的那个。通过这个功能我们可以接入所有支持MCP的工具。
-
-工具是模型上下文协议（MCP）中的一个强大的原语，它使服务器能够向客户端公开可执行功能。通过工具，LLM 可以与外部系统交互，执行计算，并在真实的世界中采取行动。
-
-MCP服务器需要实现以下接口：
-- 工具列表接口：接口地址是`tools/list`，作用是获取MCP服务器支持的所有工具列表。可以返回如下内容：
-```json
-{
-  name: "github_create_issue", //工具名称
-  description: "Create a GitHub issue", // 工具描述
-  inputSchema: { // 输入参数
-    type: "object", // 参数类型
-    properties: { //详细的请求参数名称和类型
-      title: { type: "string" },
-      body: { type: "string" },
-      labels: { type: "array", items: { type: "string" } }
-    }
-  }
-}
-```
-- 工具调用接口：接口地址是`tools/call`，作用是调用指定的工具。客户端同样可以把调用工具的结果喂给大模型。
-
-### 采样
-
-采样是一个强大的 MCP 功能，允许服务器通过客户端请求 LLM 完成，在维护安全和隐私的同时实现复杂的代理行为。
-
-采样流程如下：
-1. 服务器请求客户端的接口`sampling/createMessage`
-2. 客户端检查请求并可以修改它
-3. 客户端获取大模型的样本
-4. 客户端复审样本信息
-5. 客户端将结果返回给服务器
-
-服务器可以指定要采样的大模型，如果客户端没有这个大模型，服务器还可以指定一些`模型偏好`，也就是一些优先级，如果没有这个大模型，就按照服务器指定的优先级来选择一些其他的大模型进行采样。
-
-模型偏好设置
-- hits:模型名称建议的数组，客户端可以使用它来选择合适的模型,客户端可以将提示映射到来自不同提供程序的等效模型,多个提示按优先级顺序进行评估
-- costPriority: 降低成本的重要性,低成本的模型优先级更高
-- speedPriority: 低延迟响应的重要性，速度更快的模型优先级更高
-- intelligencePriority：高级模型功能的重要性，功能强大的模型优先级更高
-
-### 根
-
-`根`是 MCP 中的一个概念，它定义了服务器可以操作的边界。它们为客户端提供了一种方法，可以将相关资源及其位置通知服务器。
-
-根是客户端建议服务器应该关注的 URI。当客户端连接到服务器时，它声明服务器应该使用哪些根。虽然主要用于文件系统路径，但根可以是任何有效的 URI，包括 HTTP URL。
-
-根有几个重要的用途：
-- 指导 ：它们通知服务器相关资源和位置
-- 清晰度 ：根目录清楚地表明哪些资源是您工作空间的一部分
-- 组织 ：多个根允许您同时使用不同的资源
-
-当客户端支持根时，它：
-- 在连接期间声明`根`功能
-- 向服务器提供建议的`根目录`列表
-- 根目录更改时通知服务器（如果支持）
-
-虽然根是信息性的，并不严格执行，但服务器应该：
-- 尊重提供的根
-- 使用根 URI 定位和访问资源
-- 优先考虑根边界内的操作
-
-根通常用于定义：
-- 项目目录
-- 存储库位置
-- API 端点
-- 配置目录
-- 资源边界
-
-客户端应该返回如下根信息
-```json
-{
-  "roots": [
-    {
-      "uri": "file:///home/user/projects/frontend",
-      "name": "Frontend Repository"
-    },
-    {
-      "uri": "https://api.example.com/v1",
-      "name": "API Endpoint"
-    }
-  ]
-}
-```
-
-### MCP服务器
-
-MCP服务器作为接口的提供方。需要遵循`MCP协议`本身的一些规则。
-
-需要支持上面的一些功能，主要是支持`工具`。至于资源和提示功能可以不支持。
-
-### MCP客户端
-
-MCP客户端作为接口的调用方。也需要遵循`MCP协议`本身的一些规则。
-
-可以选择支持`采样`和`根`功能。
-
-MCP客户端还需要调用MCP服务器和大模型进行沟通。
-
-### MCP通信协议
-
-所有传输都使用 `JSON-RPC2.0` 来交换消息。
-
-#### JSON-RPC2.0
-
-`JSON-RPC 2.0`是一个轻量级的远程过程调用（RPC）协议。它使用JSON格式的数据进行通信，这使得它非常易于理解和操作。下面是对JSON-RPC 2.0协议的详细解释以及案例说明：
-
-在JSON-RPC 2.0中，通信的基本单位是请求和响应。客户端发送请求给服务器，服务器处理请求后返回响应。
-
-一个典型的JSON-RPC 2.0请求格式如下：
-
-```json
-{
-  "jsonrpc": "2.0", // 协议版本，固定2.0即可
-  "method": "methodName", //要调用的方法名称，可以简单理解为接口地址
-  "params": { //请求参数
-    "param1": "value1",
-    "param2": "value2"
-  },
-  "id": 1 // 请求的唯一标识
-}
-```
-
-服务器处理请求以后，通常会返回以下两个格式：
-- 正确返回的格式。
-```json
-{
-  "jsonrpc": "2.0", // 协议版本，固定2.0即可
-  "result": "Success", //成功的结果
-  "id": 1 // 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回
-}
-```
-- 如果出现错误，需要返回错误码和错误信息。
-```json
-{
-  "jsonrpc": "2.0", // 协议版本，固定2.0即可
-  "error": { // 错误信息，包括错误码和错误描述
-    "code": -32601,
-    "message": "Method not found"
-  },
-  "id": 1 // 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回
-}
-```
-
-除了正常的请求和返回以外，还有一种`通知`类型。作为单向消息从客户端发送到服务器，反之亦然。接收方不得发送响应。
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "methodName",
-  "params?": { // 请求参数
-    [key: string]: unknown
-  }
-}
-```
-### MCP传输方式
-
-MCP 使用`JSON-RPC`对消息进行编码。`JSON-RPC`消息必须是 `UTF-8` 编码的。
-
-该协议目前为客户端-服务器通信定义了两种标准传输机制：
-- STDIO: 通过标准输入输出来进行传输，通常用在MCP客户端和服务器都在同一主机的情况下。
-- HTTP：通过HTTP来进行传输，这允许MCP客户端和服务器不在同一主机。
-
-客户端应尽可能支持`stdio`传输。
-
-#### STDIO
-
-- 客户端将 `MCP服务器`作为子进程启动。
-- 服务器从其标准输入（stdin）读取 JSON-RPC 消息，并将消息发送到其标准输出（stdout）。
-- 消息可以是 JSON-RPC 请求、通知、响应或 JSON-RPC 包含一个或多个请求和/或通知的批处理。
-- 消息由换行符分隔，并且不能包含嵌入的换行符。
-- 服务器可以将 UTF-8 字符串写入其标准错误（stderr）以进行日志记录。客户端可以捕获、转发或忽略此日志记录。
-- 服务器不能向它的 stdout 写入任何不是有效的 MCP 消息。
-- 客户端不得向服务器的 stdin 写入任何不是有效 MCP 消息的内容。
-
-![初始化](https://thepatterraining.github.io/images/ai/mcp1-6.png)
-
-#### HTTP
-
-在 `HTTP` 传输中，服务器作为一个独立的进程运行， 可以处理多个客户端连接。
-
-此传输使用HTTP`POST` 和 `GET` 请求。 
-
-服务器可以选择使用服务器发送的事件 （SSE）以流式传输多个服务器消息。
-
-这允许基本的 MCP 服务器，以及支持流媒体和服务器到客户端通知和请求的功能更丰富的服务器。
-
-### MCP生命周期
-
-模型上下文协议（MCP）为客户端-服务器连接定义了严格的生命周期，以确保适当的能力协商和状态管理。
-
-![初始化](https://thepatterraining.github.io/images/ai/mcp1-5.png)
-
-#### 初始化
-
-![初始化](https://thepatterraining.github.io/images/ai/mcp1-4.png)
-
-- 客户端发送包含`协议版本`和`功能`的`初始化请求`
-- 服务器返回服务器支持的`协议版本`和`功能`进行响应
-- 客户端发送`初始化通知`作为确认
-
-此阶段要确认的内容如下：
-- 建立协议版本兼容性
-- 交换和谈判能力
-- 分享实施细节
-
-请求示例：
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize", //初始化方法
-  "params": {
-    "protocolVersion": "2024-11-05", // MCP协议版本
-    "capabilities": { // 支持的能力
-      "roots": { //支持根
-        "listChanged": true // 根变化的时候可以通知
-      },
-      "sampling": {} // 不支持采样
-    },
-    "clientInfo": { //客户端基本信息
-      "name": "ExampleClient", //客户端名称
-      "version": "1.0.0" //客户端版本
-    }
   }
 }
 ```
 
-对应的服务器接收到请求以后可以返回如下内容：
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": { // 返回结果
-    "protocolVersion": "2024-11-05", //MCP协议版本
-    "capabilities": { // 服务器支持的能力
-      "logging": {}, // 日志能力
-      "prompts": { // 提示能力
-        "listChanged": true
-      },
-      "resources": { // 资源能力
-        "subscribe": true,
-        "listChanged": true
-      },
-      "tools": { // 工具能力
-        "listChanged": true
-      }
-    },
-    "serverInfo": { // 服务器基本信息
-      "name": "ExampleServer",
-      "version": "1.0.0"
-    },
-    "instructions": "Optional instructions for the client"
-  }
-}
+接下来重新启动Claude桌面版即可。在启动Claude的时候，Claude会根据上述配置文件来启动MCP服务器。启动命令类似：
+```java
+java -Dspring.ai.mcp.server.stdio=true -jar /mcpServer/target/mcpServer-0.0.1-SNAPSHOT.jar
 ```
 
-成功初始化以后，客户端必须发送一个`初始化通知`来确认初始化完成。
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "notifications/initialized"
-}
+如果通过jps命令，可以看到jar包启动成功。
+```java
+jps -l
 ```
 
-在初始化请求中，客户端必须发送它支持的协议版本。这应该是客户端支持的最新版本。
+在Claude桌面版上可以看到我们刚刚配置的MCP服务器名称和提供的工具。
 
-如果服务器支持请求的协议版本，它必须以相同的版本响应。否则，服务器必须使用它支持的另一个协议版本进行响应。这应该是服务器支持的最新版本。
+![mcp server](https://thepatterraining.github.io/images/ai/mcp2-3.png)
 
-如果客户端不支持服务器响应中的版本，它应该 断开连接。
 
-#### 操作阶段
+![mcp server tool](https://thepatterraining.github.io/images/ai/mcp2-4.png)
 
-这个阶段表示已经初始化完成了，可以双方开始通信了。
+可以自主启用和禁用工具。
 
-在这个阶段就可以开始上面说的交流了。
+接下来我们和Claude大模型交流的时候，大模型会自己判断需不需要调用工具，调用哪个工具，如何调用。当调用的时候，会让你进行确认。
 
-这里应该注意
-- 尊重协商的协议版本
-- 仅使用已成功协商的功能
+来试试输入：
+```
+纽约的天气怎么样？
+```
 
-#### 关闭
+![mcp server tool](https://thepatterraining.github.io/images/ai/mcp2-5.png)
 
-在关闭阶段，一方（通常是客户端）干净地终止协议连接。没有定义特定的关闭消息-相反，应该使用底层传输机制来发出连接终止的信号：
+可以看到大模型自己调用了我们的工具，并展示了输入输出。
 
-​对于`STDIO`的传输方式来说，可以进行如下步骤关闭MCP：
-- 首先，关闭子进程（服务器）的输入流
-- 等待服务器退出，或者如果服务器没有在合理的时间内退出，则发送`SIGTERM`信号
-- 如果服务器`SIGTERM`之后的合理时间内没有退出，则发送`SIGKILL`信号
-服务器可以通过关闭到客户端的输出流并退出来启动关机。
+![mcp server tool](https://thepatterraining.github.io/images/ai/mcp2-6.png)
 
-对于 `HTTP`传输方式来说，通过关闭关联的 HTTP 连接就可以了。
+看到这里我们可以得出MCP+大模型的运行流程图。
+
+![mcp server tool](https://thepatterraining.github.io/images/ai/mcp2-7.png)
+
+### 日志
+
+如果需要查看日志信息，可以到如下目录：`~/Library/Logs/Claude`
+
+有多个文件：
+- mcp.log : 包含了MCP所有的日志
+- mcp-server-xxxxx.log: 一个MCP服务一个日志文件，记录了这个服务相关的所有日志
 
 ## 总结
 
