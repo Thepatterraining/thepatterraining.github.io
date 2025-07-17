@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD记账软件实战一">
+<meta property="og:url" content="https://thepatterraining.github.io/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd2-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd2-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd2-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-07-15T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-07-17T03:54:54.011Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/ddd/ddd2-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DDD记账软件实战一 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD记账软件实战一
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-07-15 10:12:47" itemprop="dateCreated datePublished" datetime="2025-07-15T10:12:47+08:00">2025-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-17 11:54:54" itemprop="dateModified" datetime="2025-07-17T11:54:54+08:00">2025-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html" class="post-meta-item leancloud_visitors" data-flag-title="DDD记账软件实战一" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%80.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="DDD领域驱动设计记账软件实战教程–划分领域和聚合"><a href="#DDD领域驱动设计记账软件实战教程–划分领域和聚合" class="headerlink" title="DDD领域驱动设计记账软件实战教程–划分领域和聚合"></a>DDD领域驱动设计记账软件实战教程–划分领域和聚合</h1><p>本文章为实战教程，主要内容包括：</p>
+<ul>
+<li>从零使用DDD构建一个记账软件</li>
+</ul>
+<p>你是否有以下疑问？</p>
+<ul>
+<li>你是一个DDD软件开发人员，但是只是按照现有的项目去写，如果自己搭建一个新项目就无从下手了？</li>
+<li>你是一个传统软件开发人员，想使用DDD重构软件，却不知道如何入手？</li>
+<li>你看过很多DDD的文章，了解DDD概念，却没有一个从头到尾的完整教程，无法把碎片化的知识串起来？</li>
+</ul>
+<p>本文章带你从头构建一个完整的DDD项目。由点到面的串联起来所有的知识。达成一个完整的知识图谱。</p>
+<h2 id="事件风暴"><a href="#事件风暴" class="headerlink" title="事件风暴"></a>事件风暴</h2><p>首先需要进行<code>事件风暴</code>。整理出来所有的<code>命令</code>、<code>业务流</code>和<code>事件</code>。</p>
+<ul>
+<li>命令：可以简单理解为一些行为。这些命令可以映射成代码模型中的一个个方法。</li>
+<li>业务流：可以按照场景进行分析业务流，比如对于记账软件来说：记账场景、查账场景就是两个不同的场景，可能有不同的业务流。业务流可以映射成代码模型中的接口。</li>
+<li>事件：可以简单理解成上面的命令产生的一些事件。会有一些<code>监听者</code>异步监听这些事件并实现一些逻辑。</li>
+</ul>
+<p>我们来分析一些记账场景会有哪些业务流。</p>
+<p>首先用户需要注册登陆。因此我们可以识别出<code>注册业务流</code>和<code>登陆业务流</code>。继而识别出<code>注册命令</code>和<code>登陆命令</code>。</p>
+<p>对于登陆业务流中来说，除了登陆命令，还可以有查询用户、校验用户信息、生成token等命令。这些命令共同完成了一次登陆业务流。</p>
+<p>此外，还会产生对应的事件。比如<code>用户已注册事件</code>、<code>已登陆事件</code>等。</p>
+<p>对于已注册事件，我们可以发送注册成功的消息提醒。还可以参与注册活动等。</p>
+<p>对于已登陆事件，我们可以写入登陆成功日志，发送登陆成功消息提醒等。</p>
+<p>登陆成功以后，首先需要创建一个<code>账本</code>。接下来可以更新账本信息。更新预算。设置角色信息。然后就可以添加收支记录在账本上了。</p>
+<blockquote>
+<p>DDD领域其实是现实世界的映射。这里我们要思考现实世界的记账是怎么样的。<br>现实世界需要一个账本、需要记录收支信息、账本的最上方可能会写上本月的预算。记录收支信息的时候会写上分类、角色、金额等信息。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd2-1.png" alt="场景分析"></p>
+<p>在这里我仅仅分析了记账场景的业务流。其实还有查账场景的业务流。此外还有一些其他的通用业务流。比如监控，数据统计等。</p>
+<p>大家可以自己分析一下将结果发到评论区。我会一一回复的。</p>
+<blockquote>
+<p>纸上得来终觉浅，绝知此事要躬行</p>
+</blockquote>
+<h2 id="领域建模"><a href="#领域建模" class="headerlink" title="领域建模"></a>领域建模</h2><p>当我们分析完所有的<code>命令</code>、<code>事件</code>以后。我们就可以根据上面分析出来的这些进行<code>领域建模</code>了。通过这些我们可以分析出领域对象。</p>
+<p>比如，登陆注册行为是围绕<code>用户领域对象</code>来完成的行为。写入登陆日志、登陆日志事件是围绕<code>用户日志领域对象</code>的行为。</p>
+<p>此外，我们还可以从上面的分析中找到<code>账本</code>、<code>预算</code>、<code>角色</code>和<code>收支记录</code>这几个领域对象。</p>
+<p>如下图：</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd2-2.png" alt="领域建模"></p>
+<p>领域对象也分三种类型</p>
+<ul>
+<li>聚合根：聚合的入口，操作聚合下所有的实体和值对象都需要通过聚合根来操作</li>
+<li>实体：具有唯一ID的实体，使用<code>充血模型</code>实现，也就是要包含属性和方法。所有对于实体的操作都应该放到这个实体中。可以映射为数据库的一个表。</li>
+<li>值对象：值对象分为简单值对象和复杂值对象。值对象和实体最大的区别在于<code>可变性</code>，值对象不能<code>单独存在</code>，只能作为实体的一部分存在。同样的，值对象不支持变更，如果需要变更则是整个值对象删除再创建一个新的。<ul>
+<li>简单值对象：基本类型的属性可以视为简单值对象。</li>
+<li>复杂值对象：引用其他类（自定义的类）作为属性的值，可以视为复杂值对象。</li>
+</ul>
+</li>
+</ul>
+<p>接下来我们就可以分析出上面的领域对象哪些是<code>实体</code>，哪些是<code>值对象</code>了。</p>
+<p>实体：</p>
+<ul>
+<li>用户实体：用户实体包括用户信息和用户的一些操作。这里可以将最新的一个登陆日志作为值对象放到用户实体中。而不是将所有的登陆日志都作为值对象放到用户实体中，因为那样的话太庞大了。</li>
+<li>用户登陆日志实体：存储登陆日志的信息，虽然从用户的角度来看，登陆日志不能单独存在。但是如果从数据分析的角度看，登陆日志则可以单独存在了。因此可以作为一个实体存在。</li>
+<li>账本实体：账本作为一个现实世界记账必须的物品，自然也要作为一个实体存在，有账本ID保证唯一性。并且可以修改账本的部分信息。</li>
+<li>收支记录实体：每一个收支记录都是账本上的一条信息，都是可以独立修改的个体。比如修改某一个记录的金额等。所以收支记录也作为一个实体存在。</li>
+</ul>
+<p>值对象：</p>
+<ul>
+<li>预算值对象：预算信息是依赖于账本的一个信息，修改预算就是修改预算这个整体。因此预算作为账本的一个值对象存在。</li>
+<li>角色值对象：多个人记账，每个人记账的时候的角色都是不一样的，修改角色也是修改角色这个整体，角色离开账本以后就没有存在的意义了，因此角色也作为值对象存在。</li>
+</ul>
+<h2 id="聚合建模"><a href="#聚合建模" class="headerlink" title="聚合建模"></a>聚合建模</h2><p>经过上面的步骤，我们已经找到了我们需要的<code>实体</code>和<code>值对象</code>。接下来我们可以根据他们之间的关系，来划分成一个个<code>聚合</code>了。</p>
+<p>如果把<code>实体</code>理解成一个个的人，那么<code>聚合</code>就相当于<code>部落</code>、<code>家族</code>等等。相近的一些人聚集在一起，就变成了一个聚合。</p>
+<p>变成聚合以后，当<code>对外沟通</code>的时候，需要一个<code>话事人</code>，也就是<code>聚合根</code>。</p>
+<p>首先我们要有用户聚合，用户聚合来管理用户信息。用户实体就是用户聚合的聚合根。</p>
+<p>其次，用户登陆日志也作为一个单独的聚合存在。可以思考一下。</p>
+<p>✅ 1. 领域含义：登录日志是用户行为的“历史轨迹”，而非用户本身的组成部分</p>
+<ul>
+<li>用户（User）是一个业务主语，它的职责是认证、权限、信息管理</li>
+<li>登录日志是用户行为产生的事实事件，它与用户的生命周期边界无关</li>
+</ul>
+<p>✅ 2. 技术设计上：日志数据量大、写入频繁、读取模式完全不同</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>用户聚合（User）</th>
+<th>登录日志（LoginLog）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>写入频率</td>
+<td>中低（修改信息、改密码）</td>
+<td>高（每次登录都写）</td>
+</tr>
+<tr>
+<td>数据量</td>
+<td>小（一个用户一条）</td>
+<td>非常大（每用户数百&#x2F;数千条）</td>
+</tr>
+<tr>
+<td>删除时是否联动</td>
+<td>删除用户可保留日志</td>
+<td>有审计&#x2F;合规要求时不能删除</td>
+</tr>
+<tr>
+<td>查询模式</td>
+<td>通过用户 ID 查询</td>
+<td>分页查询 &#x2F; 最近10条等</td>
+</tr>
+</tbody></table>
+<p>这说明 LoginLog 应该用独立表、独立聚合、独立读写模型管理。</p>
+<p>✅ 3. 聚合的职责原则（Evans 原则）</p>
+<blockquote>
+<p>一个聚合应尽可能小，保持一致性边界清晰，仅包含保护不变式所必须的部分。</p>
+</blockquote>
+<p>登录日志并不影响用户不变式（用户名、密码唯一性、身份验证），因此它不应该进聚合。</p>
+<p>所以，我们把登陆日志放到一个单独的聚合中。登陆日志就是聚合根。</p>
+<p>接下来，<code>账本</code>实体、<code>预算</code>和<code>角色</code>值对象一起构成了账本聚合。账本作为聚合根存在。</p>
+<p>剩下的收支记录作为一个聚合。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd2-3.png" alt="领域建模"></p>
+<p>有了4个聚合。我们还需要划分领域。将相近的聚合放到一个<code>领域</code>中。</p>
+<p>领域可以简单理解为粗粒度的聚合。聚合中是实体和值对象。而领域中则是聚合。</p>
+<p>我们将4个聚合划分成两个领域，分别是<code>用户领域</code>和<code>记账领域</code>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，我们完成了整个领域建模的工作，下一步就是将领域建模转换成代码建模了。</p>
+<p>下一遍文章会将我们这次的领域建模转换成代码建模，并用spring框架来实现整个代码。</p>
+<p>大家可以先自己将领域建模转换成代码建模，并将结果发到评论区一起讨论～</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html" rel="prev" title="MySQL零基础教程高阶应用实战">
+      <i class="fa fa-chevron-left"></i> MySQL零基础教程高阶应用实战
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E9%A2%86%E5%9F%9F%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E6%95%99%E7%A8%8B%E2%80%93%E5%88%92%E5%88%86%E9%A2%86%E5%9F%9F%E5%92%8C%E8%81%9A%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">DDD领域驱动设计记账软件实战教程–划分领域和聚合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A3%8E%E6%9A%B4"><span class="nav-number">1.1.</span> <span class="nav-text">事件风暴</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.2.</span> <span class="nav-text">领域建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%9A%E5%90%88%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.3.</span> <span class="nav-text">聚合建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.5.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">203</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

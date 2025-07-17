@@ -196,6 +196,880 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%AE%97%E6%B3%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%AE%97%E6%B3%95.html" class="post-title-link" itemprop="url">有序数组去重算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-18 10:12:47" itemprop="dateCreated datePublished" datetime="2022-02-18T10:12:47+08:00">2022-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%AE%97%E6%B3%95.html" class="post-meta-item leancloud_visitors" data-flag-title="有序数组去重算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%AE%97%E6%B3%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D%E7%AE%97%E6%B3%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="有序数组去重算法"><a href="#有序数组去重算法" class="headerlink" title="有序数组去重算法"></a>有序数组去重算法</h1><p>有序数组去重算法的复杂度是O(n)。</p>
+<p>代码如下,只进行一次循环，复杂度O(n)</p>
+<p>完整代码在<a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">github上面</a>，只需要clone下来执行<code>composer install</code>然后执行 <code>php artisan test:sortDeduplicate</code> 就可以看到结果了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 因为是有序数组，为了提高去重效率，取一个元素往后一直比对，如果相邻的相等表示是重复的</span></span><br><span class="line"><span class="comment"> * 继续往后，直到不相等，也就是遇到一个不重复的为止，将这个不重复的元素移动到该元素的下一个</span></span><br><span class="line"><span class="comment"> * 然后用这个不重复的元素为起始，重复上述操作。直到最后</span></span><br><span class="line"><span class="comment"> * 删除最后一个不重复元素后面所有的元素</span></span><br><span class="line"><span class="comment"> * 因为只循环一遍，复杂度O(n)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$a</span> = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">6</span>,<span class="number">8</span>,<span class="number">10</span>,<span class="number">10</span>,<span class="number">34</span>];</span><br><span class="line">    <span class="title function_ invoke__">dump</span>(<span class="variable">$a</span>);</span><br><span class="line">    <span class="comment">//分别代表第一个数据，和要比对的数据</span></span><br><span class="line">    <span class="variable">$i</span> = <span class="number">0</span>;<span class="variable">$j</span>=<span class="number">0</span>;</span><br><span class="line">    <span class="variable">$len</span> = <span class="title function_ invoke__">count</span>(<span class="variable">$a</span>);</span><br><span class="line">    <span class="title function_ invoke__">dump</span>(<span class="string">&quot;长度:&quot;</span>.<span class="variable">$len</span>);</span><br><span class="line">    <span class="keyword">while</span> ((++<span class="variable">$j</span>) &lt; <span class="variable">$len</span>) &#123; <span class="comment">//循环全部数据</span></span><br><span class="line">        <span class="comment">//从$i往后寻找，如果相邻的相等表示是重复的，继续往后，直到不相等，也就是遇到一个不重复的为止，将这个不重复的元素移动到该元素的下一个</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$a</span>[<span class="variable">$i</span>] != <span class="variable">$a</span>[<span class="variable">$j</span>]) &#123;</span><br><span class="line">            <span class="variable">$a</span>[++<span class="variable">$i</span>] = <span class="variable">$a</span>[<span class="variable">$j</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//截取前面去重过的数据</span></span><br><span class="line">    <span class="variable">$a</span> = <span class="title function_ invoke__">array_slice</span>(<span class="variable">$a</span>, <span class="number">0</span>, ++<span class="variable">$i</span>);</span><br><span class="line">    <span class="title function_ invoke__">dd</span>(<span class="variable">$a</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/PHP-ES%E5%8C%85%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/PHP-ES%E5%8C%85%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0.html" class="post-title-link" itemprop="url">PHP-ES包分词功能实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-19 00:00:00" itemprop="dateCreated datePublished" datetime="2022-01-19T00:00:00+08:00">2022-01-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/PHP-ES%E5%8C%85%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0.html" class="post-meta-item leancloud_visitors" data-flag-title="PHP-ES包分词功能实现" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/PHP-ES%E5%8C%85%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/PHP-ES%E5%8C%85%E5%88%86%E8%AF%8D%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>直接使用 composer 安装 ES 包就可以了，这里使用官方的 <code>elasticsearch/elasticsearch</code> 这个包。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require elasticsearch/elasticsearch</span><br></pre></td></tr></table></figure>
+
+<p>安装好以后，创建一个客户端。hosts如果是多个节点的集群，那么可以配置一个二维数组。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$hosts</span> = [</span><br><span class="line">            <span class="string">&#x27;host&#x27;</span> =&gt; <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;port&#x27;</span> =&gt; <span class="string">&#x27;9200&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;scheme&#x27;</span> =&gt; <span class="string">&#x27;http&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;user&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;pass&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span></span><br><span class="line">        ];</span><br><span class="line"><span class="variable">$client</span> = <span class="title class_">ClientBuilder</span>::<span class="title function_ invoke__">create</span>()  <span class="comment">//创建客户端</span></span><br><span class="line">                        -&gt;<span class="title function_ invoke__">setHosts</span>(<span class="variable">$hosts</span>) <span class="comment">//hosts连接地址</span></span><br><span class="line">                        -&gt;<span class="title function_ invoke__">build</span>();</span><br></pre></td></tr></table></figure>
+
+<p>如果想跳过ssl证书校验，可以添加一些curl的参数放进客户端</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$curlParams</span> = [<span class="comment">//不校验ssl</span></span><br><span class="line">                CURLOPT_SSL_VERIFYPEER =&gt; <span class="number">0</span>,</span><br><span class="line">                CURLOPT_SSL_VERIFYHOST =&gt; <span class="number">0</span>,</span><br><span class="line">            ];</span><br><span class="line"><span class="variable">$client</span> = <span class="title class_">ClientBuilder</span>::<span class="title function_ invoke__">create</span>()</span><br><span class="line">            -&gt;<span class="title function_ invoke__">setConnectionParams</span>([<span class="string">&#x27;client&#x27;</span> =&gt; [<span class="string">&#x27;curl&#x27;</span> =&gt; <span class="variable">$curlParams</span>]]) <span class="comment">//设置curl参数</span></span><br><span class="line">            -&gt;<span class="title function_ invoke__">setHosts</span>(<span class="variable">$hosts</span>)</span><br><span class="line">            -&gt;<span class="title function_ invoke__">build</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h3><p>简单的增删改查在 elasticsearch 的文档中有介绍了，就不说了，可以看(<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/php/current/_quickstart.html)[%E6%96%87%E6%A1%A3]%E3%80%82">https://www.elastic.co/guide/cn/elasticsearch/php/current/_quickstart.html)[文档]。</a></p>
+<p>分词的话隐藏的比较深，文档中没有介绍，他放在了<code>indices</code>这个 namespace 下面。如果看源码，可以在<code>Endpoints/Indices</code> 目录下面发现 <code>Analyze.php</code> 文件，当然了，除了分词，这里面还有其他功能，可以自己看。</p>
+<p>这个文件也很简单啊，只有几个函数，就是设置请求的API地址，参数这些。</p>
+<p>使用起来是这样的，我们用上面创建好的客户端。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$parmas</span>[<span class="string">&#x27;index&#x27;</span>] = <span class="string">&#x27;test&#x27;</span> <span class="comment">//这个是分词的index，也可以不加，加了请求的API就是 $index/_analyze</span></span><br><span class="line"><span class="comment">//请求体 这个就和你直接写DSL没区别了，参数啥的都一样，可以在 kibana里面试试参数</span></span><br><span class="line"><span class="variable">$parmas</span>[<span class="string">&#x27;body&#x27;</span>] = [</span><br><span class="line">  <span class="string">&#x27;text&#x27;</span> =&gt; <span class="string">&#x27;php开发&#x27;</span>, <span class="comment">//要分词的文字</span></span><br><span class="line">  <span class="string">&#x27;analyzer&#x27;</span> =&gt; <span class="string">&#x27;ik_smart&#x27;</span>, <span class="comment">//分词器，可以不写</span></span><br><span class="line">]; </span><br><span class="line"><span class="variable">$client</span>-&gt;<span class="title function_ invoke__">indices</span>()-&gt;<span class="title function_ invoke__">analyze</span>(<span class="variable">$params</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>indices函数返回的就是 indices 文件夹的 namespace，对应文件在<code>namespace/IndicesNamespace.php</code>,然后后面的函数就相当于文件名，她会拼接在 indices 后面，像我们上面请求的文件就是<code>indices/Analyze.php</code>。具体的拼接就是在 <code>namespace/IndicesNamespace.php</code> 这个里面做的，有一个函数如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * $params[&#x27;index&#x27;] = (string) The name of the index to scope the operation</span></span><br><span class="line"><span class="comment">  * $params[&#x27;body&#x27;]  = (array) Define analyzer/tokenizer parameters and the text on which the analysis should be performed</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> array $params Associative array of parameters</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> array</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@see</span> https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-analyze.html</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">analyze</span>(<span class="params"><span class="keyword">array</span> <span class="variable">$params</span> = []</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//获取$params[&#x27;index&#x27;], $params[&#x27;body&#x27;]</span></span><br><span class="line">    <span class="variable">$index</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">extractArgument</span>(<span class="variable">$params</span>, <span class="string">&#x27;index&#x27;</span>);</span><br><span class="line">    <span class="variable">$body</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">extractArgument</span>(<span class="variable">$params</span>, <span class="string">&#x27;body&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置endpoints处理类</span></span><br><span class="line">    <span class="variable">$endpointBuilder</span> = <span class="variable language_">$this</span>-&gt;endpoints;</span><br><span class="line">    <span class="comment">//$endpoint 就相当于 indices/Analyze.php 这个文件了</span></span><br><span class="line">    <span class="variable">$endpoint</span> = <span class="variable">$endpointBuilder</span>(<span class="string">&#x27;Indices\Analyze&#x27;</span>);</span><br><span class="line">    <span class="comment">//设置参数，index, 请求体</span></span><br><span class="line">    <span class="variable">$endpoint</span>-&gt;<span class="title function_ invoke__">setParams</span>(<span class="variable">$params</span>);</span><br><span class="line">    <span class="variable">$endpoint</span>-&gt;<span class="title function_ invoke__">setIndex</span>(<span class="variable">$index</span>);</span><br><span class="line">    <span class="variable">$endpoint</span>-&gt;<span class="title function_ invoke__">setBody</span>(<span class="variable">$body</span>);</span><br><span class="line">    <span class="comment">//发起请求</span></span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">performRequest</span>(<span class="variable">$endpoint</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>$this-&gt;endpoints 是一个函数，外面传进来的，函数内容如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">$this</span>-&gt;endpoint = <span class="function"><span class="keyword">function</span> (<span class="params"><span class="variable">$class</span></span>) <span class="keyword">use</span> (<span class="params"><span class="variable">$serializer</span></span>) </span>&#123;</span><br><span class="line">  <span class="comment">//拼接处理类</span></span><br><span class="line">  <span class="variable">$fullPath</span> = <span class="string">&#x27;\\Elasticsearch\\Endpoints\\&#x27;</span> . <span class="variable">$class</span>;</span><br><span class="line">  <span class="comment">//反射获取</span></span><br><span class="line">  <span class="variable">$reflection</span> = <span class="keyword">new</span> <span class="title class_">ReflectionClass</span>(<span class="variable">$fullPath</span>);</span><br><span class="line">  <span class="variable">$constructor</span> = <span class="variable">$reflection</span>-&gt;<span class="title function_ invoke__">getConstructor</span>();</span><br><span class="line">  <span class="comment">//执行</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">$constructor</span> &amp;&amp; <span class="variable">$constructor</span>-&gt;<span class="title function_ invoke__">getParameters</span>()) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">$fullPath</span>(<span class="variable">$serializer</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">$fullPath</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/go%E5%AD%A6%E4%B9%A0%E7%AC%AC%E4%B8%80%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/go%E5%AD%A6%E4%B9%A0%E7%AC%AC%E4%B8%80%E7%AB%A0.html" class="post-title-link" itemprop="url">go学习第一章</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-09 10:12:47" itemprop="dateCreated datePublished" datetime="2021-11-09T10:12:47+08:00">2021-11-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/go%E5%AD%A6%E4%B9%A0%E7%AC%AC%E4%B8%80%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="go学习第一章" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/go%E5%AD%A6%E4%B9%A0%E7%AC%AC%E4%B8%80%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/go%E5%AD%A6%E4%B9%A0%E7%AC%AC%E4%B8%80%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="go学习第一章"><a href="#go学习第一章" class="headerlink" title="go学习第一章"></a>go学习第一章</h1><p>在go现在的版本里面可以使用<code>go mod</code>来管理依赖了</p>
+<p>使用 <code>go mod</code> 意味着不需要设置多个 <code>GOPATH</code> 了</p>
+<p><code>go mod</code> 对应的环境变量 <code>GO111MODULE</code> 有三个值，默认<code>auto</code></p>
+<ul>
+<li>on  模块支持，go命令行会使用modules，而一点也不会去GOPATH目录下查找</li>
+<li>off 无模块支持，go命令行将不会支持module功能，寻找依赖包的方式将会沿用旧版本那种通过vendor目录或者GOPATH模式来查找。</li>
+<li>auto 只要当前目录或者父目录有<code>go.mod</code>文件，那么就以on的形式工作。</li>
+</ul>
+<h2 id="标准输入输出"><a href="#标准输入输出" class="headerlink" title="标准输入输出"></a>标准输入输出</h2><p>使用<code>fmt</code>包进行标准输出</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>flag</code> 包进行标准输入</p>
+<p>有两种方式</p>
+<ul>
+<li>一种是传入变量地址的<code>StringVar</code>，第二个参数是输入的变量名，第三个是默认值，第四个是描述</li>
+<li>还有一种是<code>String</code>，除了第一个参数不同，是通过返回值接收参数，其他都一样</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;flag&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> name <span class="type">string</span></span><br><span class="line">    flag.StringVar(&amp;name, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;default&quot;</span>, <span class="string">&quot;desc&quot;</span>)</span><br><span class="line">    name = flag.String(<span class="string">&quot;name&quot;</span>,<span class="string">&quot;default&quot;</span>,<span class="string">&quot;desc&quot;</span>)</span><br><span class="line">    flag.Parse()</span><br><span class="line">    fmt.Println(name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用的时候<code>go run hello.go -name=123</code></p>
+<p><code>-name</code>就是你输入的名称，前面要加<code>-</code> 或者 <code>--</code> 没有或者有三个都是不行的。每个输入默认自带<code>-h</code> 来获取命令帮助，帮助里面会显示描述和默认值</p>
+<h2 id="go-mod-下的本地包拆分"><a href="#go-mod-下的本地包拆分" class="headerlink" title="go mod 下的本地包拆分"></a>go mod 下的本地包拆分</h2><p>如果我们想把代码分散到不同的文件中怎么做呢？</p>
+<p>假设现在的目录如下</p>
+<ul>
+<li>main.go</li>
+<li>test<ul>
+<li>test.go</li>
+</ul>
+</li>
+</ul>
+<p>我们想要在<code>main.go</code>引用<code>test.go</code>的代码</p>
+<p>首先在go里面通过首字母大小写决定访问权限<code>首字母大写 = public</code>，<code>首字母小写 = protected or private</code></p>
+<p>假设<code>test.go</code>代码如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test <span class="comment">//包名和目录保持一致</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>main.go</code>代码如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们想使用<code>test</code>这个包里面的东西需要使用<code>go mod</code>了</p>
+<p>执行<code>go mod init name</code>,<code>name</code> 表示当前包的名称，可以随便取</p>
+<p>这个时候会生成<code>go.mod</code>文件，假设刚才执行的是<code>go mod init hello</code>，那么我们的<code>go.mod</code>文件如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">module hello</span><br><span class="line"></span><br><span class="line">go 1.17</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们就可以在<code>main.go</code>引入<code>test.go</code>了，<code>main.go</code>代码如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;hello/test&quot;</span>  <span class="comment">//引入hello这个包下面的test包</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    test.Test() <span class="comment">//这里可以使用test包的Test方法了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然了，包名<code>test</code>也可以和目录<code>test</code>不一致，比如<code>test.go</code>文件内容如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test5 <span class="comment">//包名和目录不一致</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在<code>main.go</code>依然可以引入，但是需要更改一下调用，或者加个别名</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> test5 <span class="string">&quot;hello/test&quot;</span>  <span class="comment">//别名，不用也可以，不过有的会报错</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    test5.Test() <span class="comment">//这里可以使用test5包的Test方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>变量的声明有两种方式</p>
+<ul>
+<li>var 可以使用在任何地方，不可以重复声明<ul>
+<li>var [name] [type]</li>
+<li>type在变量声明的时候如果有赋值，那么可以省略</li>
+<li>var [name] &#x3D; 1</li>
+<li>var 在外面的声明，可以在使用之后声明</li>
+<li>var 在局部声明，必须在使用之前声明</li>
+</ul>
+</li>
+<li>:&#x3D; 只能使用在函数等代码块里面，当有新的参数在左边声明的时候可以<code>重声明</code></li>
+</ul>
+<p>比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"><span class="keyword">var</span> b = a <span class="comment">//b也是string</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="string">&quot;123&quot;</span> <span class="comment">// 报错，因为a已经声明过了</span></span><br><span class="line">a, c := <span class="string">&quot;123&quot;</span>,<span class="string">&quot;456&quot;</span> <span class="comment">//不会报错，因为:=可以重声明，但是必须有一个新变量，比如c</span></span><br><span class="line">a, c := <span class="string">&quot;456&quot;</span>, <span class="string">&quot;123&quot;</span> <span class="comment">//报错，因为a,c都已经声明过了，都是旧变量</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="简单指针变量"><a href="#简单指针变量" class="headerlink" title="简单指针变量"></a>简单指针变量</h3><p>比如声明一个变量</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br></pre></td></tr></table></figure>
+
+<p>那么会产生一个内存块</p>
+<table>
+<thead>
+<tr>
+<th align="left">内存地址</th>
+<th align="left">变量内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">001</td>
+<td align="left">空</td>
+</tr>
+</tbody></table>
+<p>这个时候可以通过<code>&amp;</code>操作符取地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">println(a) //打印变量内容 空</span><br><span class="line">println(&amp;a) //打印变量内存地址 001</span><br></pre></td></tr></table></figure>
+
+<p>如果我们声明一个指针变量</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b *<span class="type">string</span></span><br><span class="line">b = &amp;a  <span class="comment">//指针变量只能存储内存地址</span></span><br></pre></td></tr></table></figure>
+
+<p>那么内存块</p>
+<table>
+<thead>
+<tr>
+<th align="left">内存地址</th>
+<th align="left">变量内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">001</td>
+<td align="left">空</td>
+</tr>
+<tr>
+<td align="left">002</td>
+<td align="left">001</td>
+</tr>
+</tbody></table>
+<p>这个时候输出，可以通过<code>*</code>操作符取指针的值</p>
+<ul>
+<li>第一步先找出指针变量的内容001</li>
+<li>第二步将001作为内存地址查询对应地址的内容</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">println</span>(b)  <span class="comment">//输出的是变量b的内容001</span></span><br><span class="line"><span class="built_in">println</span>(*b) <span class="comment">//输出的是变量b的内容001作为内存地址的内容空</span></span><br><span class="line"><span class="built_in">println</span>(&amp;b) <span class="comment">//输出的是变量b的内存地址002</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="变量类型转换和类型断言"><a href="#变量类型转换和类型断言" class="headerlink" title="变量类型转换和类型断言"></a>变量类型转换和类型断言</h3><p>可以使用 <code>type</code> 创建新的类型和声明类型的别名</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> astring = <span class="type">string</span>  <span class="comment">//声明一个string类型的别名</span></span><br></pre></td></tr></table></figure>
+
+<p>这个时候<code>astring</code> 和 <code>string</code> 这两个类型是完全一样的，没有任何区别</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a = <span class="string">&quot;1234&quot;</span></span><br><span class="line">	as = a  <span class="comment">//可以赋值</span></span><br><span class="line">	as = astring(a) <span class="comment">//可以类型转换</span></span><br><span class="line">	as, ok := <span class="keyword">interface</span>&#123;&#125;(a).(astring) <span class="comment">//可以类型断言</span></span><br><span class="line">	fmt.Println(as, ok, as == a) <span class="comment">//可以比较</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是创建新的类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> astring <span class="type">string</span></span><br></pre></td></tr></table></figure>
+
+<p>这个时候这两个类型没啥关系了，但是因为底层都是string 还是可以进行类型转换的，如果底层类型不是string，那么连转换都不行</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a = <span class="string">&quot;1234&quot;</span></span><br><span class="line">	as = a  <span class="comment">//不可以赋值</span></span><br><span class="line">	as = astring(a) <span class="comment">//可以类型转换</span></span><br><span class="line">	as, ok := <span class="keyword">interface</span>&#123;&#125;(a).(astring) <span class="comment">//类型断言失败</span></span><br><span class="line">	fmt.Println(as, ok, as == a) <span class="comment">//不可以比较</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h4><p>类型转换，比如int8转成int16，但是这种转换只适用于int和int之间，string和string之间转换，还有上面的别名和新类型之间底层类型一致的转换</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b <span class="type">int8</span></span><br><span class="line">b = <span class="number">1</span></span><br><span class="line"><span class="type">int16</span>(b) <span class="comment">//直接转换</span></span><br></pre></td></tr></table></figure>
+
+<p>如果是高类型像低类型转换，那么直接取后面的位数，高位会舍弃，比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">int16</span> <span class="comment">//</span></span><br><span class="line">a = <span class="number">3000</span> <span class="comment">//这个时候a在计算机存储的二进制 = 0000 1011 1011 1000‬</span></span><br><span class="line">b := <span class="type">uint8</span>(a) <span class="comment">//如果转换成8位int，那么是取后面的8位 1011 1000‬ b = 184</span></span><br></pre></td></tr></table></figure>
+
+<p>当然了，一个int也是可以转成string的，但是会把int值当成一个<code>Unicode</code>值，如果不是一个<code>Unicode</code>能表示的，那么会显示成乱码，比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="number">69</span></span><br><span class="line">t := <span class="type">string</span>(b) <span class="comment">//t = E</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h4><p>类型断言，想要判断一个变量是什么类型，就可以使用类型断言。使用之前需要先转成<code>interface</code>类型，<code>interface</code>是所有类型的爸爸。<br>返回两个值，第一个是断言并转换后的值，第二个值表示是否是这个类型，如果ok &#x3D; true，那么v&#x3D;转换后的值，如果ok &#x3D; false, 那么v &#x3D; nil（空值）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a astring</span><br><span class="line">v, ok := <span class="keyword">interface</span>&#123;&#125;(a).(astring)  <span class="comment">//判断a是不是一个astring类型</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="数组和切片"><a href="#数组和切片" class="headerlink" title="数组和切片"></a>数组和切片</h3><p>切片的底层是一个数组，切片是对数组的引用。</p>
+<ul>
+<li>数组 [len]string 数组长度固定不可变</li>
+<li>切片 []string 切片长度可变，可以看做可变长度的数组</li>
+</ul>
+<p>数组和切片都有<code>长度length</code>和<code>容量cap</code>的属性</p>
+<ul>
+<li>数组的长度和容量都是一样的</li>
+<li>切片的长度表示现在数据的长度，容量表示底层数组的长度也就是切片的最大长度</li>
+</ul>
+<p>比如下面，可以看到只修改c[0]的值，但是其他的值也变了，因为是修改了底层数组a的值，所以底层数组和其他引用的值都变了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a := [<span class="number">3</span>]<span class="type">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125; <span class="comment">//3长度的数组</span></span><br><span class="line">b := a[<span class="number">0</span>,<span class="number">2</span>] <span class="comment">//2长度 3容量的切片</span></span><br><span class="line">c := a[<span class="number">0</span>,<span class="number">1</span>] <span class="comment">//1长度 3容量的切片</span></span><br><span class="line">d := b[<span class="number">0</span>,<span class="number">1</span>] <span class="comment">//1长度 3容量的切片</span></span><br><span class="line"><span class="comment">// b c d的底层都是数组a</span></span><br><span class="line">c[<span class="number">0</span>] = <span class="number">100</span></span><br><span class="line">fmt.Println(a,b,c,d) <span class="comment">//a [100 2 3] b [100 2] c [100] d [100]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="切片的扩容"><a href="#切片的扩容" class="headerlink" title="切片的扩容"></a>切片的扩容</h4><p>切片的容量变化，如果切片<code>b</code>现在变成一个5长度的会怎么样呢，底层会进行一个<code>扩容</code>，会创建一个新的底层数组，然后一个新的切片，返回这个新的切片给b。</p>
+<p>扩容以后，容量如果小于1024，每次容量会乘以2，比如b的容量3乘以2变成6，如果大于1024，那么每次会乘以1.25，但是计算完以后还会进行一个内存对齐的操作。</p>
+<h3 id="字典map"><a href="#字典map" class="headerlink" title="字典map"></a>字典map</h3><p>字典是一个hash表，声明方式如下,有着hash的优势，比如key-value是O(1)的复杂度，但是map是无序的，每次遍历的顺序不一定。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m1 <span class="keyword">map</span>[<span class="type">int</span>]<span class="type">string</span> <span class="comment">//key是int,value是string的map，但是这样声明的map值是nil，并且不能赋值</span></span><br><span class="line">m1[<span class="number">1</span>] = <span class="string">&quot;2&quot;</span> <span class="comment">//报错</span></span><br><span class="line">m2 := <span class="keyword">map</span>[<span class="type">int</span>]<span class="type">int</span>&#123;<span class="number">1</span>:<span class="number">1</span>,<span class="number">2</span>:<span class="number">2</span>&#125;  <span class="comment">//key是int,value也是int的map</span></span><br><span class="line">m3 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">int</span>]<span class="type">int</span>, <span class="number">5</span>) <span class="comment">//创建一个key是int,value也是int,长度为5的map</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h3><p>channel是一个并发安全的类型。channel分为带缓冲区的和不带缓冲区的。声明方式如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 示例1。</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="number">123</span>)</span><br><span class="line">		<span class="keyword">var</span> ch1 <span class="keyword">chan</span> <span class="type">int</span> <span class="comment">//里面可以传输int的channel，默认值nil，如果这样声明会造成一个永久阻塞的channel，后面的代码不会执行</span></span><br><span class="line">		fmt.Printf(<span class="string">&quot;ch1:%s&quot;</span>, ch1)</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ch1 &lt;- 1</span></span><br><span class="line">    ch2 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">1</span>)  <span class="comment">//声明有一个缓冲区的channel</span></span><br><span class="line">    ch3 := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">0</span>)  <span class="comment">//声明不带缓冲区的channel</span></span><br><span class="line">	ch2 &lt;- <span class="number">1</span></span><br><span class="line">	<span class="comment">// ch2 &lt;- 2</span></span><br><span class="line">	<span class="comment">// m1[&quot;2&quot;] = 3</span></span><br><span class="line">	fmt.Println(&lt;-ch2, ch3)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把数据传给channel,使用<code>ch2 &lt;- 数据</code>的方式把数据传给ch2这个channel，channel的数据传递全部都是浅拷贝，下面的例子可以发现，修改s的值会使得s1的值也被修改。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   ch2 := <span class="built_in">make</span>(<span class="keyword">chan</span> []<span class="type">string</span>, <span class="number">1</span>)</span><br><span class="line">s1 := []<span class="type">string</span>&#123;<span class="string">&quot;1&quot;</span>, <span class="string">&quot;2&quot;</span>&#125;</span><br><span class="line">ch2 &lt;- s1</span><br><span class="line"><span class="comment">// ch2 &lt;- 2</span></span><br><span class="line"><span class="comment">// m1[&quot;2&quot;] = 3</span></span><br><span class="line">s := &lt;-ch2</span><br><span class="line">s[<span class="number">1</span>] = <span class="string">&quot;34&quot;</span></span><br><span class="line">fmt.Println(s, s1)</span><br></pre></td></tr></table></figure>
+
+<p>数据接收使用<code>变量 := &lt;- ch2</code> 来接收ch2的数据到一个变量中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s := &lt;- ch2</span><br></pre></td></tr></table></figure>
+
+<h4 id="单向channel"><a href="#单向channel" class="headerlink" title="单向channel"></a>单向channel</h4><p>单向channel可以限制函数的行为，比如<code>chan&lt;-</code>类型的只能发送数据到channel中，<code>&lt;-chan</code>类型的只能从channel中获取数据。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getChan</span><span class="params">(ch &lt;-<span class="keyword">chan</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">//函数里面只能从 ch 这个 channel中获取数据而无法发送数据，这样限制了这个函数里面的行为</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setChan</span><span class="params">(ch <span class="keyword">chan</span>&lt;-)</span></span> &#123;</span><br><span class="line">    <span class="comment">//函数里面只能往 ch 这个 channel中发送数据而无法获取数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p><code>go</code>中的函数是<code>一等公民</code>可以作为type类型，可以作为参数，可以作为返回值，可以赋值给变量,可以和nil做比较等等</p>
+<p>函数的声明</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">name</span><span class="params">(arg1 <span class="type">int</span>, arg2 <span class="type">int</span>)</span></span> (r <span class="type">int</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数的类型，声明一个类型 afunc afunc的底层类型是一个接受一个string参数，返回一个int参数和一个error类型参数的函数，<code>函数签名</code>是函数的参数列表和返回值列表，如果参数列表的类型一致并且返回值列表的参数类型一致就可以认为是一样的函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> afunc <span class="function"><span class="keyword">func</span><span class="params">(<span class="type">string</span>)</span></span> (<span class="type">int</span>, <span class="type">error</span>) <span class="comment">//声明一个类型 afunc afunc的底层类型是一个接受一个string参数，返回一个int参数和一个error类型参数的函数</span></span><br><span class="line"><span class="keyword">var</span> a afunc <span class="comment">//可以声明一个变量，类型是 afunc 的变量</span></span><br><span class="line">a = name <span class="comment">//可以把函数签名一致的函数赋值给这个函数变量</span></span><br><span class="line">a(<span class="number">1</span>,<span class="number">2</span>) <span class="comment">//等于 name(1,2)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h2><p>结构体的声明</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> as <span class="keyword">struct</span>&#123; <span class="comment">//声明一个名称叫 as 的结构体</span></span><br><span class="line">    a <span class="type">string</span> <span class="comment">//as 有 一个string的属性 a</span></span><br><span class="line">    b <span class="type">int</span> <span class="comment">//一个int的属性b</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//声明一个属于as结构体的方法String</span></span><br><span class="line"><span class="function"><span class="keyword">func</span><span class="params">(this as)</span></span> String() <span class="type">string</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(this.a) <span class="comment">//访问as的属性a</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的声明可以看出来，可以把struct简单的类比成class，这个as的结构体有两个属性，一个方法</p>
+<p>使用结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	as1 := as&#123; <span class="comment">//初始化as这个结构体</span></span><br><span class="line">		a: <span class="string">&quot;1&quot;</span>,</span><br><span class="line">		b: <span class="number">1</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    as2 := as&#123;&#125; <span class="comment">//也可以不初始化</span></span><br><span class="line">	fmt.Println(as1, as2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结构体的组合，也可以类比成class的继承，不过组合比继承更有优势。组合进来以后，asT结构体就拥有了as类的属性和方法，但是由于asT有a，as也有a属性，asT的就把as的覆盖了</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> asT <span class="keyword">struct</span> &#123;</span><br><span class="line">    a <span class="type">string</span> <span class="comment">//覆盖了as的a属性</span></span><br><span class="line">    as <span class="comment">//把as组合，嵌入进asT结构体，可以类比成 asT类继承了as类</span></span><br><span class="line">&#125;</span><br><span class="line">as2 := asT&#123;&#125;</span><br><span class="line">as2.a = <span class="string">&quot;3&quot;</span> <span class="comment">//修改的是as2的a属性</span></span><br><span class="line">as2.as.a = <span class="string">&quot;2&quot;</span> <span class="comment">//修改的是as2.as.a属性 可以类比成修改了父类的a属性</span></span><br><span class="line">as2.String() <span class="comment">//可以调用as2.String方法，因为as有这个方法，他组合进来也拥有了这个方法</span></span><br><span class="line"><span class="comment">//这样可以定义asT的String方法，这样的话上面的代码就会访问这个方法了，可以类比成重写了String方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span><span class="params">(this asT)</span></span> String() <span class="type">string</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(this.a) <span class="comment">//访问asT的属性a</span></span><br><span class="line">&#125;</span><br><span class="line">as2.as.String() <span class="comment">//就算覆盖了，依然可以这样调用as的String方法</span></span><br></pre></td></tr></table></figure>
+
+<p>结构体可以组合多个结构体，也可以类比成多继承。但是这样有一个问题，比如组合的两个结构体内有同样名称的属性或者方法就会报错。声明的时候不会报错，只有使用的时候会报错，因为不知道使用哪个，如果指定相应的结构体进行使用就不会报错了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> asD <span class="keyword">struct</span>&#123;</span><br><span class="line">    as</span><br><span class="line">    asT</span><br><span class="line">&#125;</span><br><span class="line">as3 := asD&#123;&#125;</span><br><span class="line">as3.a := <span class="string">&quot;3&quot;</span> <span class="comment">//报错</span></span><br><span class="line">as3.as.a := <span class="string">&quot;4&quot;</span> <span class="comment">//正常</span></span><br></pre></td></tr></table></figure>
+
+<p>还有一种方法，比如在新的结构体中定义一个同名的属性，就会覆盖其他的，所以就不会报错了</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> asD <span class="keyword">struct</span>&#123;</span><br><span class="line">    a <span class="type">int</span></span><br><span class="line">    as</span><br><span class="line">    asT</span><br><span class="line">&#125;</span><br><span class="line">as3 := asD&#123;&#125;</span><br><span class="line">as3.a := <span class="number">3</span> <span class="comment">//正常</span></span><br></pre></td></tr></table></figure>
+
+<p>还有结构体中的覆盖是通过<code>名称</code>来判断覆盖的，跟数据类型没有关系，方法的覆盖也是一样，跟参数列表和返回值没有关系</p>
+<p>结构体中指针的使用</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span><span class="params">(this asT)</span></span> String() <span class="type">string</span>&#123;</span><br><span class="line">    this.a = <span class="number">5</span> <span class="comment">//这里不可以赋值，因为this是一个值类型，这个赋值并不会真正的改变asT结构体的值，只是会改变当前this变量的值而已</span></span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(this.a) <span class="comment">//访问asT的属性a</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span><span class="params">(this *asT)</span></span> String() <span class="type">string</span>&#123;</span><br><span class="line">    this.a = <span class="number">5</span> <span class="comment">//这里可以赋值，因为this是一个指针类型</span></span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(this.a) <span class="comment">//访问asT的属性a</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个是有定义的时候有区别，因为在调用的时候<code>go</code>会自动转换，比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asT.String() <span class="comment">//如果接受的是一个*asT类型的值，这里go会转换成(&amp;asT).String()的调用</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>接口是<code>interface</code>和一般语言的接口没啥区别，但是go的接口是一种<code>无侵入式</code>实现，比如下面的代码我们声明了一个ai的接口，声明了一个as的结构体，这个结构体的方法和ai的方法一样，那么就算实现了ai的接口，可以赋值给ai接口类型的变量。</p>
+<p>这里需要<code>方法名称</code>和<code>方法签名</code>这两个全部一致才算实现了这个接口，还有要注意，*as代表SetName是 *as的方法而不是as的方法，所以我们只能把&amp;as1赋值过去，如果赋值as1会报错。因为as1只有一个GetName方法</p>
+<p>接口变量具有三个属性</p>
+<ul>
+<li>静态类型 ai</li>
+<li>动态类型 赋值时候确定，比如赋值了&amp;as1，那么动态类型就是*as</li>
+<li>动态值 也就是&amp;as1</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ai <span class="keyword">interface</span> &#123; <span class="comment">//声明一个名称叫 ai 的接口</span></span><br><span class="line">	SetName(<span class="type">string</span>)  <span class="comment">//该接口有一个SetName方法</span></span><br><span class="line">	GetName() <span class="type">string</span> <span class="comment">//有一个GetName方法</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> as <span class="keyword">struct</span> &#123; <span class="comment">//声明一个名称叫 as 的结构体</span></span><br><span class="line">	a <span class="type">string</span> <span class="comment">//as 有 一个string的属性 a</span></span><br><span class="line">	b <span class="type">int</span>    <span class="comment">//一个int的属性b</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//声明一个属于as结构体的方法 GetName</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this as)</span></span> GetName() <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(this.a) <span class="comment">//访问as的属性a</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//声明一个属于as结构体的方法 SetName</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *as)</span></span> SetName(name <span class="type">string</span>) &#123;</span><br><span class="line">	this.a = name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> ai1 ai</span><br><span class="line">	as1 := as&#123;&#125;</span><br><span class="line">	ai1 = &amp;as1</span><br><span class="line">	fmt.Println(as1, ai1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接口类型的nil值，接口只有声明的时候和赋值nil字面量的时候才是真正的nil值，看下面，输出结果a1是2，因为ai1不是真正的nil,ai1的动态值是nil，但是动态类型是*as，所以ai1不是nil</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">var</span> as2 *as <span class="comment">//as2是nil</span></span><br><span class="line">ai1 = as2</span><br><span class="line">   <span class="keyword">var</span> a1 <span class="type">int</span></span><br><span class="line"><span class="keyword">if</span> ai1 == <span class="literal">nil</span> &#123; <span class="comment">//ai1不是nil</span></span><br><span class="line">	a1 = <span class="number">1</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	a1 = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(as1, ai1, a1)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="goroutine"><a href="#goroutine" class="headerlink" title="goroutine"></a>goroutine</h2><p>goroutine 是一个 go的用户级线程，也叫协程。</p>
+<p>使用的话就是下面这样 <code>go</code> 后面跟上协程需要执行的函数代码。首先启动go程序的时候，会启动一个主进程。然后主进程生成一个主线程来执行go程序的main函数。执行的时候是一个for循环。</p>
+<ul>
+<li>执行第一次循环的时候i &#x3D; 0</li>
+<li>然后执行到了<code>go func</code>代码</li>
+<li>由go的runtime查找是否有空闲的协程。如果没有那么创建一个协程。</li>
+<li>然后把<code>go func</code>的代码放入创建好的协程。</li>
+<li>最后把这个包含了<code>go func</code>代码的协程放入协程的等待队列中</li>
+<li>直到有空闲的线程，从等待队列中取出一个协程，执行这个协程的代码</li>
+</ul>
+<p>可以看到下面这段代码的执行结果，是什么也不会发生。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			fmt.Println(i)</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为在for循环执行以后goroutine的代码还没有得到执行机会的时候，主线程main函数执行完了。那么这个时候系统的主线程就会关闭了，主进程也会关闭了。所以协程并没有执行。</p>
+<p>看下面的代码，增加了定时器，这个时候会输出10个10，因为主线程执行到定时器的时候线程挂起，然后协程就有执行的时间了，但是协程开始执行的时候，for循环已经执行完了，这个时候变量i的值是10，所以10个协程打印出来的变量i的值都是10</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			fmt.Println(i)</span><br><span class="line">		&#125;()</span><br><span class="line">    &#125;</span><br><span class="line">    time.Sleep(time.Millisecond * <span class="number">500</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看下面的代码，go func(i int){}(i)，增加了入参i int类型，并且在调用的时候把变量i传入了进去，那这个时候呢，执行的结果就是输出0-9的乱序，因为我们无法保证协程的执行顺序，但是由于传了当时的变量i，而go是浅拷贝，所以协程中的变量i的值被固定了。 </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			fmt.Println(i)</span><br><span class="line">		&#125;(i)</span><br><span class="line">    &#125;</span><br><span class="line">    time.Sleep(time.Millisecond * <span class="number">500</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2><p>for循环和别的语言一样</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i:=<span class="number">0</span>; i&lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有 range 可以循环数组，切片，map。这里range会复制一个 numbers3 来进行循环，也就是说如果numbers3是数组，那么修改numbers3[0] 的值不会影响到 numbers3[0] 的值，因为数组是值类型。如果是切片那么会影响到。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">   numbers2 := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">numbers3 := numbers2[<span class="number">0</span>:<span class="built_in">len</span>(numbers2)]</span><br><span class="line">   maxIndex2 := <span class="built_in">len</span>(numbers2) - <span class="number">1</span></span><br><span class="line">   <span class="comment">// i v对应key value，也可以只有一个key，没有value for i := range numbers3 &#123;&#125;</span></span><br><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> numbers3 &#123; <span class="comment">//range 后面跟一个切片或者数组,map</span></span><br><span class="line">	<span class="keyword">if</span> i == maxIndex2 &#123;</span><br><span class="line">		numbers3[<span class="number">0</span>] += v</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		numbers3[i+<span class="number">1</span>] += v</span><br><span class="line">       &#125;</span><br><span class="line">       v = <span class="number">1</span> <span class="comment">//这里的v因为是int类型，所以修改他的值不会影响到numbers3切片里面的值</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(numbers2, numbers3)</span><br></pre></td></tr></table></figure>
+
+<h2 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h2><p>switch语句不需要使用 break 了，因为go的switch只执行一个case,并且case后面可以跟多个结果，用逗号分隔，只要命中一个结果就执行这个case，所以case后面的结果也不能重复。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">var</span> a <span class="type">int</span></span><br><span class="line"><span class="keyword">switch</span> <span class="number">3</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>, <span class="number">2</span>:</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>, <span class="number">4</span>:</span><br><span class="line">	a = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(a) <span class="comment">//输出2</span></span><br></pre></td></tr></table></figure>
+
+<p>如果case后面重复，那么会报错</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">switch</span> <span class="number">3</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>, <span class="number">2</span>:</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>: <span class="comment">//报错</span></span><br><span class="line">	a = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为switch结果和case结果会进行判等的，所以他们两个的类型要是一样的，不然也会报错</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">switch</span> <span class="number">3</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>, <span class="number">2</span>:</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;21&quot;</span>, <span class="number">3</span>, <span class="number">4</span>: <span class="comment">//报错</span></span><br><span class="line">	a = <span class="number">2</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">var</span> a <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> b <span class="type">uint8</span> = <span class="number">3</span></span><br><span class="line"><span class="keyword">switch</span> b &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>, <span class="number">2</span>:</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>, <span class="number">40000</span>: <span class="comment">//报错，因为40000 不是uint8能表示的</span></span><br><span class="line">	a = <span class="number">2</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">var</span> b <span class="type">uint8</span> = <span class="number">3</span></span><br><span class="line"><span class="keyword">switch</span> <span class="number">40000</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span>, <span class="number">2</span>:</span><br><span class="line">	a = <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span>, b:  <span class="comment">//位置换了也是报错</span></span><br><span class="line">	a = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E5%A4%9A%E5%AD%97%E6%AE%B5bool%E6%9F%A5%E8%AF%A2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-%E5%A4%9A%E5%AD%97%E6%AE%B5bool%E6%9F%A5%E8%AF%A2.html" class="post-title-link" itemprop="url">ElasticSearch十七--ES-bool查询</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-21 00:00:00" itemprop="dateCreated datePublished" datetime="2021-10-21T00:00:00+08:00">2021-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-%E5%A4%9A%E5%AD%97%E6%AE%B5bool%E6%9F%A5%E8%AF%A2.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十七--ES-bool查询" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-%E5%A4%9A%E5%AD%97%E6%AE%B5bool%E6%9F%A5%E8%AF%A2.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E5%A4%9A%E5%AD%97%E6%AE%B5bool%E6%9F%A5%E8%AF%A2.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="bool查询"><a href="#bool查询" class="headerlink" title="bool查询"></a>bool查询</h1><p>一个bool查询里面可以包含多个查询子句</p>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">must</td>
+<td align="left">必须匹配，贡献算分</td>
+</tr>
+<tr>
+<td align="left">should</td>
+<td align="left">选择性匹配，算分</td>
+</tr>
+<tr>
+<td align="left">must_not</td>
+<td align="left">filter context 查询子句，必须不能匹配，不算分</td>
+</tr>
+<tr>
+<td align="left">filter</td>
+<td align="left">filter context 必须匹配,但是不算分</td>
+</tr>
+</tbody></table>
+<ul>
+<li>子查询可以任意顺序出现</li>
+<li>可以嵌套多个查询</li>
+<li>如果bool查询中，没有must条件，should中必须满足一个查询</li>
+<li>should是一个数组</li>
+</ul>
+<p>查询语句的结构，会对相关度算分产生影响</p>
+<ul>
+<li>同一层级下的竞争字段，具有相同的权重</li>
+<li>通过嵌套bool查询，可以改变对算分的影响</li>
+</ul>
+<h2 id="单字符串-多字段查询"><a href="#单字符串-多字段查询" class="headerlink" title="单字符串 多字段查询"></a>单字符串 多字段查询</h2><p>可以通过 <code>bool</code> 的 <code>should</code> 来实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">POST test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;bool&quot;:&#123;</span><br><span class="line">      &quot;should&quot;:[</span><br><span class="line">        &#123;&quot;match&quot;:&#123;&quot;title&quot;:&quot;php&quot;&#125;&#125;</span><br><span class="line">        &#123;&quot;match&quot;:&#123;&quot;body&quot;:&quot;php&quot;&#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是这样实现的算分过程可能不是我们想要的,算分过程如下</p>
+<ul>
+<li>查询 should 语句中的两个查询</li>
+<li>加和两个查询的评分</li>
+<li>乘以匹配语句的总数</li>
+<li>除以所有语句的总数</li>
+</ul>
+<p>我们还可以使用最高算分 <code>dis_max</code>- <code>queries</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">POST test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;dis_max&quot;:&#123;</span><br><span class="line">      &quot;queries&quot;:[</span><br><span class="line">        &#123;&quot;match&quot;:&#123;&quot;title&quot;:&quot;php&quot;&#125;&#125;</span><br><span class="line">        &#123;&quot;match&quot;:&#123;&quot;body&quot;:&quot;php&quot;&#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是有的时候，最高评分是一样的，那怎么办呢，可以通过<code>tie_breaker</code>参数来调整</p>
+<ul>
+<li>获得最佳匹配语句的评分</li>
+<li>将其他匹配语句的评分与 <code>tie_breaker</code>相乘</li>
+<li>对以上评分求和并规范化</li>
+<li>tie_breaker 是一个 0 - 1的浮点数，0代表最佳匹配，1代表所有语句同等重要。</li>
+</ul>
+<h3 id="三种场景"><a href="#三种场景" class="headerlink" title="三种场景"></a>三种场景</h3><ul>
+<li>最佳字段 best_fields 相当于 dis_max 查询<ul>
+<li>当字段之间相互竞争，又相互关联。例如 title 和 body 这样的，评分来自最佳字段</li>
+</ul>
+</li>
+<li>多数字段 most_fields<ul>
+<li>处理英文内容时：一种常见的手段是，在主字段，抽取词干，加入同义词，以匹配更多的文档。相同的文本，加入子字段，以提供更加精确的匹配。其他字段作为匹配文档提高相关度的信号。匹配字段越多则越好</li>
+</ul>
+</li>
+<li>混合字段 cross field<ul>
+<li>对于某些实体，例如人名，地址，图书，需要在多个字段中确定信息，单个字段只能作为整体的一部分。希望在任何这些列出的字段中找到尽可能多的词</li>
+</ul>
+</li>
+</ul>
+<h4 id="multi-match"><a href="#multi-match" class="headerlink" title="multi_match"></a>multi_match</h4><blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E7%AE%97%E5%88%86.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E7%AE%97%E5%88%86.html" class="post-title-link" itemprop="url">ElasticSearch十六--ES-搜索相关性算分</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-21 00:00:00" itemprop="dateCreated datePublished" datetime="2021-10-21T00:00:00+08:00">2021-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E7%AE%97%E5%88%86.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十六--ES-搜索相关性算分" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E7%AE%97%E5%88%86.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E7%AE%97%E5%88%86.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="搜索相关性算分"><a href="#搜索相关性算分" class="headerlink" title="搜索相关性算分"></a>搜索相关性算分</h1><p>ES 会对搜索结果的相关性进行一个算分，算分结果放到<code>_score</code> 字段中。</p>
+<p>算分是为了排序，ES5之前使用<code>TF-IDF</code>算法进行算分，之后使用<code>BM25</code>算法</p>
+<h2 id="词频-TF"><a href="#词频-TF" class="headerlink" title="词频 (TF)"></a>词频 (TF)</h2><ul>
+<li><p>term frequency: 检索词在一篇文档中出现的频率</p>
+<ul>
+<li>检索词出现的次数除以文档的总字数</li>
+</ul>
+</li>
+<li><p>相关性：简单将搜索中每一个词的TF进行想加</p>
+<ul>
+<li>TF(区块链) + TF(的) + TF(作用)</li>
+</ul>
+</li>
+<li><p>stop word： 没什么作用的词</p>
+<ul>
+<li><code>的</code> 可能会出现多次，但是他对于相关性并没有什么作用，应该不考虑他的词频， 可以作为一个 stop word</li>
+</ul>
+</li>
+</ul>
+<h2 id="逆文档频率-IDF"><a href="#逆文档频率-IDF" class="headerlink" title="逆文档频率 (IDF)"></a>逆文档频率 (IDF)</h2><ul>
+<li><p>DF:检索词在所有文档中出现的频率</p>
+<ul>
+<li>区块链 在相对较少的文档中出现</li>
+<li>作用 在相对较多的文档</li>
+<li>的 作为 stop word 在大量的文档中出现</li>
+</ul>
+</li>
+<li><p>inverse document frequency: 简单说 &#x3D; log(存储的全部文档数&#x2F;检索词出现过的文档数)</p>
+</li>
+<li><p>TF-IDF 就是将 TF 求和变成了加权求和</p>
+</li>
+</ul>
+<p>比如，你ES里总共存储了10万条<code>职位信息</code>, 你检索 <code>php</code>，出现 php 的职位数量是1万，那么IDF &#x3D; log(10万&#x2F;1万) &#x3D; log(10) &#x3D; 1</p>
+<ul>
+<li>TF-IDF 就是算出分词后所有词的TF和 IDF 并进行处理，比如<code>区块链的作用</code> &#x3D; TF(区块链) * IDF(区块链) + TF(的) * IDF(的) + TF(作用) * IDF(作用)</li>
+</ul>
+<h2 id="BM25"><a href="#BM25" class="headerlink" title="BM25"></a>BM25</h2><p>BM25对之前的TF-IDF 算法进行了一个优化，当TF的词出现的越来越多的时候，如果是TF-IDF 算法，那么分值会增加很多，而如果是 BM25 算法，则会趋于一个极限。</p>
+<h3 id="boosting"><a href="#boosting" class="headerlink" title="boosting"></a>boosting</h3><p><code>boosting</code>可以对算分结果进行影响</p>
+<p>正常搜索<code>php首席</code>的结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PHP首席架构师</span><br><span class="line">PHP架构师</span><br><span class="line">PHP架构师001</span><br><span class="line">首席软件架构师</span><br><span class="line">首席软件架构师</span><br><span class="line">首席科学家（科研副总经理）</span><br><span class="line">首席科学家（工业传动技术）</span><br><span class="line">商家端资深软件开发工程师（Go/PHP）</span><br></pre></td></tr></table></figure>
+
+<p>如果我们想降低<code>首席</code>这个词在搜索结果中的算分占比，可以使用<code>boosting</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">GET job_ik/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;boosting&quot;: &#123;  //boosting 关键字</span><br><span class="line">      &quot;positive&quot;: &#123;  //positive 关键字</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">          &quot;job_name&quot;: &quot;php&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;negative&quot;: &#123;  //negative 关键字</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">          &quot;job_name&quot;: &quot;首席&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;negative_boost&quot;: 0.2   // 0 - 1，降低首席排序，1-100，提高首席排序</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>降低后的结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PHP架构师</span><br><span class="line">PHP架构师001</span><br><span class="line">商家端资深软件开发工程师（Go/PHP）</span><br><span class="line">PHP首席架构师</span><br></pre></td></tr></table></figure>
+
+<p>如果把<code>negative_boost</code>提升为2，那么结果如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PHP首席架构师</span><br><span class="line">PHP架构师</span><br><span class="line">PHP架构师001</span><br><span class="line">商家端资深软件开发工程师（Go/PHP）</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E5%9F%BA%E4%BA%8E%E8%AF%8D%E9%A1%B9%E5%92%8C%E5%9F%BA%E4%BA%8E%E5%85%A8%E6%96%87%E7%9A%84%E6%9F%A5%E8%AF%A2.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1167,967 +2041,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十三节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-28 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-28T10:12:47+08:00">2021-08-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十三节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第十三节"><a href="#数据库系统原理第十三节" class="headerlink" title="数据库系统原理第十三节"></a>数据库系统原理第十三节</h1><h2 id="数据库安全和保护"><a href="#数据库安全和保护" class="headerlink" title="数据库安全和保护"></a>数据库安全和保护</h2><h3 id="安全性与访问控制"><a href="#安全性与访问控制" class="headerlink" title="安全性与访问控制"></a>安全性与访问控制</h3><p>数据库安全：指保护数据库以防止不合法的使用而造成数据泄露，更改或破坏，所以安全性对于任何一个DBMS来说都是至关重要的</p>
-<ul>
-<li>身份验证</li>
-<li>数据库用户权限确认</li>
-</ul>
-<p>查看用户</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> mysql.user</span><br></pre></td></tr></table></figure>
-
-<p>创建用户</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> <span class="keyword">user</span>[identified <span class="keyword">by</span> [password]<span class="string">&#x27;password&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-<p>create user ‘test‘@’%’ identified by ‘123’</p>
-<p>create user ‘tset‘@’%’ identified by password ‘jdkfjalkdjskflajsdfa’</p>
-<p>删除用户</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">user</span> <span class="keyword">user</span></span><br></pre></td></tr></table></figure>
-
-<p>drop user ‘test‘@’%’</p>
-<p>修改用户</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rename <span class="keyword">user</span> old_user <span class="keyword">to</span> new_user</span><br></pre></td></tr></table></figure>
-
-<p>修改密码</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> password <span class="keyword">for</span> <span class="string">&#x27;test&#x27;</span>@<span class="string">&#x27;%&#x27;</span> <span class="operator">=</span> PASSWORD(<span class="string">&#x27;pass&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="账号权限管理"><a href="#账号权限管理" class="headerlink" title="账号权限管理"></a>账号权限管理</h4><p>使用grant 为用户授权</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">grant</span></span><br><span class="line">    priv_type[<span class="keyword">column</span>]</span><br><span class="line">    <span class="keyword">on</span> [object_type] priv_level</span><br><span class="line">    <span class="keyword">to</span> <span class="keyword">user</span></span><br><span class="line">    [<span class="keyword">with</span> <span class="keyword">grant</span> option]</span><br></pre></td></tr></table></figure>
-
-<p>grant select (id, name)<br>on test.test_table<br>to test@’localhost’</p>
-<h4 id="收回用户权限"><a href="#收回用户权限" class="headerlink" title="收回用户权限"></a>收回用户权限</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">revoke</span> </span><br><span class="line">    priv_type</span><br><span class="line">    <span class="keyword">on</span> [object_type]</span><br><span class="line">    <span class="keyword">from</span> <span class="keyword">user</span></span><br></pre></td></tr></table></figure>
-
-<p>revoke select on test.test_table from ‘test‘@’localhost’</p>
-<h3 id="事务与并发控制"><a href="#事务与并发控制" class="headerlink" title="事务与并发控制"></a>事务与并发控制</h3><p>所谓事务是用户定义的一个<code>数据操作序列</code>，这些操作可作为一个完整的工作单元，要么全部执行，要么全部不执行，是一个不可分割的工作单位。事务中的操作一般是对数据的更新操作，包括<code>增删改</code></p>
-<p>以 <code>begin transaction</code>开始<br>commit 或 rollback结束</p>
-<p>事务的特征 </p>
-<ul>
-<li>A 原子性</li>
-<li>C 一致性</li>
-<li>I 隔离性</li>
-<li>D 持续性</li>
-</ul>
-<h6 id="并发操作问题"><a href="#并发操作问题" class="headerlink" title="并发操作问题"></a>并发操作问题</h6><ul>
-<li>丢失更新</li>
-<li>不可重复读</li>
-<li>读‘脏’数据</li>
-</ul>
-<h6 id="封锁"><a href="#封锁" class="headerlink" title="封锁"></a>封锁</h6><p>封锁 是最常用的并发控制技术</p>
-<p>基本思想：需要时，事务通过向系统请求对它所希望的数据对象加锁，以确保它不被非预期改变</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十四节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-28 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-28T10:12:47+08:00">2021-08-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十四节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第十四节"><a href="#数据库系统原理第十四节" class="headerlink" title="数据库系统原理第十四节"></a>数据库系统原理第十四节</h1><h2 id="数据库安全和保护"><a href="#数据库安全和保护" class="headerlink" title="数据库安全和保护"></a>数据库安全和保护</h2><h3 id="事务与并发控制"><a href="#事务与并发控制" class="headerlink" title="事务与并发控制"></a>事务与并发控制</h3><p>所谓事务是用户定义的一个<code>数据操作序列</code>，这些操作可作为一个完整的工作单元，要么全部执行，要么全部不执行，是一个不可分割的工作单位。事务中的操作一般是对数据的更新操作，包括<code>增删改</code></p>
-<p>以 <code>begin transaction</code>开始<br>commit 或 rollback结束</p>
-<p>事务的特征 </p>
-<ul>
-<li>A 原子性</li>
-<li>C 一致性</li>
-<li>I 隔离性</li>
-<li>D 持续性</li>
-</ul>
-<h6 id="并发操作问题"><a href="#并发操作问题" class="headerlink" title="并发操作问题"></a>并发操作问题</h6><ul>
-<li>丢失更新</li>
-<li>不可重复读</li>
-<li>读‘脏’数据</li>
-</ul>
-<h6 id="封锁"><a href="#封锁" class="headerlink" title="封锁"></a>封锁</h6><p>封锁 是最常用的并发控制技术</p>
-<p>基本思想：需要时，事务通过向系统请求对它所希望的数据对象加锁，以确保它不被非预期改变</p>
-<p>一个<code>锁</code>实质上就是允许或阻止一个事务对一个数据对象的存取特权</p>
-<p>基本的封锁类型</p>
-<ul>
-<li>排它锁，用于写操作</li>
-<li>共享锁，用于读操作</li>
-</ul>
-<p>封锁的粒度<br>粒度越细，并发性就越大，但软件复杂性和系统开销也就越大</p>
-<p><code>封锁的级别</code>又称为一致性级别或隔离度</p>
-<ul>
-<li>0级封锁：不重写其他非0级封锁事务的未提交的更新数据</li>
-<li>1级封锁：不允许重写未提交的更新数据。防止了丢失更新的发生</li>
-<li>2级封锁：既不重写也不读未提交的更新数据（防止了读脏数据）</li>
-<li>3级封锁：不读未提交的更新数据，不写任何（包括读操作）未提交数据</li>
-</ul>
-<p>活锁：先来先服务<br>死锁：预防</p>
-<ul>
-<li>一次性锁请求</li>
-<li>锁请求排序</li>
-<li>序列化处理</li>
-<li>资源剥夺</li>
-</ul>
-<p>可串行性<br>一组事务的一个调度就是它们的基本操作的一种排序</p>
-<p>在数据库系统中，可串行性就是并发执行的<code>正确性准则</code></p>
-<p>两段封锁法</p>
-<ul>
-<li>发展或加锁阶段</li>
-<li>收缩或释放锁阶段</li>
-</ul>
-<h3 id="备份与恢复"><a href="#备份与恢复" class="headerlink" title="备份与恢复"></a>备份与恢复</h3><p>备份</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">into</span> outfile <span class="string">&#x27;file_name&#x27;</span> export_options  </span><br><span class="line">              dumpfile <span class="string">&#x27;file_name&#x27;</span></span><br><span class="line">    fields terminated <span class="keyword">by</span> <span class="string">&#x27;,&#x27;</span>  逗号分隔</span><br><span class="line">    optionally enclosed <span class="keyword">by</span> &quot;&quot;  字符串用双引号</span><br><span class="line">    lines terminated <span class="keyword">by</span> <span class="string">&#x27;?&#x27;</span>  问号分隔每行数据</span><br></pre></td></tr></table></figure>
-
-<p>dumpfile 导出的备份文件里面所有的数据都彼此紧挨着</p>
-<p>导入</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">load data infile <span class="string">&#x27;file_name&#x27;</span> <span class="keyword">into</span> <span class="keyword">table</span> table_name</span><br><span class="line">fields terminated <span class="keyword">by</span> <span class="string">&#x27;,&#x27;</span>  逗号分隔</span><br><span class="line">    optionally enclosed <span class="keyword">by</span> &quot;&quot;  字符串用双引号</span><br><span class="line">    lines terminated <span class="keyword">by</span> <span class="string">&#x27;?&#x27;</span>  问号分隔每行数据</span><br></pre></td></tr></table></figure>
-
-<p>数据库生命周期</p>
-<ul>
-<li>需求分析</li>
-<li>系统功能与数据库的设计</li>
-<li>系统功能与数据库的实现</li>
-<li>测试与维护</li>
-</ul>
-<h4 id="php-mysql应用"><a href="#php-mysql应用" class="headerlink" title="php mysql应用"></a>php mysql应用</h4><p>连接数据库非持久连接</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$con</span> = <span class="title function_ invoke__">mysql_connect</span>(<span class="string">&quot;localhost:3306&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line"></span><br><span class="line">持久连接 mysql_pconnect</span><br><span class="line"></span><br><span class="line">选择数据库 <span class="title function_ invoke__">mysql_select_db</span>(<span class="string">&quot;test&quot;</span>, <span class="variable">$con</span>)</span><br><span class="line"></span><br><span class="line">执行 sql <span class="title function_ invoke__">mysql_query</span>(<span class="string">&quot;set names &#x27;gbk&#x27;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$sql</span>, <span class="variable">$con</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$array</span> = <span class="title function_ invoke__">mysql_fetch_array</span>(<span class="variable">$res</span>, MYSQL_NUM);</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">mysql_close</span>(<span class="variable">$con</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;关闭失败&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第十二章学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-23 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-23T10:12:47+08:00">2021-08-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十二章学习笔记" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="学堂在线C-程序设计第十二章学习笔记"><a href="#学堂在线C-程序设计第十二章学习笔记" class="headerlink" title="学堂在线C++程序设计第十二章学习笔记"></a>学堂在线C++程序设计第十二章学习笔记</h1><h2 id="泛型程序设计和标准模板库"><a href="#泛型程序设计和标准模板库" class="headerlink" title="泛型程序设计和标准模板库"></a>泛型程序设计和标准模板库</h2><h3 id="泛型及STL"><a href="#泛型及STL" class="headerlink" title="泛型及STL"></a>泛型及STL</h3><p>泛型程序设计</p>
-<ul>
-<li>编写不依赖于具体数据类型的程序</li>
-<li>将算法从特定的数据结构中抽象出来成为通用的</li>
-<li>C++的模板为泛型程序设计奠定了关键的基础</li>
-</ul>
-<p>术语：概念</p>
-<ul>
-<li>可以比较大小的数据类型记作<code>Comparable</code></li>
-<li>具有公有的复制函数并可以用 &#x3D; 赋值的记作<code>Assignable</code></li>
-<li>将 可以比较大小 并且 具有公有复制函数可以用 &#x3D; 赋值的记作<code>Sortable</code></li>
-</ul>
-<p>对于两个不同的概念A，B,如果A所需求的所有功能也是B所需求的，那么B是A的子概念，比如，Sortable是 Comparable 的子概念，也是 Assignable的子概念</p>
-<p>术语：模型</p>
-<ul>
-<li>符合一个概念的数据类型称为该概念的模型</li>
-<li>比如 int 型是 Comparable的模型</li>
-<li>静态数组不是 Assignable的模型</li>
-</ul>
-<h4 id="STL"><a href="#STL" class="headerlink" title="STL"></a>STL</h4><ul>
-<li>标准模板库STL定义了一套概念体系，为泛型程序设计提供了逻辑基础</li>
-<li>STL中的各个类模板，函数模板的参数都是用这个体系中的概念来规定的</li>
-<li>使用STL模板时，类型参数既可以是C++标准库中已有的类型，也可以是自定义的类型–只要这些类型是所要求的概念的模型</li>
-</ul>
-<p>STL基本组件</p>
-<ul>
-<li>容器（container）：容纳，包含一组元素的对象<ul>
-<li>顺序容器：<br>  array,vector,双端队列，单链表，列表</li>
-<li>有序容器：<br>  集合，多重集合，map,多重映射</li>
-<li>无序关联容器<br>  无序集合，无序多重集合，无序映射，无序多重映射</li>
-</ul>
-</li>
-<li>迭代器（iterator）<ul>
-<li>提供了顺序访问容器中每个元素的方法</li>
-<li>可以使用 ++ 运算符来获得指向下一个元素的迭代器</li>
-<li>可以使用 * 运算符访问迭代器指向的元素，如果元素类型是类或结构体，还可以使用 -&gt; 运算符直接访问成员</li>
-<li>有些迭代器还支持通过 – 运算符获得指向上一个元素的迭代器</li>
-<li>迭代器是泛化的指针：指针也具有同样的特性，因此指针本身就是一种迭代器</li>
-<li>使用独立于STL容器的迭代器，需要包含头文件<iterator></li>
-</ul>
-</li>
-<li>函数对象（function object）</li>
-<li>算法（algorithms）</li>
-</ul>
-<p><code>迭代器</code>是<code>算法</code>和<code>容器</code>的桥梁</p>
-<ul>
-<li>将迭代器作为算法的参数，通过迭代器来访问容器而不是把容器直接作为算法参数</li>
-<li>将<code>函数对象</code>作为算法参数而不是将函数所执行的运算作为算法的一部分。</li>
-<li>使用STL中提供的或自定义的迭代器和函数对象，配合STL的算法，可以组合出各种各样的功能</li>
-</ul>
-<p>容器适配器</p>
-<ul>
-<li>栈</li>
-<li>队列</li>
-</ul>
-<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><p>迭代器是算法和容器的桥梁</p>
-<ul>
-<li>迭代器用作访问容器中的元素</li>
-<li>算法不直接操作容器中的数据，而是通过迭代器间接操作</li>
-</ul>
-<p>算法和容器独立</p>
-<ul>
-<li>增加新的算法，无需影响容器的实现</li>
-<li>增加新的容器，原有的算法也可以适用</li>
-</ul>
-<p>输入流迭代器</p>
-<ul>
-<li>istream_iterator<T></li>
-<li>以输入流 如 cin 为参数构造</li>
-<li>可用 *(p++) 获得下一个输入的元素</li>
-</ul>
-<p>输出流迭代器</p>
-<ul>
-<li>ostream_iterator<T></li>
-<li>构造时需要提供输出流 如 cout</li>
-<li>可用 (*p++) &#x3D; x 将 x 输出到输出流</li>
-</ul>
-<p>二者都属于适配器</p>
-<ul>
-<li>适配器是用来为已有对象提供新的接口的对象</li>
-<li>输入流适配器和输出流适配器为流对象提供了迭代器的接口</li>
-</ul>
-<h3 id="容器的基本功能和分类"><a href="#容器的基本功能和分类" class="headerlink" title="容器的基本功能和分类"></a>容器的基本功能和分类</h3><ul>
-<li>容器类是容纳，包含一组元素或元素集合的对象</li>
-<li>基于容器中元素的组织方式分类：顺序容器，关联容器</li>
-<li>按照与容器所关联的迭代器类型分类：可逆容器，随机访问容器</li>
-</ul>
-<h3 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h3><h5 id="顺序容器的基本功能"><a href="#顺序容器的基本功能" class="headerlink" title="顺序容器的基本功能"></a>顺序容器的基本功能</h5><ul>
-<li>STL中的顺序容器<ul>
-<li>向量</li>
-<li>双端队列(deque)</li>
-<li>列表(list)</li>
-<li>单向链表(forward_list)</li>
-<li>数组(array)</li>
-</ul>
-</li>
-<li>元素线性排列，可以随时在指定位置插入元素和删除元素</li>
-<li>必须符合 Assignable 这一概念（具有共有的复制构造函数并可以用 ‘&#x3D;’ 赋值）</li>
-<li>array 对象的大小固定，forward_list有特殊的添加和删除操作</li>
-</ul>
-<p>顺序容器的接口（不包含单向链表和数组）</p>
-<ul>
-<li>构造函数</li>
-<li>赋值函数：assign</li>
-<li>插入函数: insert, push_front(只对list和deque)，push_back, emplace, emplace_front</li>
-<li>删除函数：erase, clear, pop_front, pop_back, emplace_back</li>
-<li>首尾元素的直接访问：front, back</li>
-<li>改变大小：resize</li>
-</ul>
-<h4 id="顺序容器的特征"><a href="#顺序容器的特征" class="headerlink" title="顺序容器的特征"></a>顺序容器的特征</h4><p>向量</p>
-<ul>
-<li>特点<ul>
-<li>一个可以扩展的动态数组</li>
-<li>随机访问，在尾部插入或删除元素块</li>
-<li>在中间或头部插入或删除元素慢</li>
-</ul>
-</li>
-<li>容量<ul>
-<li>容量：实际分配空间的大小</li>
-<li>s.capacity: 返回当前容量</li>
-<li>s.reserve(n): 容量小于n，则对s进行扩展，使其容量至少为n</li>
-</ul>
-</li>
-</ul>
-<p>双端队列</p>
-<ul>
-<li>特点<ul>
-<li>在两端插入或删除元素快</li>
-<li>在中间插入或删除元素慢</li>
-<li>随机访问较快，但比向量慢</li>
-</ul>
-</li>
-</ul>
-<p>列表</p>
-<ul>
-<li>特点<ul>
-<li>在任意位置插入和删除元素都很快</li>
-<li>不支持随机访问</li>
-</ul>
-</li>
-<li>接合操作（splice）<ul>
-<li>s.splice(p, s2, q1, q2): 将s2中[q1,q2)移动到s1中p所指向元素之前</li>
-</ul>
-</li>
-</ul>
-<h4 id="顺序容器的插入迭代器与适配器"><a href="#顺序容器的插入迭代器与适配器" class="headerlink" title="顺序容器的插入迭代器与适配器"></a>顺序容器的插入迭代器与适配器</h4><p>顺序容器的插入迭代器</p>
-<ul>
-<li>用于向容器头部，尾部或中间指定位置插入元素的迭代器</li>
-<li>包括前插迭代器（front_inserter），后插迭代器（back_inserter）和任意位置插入迭代器（inserter）</li>
-<li>例子：<br>  list<int> s;<br>  back_iserter iter(s);<br>  *(iter++) &#x3D; 5; &#x2F;&#x2F;通过iter把5插入s末尾</li>
-</ul>
-<p>顺序容器的适配器</p>
-<ul>
-<li>以顺序容器为基础构建一些常用数据结构，是对顺序容器的封装<ul>
-<li>栈</li>
-<li>队列</li>
-<li>优先级队列：最 <code>大</code> 的先弹出</li>
-</ul>
-</li>
-</ul>
-<p>栈和队列模板</p>
-<ul>
-<li>栈模板<br>  template &lt;class T, class Sequence &#x3D; deque<T>&gt; class stack;</li>
-<li>队列模板<br>  template &lt;class T,class FrontInsertionSequence &#x3D; deque<T>&gt; class queue;</li>
-<li>栈可以用任何一种顺序容器作为基础容器，而队列只允许用前插顺序容器（双端队列或列表）</li>
-</ul>
-<p>栈和队列共同支持的操作</p>
-<ul>
-<li>比较</li>
-<li>返回元素个数</li>
-<li>empty</li>
-<li>push</li>
-<li>pop</li>
-<li>不支持迭代器，因为不允许对任意元素访问</li>
-</ul>
-<p>栈和队列不同的操作</p>
-<ul>
-<li>栈的操作<br>  s.top 返回栈顶元素的引用</li>
-<li>队列操作<br>  s.front 获得队头元素的引用<br>  s.back 获得队尾元素的引用</li>
-</ul>
-<p>优先级队列</p>
-<ul>
-<li>优先级队列也像栈和队列一样支持元素的压入和弹出，但元素弹出顺序和元素大小有关，每次弹出最大的</li>
-<li>template &lt;class T, class Sequence &#x3D; Vector<T>&gt; class priority_queue</li>
-<li>优先级队列的基础容器必须是支持随机访问的顺序容器</li>
-<li>支持栈和队列的size,empty, push, pop几个函数</li>
-<li>优先级队列并不支持比较操作</li>
-<li>与栈类似，优先级队列提供一个 top 函数，可以获得下一个即将被弹出元素的引用</li>
-</ul>
-<h3 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h3><h4 id="分类和基本功能"><a href="#分类和基本功能" class="headerlink" title="分类和基本功能"></a>分类和基本功能</h4><p>关联容器的特点</p>
-<ul>
-<li>每个关联容器都有一个key</li>
-<li>可以根据key高效查找元素</li>
-</ul>
-<p>接口</p>
-<ul>
-<li>插入insert</li>
-<li>删除 erase</li>
-<li>查找 find</li>
-<li>定界 lower_bound,upper_bound,equal_bound</li>
-<li>计数 count</li>
-</ul>
-<h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><p>集合用来存储一组无重复的数据。用于集合的元素本身是有序的，可以高效查找元素，也可以方便的得到指定大小范围的元素在容器中所处的区间</p>
-<h4 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h4><p>映射和集合的主要区别</p>
-<ul>
-<li><p>集合的元素类型是key本身</p>
-</li>
-<li><p>映射的元素类型是key,value二元组</p>
-</li>
-<li><p>在集合中按照key查找一个元素时，一般只是确定这个元素是否存在。</p>
-</li>
-<li><p>映射中按照key查找时，除了能确定是否存在外，还可以得到相应的附加数据</p>
-</li>
-</ul>
-<h4 id="多重集合和多重映射"><a href="#多重集合和多重映射" class="headerlink" title="多重集合和多重映射"></a>多重集合和多重映射</h4><ul>
-<li>多重集合允许有重复元素的集合，多重映射允许一个key对应多个value</li>
-<li>多重集合与集合，多重映射与映射的用法差不多</li>
-</ul>
-<h3 id="函数对象"><a href="#函数对象" class="headerlink" title="函数对象"></a>函数对象</h3><p>函数对象</p>
-<ul>
-<li>一个行为类似函数的对象</li>
-<li>可以没有参数，也可以带有若干参数</li>
-<li>其功能是获取值，或者改变操作状态</li>
-<li>普通函数就是函数对象</li>
-<li>重载了 “()” 运算符的类的实例是函数对象</li>
-</ul>
-<h4 id="函数适配器"><a href="#函数适配器" class="headerlink" title="函数适配器"></a>函数适配器</h4><ul>
-<li>绑定适配器<ul>
-<li>bind1st, bind2nd: 将n元函数对象的指定参数绑定为一个常数，得到n-1元函数对象</li>
-</ul>
-</li>
-<li>组合适配器<ul>
-<li>not1,not2: 将指定谓词的结果取反</li>
-</ul>
-</li>
-<li>函数指针适配器<ul>
-<li>ptr_fun: 将一般函数指针转换为函数对象，使之能够作为其他函数适配器的输入</li>
-<li>在进行参数绑定或其他转换的时候，通常需要函数对象的类型信息</li>
-</ul>
-</li>
-<li>成员函数适配器:ptr_fun,ptr_fun_ref<ul>
-<li>对成员函数指针使用，把n元成员函数适配为n + 1元函数对象，该函数对象的第一个参数为调用该成员函数时的目的对象</li>
-<li>也就是 object-&gt;method() 变成 method(object)</li>
-<li>将 object-&gt;method(arg1) 变成 method(object, arg1)</li>
-</ul>
-</li>
-</ul>
-<h4 id="STL算法"><a href="#STL算法" class="headerlink" title="STL算法"></a>STL算法</h4><p>本身是一种函数模板</p>
-<ul>
-<li>通过迭代器获得输入数据</li>
-<li>通过函数对象对数据进行处理</li>
-<li>通过迭代器将结果输出</li>
-</ul>
-<p>STL算法是通用的，独立于具体的数据类型，容器类型</p>
-<p>分类</p>
-<ul>
-<li>不可变序列算法<ul>
-<li>不直接修改所操作的容器内容的算法</li>
-<li>用于查找指定元素，比较是否相等，对元素进行计数等</li>
-</ul>
-</li>
-<li>可变序列算法<ul>
-<li>可修改所操作的容器对象的算法</li>
-<li>包括复制，删除，替换，洗牌及生成一个序列的算法</li>
-</ul>
-</li>
-<li>排序和搜索算法<ul>
-<li>对序列排序</li>
-<li>搜索</li>
-<li>堆算法</li>
-</ul>
-</li>
-<li>数值算法<ul>
-<li>求和，求差，积等</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十一节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-21T10:12:47+08:00">2021-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十一节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第十一节"><a href="#数据库系统原理第十一节" class="headerlink" title="数据库系统原理第十一节"></a>数据库系统原理第十一节</h1><h2 id="数据库编程"><a href="#数据库编程" class="headerlink" title="数据库编程"></a>数据库编程</h2><h3 id="存储过程体"><a href="#存储过程体" class="headerlink" title="存储过程体"></a>存储过程体</h3><p>使用 declare 声明局部变量</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> cid <span class="type">int</span>(<span class="number">10</span>) <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>只能值begin end中声明</li>
-<li>必须在存储过程开头声明</li>
-<li>不同于用户变量</li>
-<li>作用范围仅限于声明他的begin end语句块</li>
-</ul>
-<p>局部变量和用户变量的区别</p>
-<ul>
-<li>局部变量前面没有@符号，并且他只能被声明的begin end语句块中使用</li>
-<li>用户变量在声明时前面有@符号，同时已声明的用户变量存在于整个会话之中</li>
-</ul>
-<p>使用 set 为局部变量赋值</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> cid <span class="operator">=</span> <span class="number">910</span>;</span><br></pre></td></tr></table></figure>
-
-<p>select id into cid table</p>
-<p>流程控制语句</p>
-<p>条件判断<br>if 条件 then<br>    表达式1<br>else<br>    表达式2<br>end if</p>
-<p>循环语句</p>
-<ul>
-<li>while</li>
-<li>repeat</li>
-<li>loop</li>
-</ul>
-<p>iterate语句<br>用于表示退出当前循环</p>
-<p>declare cursor创建游标</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> cursor_name <span class="keyword">cursor</span> <span class="keyword">for</span> select_statement</span><br></pre></td></tr></table></figure>
-
-<p>open 打开游标</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> cursor_name</span><br></pre></td></tr></table></figure>
-
-<p>使用 fetch into 读取游标数据<br>读取已打开的游标</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fetch</span> cursor_name <span class="keyword">into</span> var_name</span><br></pre></td></tr></table></figure>
-
-<p>使用 close 关闭游标</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">close</span> cursor_name</span><br></pre></td></tr></table></figure>
-
-<h3 id="存储函数"><a href="#存储函数" class="headerlink" title="存储函数"></a>存储函数</h3><p>由SQL语句和过程式语句组成</p>
-<p>使用 create function 创建</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> sp_name(参数)</span><br><span class="line">    <span class="keyword">returns</span> type</span><br><span class="line">    routine_body <span class="operator">/</span><span class="operator">/</span>主体</span><br></pre></td></tr></table></figure>
-
-<p>给定id号返回性别</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">use test;</span><br><span class="line">delimiter $$</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">function</span> fn_search(cid <span class="type">int</span>)</span><br><span class="line">    <span class="keyword">returns</span> <span class="type">char</span>(<span class="number">20</span>)</span><br><span class="line">    <span class="keyword">deterministic</span></span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">declare</span> sex <span class="type">char</span>(<span class="number">20</span>)</span><br><span class="line">    <span class="keyword">select</span> cust_sex <span class="keyword">into</span> sex <span class="keyword">from</span> customers <span class="keyword">where</span> id <span class="operator">=</span> cid;</span><br><span class="line">    if sex <span class="keyword">is</span> <span class="keyword">null</span> <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">return</span>(<span class="keyword">select</span> <span class="string">&#x27;没有该客户&#x27;</span>);</span><br><span class="line">    <span class="keyword">else</span> </span><br><span class="line">        if sex <span class="operator">=</span> <span class="string">&#x27;F&#x27;</span> <span class="keyword">then</span></span><br><span class="line">            <span class="keyword">return</span>(<span class="keyword">select</span> <span class="string">&#x27;女&#x27;</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span>(<span class="keyword">select</span> <span class="string">&#x27;男&#x27;</span>);</span><br><span class="line">        <span class="keyword">end</span> if;</span><br><span class="line">    <span class="keyword">end</span> if;</span><br><span class="line"><span class="keyword">end</span> $$</span><br></pre></td></tr></table></figure>
-
-<p>存储函数和存储过程的区别<br>存储函数不能有输出参数，存储过程有<br>存储函数必须包含一条return语句，存储过程不包含return<br>存储函数可以直接调用，不需要call，存储过程必须call</p>
-<p>使用 select 调用存储函数</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> fn_search(<span class="number">1</span>)$$</span><br></pre></td></tr></table></figure>
-
-<p>删除存储函数</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> fun_name</span><br></pre></td></tr></table></figure>
-
-<h2 id="数据库安全和保护"><a href="#数据库安全和保护" class="headerlink" title="数据库安全和保护"></a>数据库安全和保护</h2><h3 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h3><p>正确性和相容性</p>
-<ul>
-<li>列级约束，包含列的类型，取值范围，精度</li>
-<li>元组约束，指元组中各个字段之间的约束</li>
-<li>表级约束，指若干元组，关系之间的联系的约束</li>
-</ul>
-<p>实体完整性：主键约束和候选键约束</p>
-<p>主键</p>
-<ul>
-<li>一个表只能有一个主键</li>
-<li>主键唯一，不能为NULL</li>
-<li>复合主键不能包含不必要的多余列</li>
-<li>一个列名在复合主键的列表中只能出现一次</li>
-</ul>
-<p>主键约束：primary key, create table 或 alter table,一个表只能创建一个主键<br>候选键约束：unique, create table 或 alter table，可以定义若干个候选键</p>
-<h5 id="参照完整性"><a href="#参照完整性" class="headerlink" title="参照完整性"></a>参照完整性</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">references</span> table_name(index_col_name)</span><br><span class="line">[<span class="keyword">on</span> <span class="keyword">delete</span> reference_option]</span><br><span class="line">[<span class="keyword">on</span> <span class="keyword">update</span> reference_option]</span><br><span class="line"></span><br><span class="line">restrict<span class="operator">|</span>cascade<span class="operator">|</span><span class="keyword">set</span> <span class="keyword">null</span><span class="operator">|</span><span class="keyword">no</span> action</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十二节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-21T10:12:47+08:00">2021-08-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十二节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第十二节"><a href="#数据库系统原理第十二节" class="headerlink" title="数据库系统原理第十二节"></a>数据库系统原理第十二节</h1><h2 id="数据库安全和保护"><a href="#数据库安全和保护" class="headerlink" title="数据库安全和保护"></a>数据库安全和保护</h2><h3 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> orders</span><br><span class="line">order_id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">cust_id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> <span class="keyword">default</span> <span class="number">0</span>,</span><br><span class="line"><span class="keyword">primary</span> key(order_id),</span><br><span class="line"><span class="keyword">foreign</span> key(cust_id)</span><br><span class="line">refrences table_name(id)</span><br><span class="line"><span class="keyword">on</span> <span class="keyword">delete</span> restrict</span><br><span class="line"><span class="keyword">on</span> <span class="keyword">update</span> restrict</span><br></pre></td></tr></table></figure>
-
-<h4 id="用户定义完整性约束"><a href="#用户定义完整性约束" class="headerlink" title="用户定义完整性约束"></a>用户定义完整性约束</h4><p>非空 约束 not null<br>check 约束 check(sex &#x3D; ‘f’)</p>
-<p>命名完整性约束 constraint[指定的约束名字]<br>只能给基于表的完整性约束指定名字<br>基于列的不行</p>
-<p>更新完整性约束<br>使用<code>alter table</code>更新与列或表有关的各种约束</p>
-<ul>
-<li>完整性约束不能直接修改（先删除，再增加）</li>
-<li>alter table 独立删除完整性约束，而不会删除表，drop table删除表也会删除完整性约束</li>
-</ul>
-<h3 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h3><p>用户定义在关系表上的一类由事件驱动的数据对象，也是一种保证数据完整性的方法</p>
-<h4 id="创建触发器"><a href="#创建触发器" class="headerlink" title="创建触发器"></a>创建触发器</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> 名称 时间 事件</span><br><span class="line"><span class="keyword">on</span> 表 <span class="keyword">for</span> <span class="keyword">each</span> <span class="type">row</span> 主体</span><br></pre></td></tr></table></figure>
-
-<p>插入数据时改变变量值</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">trigger</span> t_name after <span class="keyword">insert</span></span><br><span class="line"><span class="keyword">on</span> table_name <span class="keyword">for</span> <span class="keyword">each</span> <span class="type">row</span> <span class="keyword">set</span> <span class="variable">@str</span> <span class="operator">=</span> <span class="string">&#x27;one customer added&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="使用触发器"><a href="#使用触发器" class="headerlink" title="使用触发器"></a>使用触发器</h4><p>insert 触发器</p>
-<ul>
-<li>可引用一个名为 <code>new</code> 的虚拟表，来访问被插入的行</li>
-<li>before insert ， new 中的值<code>可以被更新</code><br>delete 触发器</li>
-<li>可引用 <code>old</code>的虚拟表，来访问被删除的行</li>
-<li>old 只读<br>update 触发器</li>
-<li>可引用<code>old</code>的虚拟表来访问update执行前的值，也可以引用<code>new</code>访问更新后的值</li>
-</ul>
-<h3 id="安全性与访问控制"><a href="#安全性与访问控制" class="headerlink" title="安全性与访问控制"></a>安全性与访问控制</h3><p>数据库安全：指保护数据库以防止不合法的使用而造成数据泄露，更改或破坏，所以安全性对于任何一个DBMS来说都是至关重要的</p>
-<ul>
-<li>身份验证</li>
-<li>数据库用户权限确认</li>
-</ul>
-<p>查看用户</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> mysql.user</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2195,20 +2113,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-count">203</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">82</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
