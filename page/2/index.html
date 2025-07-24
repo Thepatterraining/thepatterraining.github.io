@@ -196,6 +196,815 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MCP%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/MCP%E8%AF%A6%E8%A7%A3.html" class="post-title-link" itemprop="url">MCP详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-23 16:51:30" itemprop="dateCreated datePublished" datetime="2025-04-23T16:51:30+08:00">2025-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-05 16:56:55" itemprop="dateModified" datetime="2025-05-05T16:56:55+08:00">2025-05-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MCP%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="MCP详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MCP%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MCP%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MCP"><a href="#MCP" class="headerlink" title="MCP"></a>MCP</h1><p>在AI技术大火的当下，各个公司都在搞AI-Agent技术。对于Agent来说，其实还处于一个早期的阶段，没有所谓的<code>最佳实践</code>。更没有一些<code>标准规则</code>。可谓是一片蓝海。</p>
+<p>大厂们也都在做着自己的一些尝试。但是总有人在建设底层规则。</p>
+<p>MCP就是一个标准化的产物。它定义了一些<code>标准</code>。</p>
+<p>Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标准，旨在为大型语言模型（LLM）应用提供统一的上下文交互接口，使其能够与外部数据源和工具进行无缝集成。​MCP采用客户端-主机-服务器架构，基于JSON-RPC 2.0协议，支持有状态连接和功能协商，允许AI模型访问文件、执行函数和处理上下文提示。</p>
+<p>截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Model Context Protocol (MCP) 遵循客户端-主机-服务器架构，每个主机可以运行多个客户端实例。此架构使用户能够在应用程序中集成 AI 功能，同时保持明确的安全边界和隔离关注点。基于 JSON-RPC，MCP 提供了一个有状态的会话协议，专注于上下文交换和客户端与服务器之间的采样协调。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-1.png" alt="MCP架构"></p>
+<h2 id="为什么使用MCP？"><a href="#为什么使用MCP？" class="headerlink" title="为什么使用MCP？"></a>为什么使用MCP？</h2><p>为什么要有MCP这个东西呢？我不用它是否可以？</p>
+<p>当然可以。MCP更像是一个USB接口的作用。不使用的话会有一些麻烦而已。我们来看两个案例。</p>
+<h3 id="案例一：USB接口案例"><a href="#案例一：USB接口案例" class="headerlink" title="案例一：USB接口案例"></a>案例一：USB接口案例</h3><p>我们先想象一下如果电脑没有USB接口，会怎么样？</p>
+<p>每个品牌的鼠标键盘显示器接口都不一样，比如</p>
+<ul>
+<li>罗技鼠标键盘使用罗技接口</li>
+<li>牧马人鼠标键盘使用牧马人接口</li>
+<li>雷蛇鼠标键盘使用雷蛇接口</li>
+<li>等等，每个品牌有自己的接口</li>
+</ul>
+<p>那现在我们买了一台戴尔的电脑，这个电脑只支持戴尔的接口和罗技的接口，这样就导致我们只能买这两个品牌的鼠标键盘显示器了。</p>
+<p>像下面这个图，我如果家里是华硕显示器，但是我买了一个戴尔的电脑，就用不了了，很不方便。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-2.png" alt="MCP架构"></p>
+<h3 id="案例二：充电接口案例"><a href="#案例二：充电接口案例" class="headerlink" title="案例二：充电接口案例"></a>案例二：充电接口案例</h3><p>现在很现实的一个问题就是苹果手机的充电接口。它的充电接口和安卓的充电接口是不一样的，因此两个手机的充电器无法共用。</p>
+<p>如果你从安卓换到苹果，你需要重新买一个充电器，如果你家里两个人用的是一个安卓一个苹果，那么你们出门需要带两个充电器。。。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-3.png" alt="MCP架构"></p>
+<h3 id="案例三：Agent案例"><a href="#案例三：Agent案例" class="headerlink" title="案例三：Agent案例"></a>案例三：Agent案例</h3><p>经过上面两个案例，我们应该明白了MCP解决了什么问题，也明白了为什么要使用MCP这种标准化协议。</p>
+<p>那么我们再看看对于Agent而言，MCP到底干了什么呢？</p>
+<p>我们当前Agent的现状如下：<br>我们实现了一个查询天气信息，并根据下雨下雪刮风等进行邮件通知预警的Agent。我们的Agent需要调用2个接口：</p>
+<ol>
+<li>获取天气信息</li>
+<li>发送邮件</li>
+</ol>
+<p>我们知道，这两个接口是不一样的，因此，我们需要实现<code>两套调用逻辑</code>。</p>
+<p>这样是很不方便的。甚至，如果说第一个获取天气信息的接口不好使了，我们要进行切换，其他的获取天气信息的接口也需要<code>重新实现</code>。</p>
+<p>但是，如果我们使用了<code>MCP</code>,那么我们只需要一套逻辑即可了。</p>
+<h2 id="MCP组件"><a href="#MCP组件" class="headerlink" title="MCP组件"></a>MCP组件</h2><p>接下来我们来了解一下MCP有哪些内容，包含什么东西。</p>
+<ul>
+<li>主机：也就是你的Agent，或者大模型。严格来说，这个并不属于MCP，因为这个是你必备的一个东西。只不过我们的Agent需要支持MCP才可以。</li>
+<li>MCP服务器：轻量级程序，每个程序都通过标准化的模型上下文协议公开特定的功能。MCP服务器就是一个提供接口程序的<code>服务器程序</code>，可以简单的理解为<code>HTTP服务器</code>，提供一些接口。比如我们上面提到的两个接口都放到这个服务器里面。</li>
+<li>MCP客户端：这个是<code>重中之重</code>。客户端程序负责调度<code>主机</code>和<code>MCP服务器</code>进行交互。</li>
+</ul>
+<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>资源表示 MCP 服务器希望提供给客户端的任何类型的数据。这可以包括：</p>
+<ul>
+<li>文件内容</li>
+<li>数据库记录</li>
+<li>API 响应</li>
+<li>实时系统数据</li>
+<li>屏幕截图和图像</li>
+<li>日志文件</li>
+<li>更多</li>
+</ul>
+<p>资源主要用来读取文件内容，比如我们经常使用大模型的时候会上传文件，还有使用Idea的时候可以直接让大模型获取我们的代码文件内容。</p>
+<p>资源可以包含两种类型的内容：</p>
+<ul>
+<li>文本资源<ul>
+<li>源代码</li>
+<li>配置文件</li>
+<li>日志文件</li>
+<li>JSON&#x2F;XML数据</li>
+<li>纯文本</li>
+</ul>
+</li>
+<li>二进制资源<ul>
+<li>图像</li>
+<li>PDF</li>
+<li>音频</li>
+<li>视频</li>
+<li>其他非文本格式</li>
+</ul>
+</li>
+</ul>
+<p>MCP服务器需要实现下面的接口来支持<code>资源</code>功能</p>
+<ul>
+<li>资源列表接口：接口地址必须是<code>resources/list</code>，返回内容需要包含4个信息，这个接口会告诉Agent我们拥有哪些资源<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  uri<span class="punctuation">:</span> string;            <span class="comment">//资源的URI</span></span><br><span class="line">  name<span class="punctuation">:</span> string;           <span class="comment">//资源的名称，方便人类看</span></span><br><span class="line">  description?<span class="punctuation">:</span> string;   <span class="comment">//可选的资源描述</span></span><br><span class="line">  mimeType?<span class="punctuation">:</span> string;      <span class="comment">//可选的资源类型</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>获取资源接口：接口地址必须是<code>resources/read</code>, 返回内容必须是以下格式，这个接口就是当Agent需要获取资源内容的时候进行调用的。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  contents<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      uri<span class="punctuation">:</span> string;        <span class="comment">//资源的URI</span></span><br><span class="line">      mimeType?<span class="punctuation">:</span> string;  <span class="comment">//可选的资源类型</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// 根据资源类型进行返回的信息:</span></span><br><span class="line">      text?<span class="punctuation">:</span> string;      <span class="comment">// 文本资源的内容</span></span><br><span class="line">      blob?<span class="punctuation">:</span> string;      <span class="comment">// 二进制资源的内容</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>资源列表更新接口：接口地址必须是<code>notifications/resources/list_changed</code>，这个接口是当我们能获取的资源列表有变化的时候，服务器来通知客户端说列表改变了，你需要重新获取一下。</li>
+<li>资源内容更新接口：<ul>
+<li>客户端进行资源订阅，接口地址必须是<code>resources/subscribe</code></li>
+<li>当资源内容改变的时候，服务器会发送<code>notifications/resources/updated</code>来通知客户端资源内容变化了</li>
+<li>客户端可以重新调用获取资源接口来获取最新内容。</li>
+<li>客户端可以取消资源订阅，接口地址必须是<code>resources/unsubscribe</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><p>提示这个功能也是比较常见的，当你输入<code>/</code>以后，会出现一些提示的命令，很多大模型都支持这么做了。</p>
+<p>通过提示这个功能，我们自己的Agent也可以轻松支持这个功能了。</p>
+<p>提示符使服务器能够定义可重用的提示模板和工作流，客户端可以轻松地向用户和 LLM 显示。它们提供了一种强大的方式来标准化和共享常见的 LLM 交互。</p>
+<p>MCP服务器需要支持以下接口：</p>
+<ul>
+<li>提示列表接口：接口地址<code>prompts/list</code>.展示提示列表。返回内容如下：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  prompts<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      name<span class="punctuation">:</span> <span class="string">&quot;analyze-code&quot;</span><span class="punctuation">,</span> <span class="comment">// 提示名称</span></span><br><span class="line">      description<span class="punctuation">:</span> <span class="string">&quot;Analyze code for potential improvements&quot;</span><span class="punctuation">,</span> <span class="comment">//提示描述</span></span><br><span class="line">      arguments<span class="punctuation">:</span> <span class="punctuation">[</span> <span class="comment">// 提示需要的参数列表</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          name<span class="punctuation">:</span> <span class="string">&quot;language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数名称</span></span><br><span class="line">          description<span class="punctuation">:</span> <span class="string">&quot;Programming language&quot;</span><span class="punctuation">,</span> <span class="comment">//参数描述</span></span><br><span class="line">          required<span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">//是否必填</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>使用提示接口：接口地址<code>prompts/get</code>，服务器会返回一些信息如下，客户端可以将这个信息喂给服务器。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Analyze Python code for potential improvements&quot;</span><span class="punctuation">,</span></span><br><span class="line">  messages<span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      role<span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">      content<span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        type<span class="punctuation">:</span> <span class="string">&quot;text&quot;</span><span class="punctuation">,</span></span><br><span class="line">        text<span class="punctuation">:</span> <span class="string">&quot;Please analyze the following Python code for potential improvements:\n\n```python\ndef calculate_sum(numbers):\n    total = 0\n    for num in numbers:\n        total = total + num\n    return total\n\nresult = calculate_sum([1, 2, 3, 4, 5])\nprint(result)\n```&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p><code>工具</code>功能是MCP的核心功能，作用就是我们一开始讲的那个。通过这个功能我们可以接入所有支持MCP的工具。</p>
+<p>工具是模型上下文协议（MCP）中的一个强大的原语，它使服务器能够向客户端公开可执行功能。通过工具，LLM 可以与外部系统交互，执行计算，并在真实的世界中采取行动。</p>
+<p>MCP服务器需要实现以下接口：</p>
+<ul>
+<li>工具列表接口：接口地址是<code>tools/list</code>，作用是获取MCP服务器支持的所有工具列表。可以返回如下内容：<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  name<span class="punctuation">:</span> <span class="string">&quot;github_create_issue&quot;</span><span class="punctuation">,</span> <span class="comment">//工具名称</span></span><br><span class="line">  description<span class="punctuation">:</span> <span class="string">&quot;Create a GitHub issue&quot;</span><span class="punctuation">,</span> <span class="comment">// 工具描述</span></span><br><span class="line">  inputSchema<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 输入参数</span></span><br><span class="line">    type<span class="punctuation">:</span> <span class="string">&quot;object&quot;</span><span class="punctuation">,</span> <span class="comment">// 参数类型</span></span><br><span class="line">    properties<span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//详细的请求参数名称和类型</span></span><br><span class="line">      title<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      body<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      labels<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;array&quot;</span><span class="punctuation">,</span> items<span class="punctuation">:</span> <span class="punctuation">&#123;</span> type<span class="punctuation">:</span> <span class="string">&quot;string&quot;</span> <span class="punctuation">&#125;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>工具调用接口：接口地址是<code>tools/call</code>，作用是调用指定的工具。客户端同样可以把调用工具的结果喂给大模型。</li>
+</ul>
+<h3 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h3><p>采样是一个强大的 MCP 功能，允许服务器通过客户端请求 LLM 完成，在维护安全和隐私的同时实现复杂的代理行为。</p>
+<p>采样流程如下：</p>
+<ol>
+<li>服务器请求客户端的接口<code>sampling/createMessage</code></li>
+<li>客户端检查请求并可以修改它</li>
+<li>客户端获取大模型的样本</li>
+<li>客户端复审样本信息</li>
+<li>客户端将结果返回给服务器</li>
+</ol>
+<p>服务器可以指定要采样的大模型，如果客户端没有这个大模型，服务器还可以指定一些<code>模型偏好</code>，也就是一些优先级，如果没有这个大模型，就按照服务器指定的优先级来选择一些其他的大模型进行采样。</p>
+<p>模型偏好设置</p>
+<ul>
+<li>hits:模型名称建议的数组，客户端可以使用它来选择合适的模型,客户端可以将提示映射到来自不同提供程序的等效模型,多个提示按优先级顺序进行评估</li>
+<li>costPriority: 降低成本的重要性,低成本的模型优先级更高</li>
+<li>speedPriority: 低延迟响应的重要性，速度更快的模型优先级更高</li>
+<li>intelligencePriority：高级模型功能的重要性，功能强大的模型优先级更高</li>
+</ul>
+<h3 id="根"><a href="#根" class="headerlink" title="根"></a>根</h3><p><code>根</code>是 MCP 中的一个概念，它定义了服务器可以操作的边界。它们为客户端提供了一种方法，可以将相关资源及其位置通知服务器。</p>
+<p>根是客户端建议服务器应该关注的 URI。当客户端连接到服务器时，它声明服务器应该使用哪些根。虽然主要用于文件系统路径，但根可以是任何有效的 URI，包括 HTTP URL。</p>
+<p>根有几个重要的用途：</p>
+<ul>
+<li>指导 ：它们通知服务器相关资源和位置</li>
+<li>清晰度 ：根目录清楚地表明哪些资源是您工作空间的一部分</li>
+<li>组织 ：多个根允许您同时使用不同的资源</li>
+</ul>
+<p>当客户端支持根时，它：</p>
+<ul>
+<li>在连接期间声明<code>根</code>功能</li>
+<li>向服务器提供建议的<code>根目录</code>列表</li>
+<li>根目录更改时通知服务器（如果支持）</li>
+</ul>
+<p>虽然根是信息性的，并不严格执行，但服务器应该：</p>
+<ul>
+<li>尊重提供的根</li>
+<li>使用根 URI 定位和访问资源</li>
+<li>优先考虑根边界内的操作</li>
+</ul>
+<p>根通常用于定义：</p>
+<ul>
+<li>项目目录</li>
+<li>存储库位置</li>
+<li>API 端点</li>
+<li>配置目录</li>
+<li>资源边界</li>
+</ul>
+<p>客户端应该返回如下根信息</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file:///home/user/projects/frontend&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Frontend Repository&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;uri&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://api.example.com/v1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;API Endpoint&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MCP服务器"><a href="#MCP服务器" class="headerlink" title="MCP服务器"></a>MCP服务器</h3><p>MCP服务器作为接口的提供方。需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>需要支持上面的一些功能，主要是支持<code>工具</code>。至于资源和提示功能可以不支持。</p>
+<h3 id="MCP客户端"><a href="#MCP客户端" class="headerlink" title="MCP客户端"></a>MCP客户端</h3><p>MCP客户端作为接口的调用方。也需要遵循<code>MCP协议</code>本身的一些规则。</p>
+<p>可以选择支持<code>采样</code>和<code>根</code>功能。</p>
+<p>MCP客户端还需要调用MCP服务器和大模型进行沟通。</p>
+<h3 id="MCP通信协议"><a href="#MCP通信协议" class="headerlink" title="MCP通信协议"></a>MCP通信协议</h3><p>所有传输都使用 <code>JSON-RPC2.0</code> 来交换消息。</p>
+<h4 id="JSON-RPC2-0"><a href="#JSON-RPC2-0" class="headerlink" title="JSON-RPC2.0"></a>JSON-RPC2.0</h4><p><code>JSON-RPC 2.0</code>是一个轻量级的远程过程调用（RPC）协议。它使用JSON格式的数据进行通信，这使得它非常易于理解和操作。下面是对JSON-RPC 2.0协议的详细解释以及案例说明：</p>
+<p>在JSON-RPC 2.0中，通信的基本单位是请求和响应。客户端发送请求给服务器，服务器处理请求后返回响应。</p>
+<p>一个典型的JSON-RPC 2.0请求格式如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span> <span class="comment">//要调用的方法名称，可以简单理解为接口地址</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//请求参数</span></span><br><span class="line">    <span class="attr">&quot;param1&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;param2&quot;</span><span class="punctuation">:</span> <span class="string">&quot;value2&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>服务器处理请求以后，通常会返回以下两个格式：</p>
+<ul>
+<li>正确返回的格式。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Success&quot;</span><span class="punctuation">,</span> <span class="comment">//成功的结果</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>如果出现错误，需要返回错误码和错误信息。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span> <span class="comment">// 协议版本，固定2.0即可</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 错误信息，包括错误码和错误描述</span></span><br><span class="line">    <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="number">-32601</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Method not found&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span> <span class="comment">// 请求的唯一标识，要和请求的id是一样的，代表是这个请求的返回</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>除了正常的请求和返回以外，还有一种<code>通知</code>类型。作为单向消息从客户端发送到服务器，反之亦然。接收方不得发送响应。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;methodName&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;params?&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 请求参数</span></span><br><span class="line">    <span class="punctuation">[</span>key<span class="punctuation">:</span> string<span class="punctuation">]</span><span class="punctuation">:</span> unknown</span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="MCP传输方式"><a href="#MCP传输方式" class="headerlink" title="MCP传输方式"></a>MCP传输方式</h3><p>MCP 使用<code>JSON-RPC</code>对消息进行编码。<code>JSON-RPC</code>消息必须是 <code>UTF-8</code> 编码的。</p>
+<p>该协议目前为客户端-服务器通信定义了两种标准传输机制：</p>
+<ul>
+<li>STDIO: 通过标准输入输出来进行传输，通常用在MCP客户端和服务器都在同一主机的情况下。</li>
+<li>HTTP：通过HTTP来进行传输，这允许MCP客户端和服务器不在同一主机。</li>
+</ul>
+<p>客户端应尽可能支持<code>stdio</code>传输。</p>
+<h4 id="STDIO"><a href="#STDIO" class="headerlink" title="STDIO"></a>STDIO</h4><ul>
+<li>客户端将 <code>MCP服务器</code>作为子进程启动。</li>
+<li>服务器从其标准输入（stdin）读取 JSON-RPC 消息，并将消息发送到其标准输出（stdout）。</li>
+<li>消息可以是 JSON-RPC 请求、通知、响应或 JSON-RPC 包含一个或多个请求和&#x2F;或通知的批处理。</li>
+<li>消息由换行符分隔，并且不能包含嵌入的换行符。</li>
+<li>服务器可以将 UTF-8 字符串写入其标准错误（stderr）以进行日志记录。客户端可以捕获、转发或忽略此日志记录。</li>
+<li>服务器不能向它的 stdout 写入任何不是有效的 MCP 消息。</li>
+<li>客户端不得向服务器的 stdin 写入任何不是有效 MCP 消息的内容。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-6.png" alt="初始化"></p>
+<h4 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h4><p>在 <code>HTTP</code> 传输中，服务器作为一个独立的进程运行， 可以处理多个客户端连接。</p>
+<p>此传输使用HTTP<code>POST</code> 和 <code>GET</code> 请求。 </p>
+<p>服务器可以选择使用服务器发送的事件 （SSE）以流式传输多个服务器消息。</p>
+<p>这允许基本的 MCP 服务器，以及支持流媒体和服务器到客户端通知和请求的功能更丰富的服务器。</p>
+<h3 id="MCP生命周期"><a href="#MCP生命周期" class="headerlink" title="MCP生命周期"></a>MCP生命周期</h3><p>模型上下文协议（MCP）为客户端-服务器连接定义了严格的生命周期，以确保适当的能力协商和状态管理。</p>
+<p><img src="https://thepatterraining.github.io/images/ai/mcp1-5.png" alt="初始化"></p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p><img src="https://thepatterraining.github.io/images/ai/mcp1-4.png" alt="初始化"></p>
+<ul>
+<li>客户端发送包含<code>协议版本</code>和<code>功能</code>的<code>初始化请求</code></li>
+<li>服务器返回服务器支持的<code>协议版本</code>和<code>功能</code>进行响应</li>
+<li>客户端发送<code>初始化通知</code>作为确认</li>
+</ul>
+<p>此阶段要确认的内容如下：</p>
+<ul>
+<li>建立协议版本兼容性</li>
+<li>交换和谈判能力</li>
+<li>分享实施细节</li>
+</ul>
+<p>请求示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;initialize&quot;</span><span class="punctuation">,</span> <span class="comment">//初始化方法</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">// MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 支持的能力</span></span><br><span class="line">      <span class="attr">&quot;roots&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//支持根</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span> <span class="comment">// 根变化的时候可以通知</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;sampling&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span> <span class="comment">// 不支持采样</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;clientInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">//客户端基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleClient&quot;</span><span class="punctuation">,</span> <span class="comment">//客户端名称</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span> <span class="comment">//客户端版本</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>对应的服务器接收到请求以后可以返回如下内容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 返回结果</span></span><br><span class="line">    <span class="attr">&quot;protocolVersion&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2024-11-05&quot;</span><span class="punctuation">,</span> <span class="comment">//MCP协议版本</span></span><br><span class="line">    <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器支持的能力</span></span><br><span class="line">      <span class="attr">&quot;logging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span> <span class="comment">// 日志能力</span></span><br><span class="line">      <span class="attr">&quot;prompts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 提示能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;resources&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 资源能力</span></span><br><span class="line">        <span class="attr">&quot;subscribe&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 工具能力</span></span><br><span class="line">        <span class="attr">&quot;listChanged&quot;</span><span class="punctuation">:</span> <span class="keyword">true</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;serverInfo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// 服务器基本信息</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ExampleServer&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;instructions&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Optional instructions for the client&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>成功初始化以后，客户端必须发送一个<code>初始化通知</code>来确认初始化完成。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;jsonrpc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;notifications/initialized&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在初始化请求中，客户端必须发送它支持的协议版本。这应该是客户端支持的最新版本。</p>
+<p>如果服务器支持请求的协议版本，它必须以相同的版本响应。否则，服务器必须使用它支持的另一个协议版本进行响应。这应该是服务器支持的最新版本。</p>
+<p>如果客户端不支持服务器响应中的版本，它应该 断开连接。</p>
+<h4 id="操作阶段"><a href="#操作阶段" class="headerlink" title="操作阶段"></a>操作阶段</h4><p>这个阶段表示已经初始化完成了，可以双方开始通信了。</p>
+<p>在这个阶段就可以开始上面说的交流了。</p>
+<p>这里应该注意</p>
+<ul>
+<li>尊重协商的协议版本</li>
+<li>仅使用已成功协商的功能</li>
+</ul>
+<h4 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h4><p>在关闭阶段，一方（通常是客户端）干净地终止协议连接。没有定义特定的关闭消息-相反，应该使用底层传输机制来发出连接终止的信号：</p>
+<p>​对于<code>STDIO</code>的传输方式来说，可以进行如下步骤关闭MCP：</p>
+<ul>
+<li>首先，关闭子进程（服务器）的输入流</li>
+<li>等待服务器退出，或者如果服务器没有在合理的时间内退出，则发送<code>SIGTERM</code>信号</li>
+<li>如果服务器<code>SIGTERM</code>之后的合理时间内没有退出，则发送<code>SIGKILL</code>信号<br>服务器可以通过关闭到客户端的输出流并退出来启动关机。</li>
+</ul>
+<p>对于 <code>HTTP</code>传输方式来说，通过关闭关联的 HTTP 连接就可以了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了MCP的概念，MCP的通信协议、通信方式、生命周期。MCP到底是什么东西，实现了哪些内容，使用场景以及为什么要使用MCP。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%A4%A7%E5%8E%82CR%20copy.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E5%A4%A7%E5%8E%82CR%20copy.html" class="post-title-link" itemprop="url">大厂中的Code Review</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-23 16:51:30" itemprop="dateCreated datePublished" datetime="2025-04-23T16:51:30+08:00">2025-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-19 17:35:57" itemprop="dateModified" datetime="2025-06-19T17:35:57+08:00">2025-06-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/" itemprop="url" rel="index"><span itemprop="name">程序员</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E5%A4%A7%E5%8E%82CR%20copy.html" class="post-meta-item leancloud_visitors" data-flag-title="大厂中的Code Review" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E5%A4%A7%E5%8E%82CR%20copy.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E5%A4%A7%E5%8E%82CR%20copy.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="大厂中的Code-Review"><a href="#大厂中的Code-Review" class="headerlink" title="大厂中的Code Review"></a>大厂中的Code Review</h1><p>周末没事的时候，出来和朋友喝酒撸串，谈论国(chui)家(chui)大(niu)事(bi)。</p>
+<p>喝到尽兴的时候，免不了一顿八卦盛宴。男人嘛，聚在一起吹牛逼的时候，无非就是江山美人这些事。</p>
+<p>从中华上下五千年聊到他们公司新来了<code>美女实习生</code>。</p>
+<p>到这里，我已经脑补出来了下文，比如“领导强迫美女实习生”或是“我和美女不得不说的故事”这种狗血剧情。</p>
+<p>朋友A说这个美女是挺漂亮，就是技术能力不太行。改代码的时候，误删除了一行代码，导致线上出现问题了。</p>
+<p>这时候，朋友B估计也是喝上头了，开始为美女打抱不平了。</p>
+<p>朋友B说，人家实习生，你们也不能要求太多吧，你们公司不要让她来我们公司好了。</p>
+<p>好小子，算盘珠子都崩我脸上了。。。</p>
+<p>我也奇怪的问了一句，你们厂没有<code>代码Review</code>吗？按理说，这种问题不应该发生吧。</p>
+<p>朋友A说，有是有，可能大家都不太认真吧，谁都没发现这个问题。。。也就稀里糊涂的上线了。。。</p>
+<p>这个问题，还是过了一个月才发现的。。。</p>
+<p>朋友A继续吐糟。这<code>代码Review</code>啊，也不是个什么好活，感觉大家都不太乐意干。主要是</p>
+<ul>
+<li>增加了工作量</li>
+<li>出事了还要担责</li>
+</ul>
+<p>比如这次，对于这两位代码Review的同事，肯定要被追问，为啥当时没有发现。</p>
+<p>说实话，大部分人做代码Review的时候都不做不到很认真。这是没办法的事，毕竟你又要去了解需求逻辑，还要一行行代码的去过。那没几个小时是过不完的，同时你还要干自己的工作。哪有那么多时间去认真Review呢。</p>
+<p>所以大部分人应该也就是粗略看一下，没啥问题就给过了。</p>
+<p>朋友A也说，他们这次痛定思痛。决定<code>优化</code>代码Review的流程。</p>
+<h3 id="优化后的代码Review"><a href="#优化后的代码Review" class="headerlink" title="优化后的代码Review"></a>优化后的代码Review</h3><p>角色定义如下：</p>
+<ul>
+<li>提交人：代码Review的发起人。写代码的人。</li>
+<li>审查人：负责进行代码Review工作的人。需要对代码进行Review。</li>
+</ul>
+<p>对于<code>提交人</code>来说，需要<code>提前拉会</code>进行CR会议，正常需求来说至少提前1天拉会。并明确以下几点：</p>
+<ul>
+<li>需求文档</li>
+<li>技术方案</li>
+<li>代码CR地址</li>
+<li>主要修改逻辑点</li>
+<li>自测报告</li>
+<li>上线时间</li>
+</ul>
+<p>这些要求可以帮助<code>审查人</code>快速了解自己需要做什么，重点放在哪里，避免浪费审查人的时间。</p>
+<p>当然了这样做确实会增加一些<code>提交人</code>的工作量。但是还算好的。</p>
+<p>毕竟，需求文档、技术方案、自测报告都是现成的。也就是写一下主要修改逻辑点而已。</p>
+<p>对于提交人来说，还需要选择合适的审查人，至少有一个审查人是了解需求的。</p>
+<p>对于<code>审查人</code>来说，同样有一些要求，主要为了让审查人能够认真的对待这件事情。</p>
+<ul>
+<li>代码逻辑是否正确（需要了解需求）</li>
+<li>并发处理是否正确</li>
+<li>单元测试是否覆盖了核心逻辑</li>
+<li>代码命名、格式、注释。是否能让人一下子就明白这个代码是干啥的。</li>
+<li>方法抽象是否合理</li>
+<li>异常处理</li>
+<li>性能问题</li>
+<li>安全问题</li>
+</ul>
+<p>至少需要检查以上几点，如果有问题及时提出来，让提交人进行解决。</p>
+<h3 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h3><p>Q:如果审查人没有时间怎么办？<br>A:审查人需要及时回复提交人，方便提交人选择新的审查人。</p>
+<p>Q:如果审查人意见不一致怎么办？<br>A:建议选择奇数个审查人，少数服从多数。</p>
+<p>Q:审查人是否会对技术方案提出问题？<br>A:审查人应该聚焦于技术实现，技术方案的问题应该在技术方案评审上提出而不是代码Review上提出。</p>
+<p>Q:紧急需求没时间代码Review了怎么办？<br>A:紧急需求紧急处理，快速找人Review一下即可。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于所有人来说，代码Review好像都是一个巨大的问题，很多公司甚至难以推动执行。</p>
+<p>我觉得根本的问题在于，代码Review的收益是一个长期的、利他的收益。对于大家来讲，最直观的就是工作量的增加，如果出问题了还要担责任。</p>
+<p>大家的公司都是怎么做代码Review的呢？可以发出来大家一起聊聊。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%A4%A7%E5%8E%82CR.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E5%A4%A7%E5%8E%82CR.html" class="post-title-link" itemprop="url">大厂中的Code Review</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-23 16:51:30" itemprop="dateCreated datePublished" datetime="2025-04-23T16:51:30+08:00">2025-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-17 17:16:23" itemprop="dateModified" datetime="2025-06-17T17:16:23+08:00">2025-06-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A8%8B%E5%BA%8F%E5%91%98/" itemprop="url" rel="index"><span itemprop="name">程序员</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E5%A4%A7%E5%8E%82CR.html" class="post-meta-item leancloud_visitors" data-flag-title="大厂中的Code Review" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E5%A4%A7%E5%8E%82CR.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E5%A4%A7%E5%8E%82CR.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="大厂中的Code-Review"><a href="#大厂中的Code-Review" class="headerlink" title="大厂中的Code Review"></a>大厂中的Code Review</h1><p>周末没事的时候，出来和朋友喝酒撸串，谈论国(chui)家(chui)大(niu)事(bi)。</p>
+<p>喝到尽兴的时候，免不了一顿八卦盛宴。男人嘛，聚在一起吹牛逼的时候，无非就是江山美人这些事。</p>
+<p>从中华上下五千年聊到他们公司新来了<code>美女实习生</code>。</p>
+<p>到这里，我已经脑补出来了下文，比如“领导强迫美女实习生”或是“我和美女不得不说的故事”这种狗血剧情。</p>
+<p>朋友A说这个美女是挺漂亮，就是技术能力不太行。改代码的时候，误删除了一行代码，导致线上出现问题了。</p>
+<p>这时候，朋友B估计也是喝上头了，开始为美女打抱不平了。</p>
+<p>朋友B说，人家实习生，你们也不能要求太多吧，你们公司不要让她来我们公司好了。</p>
+<p>好小子，算盘珠子都崩我脸上了。。。</p>
+<p>我也奇怪的问了一句，你们厂没有<code>代码Review</code>吗？按理说，这种问题不应该发生吧。</p>
+<p>朋友A说，有是有，可能大家都不太认真吧，谁都没发现这个问题。。。也就稀里糊涂的上线了。。。</p>
+<p>这个问题，还是过了一个月才发现的。。。</p>
+<p>朋友A继续吐糟。这<code>代码Review</code>啊，也不是个什么好活，感觉大家都不太乐意干。主要是</p>
+<ul>
+<li>增加了工作量</li>
+<li>出事了还要担责</li>
+</ul>
+<p>比如这次，对于这两位代码Review的同事，肯定要被追问，为啥当时没有发现。</p>
+<p>说实话，大部分人做代码Review的时候都不做不到很认真。这是没办法的事，毕竟你又要去了解需求逻辑，还要一行行代码的去过。那没几个小时是过不完的，同时你还要干自己的工作。哪有那么多时间去认真Review呢。</p>
+<p>所以大部分人应该也就是粗略看一下，没啥问题就给过了。</p>
+<p>朋友A也说，他们这次痛定思痛。决定<code>优化</code>代码Review的流程。</p>
+<h3 id="优化后的代码Review"><a href="#优化后的代码Review" class="headerlink" title="优化后的代码Review"></a>优化后的代码Review</h3><p>角色定义如下：</p>
+<ul>
+<li>提交人：代码Review的发起人。写代码的人。</li>
+<li>审查人：负责进行代码Review工作的人。需要对代码进行Review。</li>
+</ul>
+<p>对于<code>提交人</code>来说，需要<code>提前拉会</code>进行CR会议，正常需求来说至少提前1天拉会。并明确以下几点：</p>
+<ul>
+<li>需求文档</li>
+<li>技术方案</li>
+<li>代码CR地址</li>
+<li>主要修改逻辑点</li>
+<li>自测报告</li>
+<li>上线时间</li>
+</ul>
+<p>这些要求可以帮助<code>审查人</code>快速了解自己需要做什么，重点放在哪里，避免浪费审查人的时间。</p>
+<p>当然了这样做确实会增加一些<code>提交人</code>的工作量。但是还算好的。</p>
+<p>毕竟，需求文档、技术方案、自测报告都是现成的。也就是写一下主要修改逻辑点而已。</p>
+<p>对于提交人来说，还需要选择合适的审查人，至少有一个审查人是了解需求的。</p>
+<p>对于<code>审查人</code>来说，同样有一些要求，主要为了让审查人能够认真的对待这件事情。</p>
+<ul>
+<li>代码逻辑是否正确（需要了解需求）</li>
+<li>并发处理是否正确</li>
+<li>单元测试是否覆盖了核心逻辑</li>
+<li>代码命名、格式、注释。是否能让人一下子就明白这个代码是干啥的。</li>
+<li>方法抽象是否合理</li>
+<li>异常处理</li>
+<li>性能问题</li>
+<li>安全问题</li>
+</ul>
+<p>至少需要检查以上几点，如果有问题及时提出来，让提交人进行解决。</p>
+<h3 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h3><p>Q:如果审查人没有时间怎么办？<br>A:审查人需要及时回复提交人，方便提交人选择新的审查人。</p>
+<p>Q:如果审查人意见不一致怎么办？<br>A:建议选择奇数个审查人，少数服从多数。</p>
+<p>Q:审查人是否会对技术方案提出问题？<br>A:审查人应该聚焦于技术实现，技术方案的问题应该在技术方案评审上提出而不是代码Review上提出。</p>
+<p>Q:紧急需求没时间代码Review了怎么办？<br>A:紧急需求紧急处理，快速找人Review一下即可。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于所有人来说，代码Review好像都是一个巨大的问题，很多公司甚至难以推动执行。</p>
+<p>我觉得根本的问题在于，代码Review的收益是一个长期的、利他的收益。对于大家来讲，最直观的就是工作量的增加，如果出问题了还要担责任。</p>
+<p>大家的公司都是怎么做代码Review的呢？可以发出来大家一起聊聊。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html" class="post-title-link" itemprop="url">chatGPT可以生成图片啦</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-03 10:12:47" itemprop="dateCreated datePublished" datetime="2025-04-03T10:12:47+08:00">2025-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-09 10:14:34" itemprop="dateModified" datetime="2025-04-09T10:14:34+08:00">2025-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html" class="post-meta-item leancloud_visitors" data-flag-title="chatGPT可以生成图片啦" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="OpenAI发布新文生图模型，免费、逼真到难以分辨"><a href="#OpenAI发布新文生图模型，免费、逼真到难以分辨" class="headerlink" title="OpenAI发布新文生图模型，免费、逼真到难以分辨"></a>OpenAI发布新文生图模型，免费、逼真到难以分辨</h1><p>25年3月底，OpenAI进行了技术直播，对GPT-4o和Sora进行了重大更新，提供了全新文生图（Text-to-Image）模型。</p>
+<p>除了文生图之外，该模型还支持自定义操作、连续发问、风格转换、图像PPT等超实用功能，例如，更改图片的宽高比、图像物体中的角度，用十六进制代码指定精确颜色等。</p>
+<p>尤其是生成图像的逼真度，肉眼几乎看不出任何破绽，在精细度、细节和文本遵循方面非常出色，可以媲美甚至在某些功能超过该领域的头部平台Midjourney。</p>
+<h2 id="OpenAI文生图的优势"><a href="#OpenAI文生图的优势" class="headerlink" title="OpenAI文生图的优势"></a>OpenAI文生图的优势</h2><p>ChatGPT的文生图功能自推出以来，迅速引起了广泛关注，其主要优势包括：​</p>
+<ul>
+<li>精准的文本渲染能力：​ChatGPT的文生图功能能够准确理解用户的文本描述，并在生成的图像中清晰地呈现文本内容。这对于需要在图像中包含特定文字信息的场景，如制作菜单、信息图表或徽标等，具有重要意义。 </li>
+<li>严格遵循用户指令：​该功能能够精确执行用户的指令，生成符合预期的图像。例如，用户可以要求生成特定风格、构图或包含特定元素的图像，ChatGPT会尽力满足这些要求。 ​</li>
+<li>深度知识调用与创意拓展：​ChatGPT不仅能够利用其广泛的知识库生成图像，还能在创意上进行拓展。例如，用户可以要求生成具有特定艺术风格或融合多种元素的图像，ChatGPT能够提供多样化的创意选项。 ​</li>
+<li>高效的图像生成速度：​在实际测试中，ChatGPT能够在约30秒内生成高质量的图像，速度远超预期。这使得用户能够迅速获取所需的图像，提升了创作效率。 ​</li>
+</ul>
+<p>需要注意的是，尽管ChatGPT的文生图功能在多个方面表现出色，但在处理非拉丁语系文字时仍存在一定局限性。 </p>
+<h2 id="文生图功能的发展历史"><a href="#文生图功能的发展历史" class="headerlink" title="文生图功能的发展历史"></a>文生图功能的发展历史</h2><p>文生图技术其实很早就有了，只是最近随着大模型的火热以及一些文生图的应用，迎来了一波爆发。</p>
+<p>我们也来看一下文生图的历史。​</p>
+<ol>
+<li><p>初期探索（2014年以前）<br>在深度学习兴起之前，文生图的尝试主要依赖于基本的图像处理技术，如将现有图像素材拼贴在一起，形成类似拼贴画的效果。​</p>
+</li>
+<li><p>深度学习引入（2014年-2018年）<br>随着卷积神经网络（CNN）等深度学习模型的成功应用，研究者开始尝试使用神经网络生成图像。​2015年，多伦多大学的研究人员提出了alignDRAW模型，这是第一个现代文生图模型，能够根据文本序列生成图像。​然而，这些早期模型生成的图像质量有限，通常较为模糊。​</p>
+</li>
+<li><p>GAN和Transformer的应用（2016年-2021年）<br>2016年，研究者开始将生成对抗网络（GAN）应用于文生图任务，取得了更好的生成效果。​2019年，Transformer架构被引入文生图模型，进一步提升了生成质量。​2021年，OpenAI发布了DALL·E模型，采用Transformer架构，能够根据文本描述生成高质量的图像。​</p>
+</li>
+<li><p>扩散模型的兴起（2021年至今）<br>2021年，以扩散模型（Diffusion Model）为基础的文生图技术取得了显著进展。​这种模型通过逐步添加噪声并学习反向过程，能够生成更高质量的图像。​例如，Stable Diffusion模型在2022年发布，提供了高质量且多样化的图像生成能力。​</p>
+</li>
+</ol>
+<h2 id="openAI文生图功能演示"><a href="#openAI文生图功能演示" class="headerlink" title="openAI文生图功能演示"></a>openAI文生图功能演示</h2><p>提示词如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">帮我生成一个图片，是一座科幻风格的城市，路上有一些未来的车辆，空中还有浮空设备，路上有一些行人，有机械改造的行人</span><br></pre></td></tr></table></figure>
+
+<p>来看一下生成的图片，很高清的一张图片，也符合描述。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai1.jpg" alt="ai"></p>
+<p>再换成其他的一些提示词。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">帮我生成一个图片，是一座赛博朋克风格的城市，路上有一些车辆，空中还有浮空船，路上有一些行人，有的行人装了机械假肢等。夜晚。</span><br></pre></td></tr></table></figure>
+
+<p>看一下效果。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai2.png" alt="ai"></p>
+<p>可以看到能实现的效果还是很棒的，我们在看一下图里面加上文字呢？</p>
+<p>提示词</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">帮我生成一个五一劳动节的海报，标题是“五一劳动节快乐”，背景是学校，学校门口有一些卖东西的学生</span><br></pre></td></tr></table></figure>
+
+<p>可以看到生成的图里面对于文字的支持还是比较好的，虽然有一些瑕疵，但是比其他的文生图软件要好一些。</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai3.png" alt="ai"></p>
+<p>再来试试英文的文字呢？</p>
+<p>提示词</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">帮我生成一个五一劳动节的海报，标题是“5.1 vacation happy”，背景是学校，学校门口有一些卖东西的学生</span><br></pre></td></tr></table></figure>
+
+<p>图片效果</p>
+<p><img src="https://thepatterraining.github.io/images/AI/ai4.png" alt="ai"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>ChatGPT的文生图功能的推出，标志着内容创作进入了一个新的时代。​无论是微信公众号运营者，还是自媒体创作者，都可以借助这一功能，提升内容质量和创作效率。​随着技术的不断发展，未来的文生图功能将更加智能化、多样化，为创作者提供更多可能性。</p>
+<p>而且，OpenAI作为大模型界的老大，它的更新速度也是很快的，说不定过不了多久，其他的文生图软件就要被甩在后面了。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2046,1004 +2855,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html" class="post-title-link" itemprop="url">为什么大厂都开始使用DDD了</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-02-27 16:51:30" itemprop="dateCreated datePublished" datetime="2025-02-27T16:51:30+08:00">2025-02-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-03-03 16:24:16" itemprop="dateModified" datetime="2025-03-03T16:24:16+08:00">2025-03-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DDD/" itemprop="url" rel="index"><span itemprop="name">DDD</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html" class="post-meta-item leancloud_visitors" data-flag-title="为什么大厂都开始使用DDD了" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/DDD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%8E%82%E9%83%BD%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8DDD%E4%BA%86.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="什么是领域驱动设计DDD"><a href="#什么是领域驱动设计DDD" class="headerlink" title="什么是领域驱动设计DDD"></a>什么是领域驱动设计DDD</h1><p>领域驱动设计（Domain-Driven Design，简称DDD）是由美国软件专家埃里克・埃文斯（Eric Evans）在2004年提出的软件设计方法论，旨在解决复杂软件系统开发过程中业务逻辑与技术实现之间的矛盾，提升软件系统的可维护性、可扩展性和灵活性。</p>
-<p>说人话就是：</p>
-<ul>
-<li>What: 它是一种设计思想、一种指导原则。</li>
-<li>When: 设计微服务的时候，或者说，不知道怎么拆分微服务的时候。</li>
-<li>Why：为什么要用它，上面其实说了，不知道怎么拆分微服务的时候，可以用它来指导你如何拆分微服务。</li>
-<li>How：这个后面讲。</li>
-</ul>
-<p>很多人都说，DDD是用来处理<code>复杂</code>业务逻辑的，那<code>多复杂</code>才算<code>复杂</code>业务呢？</p>
-<p>这个问题，其实和<code>微服务什么时候用</code>是一个问题。</p>
-<p>所有的技术都不是<code>银弹</code>。都有适合它的使用场景。</p>
-<p>拿微服务来说，你一个小公司，就两三个开发，硬要上微服务，拆好几个服务出来，有什么<code>意义</code>吗？</p>
-<p>是提升性能了？</p>
-<p>是增加开发效率了？</p>
-<p>都不是，你会发现拆分完以后，程序反而<code>三高</code>了。</p>
-<ul>
-<li>高复杂度：程序变得更加复杂了。</li>
-<li>高维护成本：程序的维护成本增加了、当有需求需要修改的时候、开发效率反而降低了。</li>
-<li>高运维成本：原来一台机器就满足了，你拆的服务多了，一台机器不够了。要么加机器性能要么加机器数量。</li>
-</ul>
-<p>所以，<code>适合</code>很重要。</p>
-<blockquote>
-<p>俗话说的好，见人说人话，见鬼说鬼话。技术也一样。</p>
-</blockquote>
-<h3 id="为什么大厂都开始使用DDD了？"><a href="#为什么大厂都开始使用DDD了？" class="headerlink" title="为什么大厂都开始使用DDD了？"></a>为什么大厂都开始使用DDD了？</h3><p>回到我们的问题，为什么大厂都开始使用DDD了？</p>
-<p>因为大厂<code>人傻钱多</code>？</p>
-<p>不是，有的人会说，因为大厂的业务足够<code>复杂</code>。</p>
-<p>说对了一半。</p>
-<blockquote>
-<p>大厂通过DDD来指导微服务的拆分，解决了复杂的业务逻辑。</p>
-</blockquote>
-<p>这里面有一些点，我们再细细的拆分一下。</p>
-<h3 id="为什么要拆分微服务？"><a href="#为什么要拆分微服务？" class="headerlink" title="为什么要拆分微服务？"></a>为什么要拆分微服务？</h3><p>再问大家一个问题，为什么要拆分微服务？</p>
-<p>这个问题，千人千面。没有标准答案。</p>
-<p>但是呢，总的有一些所谓的<code>最佳实践</code>。</p>
-<ol>
-<li>当公司成长了，流量增长了，单机很难<code>支撑</code>了。</li>
-</ol>
-<p>比如，你是一个做电商的公司，你某天的成交量<code>突然飙升</code>。如何解决？最简单的做法，扩容机器。</p>
-<p>如果你是单机系统，你扩容的机器其实相当于扩容了整个系统，但是，你只有某几个接口的流量很大而已，其他的接口白白浪费了机器的成本。</p>
-<p>再比如。你家公司的流量不是<code>突然飙升</code>，而是每天都很大，但是呢，仅限于交易模块。和上面的问题是一样的。</p>
-<ol start="2">
-<li>当公司成长了，需求变多了。</li>
-</ol>
-<p>很多人开发一个项目，代码写的很乱，大家每次<code>合并代码</code>都会出现一堆<code>冲突</code>。</p>
-<p>如果你拆分成微服务的话，天然的限制和约束就可以减少冲突，因为<code>粒度</code>变小了。</p>
-<p>至于为什么拆分微服务，不再赘述了。</p>
-<h3 id="如何拆分微服务？"><a href="#如何拆分微服务？" class="headerlink" title="如何拆分微服务？"></a>如何拆分微服务？</h3><p>先给大家看两个例子吧。</p>
-<h4 id="拆分方案1"><a href="#拆分方案1" class="headerlink" title="拆分方案1"></a>拆分方案1</h4><p>小李在一家电商公司A，A公司目前的代码架构如下：</p>
-<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-1.png" alt="ddd1-1"></p>
-<p>现在，A公司说，要开始拆分微服务了。小李负责拆分微服务。</p>
-<p>小李一想，这个很简单啊，直接拆呗，一个模块一个服务就行了。交易量大只需要扩容交易服务，很完美啊。</p>
-<p>所以，拆分完成以后，架构如下：</p>
-<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-2.png" alt="ddd1-2"></p>
-<p>一开始，小李觉得挺好，但是，逐渐发现问题了。</p>
-<p>依赖严重，一个<code>购买接口</code>要跨域多个微服务。</p>
-<p>既要从<code>用户服务</code>获取用户信息，又要从<code>商品服务</code>获取商品信息，还要从<code>支付服务</code>进行支付，还要从<code>库存服务</code>扣减库存，等等。。。</p>
-<p>导致链路很长，接口的<code>响应速度</code>反而降低了。因为网络请求太多了。</p>
-<p>写代码的时候又发现问题了，原来呢，只需要写逻辑就行了，现在还要写RPC接口。开发效率也降低了。</p>
-<p>最后吧，代码写完了，又发现问题了，这事务怎么处理啊，只能上分布式事务了。开发成本又上去了。</p>
-<p>结果就是，小李被领导一顿臭骂。</p>
-<p>小李不语，只是默默承受着。。。</p>
-<h4 id="拆分方案2"><a href="#拆分方案2" class="headerlink" title="拆分方案2"></a>拆分方案2</h4><p>小李觉得诸事不顺，跳槽去了另外一家电商公司B。</p>
-<p>B公司也要拆分微服务了，领导见小李有过拆分微服务的经验，就将这个重要的任务交给了小李。</p>
-<p>小李：。。。</p>
-<p>小李无奈、只好继续重操旧业。</p>
-<p>有了上次的失败经验，小李也学聪明了。</p>
-<p>小李接下来复盘了上次的问题：</p>
-<ol>
-<li>微服务粒度不对</li>
-<li>接口链路太长导致速度下降</li>
-<li>分布式事务等导致开发效率下降，且分布式事务也导致响应时间增加。</li>
-</ol>
-<p>小李痛定思痛。要解决这几个问题。</p>
-<p>终于，小李想到了好主意。</p>
-<blockquote>
-<p>我不按照模块拆分不就完了！！！</p>
-</blockquote>
-<p>我按照业务拆分。</p>
-<p>比如，<code>购买接口</code>就放在交易服务里面。</p>
-<p>那么他需要用户信息的时候自己取，不调用用户服务了，其他的逻辑也是。</p>
-<p>这样确实解决了上面的一些问题，但是，<code>购买</code>还应该放在<code>交易服务</code>里面吗？</p>
-<p>当需要增加一个接口的时候，我们如何判断它属于哪个服务呢？</p>
-<p>小李又陷入了另外一个问题。</p>
-<p>最后的结果，导致微服务里面代码很乱。</p>
-<h4 id="使用DDD拆分微服务"><a href="#使用DDD拆分微服务" class="headerlink" title="使用DDD拆分微服务"></a>使用DDD拆分微服务</h4><p>上面的两个案例，不知道大家遇到过没有呢？</p>
-<p>还有很多其他的错误案例，大抵意思都差不多，就是不知道如何<code>正确的</code>拆分微服务。</p>
-<p>DDD就是干这个活的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DDD是指导我们如何正确拆分微服务的一种方法。</span><br></pre></td></tr></table></figure>
-
-<h5 id="DDD的一些基本概念"><a href="#DDD的一些基本概念" class="headerlink" title="DDD的一些基本概念"></a>DDD的一些基本概念</h5><p>DDD里面有很多的概念，很难一下子说清楚，因此，这里简单介绍一下。</p>
-<ul>
-<li>实体：使用充血模型实现的实体，既有属性、也有方法。</li>
-<li>值对象：只有属性的类。</li>
-<li>聚合根：一个特殊的实体，聚合的入口。</li>
-<li>聚合：聚合是一个概念、也可以理解成一个模块。聚合内包含了聚合根、实体、值对象。</li>
-<li>限界上下文：分割领域的边界、也是分割微服务的边界，通过这个边界明确这个接口属于哪个领域，也就是属于哪个微服务。每个领域有每个领域的上下文。</li>
-<li>领域：领域也就是我们的领域模型，也可以是一个微服务。</li>
-<li>子领域：一个领域可以分成多个子领域。这个就是粒度的问题了。</li>
-<li>领域事件：领域之间通信的方法。通过这个来调用其他的微服务。</li>
-</ul>
-<p>还有一些核心领域、支撑领域、通用领域等，都是领域的一种，作用不同而已。</p>
-<p>一个<code>领域</code>里面包含了多个<code>子领域</code>，如图所示。</p>
-<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-3.png" alt="ddd1-3"></p>
-<p>一个<code>子领域</code>里面包含了多个<code>聚合</code>，每个聚合里又有一个<code>聚合根</code>作为入口，还有若干个<code>实体</code>和<code>值对象</code>。</p>
-<p><img src="https://thepatterraining.github.io/images/ddd/ddd1-4.png" alt="ddd1-4"></p>
-<p>通过DDD我们可以来拆分微服务。</p>
-<p>DDD是围绕<code>业务概念</code>来进行领域建模的，后续的接口也是根据业务概念来划分到对应的领域中。从而解决开发过程中，业务演进的问题。</p>
-<p>因为当业务改变了，那么领域就改变了，对应的代码也就跟着变就好了。</p>
-<p>所以DDD和微服务不一样，不是一种具体的架构，只是一种指导方法。</p>
-<p>它可以划分出清晰的<code>业务边界</code>也就是微服务的边界，从而让微服务的拆分更加符合业务。而不是乱拆分。</p>
-<p>他也有一些步骤</p>
-<ul>
-<li>战略设计：战略设计从业务的视角上看待问题，建立领域边界、划分领域、子领域等等。</li>
-<li>战术设计：战术设计从技术的视角上看待问题，将领域转化成微服务，将业务实体转化成代码实体等等。</li>
-<li>事件风暴：通过事件风暴，大家一起来想业务，并将业务转化成领域、子领域、领域事件、实体等等。</li>
-</ul>
-<h5 id="电子商务DDD示例"><a href="#电子商务DDD示例" class="headerlink" title="电子商务DDD示例"></a>电子商务DDD示例</h5><p>首先，需要进行<code>事件风暴</code>，梳理出一些和业务逻辑有关的<code>词汇</code>。</p>
-<p>以电商举例，<code>用户</code>，<code>购买者</code>，<code>订单</code>，<code>商品</code>，<code>库存</code>，<code>收货地址</code>，<code>商家</code>，<code>价格</code>，<code>购买行为</code>，<code>下单</code>，<code>支付</code>，<code>取消订单</code>，<code>退款</code>，<code>发货</code>等等。</p>
-<p>接下来进行一些<code>识别</code>。</p>
-<p>识别什么呢？识别上面的概念，也就是哪些是<code>实体</code>、<code>值对象</code>和<code>领域事件</code>。</p>
-<p>说的再简单一些，<code>名词</code>就是实体或者值对象。如果只有属性值的就是值对象。<code>动词</code>就是领域事件。</p>
-<p>比如上面的这些里面，哪些是领域事件呢？</p>
-<ul>
-<li>下单</li>
-<li>支付</li>
-<li>取消订单</li>
-<li>购买</li>
-<li>退款</li>
-<li>发货</li>
-</ul>
-<p>哪些是实体呢？</p>
-<ul>
-<li>用户</li>
-<li>购买者</li>
-<li>商家</li>
-<li>商品</li>
-</ul>
-<p>哪些是值对象呢？</p>
-<ul>
-<li>价格：价格仅仅是一个属性，价格变化的时候就是整个值对象进行变化。</li>
-<li>收货地址：收货地址也仅仅是一个属性或者一些属性，没有方法。</li>
-<li>库存：库存也同样。</li>
-</ul>
-<p>有些人看到这里就会有疑问了？用户和购买者不是一个东西吗？</p>
-<p>这里就需要提到另外一个概念了。<code>限界上下文</code>。</p>
-<p>这个在上面简单介绍过。这里再说一下。</p>
-<p>这个概念有两个意思</p>
-<ul>
-<li>边界：用来划分领域的边界，也就是微服务的边界。</li>
-<li>上下文：在划分的边界之内，有着上下文。同样的一个东西，在不同领域里面，也就是在不同的上下文环境中，意思是不一样的。</li>
-</ul>
-<p>比如<code>笨蛋</code>这个词吧。</p>
-<p>在小情侣你侬我侬之间说，<code>哎呀，你个笨蛋</code>。就是打情骂俏的意思。当然不是说你真的笨了。</p>
-<p>那换一个环境呢，你在学习的时候，老师跟你说：<code>你真是个笨蛋！</code>。这里就是真的在说你笨了。</p>
-<p>所以呢，不同的环境，不同的上下文里面，一个词语的意思是不一样的。</p>
-<p>这里也是，都是用户，但是在浏览商品的时候他只是<code>用户</code>。但是在购买的时候，他就是<code>购买者</code>了。</p>
-<p>这样，他就在两个领域里面存在了。在<code>用户领域</code>里面是用户实体，在<code>交易领域</code>里面是购买者实体。</p>
-<p>接下来可以进行<code>聚合</code>操作，也就是将意思相近、内容相近的放到一起，放到一个聚合里面。再根据聚合的内容划分出领域、子领域等。</p>
-<p>比如</p>
-<ul>
-<li>用户聚合：里面就包含了用户实体。</li>
-<li>商品聚合：里面包含了商品实体、价格值对象、库存值对象。</li>
-<li>订单聚合：里面包含了订单实体、购买者实体、收货地址值对象。</li>
-</ul>
-<p>。。。</p>
-<p>每个聚合里面还要有一个<code>聚合根</code>作为聚合的入口。</p>
-<p>接下来将聚合划分到领域中就可以了。</p>
-<p>比如</p>
-<ul>
-<li>用户领域：包含了用户聚合</li>
-<li>交易领域：包含了商品聚合和订单聚合。也可以划分成两个子领域，一个子领域包含一个聚合。</li>
-</ul>
-<p>。。。</p>
-<p>还有一些领域事件。作为通信。</p>
-<p>比如</p>
-<ul>
-<li>下单领域事件：用户聚合发起事件 -》 订单聚合接受事件。完成下单操作。</li>
-</ul>
-<p>接下来我们需要把上面梳理出来的内容<code>映射</code>到代码上。</p>
-<p>比如，我们将上面的内容放到代码里面。这里面有两种方式，聚合是DDD中的<code>最小单元</code>，所以可以把一个聚合部署为一个微服务。</p>
-<p>当然了，也可以一个领域作为一个微服务，具体的情况，根据自身业务和流量这些具体考虑就可以了。</p>
-<p>我们这里以领域做为微服务来示例：</p>
-<ul>
-<li>用户微服务</li>
-<li>交易微服务</li>
-</ul>
-<p>先看用户微服务的文件夹吧，因为分层放在了下面介绍，所以这里的代码我们仅展示<code>领域层</code>的代码。</p>
-<ul>
-<li>userAgg: userAgg文件夹，代表了用户聚合。<ul>
-<li>core: 聚合的核心代码，包含了聚合根、实体、值对象。一个文件夹。<ul>
-<li>userAggRoot.java: 用户聚合根实体，是一个java文件，一个class类。</li>
-</ul>
-</li>
-<li>event: 聚合的一些领域事件代码。<ul>
-<li>buyEvent.java: 下单的领域事件。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>这个实体采用的是<code>充血模型</code>。</p>
-<p>简单看一下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">userAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer userId; <span class="comment">//userId是这个实体中的一个值对象。</span></span><br><span class="line">    <span class="keyword">private</span> String name; <span class="comment">//name也是一个值对象。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> UserAggRoot <span class="title function_">getUserInfo</span><span class="params">(Integer userId)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户实体的信息</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateUserName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="comment">// 更新用户名称</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//getter和setter....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>领域事件的代码，其实简单来说，因为跨越微服务了，所以可以直接通过消息队列来进行事件通信。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">buyEvent</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">buy</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 组装事件信息并且发送事件</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再看一下交易微服务：</p>
-<ul>
-<li>shopAgg: 代表了商品聚合，是一个文件夹<ul>
-<li>core:<ul>
-<li>shopAggRoot.java: 商品聚合根实体。</li>
-<li>priceVO.java: 价格值对象的类，一个class。VO代表的是Value Object的意思。</li>
-<li>inventoryVO.java: 库存值对象的类，一个class。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>orderAgg: 代表了订单聚合，是一个文件夹<ul>
-<li>core:<ul>
-<li>orderAggRoot.java: 订单聚合根实体。</li>
-<li>buyerEntity.java: 购买者实体，一个java的class。</li>
-<li>addressVO.java: 收货地址值对象。</li>
-</ul>
-</li>
-<li>event:<ul>
-<li>orderEvent: 订单事件，发送订单事件可以给物流微服务，进行物流发货。还有积分服务进行积分处理等等。。。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>代码类似：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">shopAggRoot</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer shopId; <span class="comment">// 商品id值对象</span></span><br><span class="line">    <span class="keyword">private</span> String shopName; <span class="comment">//商品名称值对象</span></span><br><span class="line">    <span class="keyword">private</span> PriceVO price; <span class="comment">//价格值对象</span></span><br><span class="line">    <span class="keyword">private</span> InventoryVO inventory; <span class="comment">//库存值对象</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subInventory</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 扣减库存</span></span><br><span class="line">        <span class="comment">// 1. 创建新的库存值对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 替换inventory属性</span></span><br><span class="line">        <span class="comment">// 。。。。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>看一些值对象：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">priceVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BigDecimal originalPrice; <span class="comment">//原价格</span></span><br><span class="line">    <span class="keyword">private</span> BigDecimal currentPrice; <span class="comment">//当前价格，可能是优惠后的价格等等</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">inventoryVO</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long inventory; <span class="comment">//库存</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="DDD的分层架构"><a href="#DDD的分层架构" class="headerlink" title="DDD的分层架构"></a>DDD的分层架构</h5><p>DDD的分层和传统的MVC分层不太一样。</p>
-<p>传统的后端服务一般是这样的层次</p>
-<ul>
-<li>controller：入口层</li>
-<li>service：业务逻辑层</li>
-<li>dao：数据层</li>
-</ul>
-<p>DDD则是分成了下面四层</p>
-<ul>
-<li>用户接口层：也就是传统的入口层</li>
-<li>应用层：应用层调用领域层的聚合来完成操作，进行服务编排。可以调用多个聚合来共同完成操作。但是应用层和传统的业务逻辑层不同，它不负责完成业务逻辑，仅仅是服务编排，具体的业务逻辑由领域层实现。</li>
-<li>领域层：领域层是核心，包含了聚合、实体、值对象和聚合根。每个实体都是充血模型，包含了逻辑操作。</li>
-<li>基础层：基础层提供了基础服务，比如缓存、队列、数据库等等。</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们简单的走了一遍DDD进行领域拆分。也让大家明白了为什么大厂会采用DDD。</p>
-<p>因为大厂的微服务架构很完善了，他们的微服务复杂，使用DDD来指导微服务的拆分是一种有效的方法。</p>
-<p>可以让代码和业务契合，当业务改变的时候代码随之改变。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DeepSeek%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/DeepSeek%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-title-link" itemprop="url">七招教你玩转DeepSeek，我求求你别再花钱买课了！</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-02-16 10:12:47" itemprop="dateCreated datePublished" datetime="2025-02-16T10:12:47+08:00">2025-02-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-17 10:21:34" itemprop="dateModified" datetime="2025-02-17T10:21:34+08:00">2025-02-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/DeepSeek%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" class="post-meta-item leancloud_visitors" data-flag-title="七招教你玩转DeepSeek，我求求你别再花钱买课了！" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/DeepSeek%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/DeepSeek%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="七招教你玩转DeepSeek，我求求你别再花钱买课了！"><a href="#七招教你玩转DeepSeek，我求求你别再花钱买课了！" class="headerlink" title="七招教你玩转DeepSeek，我求求你别再花钱买课了！"></a>七招教你玩转DeepSeek，我求求你别再花钱买课了！</h1><p>最近这段时间DeepSeek越来越火，很多人都开始使用了，以至于DeepSeek频繁出现“服务器繁忙，请稍后再试”问题。</p>
-<p>其实，随着前几年<code>OpenAI</code>发布了<code>ChatGPT</code>开始，这种<code>生成式AI大模型</code>就开始爆火。</p>
-<p>到今年<code>DeepSeek</code>爆火，又一次点燃了大家的热情。</p>
-<p>但是。。。。。。</p>
-<p>很多人还是<code>不知道</code>该怎么和AI聊天，毕竟AI不是真人，大家都知道AI能力强大，可是如何用好它呢？</p>
-<p>很多人在使用过程中都发现AI给的<code>回答不理想</code>，和自己想要的相差甚远。</p>
-<p>这是AI的问题？还是使用者的问题呢？</p>
-<p>这就是<code>信息差</code>，有些人已经用AI<code>年入百万</code>了，有些人还觉得<code>AI能力太弱</code>，回答的问题<code>乱七八糟</code>。</p>
-<p>网上还有很多人靠着信息差<code>挣钱</code>割韭菜。</p>
-<p>很多<code>付费教程</code>多如牛毛，还是有很多人乐此不疲。</p>
-<p>今天，大头<code>免费</code>教你们如何<code>使用AI</code>，解放他们真正的能力，不要再去<code>花钱</code>买课了，不要再当<code>韭菜</code>了，那些钱你买点好吃的好玩的给自己它不香吗？</p>
-<h2 id="为什么大家用不好AI？"><a href="#为什么大家用不好AI？" class="headerlink" title="为什么大家用不好AI？"></a>为什么大家用不好AI？</h2><p>大家在使用过程中，可以问问自己，为什么同样都是<code>AI</code>，别人用的AI跟<code>爱迪生</code>似的，自己用起来就跟<code>人工智障</code>一样？</p>
-<p>有的人可能知道一点，就是<code>Prompt</code>，中文就是AI提示词。也就是你需要问的准确，AI才能给你想要的回答。</p>
-<p>来看一个例子：</p>
-<p>背景：你要和对象出去旅游，出发地是北京，目的地是成都。两个人打算玩五一5天。<br>需求：你想要AI给你出一个旅游规划。</p>
-<p>大家通常会这么询问AI。</p>
-<blockquote>
-<p>给我写一个去成都的旅游攻略</p>
-</blockquote>
-<p>来看一下AI的回答。</p>
-<p><img src="https://thepatterraining.github.io/images/AI/deepseek3-2.png" alt="deepseek3-2"></p>
-<p>乍一看，这个推荐也像这么回事，但是你仔细看一看，会发现AI回答的很<code>宽泛</code>。</p>
-<ul>
-<li>给出了时间建议</li>
-<li>给出了景点建议</li>
-<li>给出了交通住宿建议</li>
-<li>给出了3天的旅游规划</li>
-</ul>
-<p>可是再看我们的需求，明显不符合我们的需求啊。</p>
-<p><code>问题</code>出在哪呢？出在我们给AI的问题上面！</p>
-<p>我们问的<code>问题不明确</code>，至少在AI的理解里面，我们的问题不明确！</p>
-<h2 id="第一招：问题要具体"><a href="#第一招：问题要具体" class="headerlink" title="第一招：问题要具体"></a>第一招：问题要具体</h2><blockquote>
-<p>第一招：问题要具体</p>
-</blockquote>
-<p>你不能只告诉他给一个成都的旅游攻略，这就像你问别人一样，他也只能给你一个宽泛的回答，一些简单的推荐而已。</p>
-<p>✅ 正确示范：我要和我对象出去旅游，从北京到成都，给我规划一个五一的旅游攻略。</p>
-<p>这里交代清楚了时间、地点、人物要素。</p>
-<p><img src="https://thepatterraining.github.io/images/AI/deepseek3-1.png" alt="deepseek3-1"></p>
-<p>看看AI的回答。跟上面比明显更好了！</p>
-<p>想要更细致的回答，还有其他的招式。可以继续优化。</p>
-<h2 id="第二招：设定角色，让AI知道自己是谁"><a href="#第二招：设定角色，让AI知道自己是谁" class="headerlink" title="第二招：设定角色，让AI知道自己是谁"></a>第二招：设定角色，让AI知道自己是谁</h2><blockquote>
-<p>第二招：设定角色，让AI知道自己是谁</p>
-</blockquote>
-<p>解释一下，你可以给AI设定一个<code>角色</code>，让他<code>代入</code>进去，那么他就会更<code>擅长</code>做某事。</p>
-<p>大家都知道，JAVA开发更擅长JAVA、川菜大厨更擅长做川菜、成都本地导游更擅长做成都的旅游规划。</p>
-<p>数学专家更擅长数学题、物理专家更擅长物理题。当你<code>赋予</code>AI一个角色以后，AI就会摇身一变，变成数学专家、物理专家、川菜大厨、成都本地导游等。</p>
-<p>这样的话，他就能更好的回答你的问题了！</p>
-<p>❌ 错误示范：帮我优化这个代码…</p>
-<p>✅ 正确示范：假设你是一个有十多年经验的JAVA专家，你会如何优化这个代码…</p>
-<p>❌ 错误示范：给我写一个去成都的旅游攻略</p>
-<p>✅ 正确示范：假设你是一个有二十多年导游经验的成都本地资深导游。我要和我对象出去旅游，从北京到成都，请给我规划一个五一的旅游攻略。</p>
-<p>AI给出的回答如下，可以看到，给出来的回答更加好了。不仅有具体的时间安排，还有对应的推荐菜以及推荐玩法。还有本地人的放坑指南等等。</p>
-<p><img src="https://thepatterraining.github.io/images/AI/deepseek3-3.png" alt="deepseek3-3"></p>
-<p>这份攻略明显更好了！</p>
-<h2 id="第三招：细化问题，逐步求精"><a href="#第三招：细化问题，逐步求精" class="headerlink" title="第三招：细化问题，逐步求精"></a>第三招：细化问题，逐步求精</h2><p>有的时候，可能我们希望得到更加细化的东西，比如说上面的旅游攻略，我们还想知道住宿安排，交通推荐。</p>
-<p>再比如交通上我们希望比较火车、高铁、飞机的价格和时间等等。</p>
-<p>为什么不<code>一次性</code>给AI呢？</p>
-<p>因为AI<code>无法理解</code>太过<code>复杂</code>的问题，他毕竟不是人类。但是你一步步跟他说，他就能明白了。每次简单一些。</p>
-<p>这就像大象装进冰箱有几步</p>
-<ol>
-<li>打开冰箱</li>
-<li>放大象</li>
-<li>关冰箱</li>
-</ol>
-<p>我们也可以继续追问</p>
-<ul>
-<li>请给出详细的交通方案，首先给出火车的</li>
-<li>接下来给出高铁的</li>
-<li>接下来给出飞机的</li>
-</ul>
-<p>❌ 错误示范：帮我规划一个五一的旅游攻略，从北京到成都，要求给出详细的交通方案、住宿方案、游玩方案。包括时间、价格、性价比等细节。</p>
-<p>✅ 正确示范：帮我规划一个五一的旅游攻略，从北京到成都，第一步，给出交通方案的时间、价格信息。第二步，给出住宿的推荐、价格、和景点的距离。第三步，给出景点的游玩信息、高峰期、路线、门票。</p>
-<p><img src="https://thepatterraining.github.io/images/AI/deepseek3-4.png" alt="deepseek3-3"></p>
-<h2 id="第四招：结合上下文，深入交流"><a href="#第四招：结合上下文，深入交流" class="headerlink" title="第四招：结合上下文，深入交流"></a>第四招：结合上下文，深入交流</h2><p>上面的结果AI确实按照我们的要求来了，但是结果并不是太好。</p>
-<p>我们<code>一次性</code>给出三步，对于AI来说，还是有点理解<code>困难</code>。</p>
-<p>所以我们可以让AI结合上下文。来一步步问。</p>
-<p>什么是<code>上下文</code>？</p>
-<p>就是在一次<code>AI对话</code>里面的<code>所有内容</code>。当我们点击<code>开启新对话</code>。就开启了一个新的上下文。这个对话里面的所有信息，都是上下文，AI可以根据上下文来回答我们的问题。</p>
-<p>✅ 正确示范：假设你是一个有二十多年导游经验的成都本地资深导游。我要和我对象出去旅游，从北京到成都，请给我规划一个五一的旅游攻略。</p>
-<p>接下来，我们再次输入：</p>
-<ul>
-<li>请帮我细化从北京到成都的交通方案，给出交通方案的时间、价格信息等</li>
-<li>请帮我细化成都的住宿推荐，给出住宿的推荐、价格、和景点的距离等</li>
-<li>根据这些信息帮我细化景点的游玩信息、高峰期、路线、门票等</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/AI/deepseek3-5.png" alt="deepseek3-3"></p>
-<p>可以看到同样的问题，AI的回答明显别上次的更加好了。还给出了一些方案对比。很适合我们选择。</p>
-<h2 id="第五招：提供参考方案"><a href="#第五招：提供参考方案" class="headerlink" title="第五招：提供参考方案"></a>第五招：提供参考方案</h2><p>就像写论文的时候，大家都需要<code>参考文献</code>一样，如果你想让AI给你输出一些很好的内容，也可以给AI一些参考文献。</p>
-<p>大家都知道，AI有一个<code>联网搜索</code>功能。这其实就是AI会去网上搜索一些文章做为<code>参考文献</code>。</p>
-<p>我们也可以自主给他一些参考文献。</p>
-<p>❌ 错误示范：帮我写一遍古诗词</p>
-<p>✅ 正确示范：假如你是一个诗人，请帮我写一遍类似《将进酒》的古诗词。</p>
-<h2 id="第六招：多轮对话引导"><a href="#第六招：多轮对话引导" class="headerlink" title="第六招：多轮对话引导"></a>第六招：多轮对话引导</h2><p>之前已经经过<code>上下文</code>了。那么基于上下文，我们就可以进行多轮提问。</p>
-<p>有很多人使用AI的时候，问了一次得不到正确答案，就不再继续提问了。</p>
-<p>❌ 错误示范：帮我写一个牙齿的广告词。</p>
-<p>✅ 正确示范：帮我写一个牙齿的广告词。</p>
-<p>接下来的回答不满意，我们可以继续让AI修改回答。</p>
-<p>✅ 第二轮问题：要求体现出我们的技术，口腔技术一流。</p>
-<p>接下来的回答可能还是不满意，我们继续引导AI修改。</p>
-<p>✅ 第二轮问题：修改广告词，控制在10个字以内。</p>
-<p>就这样一轮一轮的引导。通过不断的引导修正。最终可以得到我们想要的答案。</p>
-<h2 id="第七招：多个方案。不同角度对比选择"><a href="#第七招：多个方案。不同角度对比选择" class="headerlink" title="第七招：多个方案。不同角度对比选择"></a>第七招：多个方案。不同角度对比选择</h2><p>除了上面的方法以外，还可以让AI从不同的角度给出多个方案，我们自己从中选出一个适合的方案。</p>
-<p>当然了，如果多个方案都不满意，我们还可以通过多轮对话的方式，引导AI再次给出多个方案。</p>
-<p>❌ 错误示范：帮我写一个牙齿的广告词。</p>
-<p>✅ 正确示范：从不同的角度，给出5个牙齿的广告词。</p>
-<p>如果对5个不满意，可以继续多轮对话。</p>
-<p>…….</p>
-<h2 id="一些万能模板推荐"><a href="#一些万能模板推荐" class="headerlink" title="一些万能模板推荐"></a>一些万能模板推荐</h2><p>👉 设定角色：如资深导游、JAVA专家等。<br>👉 设定字数要求：如广告词给出10个字以内的、爆款标题给出20个字以内的。论文开题报告1000字以内。<br>👉 设定不同角度<br>👉 设定不想要的回答<br>👉 给出参考文献<br>👉 给定格式、语气、输入输出等。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过这些技巧，可以让AI更好的为我们服务，你会发现AI变成了<code>生活中的小助手</code>，而不再是<code>人工智障</code>。</p>
-<blockquote>
-<p>工具永远都只是工具。如何用好工具才是我们应该做的。</p>
-</blockquote>
-<p>没有完美的工具，只有完美使用工具的人类。</p>
-<p>通过AI提效，解放双手。有更多的时间学习、玩耍、祝大家都升职加薪！！！</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/Java%E4%B8%AD%E7%9A%84try-with-resources%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/Java%E4%B8%AD%E7%9A%84try-with-resources%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F.html" class="post-title-link" itemprop="url">还在手动管理资源？还在经常陷入OOM？一招教你快速解决</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-12 10:12:47 / 修改时间：11:30:55" itemprop="dateCreated datePublished" datetime="2025-02-12T10:12:47+08:00">2025-02-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/Java%E4%B8%AD%E7%9A%84try-with-resources%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F.html" class="post-meta-item leancloud_visitors" data-flag-title="还在手动管理资源？还在经常陷入OOM？一招教你快速解决" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/Java%E4%B8%AD%E7%9A%84try-with-resources%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/Java%E4%B8%AD%E7%9A%84try-with-resources%20%E4%BC%98%E9%9B%85%E7%9A%84%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<h1 id="还在手动管理资源？还在经常陷入OOM？一招教你快速解决"><a href="#还在手动管理资源？还在经常陷入OOM？一招教你快速解决" class="headerlink" title="还在手动管理资源？还在经常陷入OOM？一招教你快速解决"></a>还在手动管理资源？还在经常陷入OOM？一招教你快速解决</h1><p>你是否还在为了手动管理资源而发愁？打开文件以后还要记得关闭文件，这些资源全部要手动管理，一旦忘了就有可能OOM！</p>
-<p>一招教你使用<code>try-with-resources</code>来自动管理资源，不需要再手动关闭资源了，再也不怕忘记关闭资源了。</p>
-<h2 id="try-with-resources"><a href="#try-with-resources" class="headerlink" title="try-with-resources"></a>try-with-resources</h2><p>在Java开发中，资源管理一直是一个重要的问题。</p>
-<p>无论是文件操作、数据库连接还是网络通信，都需要确保资源在使用后能够正确关闭，以避免资源泄漏和潜在的错误。</p>
-<p><code>try-with-resources</code>语句的引入，为Java开发者提供了一种简洁而优雅的资源管理方式，大大简化了代码的复杂性，同时也提高了代码的可读性和安全性。</p>
-<h2 id="传统资源管理的痛点"><a href="#传统资源管理的痛点" class="headerlink" title="传统资源管理的痛点"></a>传统资源管理的痛点</h2><p>首先，我们来看看<code>try-with-resources</code>解决了什么问题。</p>
-<ol>
-<li>冗长的代码：传统资源管理的方式，通常需要在<code>finally</code>块里面手动关闭资源。但是这样既麻烦，又导致代码很多，而这些代码增加以后，比如多个资源关闭，嵌套关闭等，会导致可读性变差，代码难以管理。</li>
-<li>容易出错：当代码复杂、可读性差、难以管理以后，就很容易出错了。还有如果在关闭资源的时候抛出异常，那么资源可能就无法关闭了，从而导致资源泄漏问题。</li>
-<li>异常处理复杂：通常在<code>finally</code>中关闭资源的时候，还要在套一层<code>try...catch</code>，导致异常处理变多、复杂等问题</li>
-</ol>
-<h3 id="冗长的代码"><a href="#冗长的代码" class="headerlink" title="冗长的代码"></a>冗长的代码</h3><p>在<code>try-with-resources</code>出现之前，Java开发者通常使用<code>try-finally</code>语句来确保资源被正确关闭。例如，当操作文件时，代码通常如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    inputStream = <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;example.txt&quot;</span>);</span><br><span class="line">    <span class="comment">// 读取文件内容</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (inputStream != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            inputStream.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种写法虽然能够确保资源被关闭，但代码显得冗长且复杂。特别是当需要管理多个资源时，finally块中的关闭逻辑会变得更加繁琐。</p>
-<h3 id="容易出错"><a href="#容易出错" class="headerlink" title="容易出错"></a>容易出错</h3><p>手动管理资源时，开发者需要在<code>finally</code>块中显式调用资源的<code>close()</code>方法。如果忘记关闭资源，或者在关闭资源时抛出异常而未正确处理，就可能导致资源泄漏或其他问题。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;example.txt&quot;</span>);</span><br><span class="line"><span class="comment">// 使用inputStream读取文件内容</span></span><br><span class="line">inputStream.close(); <span class="comment">// 如果这里抛出异常，资源可能无法正确关闭</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="异常处理复杂"><a href="#异常处理复杂" class="headerlink" title="异常处理复杂"></a>异常处理复杂</h3><p>在<code>finally</code>块中关闭资源时，如果资源的<code>close()</code>方法抛出异常，而try块中也抛出了异常，处理这些异常会变得非常复杂。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    inputStream = <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;example.txt&quot;</span>);</span><br><span class="line">    <span class="comment">// 读取文件内容，可能抛出异常</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (inputStream != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            inputStream.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果try块和finally块都抛出异常，处理这些异常会变得非常复杂，容易导致错误。</p>
-<h2 id="什么是try-with-resources"><a href="#什么是try-with-resources" class="headerlink" title="什么是try-with-resources?"></a>什么是try-with-resources?</h2><p><code>try-with-resources</code>是<code>Java 7</code>引入的一种语法结构，用于<code>自动管理资源</code>。</p>
-<p>它允许在try语句中声明一个或多个资源，这些资源必须实现了<code>AutoCloseable接口</code>或其子接口Closeable。</p>
-<p>当try语句块执行完毕后，无论是否发生异常，<code>try-with-resources</code>都会自动调用资源的<code>close()</code>方法来关闭资源。</p>
-<h3 id="核心特性"><a href="#核心特性" class="headerlink" title="核心特性"></a>核心特性</h3><ul>
-<li>自动关闭资源：try-with-resources会自动调用资源的close()方法，确保资源被正确关闭。</li>
-<li>简化代码：无需手动在finally块中关闭资源，减少了代码冗余。</li>
-<li>支持多个资源：可以同时管理多个资源，每个资源之间用分号隔开。</li>
-<li>异常处理：如果资源的close()方法抛出异常，而try语句块中也抛出了异常，try语句块中抛出的异常会被传播，而资源关闭时抛出的异常会被抑制（suppressed）。</li>
-</ul>
-<h2 id="为什么使用try-with-resources"><a href="#为什么使用try-with-resources" class="headerlink" title="为什么使用try-with-resources"></a>为什么使用try-with-resources</h2><p>上面已经介绍了传统资源管理的痛点问题，所以使用<code>try-with-resources</code>主要就是解决这些痛点。</p>
-<p>当然了，除了能解决这些问题以外，还有一些其他的好处。</p>
-<p>毕竟，Java语言使用了这么长时间，能使它自身提供的一些特性，都是很有用的。</p>
-<ul>
-<li>解决传统资源管理的痛点：解决上述的痛点问题。</li>
-<li>提高代码的可读性和安全性：try-with-resources通过自动管理资源，简化了代码结构，提高了代码的可读性和安全性。它确保了资源在使用后能够正确关闭，减少了因资源泄漏导致的潜在问题。</li>
-<li>支持自定义资源类：除了Java标准库中提供的资源类（如FileInputStream、FileOutputStream等），我们还可以自定义实现AutoCloseable接口的资源类，以便在try-with-resources中使用。</li>
-</ul>
-<h2 id="何时使用try-with-resources"><a href="#何时使用try-with-resources" class="headerlink" title="何时使用try-with-resources"></a>何时使用try-with-resources</h2><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>上面已经介绍了很多了，接下来看一下，有哪些使用场景。</p>
-<ul>
-<li>文件操作：读取或写入文件时，使用FileInputStream、FileOutputStream等类。</li>
-<li>数据库操作：使用Connection、Statement、ResultSet等资源时。</li>
-<li>网络通信：使用Socket、ServerSocket等资源时。</li>
-<li>自定义资源：任何实现了AutoCloseable接口的资源类。</li>
-</ul>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>没有任何方法是一种<code>银弹</code>。技术方案没有黑魔法！所以在使用的时候也需要注意一些事项。</p>
-<ul>
-<li>确保资源实现AutoCloseable接口：只有实现了AutoCloseable接口或Closeable接口的资源类才能在try-with-resources中使用。</li>
-<li>异常处理：虽然try-with-resources会自动关闭资源，但仍然需要处理可能抛出的异常。</li>
-<li>性能考虑：虽然try-with-resources简化了代码，但调用close()方法可能会增加一定的开销。在资源较多时，需要注意性能影响。</li>
-</ul>
-<h2 id="如何使用try-with-resources"><a href="#如何使用try-with-resources" class="headerlink" title="如何使用try-with-resources"></a>如何使用try-with-resources</h2><p>经过上面的介绍，相信你已经对<code>try-with-resources</code>很了解了，接下来看一下到底该如何实战吧！</p>
-<h3 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h3><p><code>try-with-resources</code>语句允许在<code>try</code>块中声明一个或多个资源，这些资源必须实现了<code>AutoCloseable</code>接口或其子接口<code>Closeable</code>。当<code>try</code>块执行完毕后，无论是否发生异常，<code>try-with-resources</code>都会自动调用资源的<code>close()</code>方法来关闭资源。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (资源声明) &#123;</span><br><span class="line">    <span class="comment">// 使用资源</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (异常类型 异常变量) &#123;</span><br><span class="line">    <span class="comment">// 处理异常</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h3><p>以下是一个使用try-with-resources读取文件内容的示例:</p>
-<p>可以看到，我们把资源的获取放在了try后面的小括号里面，而不是以前一样放在了大括号里面。</p>
-<p>这样的话，就不需要在<code>finally</code>里面关闭资源了，因为会自动关闭。</p>
-<p>这也是因为<code>FileInputStream</code>实现了<code>Closeable</code>接口，因此可以作为资源在try-with-resources中声明。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (<span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;example.txt&quot;</span>)) &#123;</span><br><span class="line">    <span class="comment">// 使用inputStream读取文件内容</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="管理多个资源"><a href="#管理多个资源" class="headerlink" title="管理多个资源"></a>管理多个资源</h3><p>try-with-resources不仅可以管理单个资源，还可以同时管理多个资源。例如，当需要同时读取和写入文件时，可以这样写：</p>
-<p>在这个例子中，inputStream和outputStream都被声明为资源，它们的close()方法都会在try语句块执行完毕后自动调用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (<span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;input.txt&quot;</span>);</span><br><span class="line">     <span class="type">FileOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;output.txt&quot;</span>)) &#123;</span><br><span class="line">    <span class="comment">// 使用inputStream读取文件内容并写入outputStream</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义资源类"><a href="#自定义资源类" class="headerlink" title="自定义资源类"></a>自定义资源类</h3><p>除了Java标准库中提供的资源类（如FileInputStream、FileOutputStream等），我们还可以自定义实现AutoCloseable接口的资源类，以便在try-with-resources中使用。例如：</p>
-<p>只要我们自己的资源类，实现了<code>AutoCloseable</code>接口，就可以了。很简单吧！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyResource</span> <span class="keyword">implements</span> <span class="title class_">AutoCloseable</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;资源已关闭&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来就可以和上面一样的使用方法来使用我们自定义的资源类了！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (<span class="type">MyResource</span> <span class="variable">myResource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyResource</span>()) &#123;</span><br><span class="line">    <span class="comment">// 使用myResource</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>try-with-resources</code>是Java 7引入的一种非常有用的语法结构，</p>
-<p>它能够自动管理资源，简化了资源关闭的代码，提高了代码的可读性和安全性。</p>
-<p>通过实现AutoCloseable接口或Closeable接口，我们可以自定义资源类，并在try-with-resources中使用它们。</p>
-<p>在实际开发中，合理使用try-with-resources可以有效避免资源泄漏，提高代码质量。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DeepSeek%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/DeepSeek%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2.html" class="post-title-link" itemprop="url">DeepSeek R1本地部署,解决服务器繁忙，请稍后再试问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-02-10 10:12:47 / 修改时间：14:48:41" itemprop="dateCreated datePublished" datetime="2025-02-10T10:12:47+08:00">2025-02-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/DeepSeek%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2.html" class="post-meta-item leancloud_visitors" data-flag-title="DeepSeek R1本地部署,解决服务器繁忙，请稍后再试问题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/DeepSeek%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/DeepSeek%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="DeepSeek-R1本地部署"><a href="#DeepSeek-R1本地部署" class="headerlink" title="DeepSeek R1本地部署"></a>DeepSeek R1本地部署</h1><h2 id="DeepSeek大火-但天下苦服务器繁忙，请稍后再试久矣"><a href="#DeepSeek大火-但天下苦服务器繁忙，请稍后再试久矣" class="headerlink" title="DeepSeek大火,但天下苦服务器繁忙，请稍后再试久矣."></a>DeepSeek大火,但天下苦服务器繁忙，请稍后再试久矣.</h2><p>近期,DeepSeek大模型大火,一举超越ChatGPT登顶下载榜首.</p>
-<p>DeepSeek从很少人知道一下子变成了人尽皆知的大厂,招聘薪资更是开出了年薪百万的价格,应届生都可以去.可谓是梦中情厂.</p>
-<p>但是,就连DeepSeek自己可能都没想到自己这么火.因此招架不住大家的热情,频繁的出现<code>服务器繁忙，请稍后再试</code>.</p>
-<p>使用体验实在糟糕.</p>
-<p>好在,DeepSeek开源了自己的大模型,我们可以将DeepSeek部署到本地进行使用,这样的话就可以不再担心服务器繁忙了.可以尽情的蹂躏DeepSeek了!!!</p>
-<p>关于DeepSeek的技术有兴趣的可以看看他们的论文.<br><a target="_blank" rel="noopener" href="https://github.com/deepseek-ai/DeepSeek-R1/blob/main/DeepSeek_R1.pdf">DeepSeekR1论文</a></p>
-<ul>
-<li>DeepSeek-R1 遵循 MIT License，允许用户通过蒸馏技术借助 R1 训练其他模型。</li>
-<li>DeepSeek-R1 上线 API，对用户开放思维链输出，通过设置 model&#x3D;’deepseek-reasoner’ 即可调用。</li>
-<li>DeepSeek 官网与 App 即日起同步更新上线。</li>
-</ul>
-<p>DeepSeek-R1 在后训练阶段大规模使用了强化学习技术，在仅有极少标注数据的情况下，极大提升了模型推理能力。在数学、代码、自然语言推理等任务上，性能比肩 OpenAI o1 正式版。</p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
-<li><p><strong>硬件要求</strong></p>
-<ul>
-<li>需要至少一个 CPU 核心（推荐使用多核处理器）。</li>
-<li>内存建议至少 4GB，具体内存可以根据实际需求调整。</li>
-<li>磁盘空间建议至少 20GB 可用空间。</li>
-</ul>
-</li>
-<li><p><strong>操作系统</strong></p>
-<ul>
-<li>Windows、Linux 或 macOS 均可支持。</li>
-</ul>
-</li>
-</ol>
-<h2 id="蒸馏模型"><a href="#蒸馏模型" class="headerlink" title="蒸馏模型"></a>蒸馏模型</h2><p>DeepSeek本地部署的基本是蒸馏模型,简单理解为阉割版.</p>
-<p>为什么?因为本地无法支持真正大模型的算力.</p>
-<p>蒸馏模型虽然无法和完整版一样,但是胜在我们可以本地部署,自己玩.还避免了服务器繁忙的苦恼.毕竟,东西再好,你用不了也是白搭啊.</p>
-<p><code>DeepSeek</code> 在开源 <code>DeepSeek-R1-Zero</code> 和 <code>DeepSeek-R1</code> 两个 660B 模型的同时，通过 <code>DeepSeek-R1</code> 的输出，蒸馏了 <code>6个小模型</code>开源给社区，其中 32B 和 70B 模型在多项能力上实现了对标 <code>OpenAI o1-mini</code> 的效果。</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-1.png" alt="deepseek2-1"></p>
-<p>满血版DeepSeek 671B的要求:</p>
-<ul>
-<li>显存需求：完整版（未量化）的显存需求极高，<code>BF16</code>精度下需 <code>1342GB</code>显存，即使使用<code>FP16</code>精度也需约 <code>350GB</code>显存</li>
-<li>硬件配置：需多节点分布式计算，例如8张NVIDIA A100&#x2F;H100（每卡80GB显存）并行运行，或更高端的超算集群</li>
-<li>性能限制：单卡无法支持，即使最新RTX 5090（32GB显存）也无法有效运行，推理速度极低（低于每秒10个token）</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-2.jpg" alt="deepseek2-1"></p>
-<p>看一下蒸馏版的要求和推荐配置.</p>
-<table>
-<thead>
-<tr>
-<th>版本名称</th>
-<th>参数数量</th>
-<th>显存需求 (FP16)</th>
-<th>内存需求</th>
-<th>推荐Mac配置</th>
-<th>推荐Windows配置</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>DeepSeek-R1-1.5B</td>
-<td>1.5B</td>
-<td>~3GB</td>
-<td>8GB+</td>
-<td>M1&#x2F;M2芯片，8GB统一内存[^2^]</td>
-<td>GTX 1650&#x2F;RTX 2060，4GB+显存[^5^]</td>
-</tr>
-<tr>
-<td>DeepSeek-R1-7B</td>
-<td>7B</td>
-<td>~14GB</td>
-<td>16GB+</td>
-<td>M1 Pro&#x2F;M2 Pro，16GB统一内存[^2^]</td>
-<td>RTX 3060&#x2F;4070 Ti，12GB显存[^2^]</td>
-</tr>
-<tr>
-<td>DeepSeek-R1-14B</td>
-<td>14B</td>
-<td>~28GB</td>
-<td>32GB+</td>
-<td>M1 Max&#x2F;M2 Max，32GB统一内存[^2^]</td>
-<td>RTX 4090&#x2F;A100 40G，24GB+显存[^2^]</td>
-</tr>
-<tr>
-<td>DeepSeek-R1-32B</td>
-<td>32B</td>
-<td>~64GB</td>
-<td>64GB+</td>
-<td>M1 Ultra&#x2F;M2 Ultra，64GB统一内存[^2^]</td>
-<td>2x RTX 4090&#x2F;A100 80G，48GB+显存[^2^]</td>
-</tr>
-<tr>
-<td>DeepSeek-R1-70B</td>
-<td>70B</td>
-<td>~140GB</td>
-<td>128GB+</td>
-<td>需要更高配置的Mac Pro[^6^]</td>
-<td>4x RTX 4090&#x2F;A100 80G[^6^]</td>
-</tr>
-</tbody></table>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-3.jpg" alt="deepseek2-1"></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>介绍完以后,开始安装吧.</p>
-<p>安装相对来说比较简单,可以使用<code>Ollama</code>这个东西.</p>
-<p>直接在<a target="_blank" rel="noopener" href="https://ollama.com/">Ollama官网</a>下载就可以了.</p>
-<p>在如下界面,直接点击<code>DownLoad</code>就可以了.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-4.jpg" alt="deepseek2-1"></p>
-<p>接下来选择版本,Mac、Linux或者Windows.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-5.png" alt="deepseek2-1"></p>
-<p>等待下载完成以后,运行<code>Ollama</code>.这个东西可以理解为大模型的运行环境.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-6.png" alt="deepseek2-1"></p>
-<p>接下来点击Ollama官网左上角的<code>Models</code>可以准备大模型了.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-7.png" alt="deepseek2-1"></p>
-<p>选择我们要部署的<code>DeepSeek R1</code>大模型.</p>
-<p>接下里可以选择要部署的版本.版本信息上面已经介绍过了.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-8.png" alt="deepseek2-8"></p>
-<p>选择以后右侧的命令会改变,直接复制右侧的命令即可.比如我选择<code>7b</code>版本,右侧的命令就是<code>ollama run deepseek-r1:7b</code>.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-9.png" alt="deepseek2-9"></p>
-<p>直接在命令行中输入这个命令就可以了.<code>Windows</code>使用<code>CMD</code>或者<code>终端</code>都可以.<code>Mac</code>使用<code>终端</code>或者<code>Iterm2</code>都可以.运行以后会先开始下载大模型.</p>
-<blockquote>
-<p>在windows下,可以在下面的搜索里面输入CMD打开终端程序,或者按住键盘Win + R两个键,然后在里面输入CMD打开终端程序.</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-10.png" alt="deepseek2-9"></p>
-<p>下载完成以后进入大模型的输入界面,是命令行格式的,可以直接输入.</p>
-<p>比如我输入<code>你是谁</code>.回答中的<think>标签里面对应的是思考的内容.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-11.png" alt="deepseek2-9"></p>
-<p>到这里其实就安装完成了,不过如果需要UI界面在浏览器中使用的话,也可以再安装一个UI界面.</p>
-<p>后续如果还想运行的话依然是两个步骤</p>
-<ol>
-<li>打开Ollama程序</li>
-<li>运行命令ollama run deepseek-r1:7b, 注意替换成你自己的命令.</li>
-</ol>
-<h3 id="可视化界面安装"><a href="#可视化界面安装" class="headerlink" title="可视化界面安装"></a>可视化界面安装</h3><p>有很多人可能使用不惯命令行程序来输入,因此可以安装一个可视化界面,这样就和在DeepSeek官网使用一样了.</p>
-<p>接下来我们看看如何安装UI界面吧!</p>
-<p>可视化界面使用<a target="_blank" rel="noopener" href="https://github.com/open-webui/open-webui">Open-Web UI</a>提供的界面程序.可以先下载Docker,使用<code>Docker</code>运行<code>Open-Web UI</code>.</p>
-<h4 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h4><p>进入<a target="_blank" rel="noopener" href="https://www.docker.com/">Docker官网</a>,进行下载.选择要下载的版本.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-12.png" alt="deepseek2-9"></p>
-<p>下载以后进行安装,安装完成以后,打开程序,使用推荐配置就可以了.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-13.png" alt="deepseek2-9"></p>
-<h4 id="安装Open-Web-UI"><a href="#安装Open-Web-UI" class="headerlink" title="安装Open Web-UI"></a>安装Open Web-UI</h4><p>接下来就可以安装<code>Open Web-UI</code>了.</p>
-<p>使用如下命令即可.和之前一样,在CMD或者终端程序中运行如下命令.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main</span><br></pre></td></tr></table></figure>
-
-<p>接下来等待下载完成就可以了.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-14.png" alt="deepseek2-9"></p>
-<p>现在打开浏览器,输入<code>http://localhost:3000/</code>即可进入本地部署的可视化界面了!</p>
-<p>第一次的话需要创建管理员账号,输入名称、邮箱、密码就可以了.</p>
-<p>进来以后如图所示.</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-15.png" alt="deepseek2-9"></p>
-<p>使用体验如下</p>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek2-16.png" alt="deepseek2-9"></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这样就算安装完成了,可以使用命令行或者界面,看个人喜好了!</p>
-<p>通过以上步骤，您可以在本地部署 DeepSeek。请根据实际需求调整配置并确保所有依赖项已正确安装。如果在运行过程中遇到问题，请参考官方文档或联系技术支持团队。</p>
-<p>希望这份指南对您有所帮助！</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -3116,7 +2927,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">203</span>
+          <span class="site-state-item-count">207</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

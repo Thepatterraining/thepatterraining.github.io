@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD战术设计代码结构">
+<meta property="og:url" content="https://thepatterraining.github.io/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ddd/ddd3-9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-07-24T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-07-24T07:13:02.637Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/ddd/ddd3-1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DDD战术设计代码结构 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD战术设计代码结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-24 10:12:47 / 修改时间：15:13:02" itemprop="dateCreated datePublished" datetime="2025-07-24T10:12:47+08:00">2025-07-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DDD/" itemprop="url" rel="index"><span itemprop="name">DDD</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html" class="post-meta-item leancloud_visitors" data-flag-title="DDD战术设计代码结构" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ddd/DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="DDD战术设计代码结构"><a href="#DDD战术设计代码结构" class="headerlink" title="DDD战术设计代码结构"></a>DDD战术设计代码结构</h1><p>之前讲过了如何进行领域建模，也就是将<code>真实世界</code>映射到<code>业务领域</code>中。</p>
+<p>接下来，看一下如何将<code>业务领域</code>落地到<code>代码实现</code>里面。</p>
+<p>只有<code>战略设计</code>和<code>战术设计</code>结合到一起，才能做好DDD，不能只注重领域建模而忽视了代码实现，也不能只注重代码实现而忽视了领域建模。</p>
+<h2 id="层次结构"><a href="#层次结构" class="headerlink" title="层次结构"></a>层次结构</h2><h3 id="贫血三层架构"><a href="#贫血三层架构" class="headerlink" title="贫血三层架构"></a>贫血三层架构</h3><p>一般情况下，我们使用的是贫血三层架构。也就是</p>
+<ul>
+<li>controller：负责接收参数，参数校验，调用service处理业务逻辑。</li>
+<li>service：处理业务逻辑</li>
+<li>Model：和数据库交互，可能是Mybatics。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-1.png" alt="贫血三层架构"></p>
+<h3 id="DDD四层架构"><a href="#DDD四层架构" class="headerlink" title="DDD四层架构"></a>DDD四层架构</h3><p>而对于DDD来说，使用的则是经典四层架构。</p>
+<ul>
+<li>用户接口层：作为程序的入口，controller就属于这一层。</li>
+<li>应用服务层：负责领域编排，不负责具体的业务逻辑处理。通过调用领域服务层来完成业务逻辑处理。</li>
+<li>领域服务层：负责具体的业务逻辑处理。可以将service的业务逻辑下沉到这一层，而业务逻辑编排则放到应用服务层。</li>
+<li>基础设施层：提供一些基础设施，包括数据库持久化，缓存，RPC调用等等。Model就属于这一层。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-2.png" alt="DDD四层架构"></p>
+<p>如果是重构项目的话，可以将三层架构拆解成四层架构，映射关系如下：</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-3.png" alt="映射关系"></p>
+<h4 id="用户接口层"><a href="#用户接口层" class="headerlink" title="用户接口层"></a>用户接口层</h4><p>用户接口层的命名可以是<code>starter</code>或者是<code>interface</code>等等。</p>
+<p>用户接口层的职责就是整个程序的入口，对外部提供接口，包括<code>HTTP接口</code>和<code>RPC接口</code>。</p>
+<p>这一层的结构很简单：</p>
+<ul>
+<li>controller: 就是传统的controller</li>
+<li>dto: dto里面包括了请求参数和返回参数</li>
+<li>converter：负责将请求参数转换成应用服务的入参，将应用服务的出参转换成返回参数</li>
+<li>consumer：消费者，负责消费MQ的消息</li>
+</ul>
+<p>我们还可以将这一层进一步划分为两个目录，一个是HTTP接口的<code>starter</code>目录，一个是<code>RPC接口</code>的api目录。</p>
+<p>因为一般来说rpc会对外部提供一个包。因此可以将这两个分开。</p>
+<p>而且对于RPC接口的包来说，<code>consumer</code>这个目录是没有用的，因此，只需要三个目录就可以了。</p>
+<p>对于HTTP接口来说，因此请求和返回都是JSON格式的对象，因此，可以省略dto和converter这两个步骤。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-4.png" alt="用户接口层"></p>
+<h4 id="应用服务层"><a href="#应用服务层" class="headerlink" title="应用服务层"></a>应用服务层</h4><blockquote>
+<p>应用服务的职责边界很清晰，就是调用领域服务、聚合等完成业务操作。这一层只做服务编排，而不处理具体的业务逻辑。</p>
+</blockquote>
+<ol>
+<li>代码结构</li>
+</ol>
+<p>因此，应用服务层的代码结构也很简单，可以放到目录<code>application</code>里面。</p>
+<ul>
+<li>service: 应用服务，应用服务不需要和领域服务一对一的关系，也不需要和controller一对一的关系。根据业务来创建即可。</li>
+<li>dto: 这个里面存放应用服务层的入参和出参。可以根据<code>CQRS</code>规则来设置，创建、修改、删除的入参是<code>Command</code>。查询的入参是<code>Query</code>。</li>
+<li>event：应用服务层的事件发布。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-5.png" alt="应用服务层"></p>
+<ol start="2">
+<li>代码示例：</li>
+</ol>
+<p>这里，用<code>注册用户</code>来做一个简单的示例。看一下应用服务层是如何做服务编排的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MobileRegisterApplicationService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> UserAggService userAggService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationEventPublisher eventPublisher;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> SnowFlakeGenerator snowFlakeGenerator;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">register</span><span class="params">(MobileRegisterRequest command)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 校验验证码是否正确</span></span><br><span class="line">        checkVerifyCode(command.getMobile(), command.getCode());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 调用用户领域服务 判断能否注册用户</span></span><br><span class="line">        userAggService.canRegister(command.getMobile());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 验证码正确 用户可以注册 生成用户聚合</span></span><br><span class="line">        <span class="type">UserAgg</span> <span class="variable">userAgg</span> <span class="operator">=</span> UserAgg.init(command.getMobile(), snowFlakeGenerator.nextId(<span class="string">&quot;user&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4. 调用用户领域服务 注册用户</span></span><br><span class="line">        userAggService.save(userAgg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 5. 发送注册成功领域事件</span></span><br><span class="line">        eventPublisher.publishEvent(<span class="keyword">new</span> <span class="title class_">UserRegisteredEvent</span>(userAgg.getId(), userAgg.getUsername(), <span class="literal">null</span>, LocalDateTime.now()));</span><br><span class="line">        <span class="keyword">return</span> userAgg.getId();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">checkVerifyCode</span><span class="params">(String mobile, String verifyCode)</span> &#123;</span><br><span class="line">        <span class="comment">// 调用RPC接口来校验验证码</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="领域服务层"><a href="#领域服务层" class="headerlink" title="领域服务层"></a>领域服务层</h4><p>领域服务层是DDD的核心，所有的业务逻辑都以<code>充血模型</code>的形式放到聚合根、实体、值对象里面。</p>
+<p>领域服务层的入参和出参都应该是领域模型。</p>
+<ol>
+<li>代码结构</li>
+</ol>
+<p>领域服务层的代码结构相对复杂。领域服务层的代码目录首先按照聚合来区分。其次，每个聚合下面有自己的领域模型和领域服务。可以放到目录<code>domain</code>里面。</p>
+<ul>
+<li>聚合<ul>
+<li>service: 存储领域服务，领域服务的职责是编排聚合。调用聚合来完成业务逻辑。</li>
+<li>entity：这个目录存储所有的聚合根、实体和值对象。</li>
+<li>event：存放领域事件</li>
+<li>repository：存放仓储的接口，仓储的具体实现放在基础设施层。</li>
+<li>factory：存放工厂的接口，工厂的具体实现放在基础设施层。</li>
+<li>enums：存放一些领域层使用的枚举</li>
+<li>gateway：存放一些RPC请求的接口，具体实现放在基础设施层。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-6.png" alt="领域服务层"></p>
+<ol start="2">
+<li>代码示例</li>
+</ol>
+<p>可以看到领域服务里面调用了<code>Repository</code>来重建聚合，然后判断聚合是否存在来完成校验。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">canRegister</span><span class="params">(String mobile)</span> &#123;</span><br><span class="line">    <span class="comment">// 根据要注册的手机号获取用户信息</span></span><br><span class="line">    <span class="type">UserAgg</span> <span class="variable">userAgg</span> <span class="operator">=</span> userRepository.getUserByMobile(mobile);</span><br><span class="line">    <span class="comment">// 校验用户是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (userAgg != <span class="literal">null</span>) &#123;</span><br><span class="line">        log.warn(<span class="string">&quot;用户已存在&quot;</span>);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">DomainException</span>(ResultCode.USER_ALREADY_EXISTS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再来看一下判断能否登陆的方法。这里调用的是聚合的方法来校验用户状态，而不是通过领域服务来校验。这就是编排聚合。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">canLogin</span><span class="params">(UserAgg userAgg)</span> <span class="keyword">throws</span> UserLoginException &#123;</span><br><span class="line">    <span class="comment">// 0. 校验用户存在</span></span><br><span class="line">    <span class="keyword">if</span> (userAgg == <span class="literal">null</span>) &#123;</span><br><span class="line">        log.warn(<span class="string">&quot;用户不存在&quot;</span>);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UserLoginException</span>(ResultCode.USER_NOT_FOUND);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 校验用户状态</span></span><br><span class="line">    <span class="keyword">if</span> (!userAgg.validateStatus()) &#123;</span><br><span class="line">        log.warn(<span class="string">&quot;用户状态错误:&#123;&#125;&quot;</span>, userAgg.getUserStatus());</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UserLoginException</span>(ResultCode.USER_STATUS_ERROR);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="基础设施层"><a href="#基础设施层" class="headerlink" title="基础设施层"></a>基础设施层</h4><p>基础设施层为所有层提供基础的技术支持，包括但不限于数据库、缓存、队列、RPC请求、HTTP请求等等。</p>
+<p>基础设施层有两个重要的概念</p>
+<ul>
+<li>Repository：仓储，为领域模型提供持久化的功能，入参是领域模型，将领域模型转换成数据模型，在进行持久化。至于是缓存还是数据库，是MySQL还是PostgreSQL，上层并不关心。同时，也负责从持久化中恢复领域模型。</li>
+<li>Factory：工厂，和工厂模式的工厂不同，这里的工厂是负责创建领域模型的。有些领域模型的创建较为复杂，可以封装到工厂里面。</li>
+</ul>
+<ol>
+<li>基础设施层的目录</li>
+</ol>
+<p>基础设施层的代码结构可以按照职能区分。其中Repository和聚合是<code>一对一</code>的关系，一个聚合有一个Repository负责持久化和恢复。可以放到目录<code>infrastructure</code>里面。</p>
+<ul>
+<li>config: 放置项目的配置文件。</li>
+<li>repository: 放仓储的具体实现类，一个仓储对应一个聚合，负责持久化聚合里面的多个表数据。</li>
+<li>factory: 工厂的具体实现类，负责创建领域模型。</li>
+<li>gateway：放对外部的请求，包括HTTP请求和RPC请求。</li>
+<li>util：放一些工具类</li>
+<li>listener: 放一些领域事件的监听者，有一些领域事件是放到队列中其他服务监听，也有一些领域事件是自己服务监听的。</li>
+<li>producer: 生产者，负责向队列中发送消息</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-7.png" alt="基础设施层"></p>
+<ol start="2">
+<li>代码示例</li>
+</ol>
+<p>以用户聚合对应的用户仓储来看，需要创建用户的时候传入用户聚合。然后转换成数据模型，当插入数据库以后会更新用户聚合的ID。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(UserAgg userAgg)</span> &#123;</span><br><span class="line">    <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> <span class="built_in">this</span>.toPO(userAgg);</span><br><span class="line">    userMapper.insert(userPO);</span><br><span class="line">    <span class="comment">// 回填id</span></span><br><span class="line">    userAgg.setId(userPO.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当需要查询数据的时候，传入查询条件，返回用户聚合。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> UserAgg <span class="title function_">getUserByMobile</span><span class="params">(String mobile)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 查询用户信息</span></span><br><span class="line">    LambdaQueryWrapper&lt;UserPO&gt; queryWrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">    queryWrapper.eq(UserPO::getMobile, mobile);</span><br><span class="line">    <span class="type">UserPO</span> <span class="variable">userPO</span> <span class="operator">=</span> userMapper.selectOne(queryWrapper);</span><br><span class="line">    <span class="keyword">if</span> (userPO == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 转化成聚合返回</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.toEntity(userPO);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="四层架构之间的依赖关系"><a href="#四层架构之间的依赖关系" class="headerlink" title="四层架构之间的依赖关系"></a>四层架构之间的依赖关系</h4><p>四层架构的目录结构已经出来了</p>
+<ul>
+<li>starter: 放置启动类和HTTP请求以及队列的消费者。</li>
+<li>api: 放置RPC接口以及外部需要使用的一些DTO。</li>
+<li>application：应用服务层的代码</li>
+<li>domain: 领域服务层的代码</li>
+<li>infrastructure: 基础设施层的代码</li>
+<li>common: 可以放置一些公共的代码，比如工具类、exception、枚举等。</li>
+</ul>
+<p>总的目录结构如下，外层的user代表服务名称，这个是用户服务，也就是用户领域。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-8.png" alt="目录"></p>
+<p>用户接口层</p>
+<ul>
+<li>依赖应用服务层：调用应用服务实现功能。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.zt.bookkeeping.user<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>user-domain<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>应用服务层</p>
+<ul>
+<li>依赖领域服务层：应用服务的职责就是编排领域服务和领域模型。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 依赖领域层 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.zt.bookkeeping.user<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>user-domain<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>领域服务层</p>
+<ul>
+<li>什么也不依赖，领域服务层作为最底层的服务，什么也不依赖，如果需要使用基础设施的话，接口定义在领域层，实现放在基础设施层。</li>
+</ul>
+<p>基础设施层</p>
+<ul>
+<li>依赖领域服务层：因为接口要放在领域服务层，实现放在基础设施层</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 依赖领域层 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.zt.bookkeeping.user<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>user-domain<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>整体依赖关系如下：</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd3-9.png" alt="整体依赖关系"></p>
+<h3 id="如何确定代码放在哪一层？"><a href="#如何确定代码放在哪一层？" class="headerlink" title="如何确定代码放在哪一层？"></a>如何确定代码放在哪一层？</h3><p>写代码的时候如何确定这个代码该放到哪一层呢？</p>
+<p>如果这个代码是负责和外部交互的，那么就放到基础设施层。</p>
+<p>如果这个代码包含业务逻辑，那么就放到领域层，将业务逻辑拆分到聚合、实体、值对象中，如果逻辑复杂，就通过领域服务进行编排。</p>
+<p>应用层代码只编排领域服务和领域模型。</p>
+<p>接口层代码只暴露接口给外部。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%94%A8%20@TypeHandler%20%E5%81%9A%E8%87%AA%E5%8A%A8%E8%BD%AC%E6%8D%A2%E8%BF%9B%E9%98%B6%EF%BC%9AMyBatis%20+%20%E8%87%AA%E5%AE%9A%E4%B9%89%20TypeHandler.html" rel="prev" title="用 @TypeHandler 做自动转换	进阶：MyBatis + 自定义 TypeHandler">
+      <i class="fa fa-chevron-left"></i> 用 @TypeHandler 做自动转换	进阶：MyBatis + 自定义 TypeHandler
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html" rel="next" title="MySQL零基础教程高阶应用实战">
+      MySQL零基础教程高阶应用实战 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">DDD战术设计代码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%AB%E8%A1%80%E4%B8%89%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">贫血三层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DDD%E5%9B%9B%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">DDD四层架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%8E%A5%E5%8F%A3%E5%B1%82"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">用户接口层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%B1%82"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">应用服务层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%9C%8D%E5%8A%A1%E5%B1%82"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">领域服务层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E5%B1%82"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">基础设施层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E5%B1%82%E6%9E%B6%E6%9E%84%E4%B9%8B%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">四层架构之间的依赖关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E4%BB%A3%E7%A0%81%E6%94%BE%E5%9C%A8%E5%93%AA%E4%B8%80%E5%B1%82%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">如何确定代码放在哪一层？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.2.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">207</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

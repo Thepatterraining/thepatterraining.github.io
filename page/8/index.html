@@ -196,6 +196,834 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/nginx%E4%BA%8C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/nginx%E4%BA%8C.html" class="post-title-link" itemprop="url">nginx二 -- 初识nginx</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-08 10:12:47" itemprop="dateCreated datePublished" datetime="2021-10-08T10:12:47+08:00">2021-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/nginx%E4%BA%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="nginx二 -- 初识nginx" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/nginx%E4%BA%8C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/nginx%E4%BA%8C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h1><h2 id="nginx的场景"><a href="#nginx的场景" class="headerlink" title="nginx的场景"></a>nginx的场景</h2><p>三个主要场景</p>
+<ul>
+<li>静态资源：通过本地文件系统提供服务</li>
+<li>反向代理：nginx的强大性能，缓存，负载均衡</li>
+<li>API服务：openresty</li>
+</ul>
+<h2 id="nginx的优点"><a href="#nginx的优点" class="headerlink" title="nginx的优点"></a>nginx的优点</h2><ul>
+<li>高并发，高性能</li>
+<li>可扩展性好</li>
+<li>高可靠性</li>
+<li>热部署</li>
+<li>BSD许可证</li>
+</ul>
+<h2 id="nginx的组成"><a href="#nginx的组成" class="headerlink" title="nginx的组成"></a>nginx的组成</h2><ul>
+<li>nginx二进制可执行文件：由各模块原码编译出的一个文件</li>
+<li>nginx.conf:控制nginx行为</li>
+<li>access.log</li>
+<li>error.log</li>
+</ul>
+<h2 id="vim-nginx语法高亮"><a href="#vim-nginx语法高亮" class="headerlink" title="vim nginx语法高亮"></a>vim nginx语法高亮</h2><p>如果想要vim操作nginx的时候有语法高亮，那么只需要把nginx文件夹带的vim配置文件复制到自己的vim配置文件下面就可以了</p>
+<p>找到nginx源码目录，注意这里是源码目录，下载的tar包解压出来的目录，而不是编译安装后的目录，下面有一个<code>contrib</code>文件夹，这个文件夹里面有<code>vim</code>文件夹，把这个里面的配置文件都复制一下就好了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r nginx/contrib/vim/ ~/.vim/</span><br></pre></td></tr></table></figure>
+
+<h2 id="已安装的nginx-增加模块"><a href="#已安装的nginx-增加模块" class="headerlink" title="已安装的nginx 增加模块"></a>已安装的nginx 增加模块</h2><p>首先到达源码目录<code>cd /usr/local/src/nginx1.19</code></p>
+<p>然后开始编译</p>
+<ul>
+<li>–prefix 参数代表你的nginx安装目录，如果是已安装的nginx，那么这个目录就选择已安装的目录，没有安装的可以随便选想安装到的目录</li>
+<li>–with 开头的代表你想开启的模块</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./configure --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --prefix=/usr/local/src/nginx</span><br></pre></td></tr></table></figure>
+
+<p>然后执行<code>make</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以复制nginx源文件了，这里只执行make，不需要执行make install</p>
+<p>现在假设你已经在nginx源码目录了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ./objs  //移动到objs目录下</span><br><span class="line">cp nginx /usr/local/src/nginx/sbin/    //把objs目录下的nginx复制到你原来的nginx安装目录下面的sbin目录替换原来的nginx源文件</span><br></pre></td></tr></table></figure>
+
+<p>如果是新安装，那么不需要复制，直接执行 sudo make install 就可以了</p>
+<h2 id="配置语法"><a href="#配置语法" class="headerlink" title="配置语法"></a>配置语法</h2><ul>
+<li>配置文件由指令和指令块构成</li>
+<li>每条指令以;分号结尾，指令与参数间用空格分隔</li>
+<li>指令块以{}大括号将多条指令组织在一起</li>
+<li>include 语句允许组合多个配置文件以提升可维护性</li>
+<li>使用 #井号添加注释，提高可读性</li>
+<li>使用 $符号作为变量</li>
+<li>部分指令的参数支持正则表达式</li>
+</ul>
+<h2 id="http配置的指令块"><a href="#http配置的指令块" class="headerlink" title="http配置的指令块"></a>http配置的指令块</h2><ul>
+<li>http</li>
+<li>server</li>
+<li>upstream</li>
+<li>location</li>
+</ul>
+<h2 id="nginx-命令行"><a href="#nginx-命令行" class="headerlink" title="nginx 命令行"></a>nginx 命令行</h2><ul>
+<li>帮助 -h</li>
+<li>指定配置文件 -c</li>
+<li>指定配置指令 -g</li>
+<li>指定运行目录 -p</li>
+<li>发送信号 -s</li>
+<li>测试配置文件语法 -t</li>
+<li>打印版本信息 -v -V</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx             //启动</span><br><span class="line">nginx -s reload   // 重启</span><br><span class="line">nginx -s quit    //优雅停止</span><br><span class="line">nginx -s stop    //直接停止</span><br><span class="line">nginx -s reopen  //重新开始记录日志</span><br></pre></td></tr></table></figure>
+
+<h4 id="热部署"><a href="#热部署" class="headerlink" title="热部署"></a>热部署</h4><p>当你需要升级nginx或者增加模块的时候可以使用热部署的方式平滑过渡，不需要重启</p>
+<p>查看现在nginx进程的id</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep nginx</span><br></pre></td></tr></table></figure>
+
+<p>对现在的nginx进程发送<code>USR2</code>信号进行热部署</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -USR2 id</span><br></pre></td></tr></table></figure>
+
+<p>现在可以看到新的nginx进程和老的nginx进程都存在了，这个时候我们需要让老的nginx进程平滑退出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -WINCH id</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以看到老的nginx的worker进程全部平滑退出了，但是老的master进程还在，这是为了防止新的有问题，还可以退回老的</p>
+<p>如果接下来新的有问题，那么我们退回老的，发送<code>HUP</code>信号，而不是直接reload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -HUP id</span><br></pre></td></tr></table></figure>
+
+<p>接下来可以看到老的worker进程都起来了</p>
+<p>如果热部署后没有问题的话，那么我们直接删除老的master进程就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -QUIT id</span><br></pre></td></tr></table></figure>
+
+<h4 id="日志切割"><a href="#日志切割" class="headerlink" title="日志切割"></a>日志切割</h4><p>如果我们觉得日志太大可以进行日志切割，一种是发送<code>reopen</code>信号，还有一种是发送<code>USR1</code>信号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nginx -s reopen</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -USR1 id</span><br></pre></td></tr></table></figure>
+
+<p>但是注意切割之前要把之前的日志备份一下，不然就会被删除啦</p>
+<h2 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h2><p>反向代理配置在<code>http</code>代码块中</p>
+<p>首先通过<code>upstream</code>配置反向代理的服务器</p>
+<p>test 是一个名称，可以随便取</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">upstream</span> test&#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>     <span class="comment"># 上游服务器的地址，可以写多个</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>proxy_pass</code> 进行反向代理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://test;   # 这里填写上面的upstream名字</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们访问80端口实际上访问的是8080端口</p>
+<h4 id="反向代理的缓存"><a href="#反向代理的缓存" class="headerlink" title="反向代理的缓存"></a>反向代理的缓存</h4><p>反向代理之后还可以在反向代理服务器做缓存</p>
+<p>在<code>nginx.conf</code>文件的<code>http</code>代码块中设置缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 设置缓存路径 /tmp/nginxCache 缓存名称 my_cache</span><br><span class="line">proxy_cache_path /tmp/nginxCache levels=1:2 keys_zone=my_cache:10m max_size=10g inactive=60m use_temp_path=off;</span><br></pre></td></tr></table></figure>
+
+<p>接下来在我们的反向代理<code>server/location</code>代码块里面使用这个缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_cache my_cache;   # 使用上面定义的缓存</span><br><span class="line">    proxy_cache_key $host$uri$is_args$args;  # 缓存的key值，根据host uri和参数来做key</span><br><span class="line">    proxy_cache_valid 200 304 302 1d;   # 缓存200 304 302状态 缓存时间1d = 1天</span><br><span class="line">    proxy_pass http://test;   # 这里填写上面的upstream名字</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="goaccess-日志可视化"><a href="#goaccess-日志可视化" class="headerlink" title="goaccess 日志可视化"></a>goaccess 日志可视化</h2><p>goaccess 是一个c语言写的日志可视化工具</p>
+<p>直接编译安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://tar.goaccess.io/goaccess-1.2.tar.gz</span><br><span class="line">tar -xzvf goaccess-1.2.tar.gz</span><br><span class="line">cd goaccess-1.2/</span><br><span class="line">./configure --enable-utf8</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以启动了，直接启动就可以</p>
+<p>指定日志文件路径 <code>/usr/local/src/nginx/logs/access.log</code> -o 输出到某个html文件中 –real-time-html 代表实时刷新, –log-format 代表日志格式 ，–daemonize 代表守护进程后台执行 仅在 开启了 –real-time-html 实时刷新有效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">goaccess /usr/local/src/nginx/logs/access.log -o ~/wwwroot/goaccess.html --real-time-html --log-format=COMBINED --daemonize</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意，如果开启了  –real-time-html 实时刷新，那么会启动一个 socket 进程监听 7890 端口，所以 7890 端口要开放才行</p>
+<p>可以配置 nginx 文件访问这个输出的 html 文件了，就可以看到一个可视化界面了</p>
+<h2 id="ssl"><a href="#ssl" class="headerlink" title="ssl"></a>ssl</h2><p>ssl(Secure Sosckets Layer)<br>tls(Transport Layer Security)</p>
+<ul>
+<li>1995年-ssl3.0</li>
+<li>1999 - tls1.0</li>
+<li>2006 - tls1.1</li>
+<li>2008 - tls1.2</li>
+<li>2018 - tls1.3</li>
+</ul>
+<p>ssl&#x2F;tls 运行在 <code>ISO7层模型的表示层中</code>，而http协议运行在表示层的上层<code>应用层</code>。在http的数据传输到<code>表示层</code>以后，ssl&#x2F;tls就会对数据进行加密</p>
+<ul>
+<li>握手</li>
+<li>交换秘钥</li>
+<li>告警</li>
+<li>对称加密的应用数据</li>
+</ul>
+<p>tls安全套件</p>
+<blockquote>
+<p>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</p>
+</blockquote>
+<ul>
+<li>tls代表tls加密</li>
+<li>ECDHE 代表秘钥交换算法</li>
+<li>RSA 代表身份验证算法</li>
+<li>AES 代表对称加密算法</li>
+<li>128 代表强度</li>
+<li>GCM 代表分组模式</li>
+<li>SHA256 代表签名 hash 算法</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/nginx%E4%B8%80.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/nginx%E4%B8%80.html" class="post-title-link" itemprop="url">nginx一 -- 初识nginx</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-04 10:12:47" itemprop="dateCreated datePublished" datetime="2021-10-04T10:12:47+08:00">2021-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx/" itemprop="url" rel="index"><span itemprop="name">nginx</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/nginx%E4%B8%80.html" class="post-meta-item leancloud_visitors" data-flag-title="nginx一 -- 初识nginx" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/nginx%E4%B8%80.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/nginx%E4%B8%80.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h1><h2 id="nginx的场景"><a href="#nginx的场景" class="headerlink" title="nginx的场景"></a>nginx的场景</h2><p>三个主要场景</p>
+<ul>
+<li>静态资源：通过本地文件系统提供服务</li>
+<li>反向代理：nginx的强大性能，缓存，负载均衡</li>
+<li>API服务：openresty</li>
+</ul>
+<h2 id="nginx的优点"><a href="#nginx的优点" class="headerlink" title="nginx的优点"></a>nginx的优点</h2><ul>
+<li>高并发，高性能</li>
+<li>可扩展性好</li>
+<li>高可靠性</li>
+<li>热部署</li>
+<li>BSD许可证</li>
+</ul>
+<h2 id="nginx的组成"><a href="#nginx的组成" class="headerlink" title="nginx的组成"></a>nginx的组成</h2><ul>
+<li>nginx二进制可执行文件：由各模块原码编译出的一个文件</li>
+<li>nginx.conf:控制nginx行为</li>
+<li>access.log</li>
+<li>error.log</li>
+</ul>
+<h2 id="vim-nginx语法高亮"><a href="#vim-nginx语法高亮" class="headerlink" title="vim nginx语法高亮"></a>vim nginx语法高亮</h2><p>如果想要vim操作nginx的时候有语法高亮，那么只需要把nginx文件夹带的vim配置文件复制到自己的vim配置文件下面就可以了</p>
+<p>找到nginx源码目录，注意这里是源码目录，下载的tar包解压出来的目录，而不是编译安装后的目录，下面有一个<code>contrib</code>文件夹，这个文件夹里面有<code>vim</code>文件夹，把这个里面的配置文件都复制一下就好了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r nginx/contrib/vim/ ~/.vim/</span><br></pre></td></tr></table></figure>
+
+<h2 id="已安装的nginx-增加模块"><a href="#已安装的nginx-增加模块" class="headerlink" title="已安装的nginx 增加模块"></a>已安装的nginx 增加模块</h2><p>首先到达源码目录<code>cd /usr/local/src/nginx1.19</code></p>
+<p>然后开始编译</p>
+<ul>
+<li>–prefix 参数代表你的nginx安装目录，如果是已安装的nginx，那么这个目录就选择已安装的目录，没有安装的可以随便选想安装到的目录</li>
+<li>–with 开头的代表你想开启的模块</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./configure --with-file-aio --with-http_ssl_module --with-http_v2_module --with-http_realip_module --prefix=/usr/local/src/nginx</span><br></pre></td></tr></table></figure>
+
+<p>然后执行<code>make</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以复制nginx源文件了，这里只执行make，不需要执行make install</p>
+<p>现在假设你已经在nginx源码目录了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ./objs  //移动到objs目录下</span><br><span class="line">cp nginx /usr/local/src/nginx/sbin/    //把objs目录下的nginx复制到你原来的nginx安装目录下面的sbin目录替换原来的nginx源文件</span><br></pre></td></tr></table></figure>
+
+<p>如果是新安装，那么不需要复制，直接执行 sudo make install 就可以了</p>
+<h2 id="配置语法"><a href="#配置语法" class="headerlink" title="配置语法"></a>配置语法</h2><ul>
+<li>配置文件由指令和指令块构成</li>
+<li>每条指令以;分号结尾，指令与参数间用空格分隔</li>
+<li>指令块以{}大括号将多条指令组织在一起</li>
+<li>include 语句允许组合多个配置文件以提升可维护性</li>
+<li>使用 #井号添加注释，提高可读性</li>
+<li>使用 $符号作为变量</li>
+<li>部分指令的参数支持正则表达式</li>
+</ul>
+<h2 id="http配置的指令块"><a href="#http配置的指令块" class="headerlink" title="http配置的指令块"></a>http配置的指令块</h2><ul>
+<li>http</li>
+<li>server</li>
+<li>upstream</li>
+<li>location</li>
+</ul>
+<h2 id="nginx-命令行"><a href="#nginx-命令行" class="headerlink" title="nginx 命令行"></a>nginx 命令行</h2><ul>
+<li>帮助 -h</li>
+<li>指定配置文件 -c</li>
+<li>指定配置指令 -g</li>
+<li>指定运行目录 -p</li>
+<li>发送信号 -s</li>
+<li>测试配置文件语法 -t</li>
+<li>打印版本信息 -v -V</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nginx             //启动</span><br><span class="line">nginx -s reload   // 重启</span><br><span class="line">nginx -s quit    //优雅停止</span><br><span class="line">nginx -s stop    //直接停止</span><br><span class="line">nginx -s reopen  //重新开始记录日志</span><br></pre></td></tr></table></figure>
+
+<h4 id="热部署"><a href="#热部署" class="headerlink" title="热部署"></a>热部署</h4><p>当你需要升级nginx或者增加模块的时候可以使用热部署的方式平滑过渡，不需要重启</p>
+<p>查看现在nginx进程的id</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep nginx</span><br></pre></td></tr></table></figure>
+
+<p>对现在的nginx进程发送<code>USR2</code>信号进行热部署</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -USR2 id</span><br></pre></td></tr></table></figure>
+
+<p>现在可以看到新的nginx进程和老的nginx进程都存在了，这个时候我们需要让老的nginx进程平滑退出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -WINCH id</span><br></pre></td></tr></table></figure>
+
+<p>接下来就可以看到老的nginx的worker进程全部平滑退出了，但是老的master进程还在，这是为了防止新的有问题，还可以退回老的</p>
+<p>如果接下来新的有问题，那么我们退回老的，发送<code>HUP</code>信号，而不是直接reload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -HUP id</span><br></pre></td></tr></table></figure>
+
+<p>接下来可以看到老的worker进程都起来了</p>
+<p>如果热部署后没有问题的话，那么我们直接删除老的master进程就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -QUIT id</span><br></pre></td></tr></table></figure>
+
+<h4 id="日志切割"><a href="#日志切割" class="headerlink" title="日志切割"></a>日志切割</h4><p>如果我们觉得日志太大可以进行日志切割，一种是发送<code>reopen</code>信号，还有一种是发送<code>USR1</code>信号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nginx -s reopen</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -USR1 id</span><br></pre></td></tr></table></figure>
+
+<p>但是注意切割之前要把之前的日志备份一下，不然就会被删除啦</p>
+<h2 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h2><p>反向代理配置在<code>http</code>代码块中</p>
+<p>首先通过<code>upstream</code>配置反向代理的服务器</p>
+<p>test 是一个名称，可以随便取</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">upstream</span> test&#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>     <span class="comment"># 上游服务器的地址，可以写多个</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>proxy_pass</code> 进行反向代理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://test;   # 这里填写上面的upstream名字</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们访问80端口实际上访问的是8080端口</p>
+<h4 id="反向代理的缓存"><a href="#反向代理的缓存" class="headerlink" title="反向代理的缓存"></a>反向代理的缓存</h4><p>反向代理之后还可以在反向代理服务器做缓存</p>
+<p>在<code>nginx.conf</code>文件的<code>http</code>代码块中设置缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 设置缓存路径 /tmp/nginxCache 缓存名称 my_cache</span><br><span class="line">proxy_cache_path /tmp/nginxCache levels=1:2 keys_zone=my_cache:10m max_size=10g inactive=60m use_temp_path=off;</span><br></pre></td></tr></table></figure>
+
+<p>接下来在我们的反向代理<code>server/location</code>代码块里面使用这个缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_cache my_cache;   # 使用上面定义的缓存</span><br><span class="line">    proxy_cache_key $host$uri$is_args$args;  # 缓存的key值，根据host uri和参数来做key</span><br><span class="line">    proxy_cache_valid 200 304 302 1d;   # 缓存200 304 302状态 缓存时间1d = 1天</span><br><span class="line">    proxy_pass http://test;   # 这里填写上面的upstream名字</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="goaccess-日志可视化"><a href="#goaccess-日志可视化" class="headerlink" title="goaccess 日志可视化"></a>goaccess 日志可视化</h2><p>goaccess 是一个c语言写的日志可视化工具</p>
+<p>直接编译安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://tar.goaccess.io/goaccess-1.2.tar.gz</span><br><span class="line">tar -xzvf goaccess-1.2.tar.gz</span><br><span class="line">cd goaccess-1.2/</span><br><span class="line">./configure --enable-utf8</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>然后就可以启动了，直接启动就可以</p>
+<p>指定日志文件路径 <code>/usr/local/src/nginx/logs/access.log</code> -o 输出到某个html文件中 –real-time-html 代表实时刷新, –log-format 代表日志格式 ，–daemonize 代表守护进程后台执行 仅在 开启了 –real-time-html 实时刷新有效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">goaccess /usr/local/src/nginx/logs/access.log -o ~/wwwroot/goaccess.html --real-time-html --log-format=COMBINED --daemonize</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意，如果开启了  –real-time-html 实时刷新，那么会启动一个 socket 进程监听 7890 端口，所以 7890 端口要开放才行</p>
+<p>可以配置 nginx 文件访问这个输出的 html 文件了，就可以看到一个可视化界面了</p>
+<h2 id="ssl"><a href="#ssl" class="headerlink" title="ssl"></a>ssl</h2><p>ssl(Secure Sosckets Layer)<br>tls(Transport Layer Security)</p>
+<ul>
+<li>1995年-ssl3.0</li>
+<li>1999 - tls1.0</li>
+<li>2006 - tls1.1</li>
+<li>2008 - tls1.2</li>
+<li>2018 - tls1.3</li>
+</ul>
+<p>ssl&#x2F;tls 运行在 <code>ISO7层模型的表示层中</code>，而http协议运行在表示层的上层<code>应用层</code>。在http的数据传输到<code>表示层</code>以后，ssl&#x2F;tls就会对数据进行加密</p>
+<ul>
+<li>握手</li>
+<li>交换秘钥</li>
+<li>告警</li>
+<li>对称加密的应用数据</li>
+</ul>
+<p>tls安全套件</p>
+<blockquote>
+<p>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</p>
+</blockquote>
+<ul>
+<li>tls代表tls加密</li>
+<li>ECDHE 代表秘钥交换算法</li>
+<li>RSA 代表身份验证算法</li>
+<li>AES 代表对称加密算法</li>
+<li>128 代表强度</li>
+<li>GCM 代表分组模式</li>
+<li>SHA256 代表签名 hash 算法</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第十四章学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-01 10:12:47" itemprop="dateCreated datePublished" datetime="2021-09-01T10:12:47+08:00">2021-09-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十四章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="学堂在线C-程序设计第十四章学习笔记"><a href="#学堂在线C-程序设计第十四章学习笔记" class="headerlink" title="学堂在线C++程序设计第十四章学习笔记"></a>学堂在线C++程序设计第十四章学习笔记</h1><h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="comment">//抛出异常</span></span><br><span class="line">&#125; <span class="built_in">catch</span> (异常) &#123;</span><br><span class="line">    <span class="comment">//异常处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>异常接口声明</p>
+<ul>
+<li>一个函数显式声明可能抛出的异常，有利于函数的调用者为异常处理做好准备</li>
+<li>void fun() throw(A,B,C)</li>
+<li>若无异常接口声明，则可以抛出任何类型的异常</li>
+<li>不抛任何类型异常的函数声明如下：<br>  void fun() throw()</li>
+</ul>
+<h3 id="异常处理的构造与析构"><a href="#异常处理的构造与析构" class="headerlink" title="异常处理的构造与析构"></a>异常处理的构造与析构</h3><p>自动的析构</p>
+<ul>
+<li>找到一个匹配的catch异常处理后</li>
+<li>初始化异常参数</li>
+<li>将从对应的try块开始到异常被抛出之间构造（且尚未析构）的所有自动对象进行析构</li>
+<li>从最后一个catch处理之后开始恢复执行</li>
+</ul>
+<h3 id="标准程序库异常处理"><a href="#标准程序库异常处理" class="headerlink" title="标准程序库异常处理"></a>标准程序库异常处理</h3><p>基础</p>
+<ul>
+<li>exception</li>
+<li>logic_error 表示可以被预先检测到的异常<ul>
+<li>这类异常可以避免</li>
+</ul>
+</li>
+<li>runtime_error 表示难以被预先检测到的异常</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第十三章学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-31 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-31T10:12:47+08:00">2021-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十三章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="学堂在线C-程序设计第十三章学习笔记"><a href="#学堂在线C-程序设计第十三章学习笔记" class="headerlink" title="学堂在线C++程序设计第十三章学习笔记"></a>学堂在线C++程序设计第十三章学习笔记</h1><h2 id="流类库与输入输出"><a href="#流类库与输入输出" class="headerlink" title="流类库与输入输出"></a>流类库与输入输出</h2><h3 id="IO流的概念"><a href="#IO流的概念" class="headerlink" title="IO流的概念"></a>IO流的概念</h3><p>当程序与外界环境进行信息交换时，存在着两个对象，一个是程序中的对象，另一个是文件对象</p>
+<p><code>流</code>是信息流动的抽象，负责在数据的<code>生产者</code>和<code>消费者</code>之间建立联系，并管理数据的流动</p>
+<p>流对象与文件操作</p>
+<ul>
+<li>建立流对象</li>
+<li>指定这个流对象与某个文件对象建立连接</li>
+<li>程序操作流对象</li>
+<li>流对象通过文件系统对所连接的文件对象产生作用</li>
+</ul>
+<p>提取与插入</p>
+<ul>
+<li>读操作从流中提取</li>
+<li>写操作向流中写入</li>
+</ul>
+<h3 id="输出流"><a href="#输出流" class="headerlink" title="输出流"></a>输出流</h3><p>最重要的三个输出流</p>
+<ul>
+<li>ostream</li>
+<li>ofstream</li>
+<li>ostringstream</li>
+</ul>
+<p>预先定义的输出流对象</p>
+<ul>
+<li>cout 标准输出</li>
+<li>cerr 标准错误输出，没有缓冲，发送给它的内容立即被输出</li>
+<li>clog 类似cerr，但是有缓冲，缓冲区满时被输出</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ofstream <span class="title">fout</span><span class="params">(<span class="string">&#x27;123.log&#x27;</span>)</span></span>;</span><br><span class="line">streamBuf* old = cout.<span class="built_in">rdbuf</span>(fout.<span class="built_in">rdbuf</span>());</span><br><span class="line"><span class="comment">//cout 输出到123.log文件</span></span><br><span class="line">cout.<span class="built_in">rdbuf</span>(old); <span class="comment">//恢复输出到标准输出</span></span><br></pre></td></tr></table></figure>
+
+<p>构造输出流对象</p>
+<ul>
+<li>ofstream 类支持磁盘文件输出</li>
+<li>如果在构造函数中指定文件名，当构造这个文件时该文件时自动打开的<br>  ofstream fout(‘123.log’);</li>
+<li>可以在调用默认构造函数后使用open打开文件<br>  ofstream fout;<br>  fout.open(123.log);</li>
+<li>打开文件可以指定模式<br>  ofstream fout(‘123.log’, ios_base::out|ios_base::binary);</li>
+</ul>
+<p>文件输出流成员函数的三种类型</p>
+<ul>
+<li>与操纵符等价的成员函数</li>
+<li>执行非格式化写操作的成员函数</li>
+<li>其他修改流状态且不同于操纵符或插入运算符的成员函数</li>
+</ul>
+<p>成员函数</p>
+<ul>
+<li>open<ul>
+<li>把流与磁盘文件关联</li>
+<li>需要指定打开模式</li>
+</ul>
+</li>
+<li>put<ul>
+<li>把一个字符写到输出流</li>
+</ul>
+</li>
+<li>write<ul>
+<li>将内存中的一块内容写到一个文件输出，可以写二进制</li>
+</ul>
+</li>
+<li>seekp和 tellp<ul>
+<li>操作文件流的内部指针</li>
+</ul>
+</li>
+<li>close<ul>
+<li>关闭磁盘文件</li>
+</ul>
+</li>
+<li>错误处理函数<ul>
+<li>在写到一个流时进行错误处理</li>
+</ul>
+</li>
+</ul>
+<h4 id="向文本文件输出"><a href="#向文本文件输出" class="headerlink" title="向文本文件输出"></a>向文本文件输出</h4><p>插入运算符 &lt;&lt;</p>
+<ul>
+<li>为所有标准C++数据类型设计的，用于传送一个字节到输出流对象</li>
+</ul>
+<p>操纵符（manipulator）</p>
+<ul>
+<li>插入运算符和操纵符一起<br>  控制输出格式</li>
+<li>很多操纵符都定义在 ios_base类中，如hex()，<iomanip>头文件中，如setprecision()</li>
+<li>控制输出宽度<br>  在流中放入setw操纵符或调用width成员函数</li>
+<li>setw和 width只影响紧随其后的输出项，但其他流格式操纵符保持有效直到发生改变</li>
+<li>dec,oct和 hex操纵符设置输入输出的默认进制</li>
+</ul>
+<p>精度</p>
+<ul>
+<li>浮点数输出精度的默认值是6</li>
+<li>改变精度使用 setprecision操纵符，定义在 <iomanip> 头文件中</li>
+<li>如果不指定 fixed 或 scientifc,精度值表示有效数字位数</li>
+<li>如果设置了 ios_base::fixed 定点形式 或 ios_base::scientifc 科学计数法 ，精度值表示小数点之后的位数</li>
+</ul>
+<h4 id="向二进制文件输出"><a href="#向二进制文件输出" class="headerlink" title="向二进制文件输出"></a>向二进制文件输出</h4><p>二进制文件流</p>
+<ul>
+<li>使用ofstream构造函数中的模式指定二进制</li>
+<li>以通常方式构造一个流，然后使用setmode成员函数，在文件打开后改变模式</li>
+<li>通过二进制文件输出流对象完成输出</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> b[<span class="number">3</span>] =&#123;<span class="number">912</span>,<span class="number">2456</span>,<span class="number">37890</span>&#125;;</span><br><span class="line">    <span class="function">ofstream <span class="title">file</span><span class="params">(<span class="string">&quot;date.bat&quot;</span>, ios_base::binary)</span></span>;</span><br><span class="line">    file.<span class="built_in">write</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span> *&gt; (&amp;b), <span class="built_in">sizeof</span>(b));</span><br><span class="line">    file.<span class="built_in">close</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="向字符串输出"><a href="#向字符串输出" class="headerlink" title="向字符串输出"></a>向字符串输出</h4><ul>
+<li>用于构造字符串</li>
+<li>功能<ul>
+<li>支持ofstream类的除了open,close外的所有操作</li>
+<li>str函数可以返回当前已构造的字符串</li>
+</ul>
+</li>
+<li>典型应用<ul>
+<li>将数值转换为字符串</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ostringstream os;</span><br><span class="line">os &lt;&lt; <span class="number">123</span>;</span><br><span class="line">string s = os.<span class="built_in">str</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="输入流"><a href="#输入流" class="headerlink" title="输入流"></a>输入流</h3><p>重要的输入流类</p>
+<ul>
+<li>istream 最适用于顺序文本输入，cin是他的实例</li>
+<li>ifstream 支持磁盘文件输入</li>
+<li>istringstream 字符串输入</li>
+</ul>
+<p>构造输入流对象</p>
+<ul>
+<li>如果在构造函数中指定文件，在构造对象时自动打开<br>  ifstream ifs(‘data.bat’);</li>
+<li>调用默认构造函数后使用open打开<br>  ifstream ifs;<br>  ifs.open(‘data.bat’);</li>
+<li>打开文件时可以指定模式</li>
+</ul>
+<p>输入流相关函数</p>
+<ul>
+<li>open 把输入流和文件关联</li>
+<li>get 函数的功能与提取运算符(&gt;&gt;)很像，主要的不同点是get函数在读入数据时包括空白字符</li>
+<li>getLine 的功能是读取多个字符，并且可以指定终止字符，读取完成后，从读取内容中删除终止字符</li>
+<li>read 函数从一个文件读字节到内存中的指定区域，由长度确定要读的字节数。当遇到文件结束或在文本模式文件中遇到文件结束标记字符时结束读取。可以读取二进制。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> b[<span class="number">3</span>] =&#123;<span class="number">912</span>,<span class="number">2456</span>,<span class="number">37890</span>&#125;;</span><br><span class="line">    <span class="function">ofstream <span class="title">file</span><span class="params">(<span class="string">&quot;date&quot;</span>, ios_base::binary)</span></span>;</span><br><span class="line">    file.<span class="built_in">write</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span> *&gt; (b), <span class="built_in">sizeof</span>(b));</span><br><span class="line">    file.<span class="built_in">close</span>();</span><br><span class="line">    <span class="type">int</span> i2;</span><br><span class="line">    <span class="function">ifstream <span class="title">mfile</span><span class="params">(<span class="string">&quot;date&quot;</span>, ios_base::binary)</span></span>;</span><br><span class="line">    mfile.<span class="built_in">seekg</span>(<span class="number">2</span> * <span class="built_in">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">    mfile.<span class="built_in">read</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span> *&gt;(&amp;i2), <span class="built_in">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">    cout &lt;&lt; i2 &lt;&lt;endl;</span><br><span class="line">    mfile.<span class="built_in">close</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="字符串输入"><a href="#字符串输入" class="headerlink" title="字符串输入"></a>字符串输入</h4><p>用于从字符串读取数据</p>
+<h4 id="输入输出流"><a href="#输入输出流" class="headerlink" title="输入输出流"></a>输入输出流</h4><p>输入输出流都是从iostream派生的</p>
+<ul>
+<li>fstream</li>
+<li>stringstream</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1311,801 +2139,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-15 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-15T10:12:47+08:00">2021-08-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第十节"><a href="#数据库系统原理第十节" class="headerlink" title="数据库系统原理第十节"></a>数据库系统原理第十节</h1><h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><h3 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h3><h4 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h4><p>什么是视图</p>
-<ul>
-<li>视图是一个对象，他是数据库提供给用户的以多种角度观察数据库中数据的一种重要机制</li>
-<li>视图不是数据库中真实的表，而是一张虚拟表，其自身并不存储数据</li>
-</ul>
-<p>视图的优点</p>
-<ul>
-<li>集中分散数据</li>
-<li>简化查询语句</li>
-<li>重用SQL语句</li>
-<li>保护数据安全</li>
-<li>共享所需数据</li>
-<li>更改数据格式</li>
-</ul>
-<h5 id="创建视图"><a href="#创建视图" class="headerlink" title="创建视图"></a>创建视图</h5><p>or replace 防止报错，存在替换，不存在创建<br>with check option 增删改查的时候检查视图条件</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">or</span> replace <span class="keyword">view</span> view_name [(col_list)]</span><br><span class="line"><span class="keyword">as</span> select_statement</span><br><span class="line"><span class="keyword">with</span> <span class="keyword">check</span> option</span><br></pre></td></tr></table></figure>
-
-<h5 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h5><p>drop view view_name</p>
-<h5 id="修改视图"><a href="#修改视图" class="headerlink" title="修改视图"></a>修改视图</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">view</span> view_name [(col_list)]</span><br><span class="line"><span class="keyword">as</span> select_statement</span><br><span class="line"><span class="keyword">with</span> <span class="keyword">check</span> option</span><br></pre></td></tr></table></figure>
-
-<h5 id="查看视图定义"><a href="#查看视图定义" class="headerlink" title="查看视图定义"></a>查看视图定义</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">view</span> view_name</span><br></pre></td></tr></table></figure>
-
-<h5 id="更新视图数据"><a href="#更新视图数据" class="headerlink" title="更新视图数据"></a>更新视图数据</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> table_name </span><br><span class="line"><span class="keyword">values</span>(value1,...);</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> table_name <span class="keyword">set</span> col_name <span class="operator">=</span> <span class="string">&#x27;value&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h6 id="删除视图数据"><a href="#删除视图数据" class="headerlink" title="删除视图数据"></a>删除视图数据</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> table_name <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
-
-<h6 id="查询视图数据"><a href="#查询视图数据" class="headerlink" title="查询视图数据"></a>查询视图数据</h6><p>select </p>
-<h2 id="数据库编程"><a href="#数据库编程" class="headerlink" title="数据库编程"></a>数据库编程</h2><h3 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h3><p><code>存储过程</code> 是一组为了完成某项特定功能的 <code>SQL语句集</code></p>
-<ul>
-<li>可增强SQL语言的功能和灵活性</li>
-<li>良好的封装性</li>
-<li>高性能</li>
-<li>可减少网络流量</li>
-<li>可作为一种安全机制来确保数据库的安全性和数据的完整性<br>其实质就是一段存储在数据库中的 <code>代码</code><br>它可以由声明式的sql语句和过程式sql语句组成</li>
-</ul>
-<h4 id="创建存储过程"><a href="#创建存储过程" class="headerlink" title="创建存储过程"></a>创建存储过程</h4><p>DELIMITER $$ &#x2F;&#x2F;用户定义的MYSQL 结束符</p>
-<p>参数：in|out|inout 参数名 参数类型</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER $$</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> sp_name(参数)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">body <span class="operator">/</span><span class="operator">/</span>存储过程代码</span><br><span class="line"><span class="keyword">END</span> $$</span><br></pre></td></tr></table></figure>
-
-<h4 id="调用存储过程"><a href="#调用存储过程" class="headerlink" title="调用存储过程"></a>调用存储过程</h4><p>call sp_name(参数)</p>
-<h4 id="删除存储过程"><a href="#删除存储过程" class="headerlink" title="删除存储过程"></a>删除存储过程</h4><p>drop procedure sp_name</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B9%9D%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B9%9D%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第九节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-14 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-14T10:12:47+08:00">2021-08-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B9%9D%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第九节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B9%9D%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B9%9D%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第九节"><a href="#数据库系统原理第九节" class="headerlink" title="数据库系统原理第九节"></a>数据库系统原理第九节</h1><h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><h3 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h3><h4 id="where-子句和条件查询"><a href="#where-子句和条件查询" class="headerlink" title="where 子句和条件查询"></a>where 子句和条件查询</h4><p>between 2 and 4 包含2,4</p>
-<p>in (1,2,4)</p>
-<p>is null</p>
-<p>is not null</p>
-<h5 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h5><p>表子查询<br>行子查询<br>列子查询<br>标量子查询</p>
-<p>比较运算符包括</p>
-<ul>
-<li>ALL</li>
-<li>SOME</li>
-<li>ANY</li>
-</ul>
-<p>结合exists</p>
-<h6 id="group"><a href="#group" class="headerlink" title="group"></a>group</h6><p>group by id asc|desc with rollup</p>
-<h5 id="having"><a href="#having" class="headerlink" title="having"></a>having</h5><p>group by id having count(*) &lt; 3</p>
-<h5 id="order"><a href="#order" class="headerlink" title="order"></a>order</h5><p>order by id asc|desc</p>
-<h5 id="group-和-order的差别"><a href="#group-和-order的差别" class="headerlink" title="group 和 order的差别"></a>group 和 order的差别</h5><table>
-<thead>
-<tr>
-<th align="left">group</th>
-<th align="left">order</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">分组行，但输出可能不是分组的排序</td>
-<td align="left">排序产生的输出</td>
-</tr>
-<tr>
-<td align="left">只能使用选择列或表达式列</td>
-<td align="left">任意列都可以使用</td>
-</tr>
-<tr>
-<td align="left">若与聚合函数一起使用列或表达式, 则必须使用group</td>
-<td align="left">不一定需要</td>
-</tr>
-</tbody></table>
-<h5 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h5><p>limit 1,10</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E7%AB%A0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第十章学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-12 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-12T10:12:47+08:00">2021-08-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十章学习笔记" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E7%AB%A0.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="学堂在线C-程序设计第十章学习笔记"><a href="#学堂在线C-程序设计第十章学习笔记" class="headerlink" title="学堂在线C++程序设计第十章学习笔记"></a>学堂在线C++程序设计第十章学习笔记</h1><h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><h3 id="运算符重载"><a href="#运算符重载" class="headerlink" title="运算符重载"></a>运算符重载</h3><h4 id="重载规则"><a href="#重载规则" class="headerlink" title="重载规则"></a>重载规则</h4><p>C++ 几乎可以重载全部的运算符，而且只能够重载C++中已经有的</p>
-<ul>
-<li>不能重载的：”.”,”.*”,”::”,”?:”</li>
-</ul>
-<p>重载之后运算符的优先级和结合性都不会改变</p>
-<p>运算符重载是针对新类型数据的实际需要，对原有运算符进行适当的改造。</p>
-<p>例如：</p>
-<ul>
-<li>使复数类的对象可以用 + 运算符实现加法</li>
-<li>是时钟类对象可以用 ++ 运算符实现时间增加1秒</li>
-</ul>
-<p>重载为类的非静态成员函数<br>重载为非成员函数</p>
-<h4 id="双目运算符重载为成员函数"><a href="#双目运算符重载为成员函数" class="headerlink" title="双目运算符重载为成员函数"></a>双目运算符重载为成员函数</h4><p>重载为类成员的运算符函数定义形式：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">函数类型 <span class="keyword">operator</span> 运算符(形参)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>参数个数 &#x3D; 原操作数个数 - 1(后置++,–除外)</p>
-<p>双目运算符重载规则</p>
-<ul>
-<li>如果要重载B为类成员函数，使之能够实现表达式 oprd1 B oprd2,其中 oprd1 为 A类对象，则B则应被重载为A的成员函数，形参类型应该是 oprd2 所属类型</li>
-<li>经重载后，表达式 oprd1 B oprd2 相当于 oprd1.operator B(oprd2)</li>
-</ul>
-<p>例子8-1 复数类加减法运算重载为成员函数</p>
-<ul>
-<li>要求<br>  将 +，-运算重载为复数类的成员函数</li>
-<li>规则<br>  实部和虚部分别相加减</li>
-<li>操作数<br>  两个操作数都是复数类的对象</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Complex</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Complex</span>(<span class="type">double</span> r = <span class="number">0.0</span>, <span class="type">double</span> i = <span class="number">0.0</span>):<span class="built_in">real</span>(r),<span class="built_in">imag</span>(i) &#123;&#125;;</span><br><span class="line">        <span class="comment">//运算符+重载成员函数</span></span><br><span class="line">        Complex <span class="keyword">operator</span> +(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span>;</span><br><span class="line">        <span class="comment">//运算符-重载</span></span><br><span class="line">        Complex <span class="keyword">operator</span> -(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span>;</span><br><span class="line">        <span class="comment">//运算符 * 重载</span></span><br><span class="line">        Complex <span class="keyword">operator</span> *(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span>;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">display</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="type">double</span> real;</span><br><span class="line">        <span class="type">double</span> imag;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Complex Complex::<span class="keyword">operator</span>+(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Complex</span>(real + c2.real, imag + c2.imag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Complex Complex::<span class="keyword">operator</span>-(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Complex</span>(real - c2.real, imag - c2.imag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Complex Complex::<span class="keyword">operator</span>*(<span class="type">const</span> Complex &amp;c2) <span class="type">const</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Complex</span>(real * c2.real, imag * c2.imag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Complex::display</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;(&quot;</span> &lt;&lt; real &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; imag &lt;&lt; <span class="string">&quot;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Complex <span class="title">c1</span><span class="params">(<span class="number">1</span>,<span class="number">2</span>)</span>,<span class="title">c2</span><span class="params">(<span class="number">5</span>,<span class="number">6</span>)</span></span>;</span><br><span class="line">    c1.<span class="built_in">display</span>();</span><br><span class="line">    c2.<span class="built_in">display</span>();</span><br><span class="line">    Complex c3 = c1 + c2;</span><br><span class="line">    c3.<span class="built_in">display</span>();</span><br><span class="line">    Complex c4 = c1 * c2;</span><br><span class="line">    c4.<span class="built_in">display</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="单目运算符重载成为成员函数"><a href="#单目运算符重载成为成员函数" class="headerlink" title="单目运算符重载成为成员函数"></a>单目运算符重载成为成员函数</h4><p>前置单目运算符重载规则</p>
-<ul>
-<li>如果要重载U为类成员函数，使之能够实现表达式 U oprd, 其中 oprd 为 A 类对象，则 U 应被重载为 A 类的成员函数，无形参。</li>
-<li>重载后，表达式 U oprd 相当于 oprd.operator U()</li>
-</ul>
-<p>后置单目运算符 ++ 和 – 重载规则</p>
-<ul>
-<li>如果要重载 ++ 或 – 为类成员函数，使之能实现表达式 oprd++ 或 oprd–，其中 oprd 为 A 类对象，则 ++,–应被重载为A类的成员函数，且具有一个int类型的形参</li>
-<li>经重载后，表达式 oprd++ 相当于 oprd.operator ++(0)</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Complex &amp; Complex::operator++() &#123;</span><br><span class="line">    real++;</span><br><span class="line">    imag++;</span><br><span class="line">    return *this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Complex Complex::operator++(int ) &#123;</span><br><span class="line">    Complex that = *this;</span><br><span class="line">    ++(*this);</span><br><span class="line">    return that;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h4 id="运算符重载为非成员函数"><a href="#运算符重载为非成员函数" class="headerlink" title="运算符重载为非成员函数"></a>运算符重载为非成员函数</h4><p>规则</p>
-<ul>
-<li>函数的形参代表依自左至右次序排列的各操作数</li>
-<li>重载为非成员函数时<ul>
-<li>参数个数 &#x3D; 原操作个数（后置++，–除外）</li>
-<li>至少应该有一个自定义类型的参数</li>
-</ul>
-</li>
-<li>后置单目运算符 ++ 和 – 的重载函数，形参列表中要增加一个int, 但不必写形参名</li>
-<li>如果在运算符的重载函数中需要操作某类对象的私有成员，可以将此函数声明为该类的友元</li>
-</ul>
-<p>双目运算符重载</p>
-<ul>
-<li>oprd1 B oprd2 等于 operator B(oprd1,oprd2)</li>
-</ul>
-<p>前置单目重载</p>
-<ul>
-<li>B oprd 等于 operator B(oprd)</li>
-</ul>
-<p>后置单目++，–重载</p>
-<ul>
-<li>oprd B 等于 operator B(oprd, 0)</li>
-</ul>
-<h3 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h3><p>虚函数</p>
-<ul>
-<li>virtual 定义虚函数 使用运行时多态</li>
-<li>虚函数必须在类外实现函数体</li>
-<li>虚函数必须是非静态的成员函数，经过派生后，就可以实现运行时多态</li>
-</ul>
-<p>什么函数可以是虚函数</p>
-<ul>
-<li>一般成员函数</li>
-<li>构造函数不能是虚函数</li>
-<li>析构函数可以</li>
-</ul>
-<p>virtual 关键字</p>
-<ul>
-<li>派生类可以不显式的用virtual声明虚函数，这时系统就会用以下规则来判断派生类的一个函数成员是不是虚函数：<ul>
-<li>该函数是否与基类的虚函数有相同的名称，参数个数及对应参数类型</li>
-<li>该函数是否与基类的虚函数有相同的返回值或者满足类型兼容规则的指针，引用型的返回值</li>
-</ul>
-</li>
-<li>如果从名称，参数及返回值三个方面检查之后，派生类的函数满足上述条件，就会自动确定为虚函数。这时，派生类虚函数便会覆盖基类的虚函数<ul>
-<li>派生类中的虚函数还会隐藏基类中同名函数的所有其他重载形式</li>
-<li>一般习惯于在派生类的函数中也使用 virtual 关键字，以增加程序的可读性</li>
-</ul>
-</li>
-</ul>
-<h4 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h4><p>通过基类指针调用对象的析构函数，就需要让基类的析构函数成为虚函数，否则 delete 的结果是不确定的</p>
-<p>写成 虚析构函数，那么delete就会执行派生类的析构函数，不然只会静态绑定，永远执行基类的析构函数，派生类的成员就无法delete</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">//基类 虚析构函数</span></span><br><span class="line">        <span class="keyword">virtual</span> ~<span class="built_in">Base</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:<span class="keyword">public</span> Base&#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">virtual</span> ~<span class="built_in">A</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fun</span><span class="params">(Base* B)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> B;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Base* b = <span class="keyword">new</span> <span class="built_in">A</span>();</span><br><span class="line">    <span class="built_in">fun</span>(b);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h4 id="虚表和动态绑定"><a href="#虚表和动态绑定" class="headerlink" title="虚表和动态绑定"></a>虚表和动态绑定</h4><p>虚表</p>
-<ul>
-<li>每个多态类有一个虚表</li>
-<li>虚表中有当前类的各个虚函数的入口地址</li>
-<li>每个对象有一个指向当前类的虚表的指针（虚指针 vptr）</li>
-</ul>
-<p>动态绑定的实现</p>
-<ul>
-<li>构造函数中为对象的虚指针赋值</li>
-<li>通过多态类型的指针或引用调用成员函数时，通过虚指针找到虚表，进而找到所调用的虚函数的入口地址</li>
-<li>通过该入口地址调用虚函数</li>
-</ul>
-<h4 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h4><p><code>纯虚函数</code>是一个在基类中声明的虚函数，它在该基类中没有定义具体的操作内容，要求各派生类根据实际需要定义自己的版本</p>
-<p>纯虚函数的声明：<br>virtual 函数类型 函数名（参数表） &#x3D; 0;</p>
-<p>带有纯虚函数的就是<code>抽象类</code></p>
-<p>抽象类的作用</p>
-<ul>
-<li>将有关的数据和行为组织在一个继承层次结构中，保证派生类具有要求的行为</li>
-<li>对于暂时无法实现的函数，可以声明为纯虚函数，留给派生类去实现</li>
-</ul>
-<p>注意</p>
-<ul>
-<li>抽象类只能作为基类使用</li>
-<li>不能定义抽象类的对象</li>
-</ul>
-<h4 id="override"><a href="#override" class="headerlink" title="override"></a>override</h4><p>override</p>
-<ul>
-<li><p>多态行为的基础：基类声明虚函数，派生类声明一个函数覆盖该虚函数</p>
-</li>
-<li><p>覆盖要求：函数签名（signature）完全一致</p>
-</li>
-<li><p>函数签名包括：函数名 参数列表 const</p>
-</li>
-<li><p>C++引入显式函数覆盖，在编译器而非运行期捕获此类错误</p>
-</li>
-<li><p>在虚函数显式重载中运用，编译器会检查基类是否存在一虚拟函数，与派生类中带有声明override的虚拟函数，有相同的函数签名；若不存在，则回报错误</p>
-</li>
-</ul>
-<h4 id="final"><a href="#final" class="headerlink" title="final"></a>final</h4><p>final 类</p>
-<ul>
-<li>不能被继承</li>
-<li>继承出现编译错误</li>
-</ul>
-<p>final 方法</p>
-<ul>
-<li>不能被覆盖</li>
-<li>覆盖出现编译错误</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B9%9D%E7%AB%A0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B9%9D%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第九章学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-10 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-10T10:12:47+08:00">2021-08-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B9%9D%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第九章学习笔记" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B9%9D%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E4%B9%9D%E7%AB%A0.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="学堂在线C-程序设计第九章学习笔记"><a href="#学堂在线C-程序设计第九章学习笔记" class="headerlink" title="学堂在线C++程序设计第九章学习笔记"></a>学堂在线C++程序设计第九章学习笔记</h1><h2 id="继承与派生"><a href="#继承与派生" class="headerlink" title="继承与派生"></a>继承与派生</h2><h3 id="继承的基本概念和语法"><a href="#继承的基本概念和语法" class="headerlink" title="继承的基本概念和语法"></a>继承的基本概念和语法</h3><p>继承与派生</p>
-<ul>
-<li>继承与派生是同一过程从不同的角度看<ul>
-<li>保持已有类的特性而构造新类的过程称为<code>继承</code></li>
-<li>在已有类的基础上新增自己的特性而产生新类的过程称为<code>派生</code></li>
-</ul>
-</li>
-<li>被继承的已有类称为<code>基类</code></li>
-<li>派生出的新类称为<code>派生类</code></li>
-<li>直接参与派生出某类的基类称为<code>直接基类</code></li>
-<li>基类的基类甚至更高层的基类称为<code>间接基类</code></li>
-</ul>
-<p>继承的目的</p>
-<ul>
-<li>实现设计与代码重用</li>
-</ul>
-<p>派生的目的</p>
-<ul>
-<li>当新的问题出现，原有程序无法解决时，需要对原有程序进行改造</li>
-</ul>
-<p>单继承时候派生类的语法</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> 派生类名:继承方式 基类名</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>多继承时语法</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> 派生类名:继承方式 基类名, 继承方式 基类名</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>派生类的构成</p>
-<ul>
-<li>吸收基类成员<ul>
-<li>默认情况下派生类包含了全部基类中除构造和析构函数之外的所有成员</li>
-<li>C++11 规定可以用using语句继承基类构造函数</li>
-</ul>
-</li>
-<li>改造基类成员</li>
-<li>添加新的成员</li>
-</ul>
-<h2 id="继承方式"><a href="#继承方式" class="headerlink" title="继承方式"></a>继承方式</h2><h3 id="公有继承"><a href="#公有继承" class="headerlink" title="公有继承"></a>公有继承</h3><p>不同继承方式区别</p>
-<ul>
-<li><code>派生类成员</code>对基类成员的访问权限</li>
-<li>通过<code>派生类对象</code>对基类成员的访问权限</li>
-</ul>
-<p>三种继承方式</p>
-<ul>
-<li>公有</li>
-<li>私有</li>
-<li>保护</li>
-</ul>
-<p>公有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的 <code>public</code> 和 <code>protected</code> 成员 ：访问属性在派生类保持不变</li>
-<li>基类的 <code>private</code> 成员：不可直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数：可以直接访问基类中的 <code>public</code> 和 <code>protected</code> 成员，但不能直接访问基类的 <code>private</code> 成员</li>
-<li>通过派生类的对象：只能访问 <code>public</code> 成员</li>
-</ul>
-</li>
-</ul>
-<h3 id="私有继承和保护继承"><a href="#私有继承和保护继承" class="headerlink" title="私有继承和保护继承"></a>私有继承和保护继承</h3><p>私有继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的 <code>public</code> 和 <code>protected</code> 成员：变成 <code>private</code> 成员</li>
-<li>基类的 <code>private</code> 成员：不可直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数：可以直接访问基类中的 <code>public</code> 和 <code>protected</code> 成员，但不能直接访问基类的 <code>private</code> 成员</li>
-<li>通过派生类的对象：不能访问任何成员</li>
-</ul>
-</li>
-</ul>
-<p>保护继承</p>
-<ul>
-<li>继承的访问控制<ul>
-<li>基类的 <code>public</code> 和 <code>protected</code> 成员：变成 <code>private</code> 成员，都已变成 <code>protected</code> 成员</li>
-<li>基类的 <code>private</code> 成员：不可直接访问</li>
-</ul>
-</li>
-<li>访问权限<ul>
-<li>派生类中的成员函数：可以直接访问基类中的 <code>public</code> 和 <code>protected</code> 成员，但不能直接访问基类的 <code>private</code> 成员</li>
-<li>通过派生类的对象：不能直接访问</li>
-</ul>
-</li>
-</ul>
-<p>protected 成员的特点与作用</p>
-<ul>
-<li>对建立其所在类对象的模块来说，它与private的性质相同</li>
-<li>对于其派生类来说，它与public性质相同</li>
-<li>既实现了数据隐藏，又方便继承，实现代码重用</li>
-</ul>
-<h4 id="基类与派生类转换"><a href="#基类与派生类转换" class="headerlink" title="基类与派生类转换"></a>基类与派生类转换</h4><p>转换</p>
-<ul>
-<li>公有派生类对象可以被当做基类的对象使用，反之则不可<ul>
-<li>派生类的对象可以隐含转换为基类对象</li>
-<li>派生类对象可以初始化基类的引用</li>
-<li>派生类的指针可以隐含转换为基类的指针</li>
-</ul>
-</li>
-<li>通过基类对象名，指针只能使用从基类继承的成员</li>
-</ul>
-<h3 id="派生类的构造和析构"><a href="#派生类的构造和析构" class="headerlink" title="派生类的构造和析构"></a>派生类的构造和析构</h3><h4 id="派生类的构造函数"><a href="#派生类的构造函数" class="headerlink" title="派生类的构造函数"></a>派生类的构造函数</h4><ul>
-<li>基类的构造函数不被继承</li>
-<li>派生类需要定义自己的构造函数</li>
-</ul>
-<p>C++11 规定</p>
-<ul>
-<li>可用 using 语句 继承基类构造函数</li>
-<li>但是 只能 初始化从基类继承的成员</li>
-<li>语法形式：<ul>
-<li>using B::B</li>
-</ul>
-</li>
-</ul>
-<p>若不继承构造函数</p>
-<ul>
-<li>派生类新增成员：派生类定义构造函数初始化</li>
-<li>继承来的成员：自动调用基类构造函数进行初始化</li>
-<li>派生类的构造函数需要给基类的构造函数传递参数</li>
-</ul>
-<p>单继承 A继承与B</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:<span class="keyword">public</span> B&#123;</span><br><span class="line">    <span class="built_in">A</span>(<span class="type">int</span> a, <span class="type">int</span> b);</span><br><span class="line">&#125;</span><br><span class="line">A::<span class="built_in">A</span>(<span class="type">int</span> a, <span class="type">int</span> b): <span class="built_in">B</span>(b),<span class="built_in">a</span>(a) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>多继承 A 继承 B,C</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:<span class="keyword">public</span> B,<span class="keyword">public</span> C&#123;</span><br><span class="line">    <span class="built_in">A</span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c);</span><br><span class="line">&#125;</span><br><span class="line">A::<span class="built_in">A</span>(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c): <span class="built_in">B</span>(b), <span class="built_in">C</span>(c), <span class="built_in">a</span>(a) &#123;</span><br><span class="line"></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>当基类有默认构造函数时<ul>
-<li>派生类构造函数可以不向基类构造函数传参</li>
-<li>构造派生类对象，基类默认构造函数将被调用</li>
-</ul>
-</li>
-<li>如需执行基类中带参数的构造函数<ul>
-<li>派生类需要向基类构造函数传参</li>
-</ul>
-</li>
-</ul>
-<h4 id="派生类的复制构造函数"><a href="#派生类的复制构造函数" class="headerlink" title="派生类的复制构造函数"></a>派生类的复制构造函数</h4><p>若派生类没有声明复制构造函数</p>
-<ul>
-<li>编译器会在需要时生成一个隐含的复制构造函数</li>
-<li>先调用基类的复制构造函数</li>
-<li>再为派生类新增的成员执行复制</li>
-</ul>
-<p>若声明复制构造函数</p>
-<ul>
-<li>一般都要为基类的复制构造函数传递参数</li>
-<li>复制构造函数只能接受一个参数，既用来初始化派生类定义的成员，也将传递给基类的复制构造函数</li>
-<li>基类的复制构造函数形参类型是基类对象的引用，实参可以是派生类对象的引用</li>
-</ul>
-<h4 id="派生类的析构函数"><a href="#派生类的析构函数" class="headerlink" title="派生类的析构函数"></a>派生类的析构函数</h4><ul>
-<li>析构函数不被继承，派生类如果需要，要自行声明析构函数</li>
-<li>声明方法与无继承关系时类的析构函数相同</li>
-<li>不需要显式调用基类的析构函数，系统会隐式调用</li>
-<li>限制性派生类析构函数，在执行基类析构函数</li>
-</ul>
-<h3 id="派生类成员的标识和访问"><a href="#派生类成员的标识和访问" class="headerlink" title="派生类成员的标识和访问"></a>派生类成员的标识和访问</h3><h4 id="访问从基类继承的成员"><a href="#访问从基类继承的成员" class="headerlink" title="访问从基类继承的成员"></a>访问从基类继承的成员</h4><p>当派生类与基类中有相同成员时</p>
-<ul>
-<li>若未特别限定，则通过派生类对象使用的是派生类中的同名成员</li>
-<li>如果通过派生类对象访问基类中被隐藏的同名成员，应使用基类名和作用域操作符：：</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">f</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:<span class="keyword">public</span> B&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">f</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">class</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">A <span class="title">a</span><span class="params">()</span></span>;</span><br><span class="line">    a.<span class="built_in">f</span>(); <span class="comment">//调用派生类 f 函数</span></span><br><span class="line">    a.B::<span class="built_in">f</span>(); <span class="comment">//调用基类 f 函数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>二义性问题</p>
-<ul>
-<li>如果从不同基类继承了同名成员，但是在派生类中没有定义同名成员 存在二义性<ul>
-<li>派生类对象名或引用名.成员名</li>
-<li>派生类指针-&gt;成员名</li>
-</ul>
-</li>
-<li>解决方式：用类名限定</li>
-</ul>
-<h4 id="虚基类"><a href="#虚基类" class="headerlink" title="虚基类"></a>虚基类</h4><p>要解决的问题：</p>
-<ul>
-<li>当派生类从多个基类派生，而这些基类又有共同基类，则在访问此共同基类中的成员时，将产生冗余，并可能带来不一致性</li>
-</ul>
-<p>虚基类声明</p>
-<ul>
-<li>以 <code>virtual</code> 说明基类继承方式</li>
-<li>例如： class B1:virtual public B</li>
-</ul>
-<p>作用</p>
-<ul>
-<li>主要用来解决多继承时可能发生的对同一基类继承多次而产生的二义性问题</li>
-<li>为最远的派生类提供唯一的基类成员，而不重复产生多次复制</li>
-</ul>
-<p>注意</p>
-<ul>
-<li>在第一级继承时就要将共同基类设计为虚基类</li>
-</ul>
-<p>虚基类及派生类构造函数</p>
-<ul>
-<li>建立对象时候所指定的类称为<code>最远派生类</code></li>
-<li>虚基类的成员是由最远派生类的构造函数通过调用虚基类的构造函数进行初始化的</li>
-<li>在整个继承结构中，直接或间接继承虚基类的所有派生类，都必须在构造函数的成员初始化表中为虚基类的构造函数列出参数。如果未列出，则表示调用该虚基类的默认构造函数</li>
-<li>在建立对象时，只有 最远派生类 的构造函数调用虚基类的构造函数，其他类对虚基类构造函数的调用被忽略</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2178,7 +2211,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">203</span>
+          <span class="site-state-item-count">207</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

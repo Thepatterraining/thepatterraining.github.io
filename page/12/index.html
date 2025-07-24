@@ -196,6 +196,602 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html" class="post-title-link" itemprop="url">ElasticSearch十三--ES--自定义Analyzer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-09 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-09T00:00:00+08:00">2021-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十三--ES--自定义Analyzer" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-%E8%87%AA%E5%AE%9A%E4%B9%89Analyzer.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="自定义Analyzer"><a href="#自定义Analyzer" class="headerlink" title="自定义Analyzer"></a>自定义Analyzer</h1><h2 id="多字段特性"><a href="#多字段特性" class="headerlink" title="多字段特性"></a>多字段特性</h2><p>实现精确匹配</p>
+<ul>
+<li>增加一个 keyword 字段</li>
+</ul>
+<p>使用不同的analyzer</p>
+<ul>
+<li>不同语言</li>
+<li>pinyin 字段的搜索</li>
+<li>还支持为 搜索 和 索引 指定不同的 analyzer</li>
+</ul>
+<h3 id="Exact-Values-vs-Full-Text"><a href="#Exact-Values-vs-Full-Text" class="headerlink" title="Exact Values vs Full Text"></a>Exact Values vs Full Text</h3><p>Exact Value 包括数字 &#x2F; 日期 &#x2F; 具体一个字符串（例如 Apple Store）  精确值 不需要分词</p>
+<ul>
+<li>ES 中的 keyword</li>
+</ul>
+<p>全文本，非结构化的文本数据  需要分词</p>
+<ul>
+<li>ES 中的 text</li>
+</ul>
+<h3 id="自定义分词"><a href="#自定义分词" class="headerlink" title="自定义分词"></a>自定义分词</h3><p>当 ES 自带的分词器无法满足时，可以自定义分词器。通过自己组合不同的组件实现</p>
+<ul>
+<li><p>Character Filter</p>
+</li>
+<li><p>Tokenizer</p>
+</li>
+<li><p>Token Filter</p>
+</li>
+</ul>
+<p>通过自己组合上面不同的组件，可以实现出不同的分词器效果。</p>
+<h4 id="Character-Filter"><a href="#Character-Filter" class="headerlink" title="Character Filter"></a>Character Filter</h4><p>在 Tokenizer 之前对文本进行处理。可以配置多个进行不同的文本处理。会影响 Tokenizer 的 position 和 offset 信息</p>
+<p>下面是一些自带的 Character Filter</p>
+<ul>
+<li>HTML strip  去除 html 标签</li>
+<li>Mapping  字符串替换</li>
+<li>Pattern replace   正则匹配替换</li>
+</ul>
+<h4 id="Tokenizer"><a href="#Tokenizer" class="headerlink" title="Tokenizer"></a>Tokenizer</h4><p>将原始的文本按照一定的规则，切分为词</p>
+<p>下面是一些ES内置的 Tokenizer</p>
+<ul>
+<li>whitespace</li>
+<li>standard</li>
+<li>uax_url_email</li>
+<li>pattern</li>
+<li>keyword</li>
+<li>path hierarchy</li>
+</ul>
+<p>也可以用 JAVA 开发插件，实现自己的 Tokenizer</p>
+<h4 id="Token-filter"><a href="#Token-filter" class="headerlink" title="Token filter"></a>Token filter</h4><p>将 Tokenizer 输出的单词 进行增加修改删除等操作</p>
+<p>下面是ES 自带的</p>
+<ul>
+<li>Lowercase 小写</li>
+<li>stop 停止词</li>
+<li>synonym 近义词</li>
+</ul>
+<p>这几个操作简单来说就是</p>
+<ul>
+<li>Character Filter 在分词前进行处理</li>
+<li>Tokenizer 分词</li>
+<li>Token Filter 分词后进行处理</li>
+</ul>
+<h4 id="自定义分词器"><a href="#自定义分词器" class="headerlink" title="自定义分词器"></a>自定义分词器</h4><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">PUT test_home</span><br><span class="line">&#123;</span><br><span class="line">  &quot;settings&quot;:&#123;</span><br><span class="line">    &quot;analysis&quot;:&#123;</span><br><span class="line">      &quot;analyzer&quot;:&#123;</span><br><span class="line">        my_analyzer:&#123;    //自定义分词器</span><br><span class="line">          &quot;type&quot;:&quot;custom&quot;,</span><br><span class="line">          &quot;char_filter&quot;:[</span><br><span class="line">            &quot;test&quot;    //自定义 character filter</span><br><span class="line">          ],</span><br><span class="line">          &quot;tokenizer&quot;:&quot;test_tokenizer&quot;,  //自定义 tokenizer</span><br><span class="line">          &quot;filter&quot;:[         //token filter</span><br><span class="line">            &quot;lowercase&quot;,</span><br><span class="line">            &quot;english_stop&quot;</span><br><span class="line">          ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;tokenizer&quot;:&#123;         //自定义 tokenizer</span><br><span class="line">          &quot;test_tokenizer&quot;:&#123;</span><br><span class="line">            &quot;type&quot;:&quot;pattern&quot;,</span><br><span class="line">            &quot;pattern&quot;:&quot;[?]&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;char_filter&quot;:&#123;        //自定义 character filter -替换成_</span><br><span class="line">          &quot;test&quot;:&#123;</span><br><span class="line">            &quot;type&quot;:&quot;mapping&quot;,</span><br><span class="line">            &quot;mappings&quot;:[</span><br><span class="line">              &quot;-&quot; =&gt; &quot;_&quot;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;，</span><br><span class="line">        &quot;filter&quot;:&#123;       //设置 停止词</span><br><span class="line">          &quot;english_stop&quot;:&#123;</span><br><span class="line">            &quot;type&quot;:&quot;stop&quot;,</span><br><span class="line">            &quot;stopwords&quot;:&quot;_englsh_&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-Analyzer%E5%88%86%E8%AF%8D.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-Analyzer%E5%88%86%E8%AF%8D.html" class="post-title-link" itemprop="url">ElasticSearch六--ES--Analyzer分词</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-Analyzer%E5%88%86%E8%AF%8D.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch六--ES--Analyzer分词" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-Analyzer%E5%88%86%E8%AF%8D.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-Analyzer%E5%88%86%E8%AF%8D.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Analyzer分词"><a href="#Analyzer分词" class="headerlink" title="Analyzer分词"></a>Analyzer分词</h1><h2 id="Analysis-和-Analyzer"><a href="#Analysis-和-Analyzer" class="headerlink" title="Analysis 和 Analyzer"></a>Analysis 和 Analyzer</h2><p>Analysis - 文本分析是把全文本转换成一系列单词（term&#x2F;token）的过程，也叫分词</p>
+<p>Analysis 是通过 Analyzer 来实现的</p>
+<ul>
+<li>可使用 Elasticsearch 内置的分析器，或者按需制定分析器</li>
+</ul>
+<p>除了在数据写入时转换词条，匹配 Query 语句时候也需要用相同的分析器对查询语句进行分析</p>
+<h2 id="Analyzer-的组成"><a href="#Analyzer-的组成" class="headerlink" title="Analyzer 的组成"></a>Analyzer 的组成</h2><p>分词器是专门处理分词的组件，由三部分组成</p>
+<ul>
+<li>Character Filters (针对原始文本处理，例如去除html)</li>
+<li>Tokenizer (按照规则切分为单词)</li>
+<li>Token Filter(将切分的单词进行加工，小写，删除 stopwords,增加同义词)</li>
+</ul>
+<p>例子：</p>
+<p>将 <code>Mastering Elasticsearch &amp; Elasticsearch in Action</code> 经过上面的步骤就会产生</p>
+<ul>
+<li>master</li>
+<li>elasticsearch</li>
+<li>action</li>
+</ul>
+<h2 id="ES的内置分词器"><a href="#ES的内置分词器" class="headerlink" title="ES的内置分词器"></a>ES的内置分词器</h2><ul>
+<li>Standard Analyzer - 默认分词器，按词切分，小写处理</li>
+<li>Simple Analyzer - 按照非字母切分（符号被过滤），小写处理</li>
+<li>Stop Analyzer - 小写处理，停用词过滤（the a is）</li>
+<li>WhiteSpace Analyzer - 按照空格切分，不转小写</li>
+<li>Keyword Analyzer - 不分词，直接将输入当做输出</li>
+<li>Patter Analyzer - 正则表达式，默认\W+(非字符分隔)</li>
+<li>Language - 提供了30多种常见语言的分词器</li>
+<li>Customer Analyzer 自定义分词器</li>
+</ul>
+<h2 id="使用-analyzer-API"><a href="#使用-analyzer-API" class="headerlink" title="使用 _analyzer API"></a>使用 _analyzer API</h2><p>直接指定 Analyzer 进行测试</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET /_analyze</span><br><span class="line">&#123;</span><br><span class="line">    &quot;analyzer&quot;:&quot;standard&quot;,</span><br><span class="line">    &quot;text&quot;:&quot;Mastering Elasticsearch &amp; Elasticsearch in Action&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;tokens&quot; : [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;mastering&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 0,</span><br><span class="line">      &quot;end_offset&quot; : 9,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 0</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 10,</span><br><span class="line">      &quot;end_offset&quot; : 23,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 25,</span><br><span class="line">      &quot;end_offset&quot; : 38,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 2</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;in&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 39,</span><br><span class="line">      &quot;end_offset&quot; : 41,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 3</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;action&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 42,</span><br><span class="line">      &quot;end_offset&quot; : 48,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 4</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>指定索引的字段进行测试</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST test_home/_analyze</span><br><span class="line">&#123;</span><br><span class="line">  &quot;field&quot;: &quot;job_name&quot;,</span><br><span class="line">  &quot;text&quot;:&quot;Mastering Elasticsearch, Elasticsearch in Action&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;tokens&quot; : [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;mastering&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 0,</span><br><span class="line">      &quot;end_offset&quot; : 9,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 0</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 10,</span><br><span class="line">      &quot;end_offset&quot; : 23,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 25,</span><br><span class="line">      &quot;end_offset&quot; : 38,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 2</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;in&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 39,</span><br><span class="line">      &quot;end_offset&quot; : 41,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 3</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;action&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 42,</span><br><span class="line">      &quot;end_offset&quot; : 48,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 4</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义分词进行测试</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST _analyze</span><br><span class="line">&#123;</span><br><span class="line">  &quot;tokenizer&quot;: &quot;standard&quot;,</span><br><span class="line">  &quot;filter&quot;: [&quot;lowercase&quot;],</span><br><span class="line">  &quot;text&quot;:&quot;Mastering Elasticsearch, Elasticsearch in Action&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;tokens&quot; : [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;mastering&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 0,</span><br><span class="line">      &quot;end_offset&quot; : 9,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 0</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 10,</span><br><span class="line">      &quot;end_offset&quot; : 23,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;elasticsearch&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 25,</span><br><span class="line">      &quot;end_offset&quot; : 38,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 2</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;in&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 39,</span><br><span class="line">      &quot;end_offset&quot; : 41,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 3</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;token&quot; : &quot;action&quot;,</span><br><span class="line">      &quot;start_offset&quot; : 42,</span><br><span class="line">      &quot;end_offset&quot; : 48,</span><br><span class="line">      &quot;type&quot; : &quot;&lt;ALPHANUM&gt;&quot;,</span><br><span class="line">      &quot;position&quot; : 4</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="中文分词的难点"><a href="#中文分词的难点" class="headerlink" title="中文分词的难点"></a>中文分词的难点</h2><p>中文句子，切分成一个个词（不是一个个字）</p>
+<p>英文字，单词有自然地空格进行切分</p>
+<p>一句中文，在不同的上下文，有不同的理解</p>
+<p>推荐的一些中文分词器：</p>
+<ul>
+<li>icu</li>
+<li>ik : <a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-ik">https://github.com/medcl/elasticsearch-analysis-ik</a></li>
+<li>thulac : <a target="_blank" rel="noopener" href="https://github.com/microbun/elasticsearch-thulac-plugin">https://github.com/microbun/elasticsearch-thulac-plugin</a></li>
+</ul>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-Dynamic%20Mapping.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-Dynamic%20Mapping.html" class="post-title-link" itemprop="url">ElasticSearch十一--Dynamic Mapping和常见字段类型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-Dynamic%20Mapping.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch十一--Dynamic Mapping和常见字段类型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-Dynamic%20Mapping.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-Dynamic%20Mapping.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Dynamic-Mapping和常见字段类型"><a href="#Dynamic-Mapping和常见字段类型" class="headerlink" title="Dynamic Mapping和常见字段类型"></a>Dynamic Mapping和常见字段类型</h1><h2 id="Mapping"><a href="#Mapping" class="headerlink" title="Mapping"></a>Mapping</h2><p>Mapping 类似数据库中的 <code>schema</code>的定义，作用如下：</p>
+<ul>
+<li>定义索引中的字段的名称</li>
+<li>定义字段的数据类型，例如字符串，数字，布尔等</li>
+<li>字段，倒排索引的相关配置</li>
+</ul>
+<p>Mapping 会把 JSON 文档映射成 Lucene 所需要的扁平格式</p>
+<p>一个Mapping 属于一个索引的 Type</p>
+<ul>
+<li>每个文档都属于一个Type</li>
+<li>一个 Type 有一个 Mapping 定义</li>
+<li>7.0开始，不需要在 Mapping 定义中指定 Type信息</li>
+</ul>
+<h3 id="字段的数据类型"><a href="#字段的数据类型" class="headerlink" title="字段的数据类型"></a>字段的数据类型</h3><h5 id="简单类型"><a href="#简单类型" class="headerlink" title="简单类型"></a>简单类型</h5><ul>
+<li>Text&#x2F;Keyword</li>
+<li>Date</li>
+<li>Interger&#x2F;Floating</li>
+<li>Boolean</li>
+<li>IPv4 &amp; IPv6</li>
+</ul>
+<h5 id="复杂类型"><a href="#复杂类型" class="headerlink" title="复杂类型"></a>复杂类型</h5><ul>
+<li>对象类型</li>
+<li>嵌套类型</li>
+</ul>
+<h5 id="特殊类型"><a href="#特殊类型" class="headerlink" title="特殊类型"></a>特殊类型</h5><p>geo 是用于存储地理位置信息的类型</p>
+<ul>
+<li>geo_point &amp; geo_shape&#x2F; percolator</li>
+</ul>
+<h3 id="Dynamic-Mapping"><a href="#Dynamic-Mapping" class="headerlink" title="Dynamic Mapping"></a>Dynamic Mapping</h3><p>这个就是动态的Mapping，可以不需要手动指定，由 ES 动态识别数据类型，来生成对应的Mapping。</p>
+<p>但是这样生成的 Mappping 不一定正确。</p>
+<p>如果想要修改Mapping</p>
+<ul>
+<li>新增加字段<ul>
+<li>Dynamic 设为 true,一旦有新字段，Mapping会自动更新</li>
+<li>Dynamic 设为 false,一旦有新字段，Mapping不会更新，新增加的字段无法被索引，但是_source里面有数据</li>
+<li>Dynamic 设为 Strict,文档写入失败</li>
+</ul>
+</li>
+<li>已有字段，一旦已经有数据就不支持修改了<ul>
+<li>Lucene实现的倒排索引，一旦生成就不能修改</li>
+</ul>
+</li>
+<li>如果想要修改，需要Reindex API ，重建索引</li>
+</ul>
+<p>原因：</p>
+<ul>
+<li>如果修改了字段的数据类型，会导致已被索引的数据无法被搜索</li>
+<li>但是如果是增加新的字段，就不会有这种情况</li>
+</ul>
+<p>注意!!!：<br>如果<code>Dynamic</code>设为false,那么新增字段无法被索引，也就意味着不能拿这个字段去搜索，比如新增加一个<code>name</code>字段，那么无法搜索<code>name</code>这个字段，比如你想搜索name是张三的，是搜索不出来的。</p>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-title-link" itemprop="url">ElasticSearch九--RequestBody和Query DSL简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-05T00:00:00+08:00">2021-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch九--RequestBody和Query DSL简介" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES-RequestBody%E5%92%8CQuery%20DSL%E7%AE%80%E4%BB%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RequestBody和Query-DSL简介"><a href="#RequestBody和Query-DSL简介" class="headerlink" title="RequestBody和Query DSL简介"></a>RequestBody和Query DSL简介</h1><p>通过RequestBody 实现搜索</p>
+<p>参数：</p>
+<ul>
+<li>q:指定查询语句，使用Query String Syntax</li>
+<li>df:默认字段，不指定会对所有字段进行查询</li>
+<li>sort:排序</li>
+<li>from&#x2F;size: 用来分页</li>
+<li>Profile 可以查看查询是如何被执行的</li>
+</ul>
+<p>这个方法的参数和URI是一样的，比如我们在kibana里面执行下面的指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;from&quot;:0,</span><br><span class="line">  &quot;size&quot;:10,</span><br><span class="line">  &quot;sort&quot;:[&#123;&quot;id&quot;:&quot;desc&quot;&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询指定字段"><a href="#查询指定字段" class="headerlink" title="查询指定字段"></a>查询指定字段</h2><p>这种方式还可以查询指定字段，通过<code>_source</code>参数来指定。支持通配符</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="脚本字段"><a href="#脚本字段" class="headerlink" title="脚本字段"></a>脚本字段</h2><p>可以进行一些简单运算，拼接字符串等操作</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_all&quot;:&#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;script_fields&quot;:&#123;</span><br><span class="line">    &quot;new_field&quot;:&#123;</span><br><span class="line">      &quot;script&quot;:&#123;</span><br><span class="line">        &quot;lang&quot;:&quot;painless&quot; //使用这个脚本</span><br><span class="line">        &quot;source&quot;: &quot;doc[&#x27;job_name&#x27;].value+&#x27;_hello&#x27;&quot; //在职位名称后面拼接_hello</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;fields&quot;:&#123;</span><br><span class="line">  &quot;new_fields&quot;:[</span><br><span class="line">    &quot;产品_hello&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="query-DSL"><a href="#query-DSL" class="headerlink" title="query DSL"></a>query DSL</h2><p>通过DSL查询产品怎么办呢，可以使用query参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;:&quot;产品&quot;  //这里就相当于出现产 或者 品 都会搜出来 左边的 job_name 就是搜索的字段</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果想使用<code>AND</code>可以增加参数，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match&quot;:&#123;   //使用match 而不是 match_all</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;operator&quot;:&quot;AND&quot;  //这里指定AND OR NOT</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="短语搜索-match-phrase"><a href="#短语搜索-match-phrase" class="headerlink" title="短语搜索 match phrase"></a>短语搜索 match phrase</h3><p>这里就是短语，单词搜索，等价于URI的phrase search</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET test_home/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;:&#123;</span><br><span class="line">    &quot;match_phrase&quot;:&#123;   //使用match_phrase</span><br><span class="line">      &quot;job_name&quot;: &#123;  //这里变成一个对象 左边的 job_name 就是搜索的字段</span><br><span class="line">        &quot;query&quot;:&quot;产品&quot;, //这里是搜索内容</span><br><span class="line">        &quot;slop&quot;:1, //代表可以有一个错误</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;:[&#x27;job_name&#x27;,&#x27;id&#x27;] //指定字段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES-Search%20API.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1107,613 +1703,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" class="post-title-link" itemprop="url">ElasticSearch三--ES-基本概念-节点集群分片副本</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch三--ES-基本概念-节点集群分片副本" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="分布式系统的可用性与扩展性"><a href="#分布式系统的可用性与扩展性" class="headerlink" title="分布式系统的可用性与扩展性"></a>分布式系统的可用性与扩展性</h2><p>高可用性</p>
-<ul>
-<li>服务可用性：允许有节点停止服务。</li>
-<li>数据可用性：部分节点丢失，不会丢失数据。</li>
-</ul>
-<p>可扩展性</p>
-<ul>
-<li>请求量提升&#x2F;数据的不断增长（将数据分布到所有节点上）</li>
-</ul>
-<h2 id="分布式特性"><a href="#分布式特性" class="headerlink" title="分布式特性"></a>分布式特性</h2><p>Elasticsearch 的分布式架构好处</p>
-<ul>
-<li>存储的水平扩容</li>
-<li>提高系统的可用性，部分节点停止服务，整个集群的服务不受影响</li>
-</ul>
-<p>Elasticsearch的分布式架构</p>
-<ul>
-<li>不同的集群通过不同的名字来区分，默认名字“Elasticsearch”</li>
-<li>通过配置文件修改，或者在命令行中 -E cluster.name&#x3D;xxx来设置</li>
-<li>一个集群可以有一个或多个节点</li>
-</ul>
-<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>节点是一个Elasticsearch 的实例</p>
-<ul>
-<li>本质上就是一个JAVA进程</li>
-<li>一台机器上可以运行多个Elasticsearch进程，但是线上建议一个机器一个节点</li>
-</ul>
-<p>每一个节点都有名字，通过配置文件配置，或者启动时 -E node.name&#x3D;xxx 来设置</p>
-<p>每个节点在启动之后会有一个UID，保存在data目录下</p>
-<h3 id="Master-eligible-nodes-和-Master-Node"><a href="#Master-eligible-nodes-和-Master-Node" class="headerlink" title="Master-eligible nodes 和 Master Node"></a>Master-eligible nodes 和 Master Node</h3><p>每个节点启动后，默认是一个 Master eligible 节点。</p>
-<ul>
-<li>可以设置 node.master:false 禁止<br>Master-eligible 节点可以参加选主流程，成为 master 节点</li>
-</ul>
-<p>当第一个节点启动时候，它会将自己选举成为 master 节点</p>
-<p>每个节点上都保存了集群的状态，只有 master 节点才能修改。</p>
-<ul>
-<li>集群状态(Cluster State)，维护了一个集群中必要的信息<ul>
-<li>所有的节点信息</li>
-<li>所有的索引和其相关的 Mapping 与 Settings 信息</li>
-<li>分片的路由信息</li>
-</ul>
-</li>
-<li>任意节点都可以修改会导致数据的不一致</li>
-</ul>
-<h3 id="Data-Node-和-Coordinating-Node"><a href="#Data-Node-和-Coordinating-Node" class="headerlink" title="Data Node 和 Coordinating Node"></a>Data Node 和 Coordinating Node</h3><p>Data Node</p>
-<ul>
-<li>可以保存数据的节点，叫做Data Node。 负责保存分片数据。在数据扩展上起到了至关重要的作用。</li>
-</ul>
-<p>Coordinating Node</p>
-<ul>
-<li>负责接受Client 的请求，将请求分发到合适的节点，最终把结果汇集到一起。</li>
-<li>每个节点默认都起到了Coordinating Node的职责</li>
-</ul>
-<h3 id="其他的节点类型"><a href="#其他的节点类型" class="headerlink" title="其他的节点类型"></a>其他的节点类型</h3><p>Hot &amp; Warm Node</p>
-<ul>
-<li>不同硬件配置的Data Node ，用来实现 Hot &amp; Warm 架构，降低集群部署的成本。</li>
-</ul>
-<p>Machine Learning Node</p>
-<ul>
-<li>负责跑机器学习的Job,用来做异常检测</li>
-</ul>
-<p>Tribe Node</p>
-<ul>
-<li>(5.3开始使用 Cross Cluster Search) Tribe Node 连接到不同的Elasticsearch 集群，并且支持将这些集群当成一个单独的集群处理</li>
-</ul>
-<h3 id="配置节点类型"><a href="#配置节点类型" class="headerlink" title="配置节点类型"></a>配置节点类型</h3><p>生产环境建议一个节点担任一个角色</p>
-<table>
-<thead>
-<tr>
-<th align="left">节点类型</th>
-<th align="left">配置参数</th>
-<th align="left">默认值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">maste eligible</td>
-<td align="left">node.master</td>
-<td align="left">true</td>
-</tr>
-<tr>
-<td align="left">data</td>
-<td align="left">node.data</td>
-<td align="left">true</td>
-</tr>
-<tr>
-<td align="left">ingest</td>
-<td align="left">node.ingest</td>
-<td align="left">true</td>
-</tr>
-<tr>
-<td align="left">coordinating only</td>
-<td align="left">无</td>
-<td align="left">每个节点默认都是coordinating节点，设置其他类型全部为false</td>
-</tr>
-<tr>
-<td align="left">machine learning</td>
-<td align="left">node.ml</td>
-<td align="left">true(需要 enable x-pack)</td>
-</tr>
-</tbody></table>
-<h2 id="分片（Primary-Shard-amp-Replica-Shard）"><a href="#分片（Primary-Shard-amp-Replica-Shard）" class="headerlink" title="分片（Primary Shard &amp; Replica Shard）"></a>分片（Primary Shard &amp; Replica Shard）</h2><p>主分片，用以解决数据水平扩展的问题。通过主分片，可以将数据分布到集群内的所有节点之上。</p>
-<ul>
-<li>一个分片是一个运行的Lucene的实例</li>
-<li>主分片数在索引创建时指定，后续不允许修改，除非Reindex</li>
-</ul>
-<p>副本，用以解决数据高可用的问题。分片是主分片的拷贝</p>
-<ul>
-<li>副本分片数，可以动态调整</li>
-<li>增加副本数，还可以在一定程度上提高服务的可用性（读取的吞吐）</li>
-</ul>
-<h3 id="分片的设定"><a href="#分片的设定" class="headerlink" title="分片的设定"></a>分片的设定</h3><p>对于生产环境，需要提前做好容量规划</p>
-<p>分片数设置过小</p>
-<ul>
-<li>导致后续无法增加节点实现水平扩展</li>
-<li>单个分片的数据量太大，导致数据重新分配耗时</li>
-</ul>
-<p>分片数设置过大，7.0开始，默认分片设置为1，解决了over-sharding的问题</p>
-<ul>
-<li>影响搜索结果的相关性打分，影响统计结果的准确性</li>
-<li>单个节点上过多的分片，会导致资源浪费，同时也会影响性能</li>
-</ul>
-<h3 id="查询集群的健康状态"><a href="#查询集群的健康状态" class="headerlink" title="查询集群的健康状态"></a>查询集群的健康状态</h3><p>使用GET方法访问 _cluster&#x2F;health</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_cluster/health</span><br></pre></td></tr></table></figure>
-
-<p>或者访问 <code>http://localhost:9200/_cluster/health</code></p>
-<p>Green : 集群健康<br>Yello : 主分片分配，副本未分配<br>Red   : 主分片未分配</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" class="post-title-link" itemprop="url">ElasticSearch三--ES-基本概念-索引文档REST API</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch三--ES-基本概念-索引文档REST API" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%80.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="文档-Document"><a href="#文档-Document" class="headerlink" title="文档(Document)"></a>文档(Document)</h2><p>Elasticsearch 是面向<code>文档</code>的，文档是所有可搜索数据的最小单位。</p>
-<ul>
-<li>日志文件中的日志项。</li>
-<li>电影的具体信息&#x2F;唱片的具体信息</li>
-<li>MP3播放器里的一首歌&#x2F;一篇PDF文档中的具体内容</li>
-</ul>
-<p>文档会被序列化成 JSON 格式，保存在Elasticsearch中。</p>
-<ul>
-<li>JSON对象由字段组成</li>
-<li>每个字段都有对应的字段类型（字符串&#x2F;数值&#x2F;布尔&#x2F;日期&#x2F;二进制&#x2F;范围类型）</li>
-</ul>
-<p>每个文档都有一个Unique ID</p>
-<ul>
-<li>你可以自己指定ID</li>
-<li>或者通过Elasticsearch自己生成</li>
-</ul>
-<h3 id="文档的元数据"><a href="#文档的元数据" class="headerlink" title="文档的元数据"></a>文档的元数据</h3><ul>
-<li>元数据，用于标注文档的相关信息<ul>
-<li>_index - 文档所属的索引名</li>
-<li>_type - 文档所属的类型名</li>
-<li>_id - 文档唯一的ID</li>
-<li>_source - 文档的原始JSON数据</li>
-<li>_all - 整合所有字段内容到该字段，已被废除</li>
-<li>_version - 文档的版本信息</li>
-<li>_score - 相关性打分</li>
-</ul>
-</li>
-</ul>
-<h2 id="索引（Index）"><a href="#索引（Index）" class="headerlink" title="索引（Index）"></a>索引（Index）</h2><p><code>索引</code>是<code>文档</code>的容器，是一类文档的集合。</p>
-<ul>
-<li>Index 体现了逻辑空间的概念：每个索引都有自己的Mapping定义，用于定义包含的文档的字段名和字段类型</li>
-<li>Shard 体现了物理空间的概念：索引中的数据分散在Shard上</li>
-</ul>
-<p>索引的 Mapping 和 Settings</p>
-<ul>
-<li>Mapping 定义文档字段的类型</li>
-<li>Setting 定义不同的数据分布</li>
-</ul>
-<h4 id="索引的不同语意"><a href="#索引的不同语意" class="headerlink" title="索引的不同语意"></a>索引的不同语意</h4><ul>
-<li>名词：一个Elasticsearch中，有多个不同的索引。</li>
-<li>动词：保存一个文档到Elasticsearch的过程也叫索引（indexing）<ul>
-<li>ES中，创建一个倒排索引的过程</li>
-</ul>
-</li>
-<li>名词：一个B树索引，一个倒排索引</li>
-</ul>
-<h2 id="类型Type"><a href="#类型Type" class="headerlink" title="类型Type"></a>类型Type</h2><ul>
-<li>7.0 开始 每个索引只能 创建一个 Type - “_doc”</li>
-</ul>
-<h2 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h2><p>Elasticsearch提供了REST API的方式进行调用，这样不管什么语言都可以通过HTTP的方式进行调用。</p>
-<p>这些API的文档可以在<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html">Elasticsearch的文档</a>里面找到.</p>
-<p>可以在Kibana里面的<code>dev tools</code>进行REST API的测试。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--kibana%E5%AE%89%E8%A3%85.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--kibana%E5%AE%89%E8%A3%85.html" class="post-title-link" itemprop="url">ElasticSearch二--ES-Kibana安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-01T00:00:00+08:00">2021-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--kibana%E5%AE%89%E8%A3%85.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch二--ES-Kibana安装" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--kibana%E5%AE%89%E8%A3%85.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--kibana%E5%AE%89%E8%A3%85.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Kibana安装"><a href="#Kibana安装" class="headerlink" title="Kibana安装"></a>Kibana安装</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>从官网（<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/kibana)%E5%8F%AF%E4%BB%A5%E8%BF%9B%E8%A1%8C%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85">https://www.elastic.co/cn/downloads/kibana)可以进行下载安装</a></p>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/kibana</span><br></pre></td></tr></table></figure>
-
-<p>启动后可以访问 <code>localhost:5601</code> 进行查看信息</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%AE%89%E8%A3%85.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/ES--%E5%AE%89%E8%A3%85.html" class="post-title-link" itemprop="url">ElasticSearch二--ES安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-25 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-25T00:00:00+08:00">2021-03-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/ES--%E5%AE%89%E8%A3%85.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch二--ES安装" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/ES--%E5%AE%89%E8%A3%85.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%AE%89%E8%A3%85.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="ES–安装"><a href="#ES–安装" class="headerlink" title="ES–安装"></a>ES–安装</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
-<li><p>运行ElasticSearch, 需安装并配置JDK</p>
-<ul>
-<li>设置 $JAVA_HOME</li>
-</ul>
-</li>
-<li><p>各个版本对 Java的依赖</p>
-<ul>
-<li>ElasticSearch 5 需要 Java 8 以上的版本</li>
-<li>ElasticSearch 从6.5开始支持 Java 11</li>
-<li><a target="_blank" rel="noopener" href="https://www.elastic.co/support/matrix#matrix_jvm">https://www.elastic.co/support/matrix#matrix_jvm</a></li>
-<li>7.0开始，内置了Java环境</li>
-</ul>
-</li>
-</ul>
-<p>从官网（<a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/elasticsearch)%E5%8F%AF%E4%BB%A5%E8%BF%9B%E8%A1%8C%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85">https://www.elastic.co/cn/downloads/elasticsearch)可以进行下载安装</a></p>
-<h2 id="目录说明"><a href="#目录说明" class="headerlink" title="目录说明"></a>目录说明</h2><ul>
-<li>bin : 脚本文件，包括启动 ElasticSearch，安装插件。运行统计数据等。</li>
-<li>config : 配置文件：elasticsearch.yml。集群配置文件，user,role based相关配置</li>
-<li>JDK: Java运行环境</li>
-<li>data: path.data 数据文件</li>
-<li>lib : Java类库</li>
-<li>logs: path.log 日志文件</li>
-<li>modules: 包含所有ES模块</li>
-<li>plugins: 包含所有已安装插件</li>
-</ul>
-<h2 id="JVM配置"><a href="#JVM配置" class="headerlink" title="JVM配置"></a>JVM配置</h2><ul>
-<li><p>修改JVM - config&#x2F;jvm.options</p>
-<ul>
-<li>7.1 下载的默认设置是1GB</li>
-</ul>
-</li>
-<li><p>配置的建议</p>
-<ul>
-<li>Xmx 和 Xms设置成一样</li>
-<li>Xmx 不要超过机器内存的50%</li>
-<li>不要超过 30GB - <a target="_blank" rel="noopener" href="https://www.elastic.co/blog/a-heap-of-trouble">https://www.elastic.co/blog/a-heap-of-trouble</a></li>
-</ul>
-</li>
-</ul>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><h4 id="单节点启动"><a href="#单节点启动" class="headerlink" title="单节点启动"></a>单节点启动</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch</span><br></pre></td></tr></table></figure>
-
-<p>启动后可以访问 <code>localhost:9200</code> 进行查看信息</p>
-<h4 id="多节点启动"><a href="#多节点启动" class="headerlink" title="多节点启动"></a>多节点启动</h4><p>cluster.name 指定同一个集群，node.name指定每个节点的名称，path.data指定数据存放位置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch -E node.name=node1 -E cluster.name=test -E path.data=node1_data -d</span><br><span class="line">/bin/elasticsearch -E node.name=node2 -E cluster.name=test -E path.data=node2_data -d</span><br><span class="line">/bin/elasticsearch -E node.name=node3 -E cluster.name=test -E path.data=node3_data -d</span><br></pre></td></tr></table></figure>
-
-<p>启动完成以后可以直接访问<code>localhost:9200/_cat/nodes</code>查看node信息</p>
-<h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p>使用elasticsearch-plugin进行插件的安装和查看</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch-plugin list   //查询已安装的插件列表</span><br><span class="line">/bin/elasticsearch-plugin install analysis-icu  //安装analysis-icu插件</span><br></pre></td></tr></table></figure>
-
-<p>还可以通过api进行查看已安装的插件，访问<code>localhost:9200/_cat/plugins</code>可以查看已安装的插件</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1786,7 +1775,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">203</span>
+          <span class="site-state-item-count">207</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
