@@ -196,6 +196,186 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-title-link" itemprop="url">ElasticSearch四--ES--基本操作和批量操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-23T00:00:00+08:00">2021-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ES/" itemprop="url" rel="index"><span itemprop="name">ES</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" class="post-meta-item leancloud_visitors" data-flag-title="ElasticSearch四--ES--基本操作和批量操作" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ES--%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%92%8C%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h1><h2 id="文档的CRUD"><a href="#文档的CRUD" class="headerlink" title="文档的CRUD"></a>文档的CRUD</h2><ul>
+<li>Create 如果id 已经存在，会失败</li>
+<li>Index 如果id不存在，创建新的文档。否则先删除在创建新的，版本会增加</li>
+<li>Update 文档必须已经存在，更新只会对相应字段做增量修改</li>
+</ul>
+<h3 id="Create"><a href="#Create" class="headerlink" title="Create"></a>Create</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125;?op_type=create  //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_doc/&#123;id&#125; //创建或更新</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">PUT &#123;index&#125;/_create/&#123;id&#125; //只是创建</span><br><span class="line">&#123;JSON&#125;</span><br><span class="line"></span><br><span class="line">POST &#123;index&#125;/_doc/  //只是创建 自动生成id</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果通过op_type参数指定<code>create</code>那么就只会创建，如果存在会报错</li>
+<li>支持自动生成文档ID，和指定ID两种方式</li>
+<li>通过调用 <code>POST /index/_doc</code>.不指定ID系统就会自动生成</li>
+<li>使用 HTTP PUT index&#x2F;_create&#x2F;1 创建，URI中显式指定 <code>_create</code>,如果该ID的文档已经存在，则操作失败。</li>
+</ul>
+<p><img src="/../images/ES01.png" alt="ES"></p>
+<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br></pre></td></tr></table></figure>
+
+<p>找到文档。HTTP 200,找不到就返回 404</p>
+<p>元信息</p>
+<ul>
+<li>_index&#x2F;_type</li>
+<li>版本信息，同一个ID的文档，即使被删除，Version也会不断增加</li>
+<li>_source 中默认包含了文档的所有原始信息</li>
+</ul>
+<p><img src="/../images/ES02.png" alt="ES"></p>
+<h3 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h3><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT &#123;index&#125;/&#123;type&#125;/&#123;id&#125; index/_doc/1</span><br><span class="line">&#123;JSON&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Index和Create不一样的地方就在于存在就删除在创建，并且版本号增加。</p>
+<h3 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h3><p> Update 是直接更新</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_update/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;doc&quot;:&#123;JSON&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> <img src="/../images/ES03.png" alt="ES"></p>
+<h3 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h3><p> Delete是删除操作</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE &#123;index&#125;/_doc/&#123;id&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="批量操作-Bulk-API"><a href="#批量操作-Bulk-API" class="headerlink" title="批量操作 Bulk API"></a>批量操作 Bulk API</h2><p> 支持一次调用，对不同的索引进行操作<br> 支持</p>
+<ul>
+<li>Index</li>
+<li>Create</li>
+<li>Update</li>
+<li>Delete</li>
+</ul>
+<p> 只有一次网络请求，单条失败不会影响其他操作结果</p>
+<p> 返回结果包括每一条的执行结果</p>
+<p> 指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST _bulk</span><br><span class="line">&#123; &quot;index&quot;:&#123;&quot;_index&quot;:&quot;test&quot;, &quot;_id&quot;:&quot;1&quot;&#125; &#125;  //指定index和_id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value1&quot; &#125;                     //index 的数据</span><br><span class="line">&#123; &quot;delete&quot; : &#123;&quot;_index&quot;:&quot;test&quot; &quot;_id&quot;:&quot;2&quot;&#125;&#125; //delete 的 index 和id</span><br><span class="line">&#123; &quot;create&quot;: &#123;&quot;_index&quot;:&quot;test2&quot;,&quot;_id&quot;:1&#125;&#125;              //create 的index id</span><br><span class="line">&#123; &quot;field1&quot;:&quot;value3&quot;&#125;                      //create 的数据</span><br><span class="line">&#123; &quot;update&quot;:&#123;&quot;_id&quot;:1,&quot;_index&quot;:&quot;test&quot;&#125;&#125;     //update 的id index</span><br><span class="line">&#123; &quot;doc&quot;:&#123;&quot;field2&quot;:&quot;value2&quot;&#125;&#125;              //update 的数据</span><br></pre></td></tr></table></figure></p>
+<p>  <img src="/../images/ES04.png" alt="ES"></p>
+<h2 id="批量获取-mget"><a href="#批量获取-mget" class="headerlink" title="批量获取 mget"></a>批量获取 mget</h2><p>批量操作，可减少网络开销</p>
+<p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST _mget</span><br><span class="line">&#123;</span><br><span class="line">    &quot;docs&quot;:[</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;_index&quot;:&quot;user&quot;</span><br><span class="line">            &quot;_id&quot;:1</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  <img src="/../images/ES05.png" alt="ES"></p>
+<h2 id="批量查询-msearch"><a href="#批量查询-msearch" class="headerlink" title="批量查询 msearch"></a>批量查询 msearch</h2><p>指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST &#123;index&#125;/_msearch</span><br><span class="line">&#123;&#125;                             //注意这里需要加上这个 不加会报错</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br><span class="line">&#123;&quot;index&quot;: user &#125;</span><br><span class="line">&#123;&quot;query&quot;: &#123;&quot;match_all&quot;:&#123;&#125;&#125;,&quot;size&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  <img src="/../images/ES06.png" alt="ES"></p>
+<h2 id="常见错误返回"><a href="#常见错误返回" class="headerlink" title="常见错误返回"></a>常见错误返回</h2><table>
+<thead>
+<tr>
+<th align="left">问题</th>
+<th align="left">原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">无法连接</td>
+<td align="left">网络故障或集群挂了</td>
+</tr>
+<tr>
+<td align="left">连接无法关闭</td>
+<td align="left">网络故障或节点出错</td>
+</tr>
+<tr>
+<td align="left">429</td>
+<td align="left">集群过于繁忙</td>
+</tr>
+<tr>
+<td align="left">4xx</td>
+<td align="left">请求体格式有错</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">集群内部错误</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>极客时间 ES 学习笔记</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ES--%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BA%8C.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1906,114 +2086,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" class="post-title-link" itemprop="url">网络原理自顶向下三可靠数据传输原理实现SR选择重传协议</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-12 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-12T15:28:49+08:00">2020-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%B8%89%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0SR%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%E5%8D%8F%E8%AE%AE.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议"><a href="#网络原理自顶向下三可靠数据传输原理实现SR选择重传协议" class="headerlink" title="网络原理自顶向下三可靠数据传输原理实现SR选择重传协议"></a>网络原理自顶向下三可靠数据传输原理实现SR选择重传协议</h1><h3 id="SR"><a href="#SR" class="headerlink" title="SR"></a>SR</h3><p>在SR中，和GBN不同，SR是给每一个分组设置定时器，发送端只确认重传当前分组，而不是所有分组。接收端在接收到乱序的分组的时候会进行缓存，当前面的分组到达以后一起提交给应用层。</p>
-<h4 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h4><ul>
-<li>等待上层调用。这里和GBN一样</li>
-<li>超时。超时哪个重传哪个</li>
-<li>收到ACK。如果收到的是最小序号的ACK，那么base可以往前移动，也就是窗口滑动。如果收到其他序号的ACK。那么把这些ACK缓存。</li>
-</ul>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//序号</span></span><br><span class="line"><span class="variable">$base</span> = <span class="number">1</span>;</span><br><span class="line"><span class="variable">$nextSeqNum</span> = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_send</span>(<span class="params"><span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//生成校验和</span></span><br><span class="line">    <span class="variable">$checkSum</span> = <span class="title function_ invoke__">generateCheckSum</span>(<span class="variable">$data</span>);</span><br><span class="line">    <span class="comment">//组装报文</span></span><br><span class="line">    <span class="variable">$packet</span>[<span class="variable">$nextSeqNum</span>] = <span class="title function_ invoke__">make_pkt</span>(<span class="variable">$data</span>, <span class="variable">$checkSum</span>, <span class="variable">$nextSeqNum</span>);</span><br><span class="line">    <span class="comment">//调用网络层传输 </span></span><br><span class="line">    <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>[<span class="variable">$nextSeqNum</span>]);</span><br><span class="line">    <span class="comment">//每个启动一个定时器</span></span><br><span class="line">    <span class="title function_ invoke__">start_timer</span>(<span class="variable">$nextSeqNum</span>);    </span><br><span class="line">    <span class="comment">//如果超时</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$timeNum</span> = <span class="title function_ invoke__">timeout</span>()) &#123;</span><br><span class="line">        <span class="comment">//重传超时的分组</span></span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$packet</span>[<span class="variable">$timeNum</span>]);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">$isAck</span> = <span class="title function_ invoke__">rdt_rev</span>() &amp;&amp; <span class="title function_ invoke__">check</span>(<span class="variable">$isAck</span>)) &#123;</span><br><span class="line">        <span class="comment">//等待接收方回传ack 并且没有出现错误</span></span><br><span class="line">        <span class="comment">//获取确认的序号</span></span><br><span class="line">        <span class="variable">$ackNum</span> = <span class="title function_ invoke__">getAckNum</span>(<span class="variable">$isAck</span>);</span><br><span class="line">        <span class="title function_ invoke__">stop_timer</span>(<span class="variable">$ackNum</span>);</span><br><span class="line">        <span class="comment">//判断这个ACK是不是base</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$ackNum</span> == <span class="variable">$base</span>) &#123;</span><br><span class="line">            ++<span class="variable">$base</span>;</span><br><span class="line">            <span class="comment">//判断缓存有没有</span></span><br><span class="line">            <span class="keyword">while</span>(<span class="title function_ invoke__">array_key_exists</span>(++<span class="variable">$ackNum</span>, <span class="variable">$cache</span>)) &#123;</span><br><span class="line">                <span class="comment">//如果下一个ack已经收到了，那么就把base接着往前移动</span></span><br><span class="line">                ++<span class="variable">$base</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//缓存起来</span></span><br><span class="line">            <span class="variable">$cache</span>[<span class="variable">$ackNum</span>] = <span class="variable">$ackNum</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h4><ul>
-<li>序号在rcv_base 至 rcv_base + N - 1内的分组被正确接受。如果该分组不是期望的分组，那么缓存，如果是，那么给应用层并且看缓存里面有没有后续，有就直接一起给应用层</li>
-<li>序号在rcv_base - N 至 rcv_base - 1内的分组被正确接受。返回一个确认ACK。表示我已经收到了。</li>
-<li>其他情况。忽略分组</li>
-</ul>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//期望的序号</span></span><br><span class="line"><span class="variable">$expackNum</span> = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rdt_rev</span>(<span class="params"><span class="variable">$packet</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//差错检测通过了并且报文序号正确</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">check</span>(<span class="variable">$packet</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] &gt; <span class="variable">$expackNum</span> &amp;&amp; <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] &lt; <span class="variable">$expackNum</span> + N - <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>] == <span class="variable">$expackNum</span>) &#123;</span><br><span class="line">                <span class="comment">//是我们期望的，直接给应用层</span></span><br><span class="line">                <span class="comment">//解析报文</span></span><br><span class="line">                <span class="variable">$data</span> = <span class="title function_ invoke__">extract</span>(<span class="variable">$packet</span>);</span><br><span class="line">                <span class="comment">//序号对的</span></span><br><span class="line">                <span class="comment">//没有错，把数据交付给应用层并回传ack</span></span><br><span class="line">                <span class="comment">//把数据给应用层</span></span><br><span class="line">                <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$data</span>);</span><br><span class="line">                <span class="comment">//回传ACK</span></span><br><span class="line">                <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$expackNum</span>);</span><br><span class="line">                <span class="variable">$expackNum</span>++;</span><br><span class="line">                <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">                <span class="comment">//查询缓存里面有没有</span></span><br><span class="line">                <span class="variable">$key</span> = <span class="variable">$expackNum</span> + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">while</span>(<span class="title function_ invoke__">array_key_exists</span>(<span class="variable">$key</span>, <span class="variable">$cache</span>)) &#123;</span><br><span class="line">                    <span class="comment">//如果下一个分组已经收到了，那么给应用层，并且滑动窗口</span></span><br><span class="line">                    <span class="title function_ invoke__">deliver_data</span>(<span class="variable">$cache</span>[<span class="variable">$expackNum</span>]);</span><br><span class="line">                    ++<span class="variable">$expackNum</span>;</span><br><span class="line">                    <span class="variable">$key</span>++;</span><br><span class="line">                &#125;   </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//缓存分组</span></span><br><span class="line">                <span class="variable">$cache</span>[<span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>]] = <span class="variable">$packet</span>;</span><br><span class="line">                <span class="comment">//回传ACK</span></span><br><span class="line">                <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$packet</span>[<span class="string">&#x27;num&#x27;</span>]);</span><br><span class="line">                <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没通过差错检测或者序号错误，我们回传一个上一个ack，告诉发送端上一个分组我们收到了，当前分组没收到。</span></span><br><span class="line">        <span class="comment">//回传ACK</span></span><br><span class="line">        <span class="variable">$ack</span> = <span class="title function_ invoke__">make_pkt</span>(<span class="number">1</span>, <span class="variable">$expackNum</span>);</span><br><span class="line">        <span class="title function_ invoke__">udt_send</span>(<span class="variable">$ack</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2086,7 +2158,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">207</span>
+          <span class="site-state-item-count">208</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
