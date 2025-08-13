@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="登录系统架构图                                                    登录系统架构图                                                     展示层                                                              前端应用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dream">
+<meta property="og:url" content="https://thepatterraining.github.io/ddd/a.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="登录系统架构图                                                    登录系统架构图                                                     展示层                                                              前端应用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-08-08T03:15:30.956Z">
+<meta property="article:modified_time" content="2025-08-08T03:15:35.590Z">
+<meta property="article:author" content="Thepatter">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://thepatterraining.github.io/ddd/a.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ddd/a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-08-08 11:15:30 / 修改时间：11:15:35" itemprop="dateCreated datePublished" datetime="2025-08-08T11:15:30+08:00">2025-08-08</time>
+            </span>
+
+          
+            <span id="/ddd/a.html" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ddd/a.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ddd/a.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录系统架构图</title>
+</head>
+<body>
+    <svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+        <!-- 背景 -->
+        <rect width="1200" height="800" fill="white"/>
+        
+        <!-- 标题 -->
+        <text x="600" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#1a237e">登录系统架构图</text>
+        
+        <!-- 展示层 -->
+        <g transform="translate(50, 60)">
+            <rect x="0" y="0" width="120" height="700" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="8"/>
+            <text x="60" y="350" text-anchor="middle" font-size="18" font-weight="bold" fill="#1976d2" transform="rotate(-90 60 350)">展示层</text>
+        </g>
+        
+        <!-- 展示层内容 -->
+        <g transform="translate(200, 80)">
+            <rect x="0" y="0" width="900" height="100" fill="#bbdefb" stroke="#1976d2" stroke-width="1" rx="10"/>
+            <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#0d47a1">前端应用</text>
+            <rect x="20" y="40" width="200" height="40" fill="#e1f5fe" stroke="#0288d1" rx="8"/>
+            <text x="120" y="65" text-anchor="middle" font-size="14" fill="#01579b">Web端</text>
+            <rect x="240" y="40" width="200" height="40" fill="#e1f5fe" stroke="#0288d1" rx="8"/>
+            <text x="340" y="65" text-anchor="middle" font-size="14" fill="#01579b">移动端</text>
+            <rect x="460" y="40" width="200" height="40" fill="#e1f5fe" stroke="#0288d1" rx="8"/>
+            <text x="560" y="65" text-anchor="middle" font-size="14" fill="#01579b">小程序</text>
+            <rect x="680" y="40" width="200" height="40" fill="#e1f5fe" stroke="#0288d1" rx="8"/>
+            <text x="780" y="65" text-anchor="middle" font-size="14" fill="#01579b">第三方接入</text>
+        </g>
+        
+        <!-- 网关层 -->
+        <g transform="translate(50, 200)">
+            <rect x="0" y="0" width="120" height="100" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="8"/>
+            <text x="60" y="55" text-anchor="middle" font-size="18" font-weight="bold" fill="#1b5e20">网关层</text>
+        </g>
+        
+        <!-- 网关层内容 -->
+        <g transform="translate(200, 200)">
+            <rect x="0" y="0" width="900" height="100" fill="#c8e6c9" stroke="#388e3c" stroke-width="1" rx="10"/>
+            <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1b5e20">API网关</text>
+            <rect x="20" y="40" width="200" height="40" fill="#dcedc8" stroke="#689f38" rx="8"/>
+            <text x="120" y="65" text-anchor="middle" font-size="14" fill="#33691e">路由转发</text>
+            <rect x="240" y="40" width="200" height="40" fill="#dcedc8" stroke="#689f38" rx="8"/>
+            <text x="340" y="65" text-anchor="middle" font-size="14" fill="#33691e">认证鉴权</text>
+            <rect x="460" y="40" width="200" height="40" fill="#dcedc8" stroke="#689f38" rx="8"/>
+            <text x="560" y="65" text-anchor="middle" font-size="14" fill="#33691e">限流熔断</text>
+            <rect x="680" y="40" width="200" height="40" fill="#dcedc8" stroke="#689f38" rx="8"/>
+            <text x="780" y="65" text-anchor="middle" font-size="14" fill="#33691e">日志监控</text>
+        </g>
+        
+        <!-- 应用层 -->
+        <g transform="translate(50, 320)">
+            <rect x="0" y="0" width="120" height="150" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+            <text x="60" y="75" text-anchor="middle" font-size="18" font-weight="bold" fill="#e65100">应用层</text>
+        </g>
+        
+        <!-- 应用层内容 -->
+        <g transform="translate(200, 320)">
+            <rect x="0" y="0" width="900" height="150" fill="#ffe0b2" stroke="#f57c00" stroke-width="1" rx="10"/>
+            <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#e65100">认证服务</text>
+            <rect x="20" y="40" width="280" height="50" fill="#ffecb3" stroke="#ffa726" rx="8"/>
+            <text x="160" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">登录控制器</text>
+            <text x="160" y="80" text-anchor="middle" font-size="13" fill="#f57c00">LoginController</text>
+            
+            <rect x="320" y="40" width="280" height="50" fill="#ffecb3" stroke="#ffa726" rx="8"/>
+            <text x="460" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">认证服务接口</text>
+            <text x="460" y="80" text-anchor="middle" font-size="13" fill="#f57c00">AuthenticationService</text>
+            
+            <rect x="620" y="40" width="260" height="50" fill="#ffecb3" stroke="#ffa726" rx="8"/>
+            <text x="750" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">Token管理器</text>
+            <text x="750" y="80" text-anchor="middle" font-size="13" fill="#f57c00">TokenManager</text>
+            
+            <rect x="170" y="100" width="280" height="40" fill="#ffecb3" stroke="#ffa726" rx="8"/>
+            <text x="310" y="125" text-anchor="middle" font-size="14" fill="#e65100">验证码服务</text>
+            
+            <rect x="470" y="100" width="280" height="40" fill="#ffecb3" stroke="#ffa726" rx="8"/>
+            <text x="610" y="125" text-anchor="middle" font-size="14" fill="#e65100">第三方认证适配器</text>
+        </g>
+        
+        <!-- 领域层 -->
+        <g transform="translate(50, 490)">
+            <rect x="0" y="0" width="120" height="150" fill="#fce4ec" stroke="#d32f2f" stroke-width="2" rx="8"/>
+            <text x="60" y="75" text-anchor="middle" font-size="18" font-weight="bold" fill="#b71c1c">领域层</text>
+        </g>
+        
+        <!-- 领域层内容 -->
+        <g transform="translate(200, 490)">
+            <rect x="0" y="0" width="900" height="150" fill="#ffcdd2" stroke="#d32f2f" stroke-width="1" rx="10"/>
+            <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#b71c1c">认证领域</text>
+            
+            <rect x="20" y="40" width="200" height="90" fill="#ffebee" stroke="#ef5350" rx="8"/>
+            <text x="120" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">用户聚合根</text>
+            <text x="120" y="80" text-anchor="middle" font-size="12" fill="#d32f2f">User</text>
+            <text x="120" y="100" text-anchor="middle" font-size="12" fill="#d32f2f">UserCredential</text>
+            <text x="120" y="120" text-anchor="middle" font-size="12" fill="#d32f2f">LoginRecord</text>
+            
+            <rect x="240" y="40" width="200" height="90" fill="#ffebee" stroke="#ef5350" rx="8"/>
+            <text x="340" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">认证策略接口</text>
+            <text x="340" y="80" text-anchor="middle" font-size="12" fill="#d32f2f">AuthStrategy</text>
+            <text x="340" y="100" text-anchor="middle" font-size="12" fill="#d32f2f">+ authenticate()</text>
+            <text x="340" y="120" text-anchor="middle" font-size="12" fill="#d32f2f">+ validate()</text>
+            
+            <rect x="460" y="40" width="200" height="90" fill="#ffebee" stroke="#ef5350" rx="8"/>
+            <text x="560" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">策略工厂</text>
+            <text x="560" y="80" text-anchor="middle" font-size="12" fill="#d32f2f">AuthStrategyFactory</text>
+            <text x="560" y="100" text-anchor="middle" font-size="12" fill="#d32f2f">+ getStrategy()</text>
+            <text x="560" y="120" text-anchor="middle" font-size="12" fill="#d32f2f">+ register()</text>
+            
+            <rect x="680" y="40" width="200" height="90" fill="#ffebee" stroke="#ef5350" rx="8"/>
+            <text x="780" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">领域服务</text>
+            <text x="780" y="80" text-anchor="middle" font-size="12" fill="#d32f2f">AuthDomainService</text>
+            <text x="780" y="100" text-anchor="middle" font-size="12" fill="#d32f2f">SecurityService</text>
+            <text x="780" y="120" text-anchor="middle" font-size="12" fill="#d32f2f">TokenService</text>
+        </g>
+        
+        <!-- 基础设施层 -->
+        <g transform="translate(50, 660)">
+            <rect x="0" y="0" width="120" height="100" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2" rx="8"/>
+            <text x="60" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#4a148c" transform="rotate(-90 60 50)">基础设施层</text>
+        </g>
+        
+        <!-- 基础设施层内容 -->
+        <g transform="translate(200, 660)">
+            <rect x="0" y="0" width="900" height="100" fill="#e1bee7" stroke="#7b1fa2" stroke-width="1" rx="10"/>
+            <text x="450" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#4a148c">基础设施</text>
+            <rect x="20" y="35" width="130" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="85" y="55" text-anchor="middle" font-size="13" fill="#4a148c">MySQL</text>
+            <text x="85" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">用户数据</text>
+            
+            <rect x="170" y="35" width="130" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="235" y="55" text-anchor="middle" font-size="13" fill="#4a148c">Redis</text>
+            <text x="235" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">缓存/Token</text>
+            
+            <rect x="320" y="35" width="130" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="385" y="55" text-anchor="middle" font-size="13" fill="#4a148c">SMS服务</text>
+            <text x="385" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">短信验证码</text>
+            
+            <rect x="470" y="35" width="130" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="535" y="55" text-anchor="middle" font-size="13" fill="#4a148c">微信API</text>
+            <text x="535" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">OAuth2.0</text>
+            
+            <rect x="620" y="35" width="130" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="685" y="55" text-anchor="middle" font-size="13" fill="#4a148c">MQ</text>
+            <text x="685" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">事件总线</text>
+            
+            <rect x="770" y="35" width="110" height="50" fill="#f3e5f5" stroke="#9c27b0" rx="8"/>
+            <text x="825" y="55" text-anchor="middle" font-size="13" fill="#4a148c">日志</text>
+            <text x="825" y="72" text-anchor="middle" font-size="12" fill="#6a1b9a">ELK</text>
+        </g>
+    </svg>
+</body>
+</html>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%B8%89.html" rel="prev" title="DDD记账软件实战三">
+      <i class="fa fa-chevron-left"></i> DDD记账软件实战三
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
