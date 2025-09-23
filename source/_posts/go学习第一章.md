@@ -12,8 +12,8 @@ article: go学习第一章
 
 使用 `go mod` 意味着不需要设置多个 `GOPATH` 了
 
-`go mod` 对应的环境变量 `GO111MODULE` 有三个值，默认`auto`
-- on  模块支持，go命令行会使用modules，而一点也不会去GOPATH目录下查找
+`go mod` 对应的环境变量 `GO111MODULE` 有三个值，默认``
+- on  模块支持，go命令行会使用modules，而一点也不会去GOPATH目录下查auto找
 - off 无模块支持，go命令行将不会支持module功能，寻找依赖包的方式将会沿用旧版本那种通过vendor目录或者GOPATH模式来查找。
 - auto 只要当前目录或者父目录有`go.mod`文件，那么就以on的形式工作。
 
