@@ -196,6 +196,245 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-title-link" itemprop="url">深入理解计算机系统一--Amdahl定律</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--Amdahl定律" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--Amdahl%E5%AE%9A%E5%BE%8B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Amdahl定律"><a href="#Amdahl定律" class="headerlink" title="Amdahl定律"></a>Amdahl定律</h1><p>Gene Amdal，计算领域的早期先锋之一，对提升系统某一部分性能所带来的效果做出了简单却有见地的观察。</p>
+<p>这个观察被称为<code>Amdahl定律</code>。该定律的主要思想是，当我们对系统的某个部分加速时，其对系统整体性能的影响取决于该部分的重要性和加速程度。</p>
+<p>若系统执行某应用程序需要时间为<code>T</code><sub><code>old</code></sub>。假设系统某部分执行所需时间与该时间的比例为<code>a</code>，而该部分性能提升比例为<code>k</code>。即该部分初始所需执行时间为<code>aT</code><sub><code>old</code></sub>，现在所需时间为(<code>aT</code><sub><code>old</code></sub>)&#x2F;<code>k</code>。因此，总的执行时间应为：</p>
+<blockquote>
+<p>T<sub>new</sub> &#x3D; (1 - a)T<sub>old</sub> + (aT<sub>old</sub>)&#x2F;k &#x3D; T<sub>old</sub> [(1 - a) + a&#x2F;k]</p>
+</blockquote>
+<p>由此，可以计算加速比 S &#x3D; T<sub>old</sub> &#x2F; T<sub>new</sub> 为</p>
+<blockquote>
+<p>S &#x3D; 1 &#x2F; [(1 - a) + a&#x2F;k]</p>
+</blockquote>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>考虑这样一种情况，系统的某个部分初始耗时比例为60%（a &#x3D; 0.6），其加速比例因子为3，也就是性能提升了300%。则我们可以获得的整体系统加速比为：</p>
+<blockquote>
+<p>1 &#x2F; [(1 - 0.6) + 0.6 &#x2F; 3] &#x3D; 1 &#x2F; (0.4 + 0.2) &#x3D; 1 &#x2F; 0.6 &#x3D; 1.66666666 约等于 1.67倍</p>
+</blockquote>
+<p>可以看到虽然我们优化的部分提升了3倍性能，但是整体性能只提升了1.67倍。</p>
+<p>虽然我们对系统的一个主要部分做了重大改进，但是获得的加速比却明显小于这部分的加速比。这就是<code>Amdahl</code>定律的主要观点–<code>要想显著加速整个系统，必须提升系统中相当大的部分的速度</code>。</p>
+<h2 id="练习题1-1"><a href="#练习题1-1" class="headerlink" title="练习题1.1"></a>练习题1.1</h2><p>假设你要把土豆从爱达荷州送到明尼苏达州，全程2500公里。在限速范围内，你估计平均速度为100公里&#x2F;小时，整个行程需要25个小时。</p>
+<blockquote>
+<p>A:新闻说蒙大拿州取消了限速，这使得行程有1500公里速度可以达到150公里&#x2F;小时，那么加速比是多少？</p>
+</blockquote>
+<p>答：根据题目可知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a = 1500 / 2500 = 0.6 k = 1.5 求S</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line"></span><br><span class="line">S = 1 / (0.4 + 0.4)</span><br><span class="line">S = 1 / 0.8</span><br><span class="line">S = 1.25</span><br></pre></td></tr></table></figure>
+<p>加速比是 1.25倍</p>
+<blockquote>
+<p>B:你可以购买道具，想让加速比达到1.67倍，那么你必须以多快的速度通过蒙大拿州？</p>
+</blockquote>
+<p>答：根据题目可知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">S = 1.67 a = 0.6 求k</span><br><span class="line"></span><br><span class="line">1.67 = 1 / (0.4 + 0.6 / k)</span><br><span class="line">1.67 * (0.4 + 0.6 / k) = 1</span><br><span class="line">0.668 + 1.002 / k = 1</span><br><span class="line">1.002 / k = 0.332</span><br><span class="line">k = 1.002 / 0.332</span><br><span class="line">k = 3.02</span><br></pre></td></tr></table></figure>
+<p>也就是蒙大拿州的速度必须达到 100 * 3.02 &#x3D; 302公里&#x2F;小时才行。</p>
+<h2 id="练习题1-2"><a href="#练习题1-2" class="headerlink" title="练习题1.2"></a>练习题1.2</h2><p>公司说下个版本的软件性能将提升2倍。这个任务分配给你，你已经确认只有80%的系统可以进行改进，那么，这部分需要改进多少才可以达到要求？</p>
+<p>根据题目可以知道:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a = 0.8, S = 2,求k</span><br><span class="line"></span><br><span class="line">公式 S = 1 / [(1 - a) + a/k] 代入：</span><br><span class="line">2 = 1/ [(1 - 0.8) + 0.8/k]</span><br><span class="line">2 = 1 / (0.2 + 0.8 / k)</span><br><span class="line">2 (0.2 + 0.8 / k) = 1</span><br><span class="line">0.4 + 1.6 / k = 1</span><br><span class="line">1.6 / k = 0.6</span><br><span class="line">1.6 = 0.6k</span><br><span class="line">16 / 6 = k</span><br><span class="line">k = 2.67</span><br></pre></td></tr></table></figure>
+<p>所以我们需要改进这部分至少2.67倍才能达到要求。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-title-link" itemprop="url">深入理解计算机系统一--c程序发生了什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-21 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-21T10:12:47+08:00">2020-08-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/csapp/" itemprop="url" rel="index"><span itemprop="name">csapp</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" class="post-meta-item leancloud_visitors" data-flag-title="深入理解计算机系统一--c程序发生了什么" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--c%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><p>计算机系统是由硬件和系统软件组成的，它们共同工作来运行应用程序。。虽然系统的 具体实现方式随着时间不断变化，但是系统内在的概念却没有改变。所有计算机系统都有 相似的硬件和软件组件，它们又执行着相似的功能。</p>
+<h2 id="第一个c程序"><a href="#第一个c程序" class="headerlink" title="第一个c程序"></a>第一个c程序</h2><p>一般第一个程序都是输出<code>hello world</code>，这里我们使用c语言输出一个<code>hello world</code>。后面在来讲这里面都发生了什么。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终程序都会被转成2进制代码，一般都根据ASCII码来转换，下图是上面的代码根据ASCII码转换成的二进制代码。</p>
+<p><img src="/../images/csapp1-1.png" alt="coursera"></p>
+<h2 id="程序被翻译成不同格式"><a href="#程序被翻译成不同格式" class="headerlink" title="程序被翻译成不同格式"></a>程序被翻译成不同格式</h2><p>计算机最后能执行的是二进制文件，所以需要把c文件转换成二进制文件，这是经过几个步骤的转换，而不是一次性转换成的。当然了，我们使用gcc编译的时候他是一下子执行了所有步骤的。</p>
+<p>分为4个阶段</p>
+<ul>
+<li>hello.c 经过 预处理器(cpp) 输出 hello.i (修改了的源程序)</li>
+<li>hello.i 经过 编译器(ccl) 输出 hello.s (汇编程序)</li>
+<li>hello.s 经过 汇编器(as) 输出 hello.o (可重定位目标程序)</li>
+<li>hello.o 和 引入的其他库的文件 经过 连接器(ld) 输出 hello.exe (可执行程序)</li>
+</ul>
+<h4 id="预处理阶段"><a href="#预处理阶段" class="headerlink" title="预处理阶段"></a>预处理阶段</h4><p>预处理器根据以字符<code>#</code>开头的命令，修改原始的c程序。把你引入的文件插入到原始文件中。生成新的hello.i文件。</p>
+<h4 id="编译阶段"><a href="#编译阶段" class="headerlink" title="编译阶段"></a>编译阶段</h4><p>编译器把hello.i这个c程序文件编译成汇编程序文件。生成新的hello.s文件。</p>
+<h4 id="汇编阶段"><a href="#汇编阶段" class="headerlink" title="汇编阶段"></a>汇编阶段</h4><p>汇编器把hello.s这个汇编程序翻译成机器语言指令，把这些指令打包成可重定位目标程序。生成新的hello.o文件，它包含的17个字节是函数main的指令编码。</p>
+<h4 id="链接阶段"><a href="#链接阶段" class="headerlink" title="链接阶段"></a>链接阶段</h4><p>我们的c程序调用了别的函数，调用了printf这个输出函数，这个函数是标准c库里面的函数，这个函数存在于printf.o这个预先编译好的文件里面，而我们要把这两个文件合并到一起，链接器就负责这种合并。最后得到一个可执行程序 hello.exe</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E4%B8%80--%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1619,261 +1858,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" class="post-title-link" itemprop="url">设计模式之适配器模式--不兼容变兼容接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-05 17:54:30" itemprop="dateCreated datePublished" datetime="2020-05-05T17:54:30+08:00">2020-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之适配器模式--不兼容变兼容接口" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F-%E4%B8%8D%E5%85%BC%E5%AE%B9%E5%8F%98%E5%85%BC%E5%AE%B9%E6%8E%A5%E5%8F%A3.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计模式之适配器模式–不兼容变兼容接口"><a href="#设计模式之适配器模式–不兼容变兼容接口" class="headerlink" title="设计模式之适配器模式–不兼容变兼容接口"></a>设计模式之适配器模式–不兼容变兼容接口</h1><p><code>适配器模式</code>可以增加接口的易用性，使得不兼容的接口变得兼容。</p>
-<blockquote>
-<p>将一个接口转换成另外的接口，使得原本不兼容的接口变得兼容。</p>
-</blockquote>
-<h2 id="为什么要使用适配器模式"><a href="#为什么要使用适配器模式" class="headerlink" title="为什么要使用适配器模式"></a>为什么要使用适配器模式</h2><p>比如你的接口设计存在缺点，不够易用，不能复用但又希望复用的时候。</p>
-<p>比如你要对接多个平台的接口他们互不兼容的时候。</p>
-<p>现实中也有很多适配器，比如安卓苹果的转换头，比如usb到type-c的转换头，都是因为两边的接口不同，不兼容所以需要一个适配器。</p>
-<p>下面是一个手机类，现在需要充电，但是手机的充电需要typec接口。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 手机类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mobile</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 给手机充电操作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">charge</span>(<span class="params">ITypec <span class="variable">$typec</span></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;使用typec接口给手机充电&#x27;</span>);</span><br><span class="line">        <span class="variable">$typec</span>-&gt;<span class="title function_ invoke__">typec</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在只有一个usb接口可以充电。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 需要适配的类</span></span><br><span class="line"><span class="comment"> * usb接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">usb</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">usb</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;电脑usb接口&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们增加一个适配器，也就是typec转usb的头。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器接口</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器类，typec转换usb的适配器</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">typec</span> <span class="keyword">implements</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$usb</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;usb = <span class="keyword">new</span> usb;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;接口适配器&#x27;</span>);</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;usb-&gt;<span class="title function_ invoke__">usb</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们的客户端就可以使用这个适配器了。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$mobile</span> = <span class="keyword">new</span> <span class="title class_">mobile</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable">$mobile</span>-&gt;<span class="title function_ invoke__">charge</span>(<span class="keyword">new</span> typec);</span><br></pre></td></tr></table></figure>
-
-<p>这是<code>对象适配器</code>，还有类适配器，类适配器的话需要继承要适配的类。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 适配器模式</span></span><br><span class="line"><span class="comment"> * 适配器类，typec转换usb的适配器</span></span><br><span class="line"><span class="comment"> * typec接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">typec</span> <span class="keyword">extends</span> <span class="title">usb</span> <span class="keyword">implements</span> <span class="title">ITypec</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//不再需要存储对象，直接继承了</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 接口</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">typec</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;接口适配器&#x27;</span>);</span><br><span class="line">        <span class="comment">//$this-&gt;usb-&gt;usb();</span></span><br><span class="line">        <span class="comment">//这里改成使用父类的usb方法。</span></span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">usb</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="适配器和代理模式还有装饰器模式的区别"><a href="#适配器和代理模式还有装饰器模式的区别" class="headerlink" title="适配器和代理模式还有装饰器模式的区别"></a>适配器和代理模式还有装饰器模式的区别</h3><p>这几个设计模式其实都差不多，你也可以说使用了typec代理了usb。只是角度不同所以名字不同罢了。</p>
-<ul>
-<li>代理模式 更注重代理，代理了原有类。</li>
-<li>装饰器模式 比代理模式更加灵活多样。</li>
-<li>适配器模式 更注重兼容性，为了兼容别的类，而不是代理和装饰功能。</li>
-</ul>
-<p>虽然角度不同，但是我觉得核心都差不多。<strong>这几个设计模式都是需要修改原有类的时候，没有选择修改，而是套了壳子，来扩展功能</strong>。这是一种好的思想，灵活运用思想更重要。</p>
-<p>代码放在了我的github上面。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" class="post-title-link" itemprop="url">设计模式之装饰器模式--各种功能随意扩展</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-05 17:22:45" itemprop="dateCreated datePublished" datetime="2020-05-05T17:22:45+08:00">2020-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" class="post-meta-item leancloud_visitors" data-flag-title="设计模式之装饰器模式--各种功能随意扩展" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F-%E5%90%84%E7%A7%8D%E5%8A%9F%E8%83%BD%E9%9A%8F%E6%84%8F%E6%89%A9%E5%B1%95.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="设计模式之装饰器模式–各种功能随意扩展"><a href="#设计模式之装饰器模式–各种功能随意扩展" class="headerlink" title="设计模式之装饰器模式–各种功能随意扩展"></a>设计模式之装饰器模式–各种功能随意扩展</h1><p><code>装饰器模式</code>是灵活给原有类装饰新功能。</p>
-<blockquote>
-<p>动态的给对象添加额外职责，就增加功能来说，装饰模式比生成子类更为灵活。</p>
-</blockquote>
-<h2 id="为什么要使用装饰器模式"><a href="#为什么要使用装饰器模式" class="headerlink" title="为什么要使用装饰器模式"></a>为什么要使用装饰器模式</h2><p>如果你需要添加一些额外的功能，再不修改原有类的基础上，给原有类套个壳。并且可以套多个壳，我觉得装饰器模式有点像中间件。</p>
-<p>比如你现在有一个登录的功能。</p>
-<p>你现在需要给登录加一个权限控制。然后还要增加一个登录日志。还要增加登录微信通知。如果修改原有类可能引起未知bug。</p>
-<p>可以使用装饰器模式。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 装饰器父类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$compent</span></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;compent = <span class="variable">$compent</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;compent-&gt;<span class="title function_ invoke__">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 权限装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginAuth</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;判断登录权限&#x27;</span>);</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 登录日志装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginLog</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;记录登录日志&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 微信通知装饰器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginWechat</span> <span class="keyword">extends</span> <span class="title">Decorate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">login</span>();</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;发送微信登录通知&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>下面是原来的登录功能</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 装饰器模式</span></span><br><span class="line"><span class="comment"> * 核心代码</span></span><br><span class="line"><span class="comment"> * 登录功能</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">login</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">login</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">dump</span>(<span class="string">&#x27;用户登录&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>原来的客户端直接调用login，只有登录功能。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">login</span>();</span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p>增加了装饰器以后可以把登录功能放入装饰器。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> login;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用权限装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginAuth</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用登录日志装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginLog</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用微信通知装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginWechat</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/decorator1.png" alt="decorate"></p>
-<p>还可以任意调换装饰器的位置，可以先发送微信通知在记录登录日志。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> login;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用微信通知装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginWechat</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用登录日志装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginLog</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用权限装饰器</span></span><br><span class="line"><span class="variable">$login</span> = <span class="keyword">new</span> <span class="title class_">LoginAuth</span>(<span class="variable">$login</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$login</span>-&gt;<span class="title function_ invoke__">login</span>();</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/decorator2.png" alt="decorate"></p>
-<p>这个模式就非常灵活，可以任意组装自己的装饰，比如购买支付的时候，需要装饰积分发放，账单通知这些。而且每个装饰器的职责单一，方便插拔，如果不需要一个装饰器的时候把这个装饰器去掉就可以了。</p>
-<p>代码放在了我的github上面。</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Thepatterraining/design-pattern">设计模式</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1941,7 +1930,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

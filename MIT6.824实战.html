@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
 <meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
 <meta property="article:published_time" content="2025-03-18T02:12:47.000Z">
-<meta property="article:modified_time" content="2025-06-16T08:01:55.029Z">
+<meta property="article:modified_time" content="2025-09-23T02:43:17.389Z">
 <meta property="article:author" content="Thepatter">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="数据库原理">
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-16 16:01:55" itemprop="dateModified" datetime="2025-06-16T16:01:55+08:00">2025-06-16</time>
+                <time title="修改时间：2025-09-23 10:43:17" itemprop="dateModified" datetime="2025-09-23T10:43:17+08:00">2025-09-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -334,7 +334,7 @@
 <p>核心思想：将输入分成多份，产生多个输入。并对每个输入调用Map函数。</p>
 <h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map函数将输入内容进行处理，输出一组key&#x3D;&gt;value结构。你可以把 Map 理解成<code>分类处理</code>的过程。</p>
 <p>示例1：Map将从输入中统计每个英文字母出现的次数。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 =&gt; Map =&gt; 输出：a:1, b:2, c:0</span><br><span class="line">Input2 =&gt; Map =&gt; 输出：a:0, b:1, c:1</span><br><span class="line">Input3 =&gt; Map =&gt; 输出：a:1, b:0, c:0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 =&gt; Map =&gt; 输出：a:1, b:1, c:0</span><br><span class="line">Input2 =&gt; Map =&gt; 输出：a:0, b:1, c:1</span><br><span class="line">Input3 =&gt; Map =&gt; 输出：a:1, b:0, c:0</span><br></pre></td></tr></table></figure>
 
 <p>简化的Map函数如下：<br>Map函数接收两个参数，k是文件名称，v是文件内容</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">split file <span class="comment">// 拆分文件内容</span></span><br><span class="line">Map(k, v)&#123;</span><br><span class="line">    <span class="comment">// 循环输出每个字母</span></span><br><span class="line">    <span class="keyword">for</span>(w:words) &#123;</span><br><span class="line">        <span class="comment">//3. 输出格式同样是k=》v，k是字母，v是出现次数。</span></span><br><span class="line">        <span class="comment">// emit函数是输出函数，由MapReduce框架提供</span></span><br><span class="line">        <span class="comment">// 为什么输出1？因为是简单的计数，每个字母出现1次</span></span><br><span class="line">        emit(w,<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际输出结果：a:1, b:1, b:1</span></span><br></pre></td></tr></table></figure>
@@ -342,7 +342,7 @@
 <h3 id="Reduce"><a href="#Reduce" class="headerlink" title="Reduce"></a>Reduce</h3><p>对 <code>Map</code> 阶段产生的键值对，按 <code>key</code> 分组并聚合处理，得到最终的结果。</p>
 <p>你可以把 <code>Reduce</code> 理解成<code>对同一类的东西做总结</code>的过程。</p>
 <p>而Reduce函数同样接收输入，在这个示例中，我们的Reduce函数可以接收某一个字母和出现的次数做为输入，输出总的出现次数。比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 (a:1, a:0, a:1) =&gt; Reduce =&gt; 输出：a:2</span><br><span class="line">Input2 (b:2, b:1, b:0) =&gt; Reduce =&gt; 输出：b:3</span><br><span class="line">Input3 (c:0, c:1, c:0) =&gt; Reduce =&gt; 输出：c:1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 (a:1, a:0, a:1) =&gt; Reduce =&gt; 输出：a:2</span><br><span class="line">Input2 (b:1, b:1, b:1) =&gt; Reduce =&gt; 输出：b:3</span><br><span class="line">Input3 (c:0, c:1, c:0) =&gt; Reduce =&gt; 输出：c:1</span><br></pre></td></tr></table></figure>
 
 <p>简化的Reduce函数如下：<br>Reduce函数同样接收文件做为输入。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reduce函数的输入，k是用来聚合的key，在这里，这个k就是字母，可能是a,b,c。对于计算来说，用不到这个k，v是map输出的值的list。</span></span><br><span class="line"><span class="comment">// 比如a:1, a:0, a:1, k是a, v是[1,1]</span></span><br><span class="line">Reduce(k, v) &#123;</span><br><span class="line">    <span class="comment">// 直接输出计数即可 因为list的长度就是计数，这是因为每个值都是1.</span></span><br><span class="line">    emit(len(v));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -1026,7 +1026,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

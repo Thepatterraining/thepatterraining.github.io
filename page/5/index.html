@@ -196,6 +196,299 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html" class="post-title-link" itemprop="url">算法导论</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-04-15T10:12:47+08:00">2024-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html" class="post-meta-item leancloud_visitors" data-flag-title="算法导论" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="算法导论"><a href="#算法导论" class="headerlink" title="算法导论"></a>算法导论</h1><p>目标一：解决计算问题，除此之外还有更多。more than that<br>目标二：证明正确性<br>目标三：证明更高效<br>目标四：可以和其他人讲明白为什么正确且高效</p>
+<h2 id="算法基础"><a href="#算法基础" class="headerlink" title="算法基础"></a>算法基础</h2><p>算法就是用来求解问题的，我们想求解一组通用的问题，而不是固定的问题。算法的实现就是一个函数，给定一组输入，得到一个正确的输出。</p>
+<p>数学归纳法证明算法的正确性。</p>
+<p><code>循环不变式</code>主要用来帮助我们理解算法的正确性。我们必须证明三条性质</p>
+<ol>
+<li>初始化：循环的第一次迭代之前它为真</li>
+<li>保持：如果循环的某次迭代之前它为真，那么下次迭代之前它仍为真</li>
+<li>终止：在循环终止时，不变式为我们提供一个有用的性质，该性质有助于证明算法是正确的</li>
+</ol>
+<p>通过循环不变式证明插入排序是正确的，下面是插入排序的伪代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">insert_sort(A)</span><br><span class="line">    <span class="keyword">for</span> j = <span class="number">2</span> to A.length</span><br><span class="line">        key = A[j]</span><br><span class="line">        i = j - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &gt; <span class="number">0</span> and A[i] &gt; key</span><br><span class="line">            A[i+<span class="number">1</span>] = A[i]</span><br><span class="line">            i--</span><br><span class="line">        A[i+<span class="number">1</span>] = key</span><br></pre></td></tr></table></figure>
+
+<p>循环不变式开始的时候，j &#x3D; 2的时候，A[1]…A[j-1]里面只有一个元素A[1]，当然是已排序的。循环不变式成立<br>保持：证明每次迭代保持循环不变式，非形式化的来看，4-7行将A[j-1],A[j-2]等向右移动，第8行将key插入合适的位置，子数组由原来的A[1]…A[j-1]组成，且已经排好序，下一次迭代增加j将保持循环不变式。</p>
+<blockquote>
+<p>如果是形式化的处理，还需要证明while循环的循环不变式。我们不愿陷入形式主义的困境，所以只根据非形式化的来看。<br>终止：for 循环的终止条件是 j &gt; A.length, 因为每次循环j+1，所以必然会有j &#x3D; A.length + 1,我们的子数组A[1]…A[j-1]，就变成了A[1]…A[A.length]由原来的A[1]…A[A.length]组成，且已排好序。因此算法正确</p>
+</blockquote>
+<p>练习1.重新insert_sort，使排序变成降序</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">insert_sort(A)</span><br><span class="line">    <span class="keyword">for</span> j = <span class="number">2</span> to A.length</span><br><span class="line">        key = A[j]</span><br><span class="line">        i = j - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &gt; <span class="number">0</span> and A[i] &lt; key</span><br><span class="line">            A[i+<span class="number">1</span>] = A[i]</span><br><span class="line">            i--</span><br><span class="line">        A[i+<span class="number">1</span>] = key</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据结构和动态数组"><a href="#数据结构和动态数组" class="headerlink" title="数据结构和动态数组"></a>数据结构和动态数组</h2><ul>
+<li>Interface(API&#x2F;ADT): 你想做什么？是一种规范，定义了支持哪些操作。可以理解为问题。</li>
+<li>Data Structure: 实际怎么做，数据实际的表示形式。算法对于操作的支持。可以理解为解决方案。</li>
+</ul>
+<p>接口：</p>
+<ul>
+<li>Sequence<ul>
+<li>Static Sequence Interface: 静态的，数量不可变的。<ul>
+<li>build(x): 新建一个Static Sequence。</li>
+<li>len(): 返回数量</li>
+<li>iter_seq(): 迭代器</li>
+<li>get_at(i): 获取i下标的元素</li>
+<li>set_at(i, x): 设置i下标的元素为x</li>
+<li>get_first()</li>
+<li>get_last()</li>
+<li>set_first()</li>
+<li>set_last()</li>
+</ul>
+</li>
+<li>Dynamic Sequence Interface: 动态的，数量可变的<ul>
+<li>支持上面所有</li>
+<li>insert_at(i, x): 插入某一个位置</li>
+<li>delete_at(i): 删除某一个位置的元素</li>
+<li>insert_first()</li>
+<li>insert_last()</li>
+<li>delete_fist()</li>
+<li>delete_last()</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>数据结构：</p>
+<ul>
+<li>Linked List</li>
+</ul>
+<h2 id="Set-And-Sorting"><a href="#Set-And-Sorting" class="headerlink" title="Set And Sorting"></a>Set And Sorting</h2><p>接口</p>
+<ul>
+<li>Set<ul>
+<li>Container<ul>
+<li>build(A): 根据一个iterable的A,创建</li>
+<li>len(): 返回数量</li>
+</ul>
+</li>
+<li>Static <ul>
+<li>find(k): 返回一个set中的元素</li>
+</ul>
+</li>
+<li>Dynamic <ul>
+<li>insert(k): 插入一个元素到set</li>
+<li>delete(k): 从set中删除一个元素</li>
+</ul>
+</li>
+<li>Order <ul>
+<li>iter_ord(): 迭代器</li>
+<li>find_min(): 获取最小的key</li>
+<li>find_max(): 获取最大的key</li>
+<li>find_next(k): 获取比k大的下一个key</li>
+<li>find_pre(k): 获取比k小的上一个key</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>数据结构</p>
+<ul>
+<li>Array</li>
+<li>Sorted Array</li>
+</ul>
+<p>排序</p>
+<ul>
+<li>破坏性：用一个新的排序后的数组B覆盖数组A</li>
+<li>原地排序：仅仅用O(1)空间来排序</li>
+</ul>
+<p>permutation Sort</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0.html" class="post-title-link" itemprop="url">算法导论</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-15 10:12:47" itemprop="dateCreated datePublished" datetime="2024-04-15T10:12:47+08:00">2024-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0.html" class="post-meta-item leancloud_visitors" data-flag-title="算法导论" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h1><p>线性代数的基本问题是求解线性方程组</p>
+<h2 id="Ax-x3D-b"><a href="#Ax-x3D-b" class="headerlink" title="Ax &#x3D; b"></a>Ax &#x3D; b</h2><p>给定两个方程：<code>2x - y = 0</code> 和 <code>-x + 2y = 3</code>。<br>对于<code>row picture</code> 矩阵是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[2, -1] [x] = [0]</span><br><span class="line">[-1, 2] [y]   [3]</span><br><span class="line">A        X  =  b</span><br></pre></td></tr></table></figure>
+
+<p>画图为</p>
+<p>对于<code>column picture</code> 矩阵是下图，矩阵叫做<code>列的线性组合</code>，解出来x &#x3D; 1, y &#x3D; 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x [2 ]   + y [-1] = [0]</span><br><span class="line">  [-1]       [2 ]   [3]</span><br></pre></td></tr></table></figure>
+
+<p>画图为</p>
+<p>矩阵和向量的乘法：</p>
+<p>1 2 3<br>4 5 6<br>7 8 9 &#x3D; 1｜5 6｜ - 2 |4 6| + 3 |4 5|<br>         |8 9|    |7 9|       |7 8| &#x3D; 1 * -3 - (2 * -6) + (3 * -3) &#x3D; -3 + 12 - 9 &#x3D; 0</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/JAM%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2325,2157 +2618,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DeepSeek.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/DeepSeek.html" class="post-title-link" itemprop="url">MySQL查询路径选择</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-26 10:12:47" itemprop="dateCreated datePublished" datetime="2023-04-26T10:12:47+08:00">2023-04-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-27 18:46:34" itemprop="dateModified" datetime="2025-01-27T18:46:34+08:00">2025-01-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/DeepSeek.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL查询路径选择" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/DeepSeek.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/DeepSeek.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队。</p>
-<h1 id="ChatGPT要被DeepSeek取代了？"><a href="#ChatGPT要被DeepSeek取代了？" class="headerlink" title="ChatGPT要被DeepSeek取代了？"></a>ChatGPT要被DeepSeek取代了？</h1><p>大家都知道，目前的AI方面可以说是GPT遥遥领先，大部分的国产大模型还是在追赶的路上的。</p>
-<p>可是，现在！我国的国产大模型出现了一个巨大利好！那就是DeepSeek诞生了！</p>
-<p>DeepSeek是由知名量化资管巨头幻方量化创立，目前最新发布的<code>DeepSeek R1</code>模型，对标<code>OpenAI o1</code>模型，已经可以免费体验了！</p>
-<p>这可以说是国产大模型的巨大进步！</p>
-<h2 id="DeepSeek的发展"><a href="#DeepSeek的发展" class="headerlink" title="DeepSeek的发展"></a>DeepSeek的发展</h2><p>DeepSeek成立于2023年7月17日，由知名量化资管巨头幻方量化创立。DeepSeek 是一家创新型科技公司，长久以来专注于开发先进的大语言模型（LLM）和相关技术，作为大厂外唯一一家储备万张 A100 芯片的公司，幻方量化为DeepSeek的技术研发提供了强大的硬件支持。</p>
-<p>2023年8月2日，注册资本变更为1000万元，章程备案，投资人变更为宁波程恩企业管理咨询合伙企业，市场主体类型变更为其他有限责任公司。</p>
-<p>2024年9月5日，DeepSeek 官方更新 API 支持文档，宣布合并 DeepSeek Coder V2 和 DeepSeek V2 Chat 两个模型，升级推出全新的 DeepSeek V2.5 新模型。官方表示为向前兼容，API 用户通过 deepseek-coder 或 deepseek-chat 均可以访问新的模型。</p>
-<p>2024年12 月，一份关于 DeepSeek 发布历程、优化方向的专家会议纪要文件在业内流传。对此，DeepSeek 回应称，公司未授权任何人员参与券商投资者交流会，所谓“DeepSeek 专家”非公司人员，所交流信息不实。DeepSeek 表示，公司内部制定有严格的规章制度，明令禁止员工接受外部访谈、参与投资者交流等市场上各类面向投资者的机构信息交流会。相关事项均以公开披露信息为准。</p>
-<p>2025年1月27日，DeepSeek应用登顶苹果美国地区应用商店免费APP下载排行榜，在美区下载榜上超越了ChatGPT。同日，苹果中国区应用商店免费榜显示，DeepSeek成为中国区第一。根据公开报道，DeepSeek的员工规模不及OpenAI的1&#x2F;5，百人出头的公司中，算子、推理框架、多模态等研发工程师以及深度学习方面的研究人员共有约70人，主要在北京分部，其余30多人在杭州总部，多为前端、产品以及商务人员。</p>
-<p>下面是DeepSeek的网址，大家可以打开自己感受一下效果！</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.deepseek.com/">https://www.deepseek.com/</a></p>
-</blockquote>
-<h2 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h2><p>我们可以看到DeepSeek目前登顶了中国区和美国区下载排行榜，更是超过了ChatGPT。</p>
-<p>但是只有实际使用，才能知道大模型的能力。</p>
-<p>大头这次问了大模型两个问题，来进行对比，大家一起看看吧！</p>
-<ul>
-<li>第一个问题是“使用JAVA帮我写一个备忘录的代码”，这个问题主要是看一下两个模型的代码能力。</li>
-</ul>
-<p>首先是<code>DeepSeek</code>。 可以看到基本没啥问题。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MemoApp</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ArrayList&lt;String&gt; memos = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Scanner</span> <span class="variable">scanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;\n备忘录菜单:&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;1. 添加备忘录&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;2. 查看备忘录&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;3. 删除备忘录&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;4. 退出&quot;</span>);</span><br><span class="line">            System.out.print(<span class="string">&quot;请选择操作: &quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="type">int</span> <span class="variable">choice</span> <span class="operator">=</span> scanner.nextInt();</span><br><span class="line">            scanner.nextLine(); <span class="comment">// 清除缓冲区</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">switch</span> (choice) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                    addMemo();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                    viewMemos();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                    deleteMemo();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;退出程序...&quot;</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;无效的选择，请重新输入。&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addMemo</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.print(<span class="string">&quot;请输入备忘录内容: &quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">memo</span> <span class="operator">=</span> scanner.nextLine();</span><br><span class="line">        memos.add(memo);</span><br><span class="line">        System.out.println(<span class="string">&quot;备忘录已添加！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">viewMemos</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (memos.isEmpty()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;没有备忘录。&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;备忘录列表:&quot;</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; memos.size(); i++) &#123;</span><br><span class="line">                System.out.println((i + <span class="number">1</span>) + <span class="string">&quot;. &quot;</span> + memos.get(i));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deleteMemo</span><span class="params">()</span> &#123;</span><br><span class="line">        viewMemos();</span><br><span class="line">        <span class="keyword">if</span> (!memos.isEmpty()) &#123;</span><br><span class="line">            System.out.print(<span class="string">&quot;请输入要删除的备忘录编号: &quot;</span>);</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> scanner.nextInt();</span><br><span class="line">            scanner.nextLine(); <span class="comment">// 清除缓冲区</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (index &gt; <span class="number">0</span> &amp;&amp; index &lt;= memos.size()) &#123;</span><br><span class="line">                memos.remove(index - <span class="number">1</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;备忘录已删除！&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;无效的编号。&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们再看一下GPT的回答。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MemoApp</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用ArrayList来存储备忘录</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ArrayList&lt;String&gt; memos = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 显示菜单</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">showMenu</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;\n===== 备忘录应用 =====&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;1. 添加备忘录&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;2. 查看备忘录&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;3. 删除备忘录&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;4. 退出&quot;</span>);</span><br><span class="line">        System.out.print(<span class="string">&quot;请输入选项: &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加备忘录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">addMemo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Scanner</span> <span class="variable">scanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">        System.out.print(<span class="string">&quot;请输入备忘录内容: &quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">memo</span> <span class="operator">=</span> scanner.nextLine();</span><br><span class="line">        memos.add(memo);</span><br><span class="line">        System.out.println(<span class="string">&quot;备忘录添加成功！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 查看备忘录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">viewMemos</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (memos.isEmpty()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;当前没有备忘录！&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;\n当前的备忘录:&quot;</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; memos.size(); i++) &#123;</span><br><span class="line">                System.out.println((i + <span class="number">1</span>) + <span class="string">&quot;. &quot;</span> + memos.get(i));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 删除备忘录</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deleteMemo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Scanner</span> <span class="variable">scanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">        <span class="keyword">if</span> (memos.isEmpty()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;没有备忘录可以删除！&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.print(<span class="string">&quot;请输入要删除的备忘录编号: &quot;</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> scanner.nextInt() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= <span class="number">0</span> &amp;&amp; index &lt; memos.size()) &#123;</span><br><span class="line">            memos.remove(index);</span><br><span class="line">            System.out.println(<span class="string">&quot;备忘录删除成功！&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;无效的编号！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Scanner</span> <span class="variable">scanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">        <span class="type">int</span> choice;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 程序主循环</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            showMenu();</span><br><span class="line">            choice = scanner.nextInt();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">switch</span> (choice) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                    addMemo();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                    viewMemos();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                    deleteMemo();</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;退出程序...&quot;</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    System.out.println(<span class="string">&quot;无效的选项，请重新输入！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>从这里就能看出来了，这两个模型代码能力差不多。</p>
-<p>那么，我们再来看第二个问题，算是AI难题了。</p>
-<ul>
-<li>第二个问题是“请问9.9和9.11谁大”</li>
-</ul>
-<p>聪明的你们都知道是9.9更大，但是AI能正确回答出来吗？</p>
-<p>这一次，我们先看GPT的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9.11 比 9.9 大。</span><br><span class="line"></span><br><span class="line">在数字比较时，首先看整数部分，如果相等，再比较小数部分。9.11 的小数部分是 .11，而 9.9 的小数部分是 .9，因此 9.11 大于 9.9。</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，GPT回答错误了，真不愧是AI难题啊。</p>
-<p>我们再看看<code>DeepSeek</code>的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">比较 9.9 和 9.11 的大小：</span><br><span class="line"></span><br><span class="line">统一小数位数：</span><br><span class="line"></span><br><span class="line">将 9.9 写成 9.90，方便比较。</span><br><span class="line"></span><br><span class="line">逐位比较：</span><br><span class="line"></span><br><span class="line">整数部分：9 = 9</span><br><span class="line"></span><br><span class="line">十分位：9 = 9</span><br><span class="line"></span><br><span class="line">百分位：0 &lt; 1</span><br><span class="line"></span><br><span class="line">结论：</span><br><span class="line"></span><br><span class="line">9.90 &lt; 9.11</span><br><span class="line"></span><br><span class="line">最终答案：\boxed&#123;9.11\ \text&#123;更大&#125;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，也回答错了。好吧，这么看，两个模型不想上下。</p>
-<p>但是，我们换一个问法呢？</p>
-<p>比如问它们<code>9.9-9.11等于多少</code>?</p>
-<p>我们再看看GPT的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9.9 - 9.11 = 0.79</span><br><span class="line"></span><br><span class="line">所以，结果是 0.79。</span><br></pre></td></tr></table></figure>
-
-<p>这个回答没毛病！回答正确，可是我们问它<code>9.9和9.11谁大</code>,它却回答不出来。</p>
-<p>并且我们都知道，模型是有<code>上下文</code>这个概念的，我们现在根据这个上下文再问一次。问题是<code>那么9.9和9.11谁大</code></p>
-<p>下面是GPT的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9.9 比 9.11 小。</span><br><span class="line"></span><br><span class="line">虽然 9.9 的整数部分和 9.11 的整数部分相同，但它的小数部分是 .9，而 9.11 的小数部分是 .11。所以 9.9 小于 9.11。</span><br></pre></td></tr></table></figure>
-
-<p>在拥有上下文的过程中，GPT依然回答错误！！</p>
-<p>好了，接下来看看<code>DeepSeek</code>的回答。</p>
-<p>问题是<code>9.9-9.11等于多少</code>?</p>
-<p>回答是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">计算 9.9 - 9.11 的步骤如下：</span><br><span class="line"></span><br><span class="line">对齐小数位数：</span><br><span class="line"></span><br><span class="line">将 9.9 写成 9.90，方便计算。</span><br><span class="line"></span><br><span class="line">逐位相减：</span><br><span class="line"></span><br><span class="line">百分位：0 - 1，不够减，向十分位借 1，变成 10 - 1 = 9</span><br><span class="line"></span><br><span class="line">十分位：8（借出 1 后） - 1 = 7</span><br><span class="line"></span><br><span class="line">个位：9 - 9 = 0</span><br><span class="line"></span><br><span class="line">结果为负数：</span><br><span class="line"></span><br><span class="line">由于 9.90 &lt; 9.11，结果为负。</span><br><span class="line"></span><br><span class="line">最终答案：</span><br><span class="line"></span><br><span class="line">\boxed&#123;-0.21&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以发现，错误了，错的离谱，说明<code>DeepSeek</code>还是和GPT有一些差距的。</p>
-<h3 id="R1模型"><a href="#R1模型" class="headerlink" title="R1模型"></a>R1模型</h3><p>有人说了，你这是不是没用<code>DeepSeek</code>的R1模型啊。</p>
-<p>确实是这样哈哈哈。</p>
-<p>我们来看一下R1模型的效果。</p>
-<p>问题<code>9.9-9.11等于多少</code>?</p>
-<p><img src="/../images/AI01.jpg" alt="概念学习"></p>
-<p>可以看到，这个答案依然是错误的……</p>
-<p>那么我们换回刚才的问题<code>请问9.9和9.11谁大</code>?</p>
-<p>见证奇迹的时候。</p>
-<p><img src="/../images/AI02.jpg" alt="概念学习"></p>
-<p>好吧，奇迹没有出现，依然错误。</p>
-<p>不过能看出来大模型确实是在思考，看一下这次的回答，有详细步骤，有纠正，有问题根源，等等，但是依然回答错误了。</p>
-<p>下面是具体的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">答案：9.11 更大</span><br><span class="line"></span><br><span class="line">9.11</span><br><span class="line"> </span><br><span class="line">详细比较步骤：</span><br><span class="line">统一小数位数</span><br><span class="line">将 9.9 补位为 9.90，使其与 9.11 的小数位数一致，便于逐位比较。</span><br><span class="line"></span><br><span class="line">逐位比较</span><br><span class="line"></span><br><span class="line">整数部分：9 = 9</span><br><span class="line"></span><br><span class="line">十分位：9（来自 9.90） &gt; 1（来自 9.11）</span><br><span class="line">→ 此时已能判断 9.90 &gt; 9.11</span><br><span class="line"></span><br><span class="line">百分位（补充说明）：0（来自 9.90） &lt; 1（来自 9.11）</span><br><span class="line">→ 但十分位已分出大小，无需继续比较。</span><br><span class="line"></span><br><span class="line">结论</span><br><span class="line">虽然百分位 0 &lt; 1，但关键比较位是十分位，因此 9.90（即 9.9） &gt; 9.11。</span><br><span class="line">然而，这里的结论需要修正！</span><br><span class="line">实际正确的逻辑是：</span><br><span class="line"></span><br><span class="line">9.90 的十分位是 9，而 9.11 的十分位是 1，因此 9.90 &gt; 9.11。</span><br><span class="line">但根据数学事实，9.9（即 9.90）确实小于 9.11，因为正确的逐位比较应为：</span><br><span class="line"></span><br><span class="line">整数部分：9 = 9</span><br><span class="line"></span><br><span class="line">十分位：9 &gt; 1</span><br><span class="line">→ 因此 9.90 &gt; 9.11？</span><br><span class="line">这显然矛盾，说明逻辑存在问题！</span><br><span class="line"></span><br><span class="line">关键纠正：</span><br><span class="line">上述步骤存在错误，正确的比较应为：</span><br><span class="line"></span><br><span class="line">9.9 实际是 9.90，而 9.11 是 9.11。</span><br><span class="line"></span><br><span class="line">比较时，先看整数位（9 vs. 9 → 相等），再看十分位（9 vs. 1 → 9 更大）。</span><br><span class="line"></span><br><span class="line">因此，9.90 &gt; 9.11，即 9.9 &gt; 9.11。</span><br><span class="line">然而，这与实际计算结果矛盾（例如，9.9 - 9.11 = -0.21，结果为负说明 9.9 &lt; 9.11）。</span><br><span class="line">这说明原问题存在陷阱！</span><br><span class="line"></span><br><span class="line">问题根源：</span><br><span class="line">误区：误认为小数位数多的一定更大。</span><br><span class="line"></span><br><span class="line">正解：</span><br><span class="line">将两数统一为相同小数位数：</span><br><span class="line"></span><br><span class="line">9.90 vs 9.11</span><br><span class="line">十分位：9 &gt; 1 → 9.90 &gt; 9.11（正确结论）。</span><br><span class="line"></span><br><span class="line">但实际数学中，9.9 确实小于 9.11，因为 9.9 = 9.90，而 9.90 &lt; 9.11 不成立。</span><br><span class="line">这里存在逻辑矛盾，需重新审视。</span><br><span class="line"></span><br><span class="line">最终正确结论：</span><br><span class="line">通过数值验证：</span><br><span class="line"></span><br><span class="line">9.9 = 9.90，而 9.11 = 9.11。</span><br><span class="line"></span><br><span class="line">由于 9.90 &gt; 9.11，因此 9.9 &gt; 9.11。</span><br><span class="line">但根据减法结果 9.9 - 9.11 = -0.21（负数），实际应为 9.9 &lt; 9.11。</span><br><span class="line">矛盾源于比较时的错误逻辑！</span><br><span class="line"></span><br><span class="line">正解修正：</span><br><span class="line">正确比较方法：</span><br><span class="line"></span><br><span class="line">9.90vs9.11</span><br><span class="line">整数部分：9 = 9</span><br><span class="line"></span><br><span class="line">十分位：9 &gt; 1 → 9.90 &gt; 9.11</span><br><span class="line">因此，9.9 &gt; 9.11，但减法结果 9.9 - 9.11 = -0.21 表明应为 9.9 &lt; 9.11，矛盾！</span><br><span class="line">问题出在数值的书写或理解错误。</span><br><span class="line"></span><br><span class="line">终极答案：</span><br><span class="line">实际应为 9.11 &gt; 9.9，因为：</span><br><span class="line"></span><br><span class="line">9.11 = 9 + 0.11</span><br><span class="line"></span><br><span class="line">9.9 = 9 + 0.90</span><br><span class="line">但 0.90 &gt; 0.11，因此 9.9 &gt; 9.11。</span><br><span class="line">然而，减法结果为负，说明原题可能存在表述错误。</span><br><span class="line">正确答案应以数值计算为准：</span><br><span class="line"></span><br><span class="line">9.9−9.11=−0.21⇒ 9.11 更大</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，根本原因是因为大模型认为<code>9.9 = 9.90</code>。</p>
-<p>所以，DeepSeek目前还是没办法替代GPT的，不过，国产大模型也很强大了，相信不久的将来是可以超越GPT的！</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><p>以上就是今天的内容了，大家有任何疑问可以打在评论区，一起交流～</p>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
-<p>发送“电子书”即可领取价值上千的电子书资源。</p>
-<p>部分电子书如图所示。</p>
-<p><img src="/../images/bottom1.png" alt="概念学习"></p>
-<p><img src="/../images/bottom2.png" alt="概念学习"></p>
-<p><img src="/../images/bottom3.png" alt="概念学习"></p>
-<p><img src="/../images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/CMU15445%E7%AC%94%E8%AE%B0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/CMU15445%E7%AC%94%E8%AE%B0.html" class="post-title-link" itemprop="url">CMU15445笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-26 10:12:47" itemprop="dateCreated datePublished" datetime="2023-04-26T10:12:47+08:00">2023-04-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CMU15445/" itemprop="url" rel="index"><span itemprop="name">CMU15445</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/CMU15445%E7%AC%94%E8%AE%B0.html" class="post-meta-item leancloud_visitors" data-flag-title="CMU15445笔记" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/CMU15445%E7%AC%94%E8%AE%B0.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/CMU15445%E7%AC%94%E8%AE%B0.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="CMU15445笔记"><a href="#CMU15445笔记" class="headerlink" title="CMU15445笔记"></a>CMU15445笔记</h1><h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><p>数据库就是管理文件的一个程序。将文件管理抽象出来不同的结构，如关系数据库，文档数据库，图数据库等。方便管理，使用，并能进行复杂的操作，如事务等。更加通用使任何语言都可以使用。对于多个进程并发修改一个文件，那么数据库可以提供更好的性能和解决方案。</p>
-<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><ul>
-<li>关系模型：大多数数据库使用的</li>
-<li>键值对模型：NOSql使用的，比如redis</li>
-<li>图模型：NOSql使用的</li>
-<li>文档模型：NOSql使用的，比如mongoDB</li>
-<li>列存储模型</li>
-<li>数组，向量模型：向量数据库，如Fassi</li>
-<li>分组模型，网络模型，多值模型：已经很少使用的模型</li>
-</ul>
-<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>Ted Codd在1969年设计了关系模型。发表了<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/362384.362685">A relational model of data for large shared data banks</a></p>
-<p>关系模型将物理层和逻辑层分离，当数据的内部表示发生变化时，甚至当外部表示的某些方面发生变化时，用户在终端和大多数应用程序上的活动应该不受影响。</p>
-<p>关系模型提供了一种仅用数据的自然结构来描述数据的方法，因此，它为高级数据语言提供了一个基础，这种语言将一方面在程序之间产生最大的独立性，另一方面在机器表示和数据组织之间产生最大的独立性。另一个优点是，它为处理关系的可导出性、冗余性和一致性提供了坚实的基础。</p>
-<p>仍然需要消除的三种主要数据依赖是：顺序依赖、索引依赖和访问路径依赖。</p>
-<ul>
-<li>顺序依赖：程序展示的顺序和文件内容的存储顺序并不一致，需要各自独立。</li>
-<li>索引依赖：如果程序使用索引的时候，索引被删除那么程序将出错。</li>
-<li>访问路径依赖：访问数据的时候依赖数据的物理结构。</li>
-</ul>
-<p><code>关系</code>指的是数学意义上的关系，对于给定集合S1,S2,S3…Sn，R是n个集合上的关系，如果它是n个元组的集合，每个元组的第一个元素来自S1,第二个来自S2，以此类推。我们称Sj是R上的第j个定义域。R的阶为n(degree n)，阶为1的时候称为一元关系，2的时候称为二元关系，阶为n称为n元关系。</p>
-<p>关键原则：</p>
-<ul>
-<li>将数据存储在简单的数据结构(关系)中</li>
-<li>物理存储留给DBMS实现</li>
-<li>通过高级语言访问数据，DBMS确定最佳策略。</li>
-</ul>
-<p>结构采用关系。确保数据库内容满足完整性约束。程序通过接口来访问和修改数据库内容。</p>
-<p>关系是无序的，n元关系就是n个列的表。一个元组是一行记录。</p>
-<h2 id="高级SQL"><a href="#高级SQL" class="headerlink" title="高级SQL"></a>高级SQL</h2><p>PostegreSQL:由伯克利大学开发，是之前开发Ingres的人开发的。</p>
-<p>IBM的DB2支持SQL,所以SQL成为了标准。</p>
-<p>数据库支持SQL,最低要支持SQL-92标准。</p>
-<p>下面的sql在postgreSQL中会报错，mysql中如果<code>sql_mode</code>是<code>ansi</code>也会报错，如果<code>sql_mode</code>是<code>traditional</code>就不会报错，而是会随机选一个cid展示出来。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">avg</span>(s.gpa), e.cid <span class="keyword">from</span> enrolled <span class="keyword">as</span> e,student <span class="keyword">as</span> s</span><br><span class="line"><span class="keyword">where</span> e.sid <span class="operator">=</span> s.sid;</span><br></pre></td></tr></table></figure>
-
-<h3 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h3><table>
-<thead>
-<tr>
-<th align="left">名称</th>
-<th align="left">大小写</th>
-<th align="left">引号</th>
-<th align="left">字符串拼接</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">SQL-92</td>
-<td align="left">敏感的</td>
-<td align="left">单引号</td>
-<td align="left">||</td>
-</tr>
-<tr>
-<td align="left">PostgreSQL</td>
-<td align="left">敏感的</td>
-<td align="left">单引号</td>
-<td align="left">+</td>
-</tr>
-<tr>
-<td align="left">mysql</td>
-<td align="left">不敏感的</td>
-<td align="left">单引号&#x2F;双引号</td>
-<td align="left">concat &#x2F; 空格</td>
-</tr>
-<tr>
-<td align="left">SQLite</td>
-<td align="left">敏感的</td>
-<td align="left">单引号&#x2F;双引号</td>
-<td align="left">+</td>
-</tr>
-<tr>
-<td align="left">｜DB2</td>
-<td align="left">敏感的</td>
-<td align="left">单引号</td>
-<td align="left">||</td>
-</tr>
-<tr>
-<td align="left">Oracle</td>
-<td align="left">敏感的</td>
-<td align="left">单引号</td>
-<td align="left">||</td>
-</tr>
-</tbody></table>
-<h3 id="时间日期处理"><a href="#时间日期处理" class="headerlink" title="时间日期处理"></a>时间日期处理</h3><table>
-<thead>
-<tr>
-<th align="left">名称</th>
-<th align="left">当前日期 NOW()</th>
-<th align="left">当前日期 CURRENT_TIMESTAMP()</th>
-<th align="left">当前日期 CURRENT_TIMESTAMP</th>
-<th align="left">日期差值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">PostgreSQL</td>
-<td align="left">2023-04-26 14:27:01.790522+08</td>
-<td align="left">不支持</td>
-<td align="left">2023-04-26 14:27:32.280334+08</td>
-<td align="left">select DATE(‘2018-08-29’) - DATE(‘2018-01-01’); 结果240</td>
-</tr>
-<tr>
-<td align="left">mysql</td>
-<td align="left">2023-04-26 14:28:36</td>
-<td align="left">2023-04-26 14:28:44</td>
-<td align="left">2023-04-26 14:28:56</td>
-<td align="left">select DATEDIFF(DATE(“2018-08-29”),DATE(“2018-01-01”)); 结果240</td>
-</tr>
-<tr>
-<td align="left">SQLite</td>
-<td align="left">不支持</td>
-<td align="left">不支持</td>
-<td align="left">2023-04-26 06:30:47</td>
-<td align="left">select CAST((julianday(‘2018-08-29’) - julianday(‘2018-01-01’)) as INT) as days; 结果 240</td>
-</tr>
-</tbody></table>
-<h3 id="复制表数据"><a href="#复制表数据" class="headerlink" title="复制表数据"></a>复制表数据</h3><p>create table会创建表，insert into需要表已经存在。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> student2 (</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> student</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student2(</span><br><span class="line">    <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> student</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h3 id="获取id最大的一个学生数据"><a href="#获取id最大的一个学生数据" class="headerlink" title="获取id最大的一个学生数据"></a>获取id最大的一个学生数据</h3><p>下面的是错误做法，因为不知道id最大的name是谁，会报错，如果sql_mode&#x3D;tranditional，会执行成功，但是name是随机的。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">MAX</span>(e.sid),s.name <span class="keyword">from</span> enrolled <span class="keyword">as</span> e,student <span class="keyword">as</span> s</span><br><span class="line"><span class="keyword">where</span> e.sid <span class="operator">=</span> s.sid</span><br></pre></td></tr></table></figure>
-<p>下面的在postgresql和mysql都可以执行成功，并获取到id最大的name数据。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sid, name <span class="keyword">from</span> student</span><br><span class="line"><span class="keyword">where</span> sid <span class="keyword">in</span> (<span class="keyword">select</span> <span class="built_in">max</span>(sid) <span class="keyword">from</span> enrolled)</span><br></pre></td></tr></table></figure>
-
-<p>下面的SQL在postgresql中可以执行成功，结果和上面的一样，而在mysql8中报错<code>This version of MySQL doesn&#39;t yet support &#39;LIMIT &amp; IN/ALL/ANY/SOME subquery&#39;</code></p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sid, name <span class="keyword">from</span> student</span><br><span class="line"><span class="keyword">where</span> sid <span class="keyword">in</span> (<span class="keyword">select</span> sid <span class="keyword">from</span> enrolled <span class="keyword">order</span> <span class="keyword">by</span> sid <span class="keyword">desc</span> limit <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="获取没有学生报名的课程"><a href="#获取没有学生报名的课程" class="headerlink" title="获取没有学生报名的课程"></a>获取没有学生报名的课程</h3><p>下面的sql在postgresql 和 mysql 中都可以得到正确的结果</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course </span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> enrolled <span class="keyword">where</span> course.cid <span class="operator">=</span> enrolled.cid);</span><br></pre></td></tr></table></figure>
-
-<h3 id="window窗口"><a href="#window窗口" class="headerlink" title="window窗口"></a>window窗口</h3><p><code>ROW_NUMBER</code>和<code>RANK</code>都需要和<code>OVER</code>一起使用。</p>
-<ul>
-<li>ROW_NUMBER(): 显示当前行号</li>
-<li>RANK() : 显示排序后的排名，如果没有排序，都是1</li>
-<li>OVER()<ul>
-<li>PARTITION BY 进行分组</li>
-<li>GROUP BY 进行分组</li>
-<li>ORDER BY 排序</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/15445001.png" alt="001"></p>
-<p><img src="/../images/15445002.png" alt="002"></p>
-<p><img src="/../images/15445003.png" alt="003"></p>
-<h4 id="获取每个课程中分数最高的学生信息"><a href="#获取每个课程中分数最高的学生信息" class="headerlink" title="获取每个课程中分数最高的学生信息"></a>获取每个课程中分数最高的学生信息</h4><p>下面的SQL，在postgresql中执行成功，mysql8执行报错。</p>
-<p>首先查询所有课程信息，并按照课程分组，按照分数排序。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line"><span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line"><span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/15445004.png" alt="004"></p>
-<p>接着搜索上表中分数为1，也就是分数最高的学生。也就是每个课分数最高的学生信息。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">    <span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line">    <span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled) <span class="keyword">AS</span> ranking</span><br><span class="line"><span class="keyword">WHERE</span> ranking.rank <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/15445005.png" alt="005"></p>
-<h3 id="CTE-common-table-expressions"><a href="#CTE-common-table-expressions" class="headerlink" title="CTE(common table expressions)"></a>CTE(common table expressions)</h3><p>使用<code>CTE</code>实现获取每个课程中分数最高的学生信息。</p>
-<p>通过<code>WITH</code>语句来声明一个临时表。表名<code>cteSource</code>，表的内容就是最的sid，通过<code>SELECT MAX(sid) FROM enrolled</code>查询出来的结果。字段名叫<code>maxId</code>。</p>
-<p>然后在查询语句里面就可以连接<code>cteSource</code>表，然后通过sid &#x3D; cteSource.maxId 来获取到sid最大的用户信息。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cteSource (maxId) <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">MAX</span>(sid) <span class="keyword">FROM</span> enrolled</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> student, cteSource</span><br><span class="line"><span class="keyword">WHERE</span> student.sid <span class="operator">=</span> cteSource.maxId</span><br></pre></td></tr></table></figure>
-
-<p>还有一些其他的用法，比如:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cte1 (col1) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">),</span><br><span class="line">cte2 (col2) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">2</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> cte1, cte2;</span><br></pre></td></tr></table></figure>
-
-<h3 id="lateral-join"><a href="#lateral-join" class="headerlink" title="lateral join"></a>lateral join</h3><p>mysql目前还不支持该功能，postgreSQL和Sqlserver等支持。</p>
-<h2 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h2><p>页的三个概念</p>
-<ol>
-<li>硬件上的页面(通常是4KB)</li>
-<li>操作系统上的页面(4KB,x64 2MB&#x2F;1GB)</li>
-<li>数据库页面(512B-32KB)</li>
-</ol>
-<p>磁盘和内存通信是一页一页的，如果数据都在一页里，后续的访问请求就可以走内存了，要不然还的从磁盘获取。内存中可以获取bit数据。</p>
-<p>系统设计目标：给应用程序一个错觉，能提供足够的内存将整个数据库存入内存中。<br>实现：谨慎的最小化每次从磁盘读取内容或运行查询时所带来的影响。<br>流程：</p>
-<ul>
-<li>查询执行器：向内存中的<code>buffer pool</code>请求查询内容。</li>
-<li>buffer pool: 如果数据所在的页已经在buffer pool中，就直接返回。如果数据所在的页不在buffer pool中，就向磁盘中的<code>database file</code>请求。</li>
-<li>database file: 有页目录，还有具体的页，数据存在页中，查询页目录找到对应的页返回给<code>buffer pool</code>。</li>
-</ul>
-<p><img src="/../images/15445006.png" alt="006"></p>
-<p>上面的步骤操作系统本身就可以实现，比如使用<code>mmap</code>，但是操作系统是统一的动作，遇到一些问题不知道该如何处理，而DBMS则可以根据不同的情况做不同的处理，进行优化。像主流的<code>mysql</code>,<code>SqlServer</code>,<code>Oracle</code>都没有用<code>mmap</code>。<code>mongoDB</code>早期使用的<code>mmap</code>，后面也是用<code>WiredTiger</code>替换掉了<code>mmap</code>。</p>
-<p>DBMS自己实现的话，主要关心的两个问题:</p>
-<ol>
-<li>如何表示磁盘上文件的数据</li>
-<li>如何管理内存以及在硬盘间移动数据</li>
-</ol>
-<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
-<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
-<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
-<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
-<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
-<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
-<ul>
-<li>堆存储</li>
-<li>树存储</li>
-<li>有序文件存储（ISAM）</li>
-<li>hashing文件存储</li>
-</ul>
-<p>堆存储</p>
-<ul>
-<li>无序的，保存的顺序和存储的顺序无关。</li>
-<li>需要读写page</li>
-<li>遍历所有的page</li>
-<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
-<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
-</ul>
-<p>page directory</p>
-<ul>
-<li>存储page ID和所在位置的关系</li>
-<li>存储page的空闲空间信息</li>
-</ul>
-<p><img src="/../images/15445010.png" alt="010"></p>
-<p>page header</p>
-<ul>
-<li>page 大小</li>
-<li>checksum 校验和</li>
-<li>DBMS版本信息</li>
-<li>事务可见性</li>
-<li>压缩信息</li>
-</ul>
-<h4 id="page-layout"><a href="#page-layout" class="headerlink" title="page layout"></a>page layout</h4><h5 id="tuple-oriented-storage"><a href="#tuple-oriented-storage" class="headerlink" title="tuple oriented storage"></a>tuple oriented storage</h5><p>一般想法，直接存储，并在后面追加，但是对于可变数据长度很难管理。</p>
-<ul>
-<li>记录page数，也就是page内部可插入的偏移量</li>
-<li>一个一个tupe按照顺序存储</li>
-</ul>
-<p><img src="/../images/15445007.png" alt="007"></p>
-<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
-<ul>
-<li>slotted pages<ul>
-<li>slot array 存储插槽信息的偏移量，通过他找到对应的tuple</li>
-<li>支持可变长度的 tuple</li>
-<li>但是会产生一些碎片空间，因为太小，tuple放不下。</li>
-<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/15445008.png" alt="008"></p>
-<p><code>record ID</code>表示一个tuple的物理位置,不同的DBMS有不同的名称，来表示数据的唯一位置，比如<code>postgresql</code>的<code>ctid</code>,<code>oracle</code>的<code>rowid</code>。<code>ctid</code>由<code>page id</code>和<code>slot number</code>组成。</p>
-<p><img src="/../images/15445009.png" alt="009"></p>
-<p>插入新的tuple的时候</p>
-<ol>
-<li>检查page direactory,找到一个page里面有空的可用的slot</li>
-<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存</li>
-<li>在page里面检查slot array，找到一个空的空间，将tuple插入</li>
-</ol>
-<p>更新tuple的时候</p>
-<ol>
-<li>检查page direactory,找到tuple对应的page</li>
-<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存</li>
-<li>在page里面通过slot array获取tuple的偏移量</li>
-<li>如果数据空间合适，那么直接覆盖该tuple，否则，将原来的tuple标记为已删除，并将新tuple插入其他page。</li>
-</ol>
-<p>因此更新的时候有一些问题</p>
-<ul>
-<li>page会产生碎片空间</li>
-<li>更新的时候需要从磁盘获取整个page</li>
-<li>更新多条数据的时候，可能多个tuple在多个page中，产生随机IO</li>
-</ul>
-<p>所以有些DBMS不能更新数据，只能增加数据，比如HDFS等</p>
-<h5 id="Log-Structured-Storage"><a href="#Log-Structured-Storage" class="headerlink" title="Log Structured Storage"></a>Log Structured Storage</h5><p>比如HBase,ClickHouse,RocksDB,LevelDB都是这个方式。 </p>
-<p>这种方式的一些问题：</p>
-<ul>
-<li>Write-Amplification:在该tuple的生命周期里面可能写入无数次磁盘，并一直在那里且不被需要。</li>
-<li>Compaction is Expensive：</li>
-</ul>
-<h5 id="Index-Organized-Storage"><a href="#Index-Organized-Storage" class="headerlink" title="Index Organized Storage"></a>Index Organized Storage</h5><p>tuple</p>
-<ul>
-<li>header</li>
-<li>列1</li>
-<li>列2</li>
-<li>列n</li>
-</ul>
-<h4 id="tupe-layout"><a href="#tupe-layout" class="headerlink" title="tupe layout"></a>tupe layout</h4><p>tuple就是一堆bit，DBMS解释他们的作用。里面包含</p>
-<ul>
-<li>header</li>
-<li>data</li>
-</ul>
-<h5 id="data-layout"><a href="#data-layout" class="headerlink" title="data layout"></a>data layout</h5><p>table foo</p>
-<ul>
-<li>id int primary key</li>
-<li>value bigint</li>
-</ul>
-<p><img src="/../images/15445011.png" alt="011"></p>
-<h5 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h5><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
-<p><img src="/../images/15445012.png" alt="012"></p>
-<h5 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h5><p>可变长度的数据<code>varchar</code>,<code>varbinary</code>,<code>text</code>,<code>blob</code>,他们的长度存在header里面。</p>
-<p>日期时间类型存储的是时间戳。</p>
-<p>float&#x2F;real&#x2F;double: 是浮点数，cpu支持浮点数运算，优点是速度快，但是会精度缺失<br>decimal: 是定点数，运算速度慢，但是精度高。</p>
-<p><img src="/../images/15445013.png" alt="013"></p>
-<p>large values，应该避免这样，因为维护overflow page很麻烦。</p>
-<ul>
-<li>tuple中存储另外一个page页的指针，将具体数据存放到另外一个page页中。</li>
-<li>postgresql中叫<code>toast</code>，如果数据大于2KB，就会放到toast中，tuple中只存储指针。</li>
-<li>mysql中叫<code>overflow page</code>，如果数据大于1&#x2F;2的page大小，就会放进去，tuple中只存储指针。</li>
-</ul>
-<p>外部存储</p>
-<ul>
-<li>tuple中存储指向外部文件的指针或者文件地址。</li>
-</ul>
-<p>NULL存储</p>
-<ul>
-<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
-<li>列数据库通常使用占位符来标识NULL</li>
-<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
-<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
-</ul>
-<p>catalogs 用来存储数据库元信息，大多数数据库将这些信息存到一张表里面</p>
-<ul>
-<li>表，字段，索引，视图等</li>
-<li>用户，权限，安全等</li>
-<li>内部数据统计等</li>
-<li>infomation schemal api 通过这个来获取catalogs信息<ul>
-<li>mysql<ul>
-<li>show tables 获取所有的表</li>
-<li>describe table_name 获取表的信息</li>
-</ul>
-</li>
-<li>postgresql<ul>
-<li>\d or \d+ 获取所有的表</li>
-<li>\d table_name 获取表信息</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="DATABASE-WORKLOADS"><a href="#DATABASE-WORKLOADS" class="headerlink" title="DATABASE WORKLOADS"></a>DATABASE WORKLOADS</h3><p>OLTP</p>
-<ul>
-<li>通常是业务侧使用的传统数据库，比如oracle,postgresql,mysql</li>
-<li>小的业务多次执行，比如多个简单的插入，更新，查询</li>
-</ul>
-<p>OLAP</p>
-<ul>
-<li>通常是大数据，数据分析来使用，比如Hbase等，支持复杂的数据查询</li>
-<li>OLAP位于OLTP的后方</li>
-</ul>
-<p>HTAP</p>
-<ul>
-<li>OLTP和OLAP的混合，两个都可以做</li>
-</ul>
-<p><img src="/../images/15445014.png" alt="014"></p>
-<p>N-ary 模型</p>
-<ul>
-<li>行存储模型</li>
-<li>page里面是按行存储的，每个tuple就是一行</li>
-</ul>
-<p>优点</p>
-<ul>
-<li>快速的insert,update,delete</li>
-<li>查找的优势是数据都在一起</li>
-<li>能在集群中使用 <code>index-oriented</code>物理存储方式</li>
-</ul>
-<p>缺点</p>
-<ul>
-<li>不适合扫描table中大部分<code>and/or</code>属性的子集</li>
-<li>访问的内存局部性糟糕，查找数据的弊端是会加载一个page的时候会加载不需要的行数据</li>
-<li>不适合压缩，因为一个page里面有不同的<code>value domains</code></li>
-</ul>
-<p>Decomposition 模型</p>
-<ul>
-<li>列存储模型</li>
-<li>一个page里面是一列数据</li>
-</ul>
-<p>优点</p>
-<ul>
-<li>优势是查找的时候不会加载不需要的数据</li>
-<li>更快的查询过程，因为有更好的局部性和<code>cached data</code>重用</li>
-<li>更好的数据压缩</li>
-</ul>
-<p>缺点</p>
-<ul>
-<li>劣势是查找的数据不在一起，需要去各个page里面找。所以insert update delete也更慢。</li>
-</ul>
-<p>列存储查询的时候处理where子句以后需要找到对应的其他列在其他page中的位置，有两个方法，通常使用第一个方法，第二个方法并不好</p>
-<ul>
-<li>固定长度：每个page中的每个列的长度都固定，顺序也一样，这样通过where子句对应列的偏移量，就可以确定其余列的偏移量</li>
-<li>内嵌tuple id: 每个值里面都加入对应的tuple id，根据tuple id查询其他列</li>
-</ul>
-<p>Partition Attributes Across(PAX) Storage 模型</p>
-<ul>
-<li>将行存储和列存储混合的模型</li>
-<li>目标是保留列存储的快速处理和行存储的空间局部性优势（这里空间局部性优势指访问的数据在一起）</li>
-<li>比如<a target="_blank" rel="noopener" href="https://orc.apache.org/">Apache ORC</a>,<a target="_blank" rel="noopener" href="https://arrow.apache.org/">Apache Arrow</a>, <a target="_blank" rel="noopener" href="https://parquet.apache.org/">Apache Parquet</a>.</li>
-</ul>
-<p>PAX 物理数据组织</p>
-<ul>
-<li>水平划分为<code>row groups</code>，即一些行数据的集合</li>
-<li>在<code>row groups</code>里面垂直划分为<code>column chunks</code>，即列的集合，也就是列存储方式</li>
-<li>每个<code>column chunks</code>下面可能还会有page</li>
-</ul>
-<p><img src="/../images/15445015.png" alt="015"></p>
-<h3 id="数据库压缩"><a href="#数据库压缩" class="headerlink" title="数据库压缩"></a>数据库压缩</h3><p>目标1：必须产生固定长度的值<br>目标2：在查询期间尽可能推迟解压缩，你不希望先解压缩在查询，这样很占空间且影响速度<br>目标3：必须是无损方案</p>
-<p>压缩粒度</p>
-<ul>
-<li>Block-level: 压缩同一张表的tuple</li>
-<li>Tuple-level: 压缩整个tuple的内容（仅限行存储）</li>
-<li>Attribute-level：压缩同一个tuple的多个属性或单个属性</li>
-<li>Column-level：压缩存储于多个tuple中的一个或多个属性的多个值（仅限列存储）</li>
-</ul>
-<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
-<p><img src="/../images/15445016.png" alt="016"></p>
-<h4 id="Column-level-压缩算法"><a href="#Column-level-压缩算法" class="headerlink" title="Column-level 压缩算法"></a>Column-level 压缩算法</h4><h5 id="run-length-encoding"><a href="#run-length-encoding" class="headerlink" title="run length encoding"></a>run length encoding</h5><p>将单个column中的相同值压缩成三元组，需要对列进行智能排序，以最大限度地提高压缩机会。</p>
-<ul>
-<li>属性的值</li>
-<li>column segment的起始位置</li>
-<li>值的数量</li>
-</ul>
-<p>比如下面的数据，将压缩成右边的数据，(Y,0,3)，代表值是Y，起始位置0,值的数量有3个。后面的压缩数据是一样的。这种压缩方法可以快速计算count的数量等。</p>
-<p>如果你的值类型很少，且有序，那么将大大减少空间占用。</p>
-<p><img src="/../images/15445017.png" alt="017"></p>
-<h5 id="bit-packing"><a href="#bit-packing" class="headerlink" title="bit packing"></a>bit packing</h5><p>如果字段里面的值都比较小，但是column type很大，可以忽略掉不需要的bit，比如int是32 bit，但是里面的值都很小，用不了这么多，就可以忽略他们。</p>
-<p><img src="/../images/15445018.png" alt="018"></p>
-<h5 id="bit-map-encoding"><a href="#bit-map-encoding" class="headerlink" title="bit map encoding"></a>bit map encoding</h5><p>使用bit map来标识数据值，仅仅适用于值的类型比较少的。</p>
-<p><img src="/../images/15445019.png" alt="019"></p>
-<h5 id="delta-encoding"><a href="#delta-encoding" class="headerlink" title="delta encoding"></a>delta encoding</h5><p>找到一个基本的数据，以它为基础，进行压缩，+1，-1这种。再将其按照<code>run length encoding</code>的方式压缩，可以再次节省空间。</p>
-<p><img src="/../images/15445020.png" alt="020"></p>
-<h5 id="DICTIONARY-COMPRESSION"><a href="#DICTIONARY-COMPRESSION" class="headerlink" title="DICTIONARY COMPRESSION"></a>DICTIONARY COMPRESSION</h5><p>按照字典将数据进行映射，并存储，这样可以节省空间，如果在字典映射的时候还能先排序，那么还可以完成将<code>where like &#39;and%&#39;</code>转成<code>where between 10 and 20</code>。</p>
-<p><img src="/../images/15445021.png" alt="021"></p>
-<h2 id="buffer-pool-和内存管理"><a href="#buffer-pool-和内存管理" class="headerlink" title="buffer pool 和内存管理"></a>buffer pool 和内存管理</h2><p>时间管理</p>
-<ul>
-<li>将数据写入磁盘的何处</li>
-<li>目标是经常被一起使用的pages放在磁盘中也是一起的地方。</li>
-</ul>
-<p>空间管理</p>
-<ul>
-<li>何时将pages读入内存，何时将pages写入磁盘</li>
-<li>目标是最小化的解决必须从磁盘读取数据这个事</li>
-</ul>
-<p>frame</p>
-<ul>
-<li>buffer pool中的一块内存区域</li>
-<li>相当于page里面的slot</li>
-</ul>
-<p>page table</p>
-<ul>
-<li>记录pages在当前buffer pool中的位置,通过page table 和 page id可以知道在哪个frame中。</li>
-</ul>
-<p><img src="/../images/15445022.png" alt="022"></p>
-<p>page 里面记录一些元数据</p>
-<ul>
-<li>dirty flag: 记录是否被修改过，也就是常说的”脏数据标记”</li>
-<li>引用计数器： 记录有多少线程在使用这个数据</li>
-<li>访问追踪信息</li>
-</ul>
-<p>lock and latch</p>
-<ul>
-<li>lock在数据库中指high-level的东西，可以保护数据库，数据表，数据。保护数据库内容不受其他事务影响，在事务持续期间保持，可以回滚。</li>
-<li>latch保护内部的东西，数据结构，内存区域。保护内部数据结构不受其他线程的影响，在操作期间保持，不需要可以回滚。</li>
-</ul>
-<p>buffer pool 使用 mmap的问题：</p>
-<ul>
-<li>事务安全：操作系统完全控制page的写入，刷新，有可能在一个事务没有完成的时候有些数据就已经写入磁盘了。</li>
-<li>IO停顿：DBMS不知道哪些page在内存中，当读取不在内存中的时候触发page fault，操作系统才会从磁盘获取。</li>
-<li>错误处理：任何访问都可能触发操作系统的中断信号<code>SIGBUS</code>，而整个DBMS都需要处理它。</li>
-<li>性能问题</li>
-</ul>
-<p>全局策略</p>
-<ul>
-<li>针对所有的查询或者事务的策略</li>
-</ul>
-<p>局部策略</p>
-<ul>
-<li>针对单个查询或者事务的策略</li>
-<li>可以对单个优化，虽然对全局可能不好</li>
-</ul>
-<h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><p>淘汰策略有几种算法</p>
-<ul>
-<li>LRU</li>
-<li>Clock：Linux使用的，把所有的page放成一个圈，每个page有一个标志位，如果为0表示没有被使用过，1被使用过，淘汰的时候淘汰0的，再把1改成0.</li>
-<li>LRUK：记录使用的次数k，达到次数才放到缓存里面，淘汰的时候比对两次的时间间隔，间隔长的认为是最近最少使用</li>
-<li>PRIORITY HINTS</li>
-</ul>
-<h4 id="mysql-近似-LRU-k"><a href="#mysql-近似-LRU-k" class="headerlink" title="mysql 近似 LRU-k"></a>mysql 近似 LRU-k</h4><p>相当于K&#x3D;2。有一个LRU List，但是有两个指针，分别表示<code>old list</code>和<code>young list</code>。当数据第一次被访问的时候放到<code>old list</code>中，再次被访问的时候放到<code>young list</code>中。</p>
-<p><img src="/../images/15445023.png" alt="023"></p>
-<p>当访问 page1 的时候，需要淘汰掉<code>old list</code>中的page8，其实也是整个LRU中的最后一个元素。然后将page1插入<code>old list</code>。</p>
-<p><img src="/../images/15445024.png" alt="024"></p>
-<p>当再次访问 page1 的时候，将page1 插入<code>young list</code>。这个时候<code>young list</code>最后的元素也就进入了<code>old list</code>.</p>
-<p><img src="/../images/15445025.png" alt="025"></p>
-<h4 id="PRIORITY-HINTS"><a href="#PRIORITY-HINTS" class="headerlink" title="PRIORITY HINTS"></a>PRIORITY HINTS</h4><p>比如B+树的根节点具有最高的优先级，所以一直放在内存中。</p>
-<p><img src="/../images/15445026.png" alt="026"></p>
-<p>多buffer pool</p>
-<ul>
-<li>通过使用多个buffer pool可以根据不同的table放入不同的buffer pool进行不同的优化。也可以通过其他的策略使用多个buffer pool</li>
-<li>由于有多个buffer pool,减少了锁争抢和锁等待的时间。</li>
-<li>mysql中通过hash确定数据是否在buffer pool，然后通过取余确定在哪个buffer pool</li>
-</ul>
-<p>预取数据</p>
-<ul>
-<li>顺序扫描的时候预先把后面的page取到buffer pool中。这一步mmap也可以实现</li>
-<li>索引扫描的时候预先把索引中需要用到的后面的page取到buffer pool中。这一步mmap实现不了，这也是数据库自己实现buffer pool的优势。</li>
-</ul>
-<p>扫描共享</p>
-<ul>
-<li>共享扫描到的page内容</li>
-<li>如果查询1需要扫描page1,page2,page3,page4的内容并且已经扫描到了page3,这个时候page1已经扫描完了被从buffer pool中丢弃了</li>
-<li>这时候有一个查询2也需要扫描所有的pages，如果从page1开始扫描，就会把page1再次读入buffer pool，但是这样是低效率的，所以可以先共享查询1的page数据，先扫描page3,然后page4，这时候查询1执行完毕，在回头扫描page1,page2。</li>
-<li>mysql不支持</li>
-</ul>
-<p>buffer pool bypass</p>
-<ul>
-<li>单独开辟一个本地内存区域来用，而不是使用buffer pool</li>
-<li>可以避免操作page table带来的开销（latch锁住的开销）</li>
-<li>可以避免污染buffer pool</li>
-<li>适合数据量不大的情况</li>
-<li>mysql5.7不支持</li>
-</ul>
-<p>os page cache</p>
-<ul>
-<li>操作系统的文件缓存，当使用fopen,fread,fwrite的时候会先从操作系统缓存中读取文件内容。</li>
-<li>只有postgresql使用了这个。</li>
-<li>通过 direct IO可以不使用这个</li>
-<li>使用它会导致有两个缓存，buffer pool 和 os page cache。不好控制。</li>
-<li>fsync如果失败以后再次调用也不会生效，因为它会将dirty设置为false</li>
-</ul>
-<p>两种写出方案需要做权衡，取舍</p>
-<ul>
-<li>如果写出dirty flag的数据然后读取新数据，就会产生2次IO。通常会有一个定时任务线程去将dirty flag的数据写入磁盘，写入之前必须要先将操作日志写入磁盘。</li>
-<li>如果直接读取新数据就只有1次IO，但是这样有可能把下次会用到的数据丢弃。</li>
-</ul>
-<h2 id="hash-table"><a href="#hash-table" class="headerlink" title="hash table"></a>hash table</h2><p>hash function</p>
-<ul>
-<li>最快的是facebook 的 xxhash</li>
-</ul>
-<p>hash schema</p>
-<ul>
-<li>liner probe hashing<ul>
-<li>如果要插入的位置有值了，就往下扫描，扫描到空的位置插入</li>
-<li>删除的时候可以增加一个<code>墓碑</code>标记，这样就知道这里是有数据的不是空，查找的时候就会继续往下扫描而不会是没找到</li>
-<li>删除的时候还可以把后面的数据往前移动，但是这样有的数据就不再原来的位置了，就找不到了。因为只会往下扫描不会往上扫描</li>
-</ul>
-</li>
-<li>robin hood hashing<ul>
-<li>记录<code>距离数</code>，表示插入的位置和应该插入的位置的距离。从0开始。</li>
-<li>插入的时候判断距离数，进行<code>劫富济贫</code>，如果你向下扫描到距离数为3的地方插入，而在距离数为2的地方的数据x，x的距离数比你小，比如是0，1.那么你就占据这里，你插入距离数为2的地方，而将x插入你下面，x的距离数会+1.</li>
-<li>从整体来看，这个方法牺牲了插入的效率，将数据的距离数变得更加平均</li>
-</ul>
-</li>
-<li>cuckoo hashing<ul>
-<li>该方法使用两个或多个<code>hash table</code>来记录数据，对A进行两次hash，得出两个hash table中的插入位置，随机选择一个进行插入</li>
-<li>如果选择的插入位置已经有数据了，就选择另一个插入</li>
-<li>如果两个都有数据了，就占据一个，然后对这个位置上之前的数据B再次hash选择其余位置。</li>
-</ul>
-</li>
-</ul>
-<p>动态hash table</p>
-<ul>
-<li>chained hashing<ul>
-<li>把所有相同hash的组成一个bucket链表，然后一直往后面增加</li>
-<li>java的hash table默认就是这样的</li>
-</ul>
-</li>
-<li>extendible hashing<ul>
-<li>对 chained hashing 的扩展</li>
-<li>有一个slot array，在slot array上有一个 counter, 如果counter &#x3D; 2，代表看hash以后的数字的前两个bit,slot array就有4个位置，分别是00,01,10,11</li>
-<li>每个slot指向一个bucket</li>
-<li>hash以后找到前两位对应的slot指向的bucket，将数据放进去，如果满了，放不下了就进行拆分</li>
-<li>将slot array的counter扩容为3，看前3个bit，slot array变成了8个位置</li>
-<li>只将这个满了的bucket拆分成2个，其余的不变，重新进行slot的映射</li>
-<li>再次hash这个值，看前3个bit找到对应的slot,在找到对应的bucket，然后插入进去</li>
-</ul>
-</li>
-<li>linear hashing<ul>
-<li>对 extendible hashing 的扩展</li>
-<li>去掉了 conter，因为他每次加1，都会扩容一倍</li>
-<li>增加了<code>split point</code>，一开始指向0，然后每次<code>overflow</code>需要拆分的时候就拆分split point指向的那个bucket，然后slot array只扩容一个，这个时候出现第二个hash函数并将split point+1</li>
-<li>查询的时候如果slot array的位置小于split point，就使用第二个hash函数，因为被拆分了</li>
-<li>如果大于等于split point，就使用第一个hash函数</li>
-</ul>
-</li>
-</ul>
-<h2 id="tree-index"><a href="#tree-index" class="headerlink" title="tree index"></a>tree index</h2><ul>
-<li>b tree(1971)</li>
-<li>b+ tree (1973)</li>
-<li>b* tree (1977)</li>
-<li>b link tree (1981)</li>
-</ul>
-<p>b+ tree 删除和插入的复杂度都是<code>O(log n)</code>， b 是 <code>balance (平衡)</code>，paper: <code>the ubiquitous B-tree</code></p>
-<p>B+ tree,保证每个节点都必须是半满的，对于存放在节点中的key数量来说，key数量至少为<code>M/2 - 1</code>个，M为树的高度，key的数量必须小于 <code>M - 1</code>,如果当删除数据以后导致key数量小于M&#x2F;2 - 1个，就会进行平衡，使他满足M&#x2F;2 - 1个。</p>
-<blockquote>
-<p>M&#x2F;2 - 1 ≤ key数量 ≤ M - 1</p>
-</blockquote>
-<p>如果一个中间节点有k个key,那你就会有k+1个非空孩子节点，也就是k+1个指向下方节点的指针。每个节点的内容是一个<code>指针</code>和一个<code>key</code></p>
-<p>叶子节点之间有连接叶子节点的兄弟指针，这个想法来源于b link tree。每个节点的内容是一个<code>数据</code>和一个<code>key</code>，数据可以是一个<code>record id</code> 也可以是一个 <code>tuple</code></p>
-<p>叶子节点的内容，通常key和value是分开存储的，因为搜索的时候并不需要加载value数据</p>
-<ul>
-<li>元数据<ul>
-<li>isleaf 是否是叶子节点</li>
-<li>slots 有多少空闲的slot</li>
-<li>prev 前一个叶子节点的指针</li>
-<li>next 后一个叶子节点的指针</li>
-</ul>
-</li>
-<li>key数据</li>
-<li>value数据</li>
-</ul>
-<p>b tree 和 b+ tree 的区别</p>
-<ul>
-<li>b tree的中间节点也可以存数据，所以key是不重复的</li>
-<li>b+ tree的中间节点没有数据，所有数据都在叶子节点，所以key有可能既存在中间节点也存在叶子节点。会重复</li>
-<li>b tree的性能在并行处理上更差，因为修改以后需要向上传播也需要向下传播修改，这个时候两边都要增加<code>latch</code></li>
-<li>b+ tree的性能更好，因为只修改叶子节点，所以只需要向上传播，只需要增加一个<code>latch</code></li>
-</ul>
-<p>b+ tree 插入</p>
-<ol>
-<li>向下扫描，找到对应的叶子节点</li>
-<li>如果可以插入就直接插入</li>
-<li>如果不可以插入，那么从中间分开，变成两个叶子节点，并将中间的key传递给父节点，插入父节点。</li>
-<li>如果父节点可以插入就直接插入并分出一个指针指向新的叶子节点</li>
-<li>如果父节点不可以插入重复上述操作3</li>
-</ol>
-<p>b+ tree 删除</p>
-<ol>
-<li>向下扫描，找到对应的叶子节点，这个时候就会增加<code>latch</code>，因为不知道需不需要合并，操作以后才会释放</li>
-<li>如果可以删除就直接删除</li>
-<li>如果删除后导致key数量 &lt; <code>M/2 - 1</code>,那么就会出发合并，因为不满足key数量啦</li>
-<li>进行合并的时候删除这个key，然后先查看左右的兄弟节点，是否能直接把数据插入过来，如果可以的话就掠夺一个key过来，然后向上传播</li>
-<li>如果不能掠夺，那么就合并到兄弟节点，然后向上传播。</li>
-</ol>
-<p>b+ tree 标准填充容量大概是67% - 69%，对于一个大小是8kb的page来说，如果高度为4，大约能记录30 0000个键值对。</p>
-<p>b+ tree的查找</p>
-<ul>
-<li>对于&lt;a,b,c&gt;,查找a&#x3D;5 and b&#x3D;3也是可以走索引的，但是hash索引就不行，有些数据库还支持b&#x3D;3的搜索走索引，比如oracle和sql server</li>
-</ul>
-<p>b+ tree的节点大小，机械硬盘的大小最好在1M,ssd的大小在10KB</p>
-<blockquote>
-<p>推荐书籍 Modern B-Tree Techniques</p>
-</blockquote>
-<p>对于非唯一索引</p>
-<ul>
-<li>重复存储，需要注意两个相同的key存储在不同的page中</li>
-<li>value list,key只存储一个，然后所有的value存储成value list</li>
-</ul>
-<p>节点内部的搜索</p>
-<ul>
-<li>线性搜索</li>
-<li>二分搜索</li>
-<li>interpolation<ul>
-<li>通过数学计算出线性搜索的起点，提升搜索速度</li>
-</ul>
-</li>
-</ul>
-<p>优化方法</p>
-<ul>
-<li>前缀压缩<ul>
-<li>比后缀截断用的更多</li>
-<li>存储在page中的key,如果前缀一样的可以提取出来存储一次，然后剩余的数据在存储在key里面</li>
-</ul>
-</li>
-<li>后缀截断<ul>
-<li>存储在中间节点的，用来寻路的key，可以只存储前面的部分，如果后面的不需要可以截断</li>
-<li>更新的时候需要进行维护</li>
-</ul>
-</li>
-<li>批量插入<ul>
-<li>如果已经有数据了再建立索引，这个时候不需要从头开始一个个建立，只需要先排序</li>
-<li>然后建立所有的叶子节点</li>
-<li>在一层层向上建立中间节点</li>
-<li>非常普遍的方法，主流数据库都支持</li>
-</ul>
-</li>
-<li>point willizeing<ul>
-<li>将节点固定在内存中</li>
-<li>对于page来说，直接存储page指针而不是page id，就不需要请求buffer pool了</li>
-</ul>
-</li>
-</ul>
-<p>b+ tree的重复key，通常使用增加<code>record id</code>的方式，这种方式影响更小。</p>
-<ul>
-<li>增加<code>record id</code>,<code>record id</code>是<code>page id</code> + <code>offset</code>用来确定tuple的位置。</li>
-<li>垂直扩展叶子节点，将数据存在里面</li>
-</ul>
-<p>部分索引</p>
-<ul>
-<li>在创建索引的时候添加where条件，只有符合条件的才会进入索引。</li>
-<li>查询的时候只有符合条件的才会走索引</li>
-</ul>
-<p>覆盖索引</p>
-<ul>
-<li>在创建索引的时候添加联合索引</li>
-<li>查询的时候所需数据都在索引中，就不需要在找对应的tuple信息了。</li>
-</ul>
-<p>函数索引</p>
-<ul>
-<li>创建索引的时候添加函数信息，比如 MONTH(date), 只对月份创建索引</li>
-<li>查询的时候 MONTH(date) 就会走索引了，而date就不会走索引了</li>
-<li>如果创建的时候只创建 date 索引，那么查询的时候 MONTH(date) 就不会走索引</li>
-</ul>
-<p>trie index(前缀树)</p>
-<ul>
-<li>把每个单词建立成树，一层放一个字母</li>
-</ul>
-<p>radix tree</p>
-<ul>
-<li>trie index的升级版</li>
-<li>对于trie index进行了横向的压缩和纵向的压缩</li>
-</ul>
-<h3 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h3><p>Bloom filter</p>
-<p>Counting Bloom filter</p>
-<p>Cuckoo filter</p>
-<p>Succinct Range Filter</p>
-<h2 id="索引并发控制"><a href="#索引并发控制" class="headerlink" title="索引并发控制"></a>索引并发控制</h2><p>并发控制</p>
-<ul>
-<li>逻辑正确性<ul>
-<li>获取id &#x3D; 5的数据，能正确返回id &#x3D; 5的数据</li>
-</ul>
-</li>
-<li>物理正确性<ul>
-<li>保护page指针指向正确的page数据，不会触发 segfualt</li>
-</ul>
-</li>
-</ul>
-<p>latch 模式</p>
-<ul>
-<li>读模式<ul>
-<li>可以多个线程读取</li>
-</ul>
-</li>
-<li>写模式<ul>
-<li>只有一个线程可以写模式，这个时候其他线程不能读取也不能写入</li>
-</ul>
-</li>
-</ul>
-<p>latch</p>
-<ul>
-<li>blocking os mutex<ul>
-<li>std::mutex m;</li>
-<li>m.lock();</li>
-<li>m.unlock();</li>
-</ul>
-</li>
-<li>test and set spin latch<ul>
-<li>std::atomic_flag latch</li>
-<li>while(latch.test_and_set()){} &#x2F;&#x2F; 如果获取到锁就跳出循环</li>
-</ul>
-</li>
-<li>read - write latch<ul>
-<li>读锁，获取的时候线程数队列，等待队列，如果能获取就进入线程数队列，不能就进入等待队列</li>
-<li>写锁，线程数队列，等待队列，如果能获取就进入线程队列，不能就进入等待队列</li>
-<li>如果有一个写锁在等待队列，这个时候在获取读锁也放入等待队列，要不然一直读，写锁就获取不到了</li>
-</ul>
-</li>
-</ul>
-<p>latch crabbing&#x2F;coupling</p>
-<ul>
-<li>使用栈保存latchs</li>
-<li>每个节点都需要一个latch</li>
-<li>如果当前节点是<code>安全</code>的，就可以释放上层的所有latchs</li>
-<li><code>安全</code>：指操作的时候不会触发<code>拆分</code>和<code>合并</code>。通常read latch都是安全的，write latch 插入的时候如果有足够的空间就是安全的，删除的时候删除以后不会合并就是安全的</li>
-</ul>
-<p>乐观锁</p>
-<ul>
-<li>乐观的认为不需要<code>合并</code>和<code>拆分</code>。</li>
-<li>所有的操作都先获取read latch,如果发现需要<code>合并</code>和<code>拆分</code>，再次从头获取write latch来一遍</li>
-<li>优点是所有操作都是read latch，可以更好的支持并发</li>
-<li>缺点是遇到<code>合并</code>和<code>拆分</code>会再来一遍，而且如果连续的插入都需要合并，就会退化成每个都获取write latch。</li>
-</ul>
-<p>叶子节点扫描</p>
-<ul>
-<li>叶子节点的扫描可能会触发<code>死锁</code>，比如两个线程</li>
-<li>线程1执行读取，读取到了叶子节点1</li>
-<li>线程2执行写入，在叶子节点2处获取了write latch</li>
-<li>这个时候线程1在叶子节点1里面没有找到数据，所以要扫描叶子节点2，但是获取read latch的时候卡主了，需要等待</li>
-<li>而线程2有可能也需要访问叶子节点1，同样等待，产生死锁</li>
-<li>这个时候可以设置等待时间，超过等待时间则<code>自杀</code>，然后重头再来，假如线程1自杀，然后再来一遍，这个时候线程2就可以获取到latch，然后执行下去了</li>
-</ul>
-<p>overflow处理</p>
-<ul>
-<li>来源于b link tree的优化</li>
-<li>当需要拆分的时候，先拆分叶子节点，这个时候不向<code>父结点</code>传播，因为修改父结点需要从头开始获取write latch。</li>
-<li>这个时候标记父结点需要插入一个key</li>
-<li>等待下一个修改操作到父结点的时候，获取write latch，然后执行这个插入操作。</li>
-</ul>
-<h2 id="排序和聚合"><a href="#排序和聚合" class="headerlink" title="排序和聚合"></a>排序和聚合</h2><p>排序的好处</p>
-<ul>
-<li>有序的数据创建索引的时候可以快速的先创建叶子节点，在创建父结点</li>
-<li>有序的数据在<code>order by</code>分组的时候可以更快的分组</li>
-<li>有序的数据在<code>distinct</code>去重的时候可以更快的去重</li>
-</ul>
-<p>排序算法</p>
-<ul>
-<li>在内存中<ul>
-<li>可以使用各种算法</li>
-<li>但是有的数据内存放不下，就需要在磁盘上排序</li>
-<li>需要先知道<code>可以用内存的大小</code>，这样就知道该内存排序还是磁盘排序</li>
-</ul>
-</li>
-<li>在磁盘上<ul>
-<li>快排会产生更多的随机IO,会更慢</li>
-<li>使用<code>归并排序</code>更好，分成多个<code>runs</code>,对每个run排序，然后在通过<code>二路归并</code>生成总的排序，这可以减少随机IO</li>
-<li>外部归并排序，需要3个<code>buffer pool</code>，2个用来排序run，1个用来二路归并。 </li>
-<li>次数：1 + log(n)</li>
-<li>总的IO数: 2N * (# of passes)</li>
-<li>可以通过<code>预取</code>来优化，当对page排序的时候，另外一个线程先取出下次要排序的page。</li>
-</ul>
-</li>
-</ul>
-<p>聚簇索引</p>
-<ul>
-<li>排序的字段如果建立了聚簇索引，就不需要在排序了，直接可以走聚簇索引拿到排序好的数据</li>
-</ul>
-<h3 id="top-N-heap-sort"><a href="#top-N-heap-sort" class="headerlink" title="top-N heap sort"></a>top-N heap sort</h3><p>比如下面的sql</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> a</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> id <span class="keyword">ASC</span></span><br><span class="line">limit <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-
-<p>那么首先创建一个大小为2的有序数组或优先级队列之类的。假设我们的数据是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;id:3, name: xxx&#125;, &#123;id:4, name:xxx&#125;, &#123;id:5, name:xxx&#125;, &#123;id:2, name:xxx&#125;</span><br></pre></td></tr></table></figure>
-<p>这个时候优先级队列是空的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后扫描id为3的数据，放入优先级队列，再扫描id为4的数据，放入优先级队列。这个时候队列数据是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;id:3, name: xxx&#125;, &#123;id:4, name:xxx&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来扫描id5的数据，放不进优先级队列，因为id大，最后扫描id2的数据，放入优先级队列，队列就排好序了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;id:2, name:xxx&#125;,&#123;id:3, name: xxx&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/../images/15445027.png" alt="027"></p>
-<h3 id="external-merge-sort"><a href="#external-merge-sort" class="headerlink" title="external merge sort"></a>external merge sort</h3><p>当数据太大，无法放在内存中的时候，需要借助外部的文件来进行排序</p>
-<ul>
-<li>先排序小块的数据，然后写入文件</li>
-<li>在将文件的内容合并</li>
-</ul>
-<p>early materialization</p>
-<ul>
-<li>将数据放在排序的数据里面，排序以后可以直接返回数据，行数据库一般用这个</li>
-</ul>
-<p>late materialization</p>
-<ul>
-<li>排序的数据里存的是tuple id or record id, 排序以后再根据id查询数据返回</li>
-</ul>
-<p><img src="/../images/15445028.png" alt="028"></p>
-<p><img src="/../images/15445029.png" alt="029"></p>
-<p>优化方法</p>
-<ul>
-<li>增加buffer pool在排序中可用的内存，当一个输出page进行写入IO的时候，CPU处理另一个输出page。</li>
-<li>多线程，一个线程进行page排序，另外一个线程进行二路归并。</li>
-</ul>
-<h3 id="聚合"><a href="#聚合" class="headerlink" title="聚合"></a>聚合</h3><p>两个实现方法</p>
-<ul>
-<li>排序</li>
-<li>哈希，通常哈希更好，因为都在内存中</li>
-</ul>
-<blockquote>
-<p>group by 和 distinct 本身执行的时候也是需要排序的</p>
-</blockquote>
-<p>hash</p>
-<ol>
-<li>分区<ul>
-<li>可以顺序扫描每个page</li>
-<li>对于每个page的key进行hash，然后分区，hash相同的说明key相同，分到一个区里面</li>
-<li>这个时候不管distinct还是group by都可以方便的执行了</li>
-</ul>
-</li>
-<li>重新哈希<ul>
-<li>对于分区以后的数据再次进行hash</li>
-<li>再次hash的数据放入一个临时的hash table</li>
-<li>处理完一个临时的hash table就把结果写入结果集</li>
-</ul>
-</li>
-</ol>
-<p>排序的聚合实现，以distinct为例：</p>
-<ol>
-<li>先执行where条件筛选出符合的<code>tuple</code></li>
-<li>再次根据列筛选出符合的列</li>
-<li>对于需要排序的列进行排序</li>
-<li>顺序扫描排序结果，实现去重，并生成最终结果</li>
-</ol>
-<p>哈希的聚合实现，以distinct为例：</p>
-<ol>
-<li>先执行where条件筛选出符合的<code>tuple</code></li>
-<li>再次根据列筛选出符合的列</li>
-<li>对于需要排序的列进行hash，先分区，再重新哈希。</li>
-<li>重新哈希的时候生成最终结果。</li>
-</ol>
-<p>重新哈希的时候</p>
-<ul>
-<li>avg的话，需要再临时hash table里面存储key的数量和要求平均数的总数。在生成最终结果的时候进行计算平均数</li>
-<li>min的话，临时hash table里面存入最小数，生成最终结果直接取</li>
-<li>max同上</li>
-<li>sum同上</li>
-<li>count同上</li>
-</ul>
-<h2 id="join算法"><a href="#join算法" class="headerlink" title="join算法"></a>join算法</h2><p>join输出：数据</p>
-<ul>
-<li>在join的时候把两张表的数据全部输出给下一个处理器，这包括了表的所有字段</li>
-<li>好处是，接下来的处理不需要再拿其他字段了，所有字段都有了</li>
-<li>坏处是，Join的时候数据量很大，因为有所有字段</li>
-<li>可以进行优化，在join的时候只获取需要的字段</li>
-</ul>
-<p>join输出：record id</p>
-<ul>
-<li>在join的时候，只获取on的字段和record id，然后需要其他字段的时候在通过 record id去获取，这个很适合列存储数据库</li>
-<li>第一个使用的是<code>vertica</code>列存储数据库，不过现在已经不用了</li>
-</ul>
-<p>如何判断两个join算法的好坏？</p>
-<ul>
-<li>通过IO来计算</li>
-<li>假设左表R有M个page,m个tuple</li>
-<li>右表S有N个page,n个tuple</li>
-</ul>
-<p>join算法</p>
-<ul>
-<li>Nested Loop Join<ul>
-<li>simple&#x2F;stupid</li>
-<li>block</li>
-<li>index</li>
-</ul>
-</li>
-<li>Sort-Merge Join</li>
-<li>Hash Join<ul>
-<li>simple</li>
-<li>GRACE(Externally partitioned)</li>
-<li>Hybird</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/15445030.png" alt="030"></p>
-<h3 id="Simple-Nested-Loop-Join"><a href="#Simple-Nested-Loop-Join" class="headerlink" title="Simple Nested Loop Join"></a>Simple Nested Loop Join</h3><ul>
-<li>通过两层for循环，然后符合条件的进行输出</li>
-<li>IO计算：因为外层循环要读取 M 个 page,循环的tuple 是 m,内存循环要读取N个page，所以内层循环的IO数是 m * N,总的IO：M + (m * N)</li>
-<li>假设 M &#x3D; 1000, m &#x3D; 10 0000, N &#x3D; 500, n &#x3D; 40000, 总的IO &#x3D; 1000 + (10 0000 * 500) &#x3D; 5000 1000</li>
-<li>假设 SSD 执行速度 0.1ms 一次IO，大概需要1.3个小时</li>
-<li>如果N是左表，那么总IO &#x3D; 500 + (4000 * 1000) &#x3D; 400 0500,大概需要1.1个小时</li>
-<li>所以如果左表是小表，性能更好</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Tuple r: R) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Tuple s: S) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.id == r.id) &#123;</span><br><span class="line">            <span class="comment">// 输出</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Block-Nested-Loop-Join"><a href="#Block-Nested-Loop-Join" class="headerlink" title="Block Nested Loop Join"></a>Block Nested Loop Join</h3><ul>
-<li>对simple的优化，不在循环tuple，而是循环page，将page打包成block，然后循环block</li>
-<li>这样的话对于内层循环来说IO就是 M * N，总的IO就是 M + (M * N)</li>
-<li>假设 M &#x3D; 1000, m &#x3D; 10 0000, N &#x3D; 500, n &#x3D; 40000, 总的IO &#x3D; 1000 + (1000 * 500) &#x3D; 50 1000</li>
-<li>假设 SSD 执行速度 0.1ms 一次IO，大概需要50s</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个看上去循环多了，不过因为预先读取了两个block才循环，所以循环是在内存中，IO次数少了</span></span><br><span class="line"><span class="keyword">for</span> (Block br: R) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Block bs: S) &#123;</span><br><span class="line">        <span class="keyword">for</span> (Tuple r: br) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Tuple s: bs) &#123;</span><br><span class="line">                <span class="keyword">if</span> (s.id == r.id) &#123;</span><br><span class="line">                    <span class="comment">// 输出</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Block-Nested-Loop-Join优化"><a href="#Block-Nested-Loop-Join优化" class="headerlink" title="Block Nested Loop Join优化"></a>Block Nested Loop Join优化</h4><ul>
-<li>假设buffer pool容量是B,可以先获取B - 2个左表的Block,剩下2个位置，一个是获取右表的 Block 的，一个是输出的。</li>
-<li>这样的话总的IO次数：M + ([M&#x2F;(B-2)] * N), M&#x2F;(B - 2)向上取整</li>
-<li>最好的情况是 B &gt; M + 2，代表一次性能获取所有的左表的Block</li>
-<li>这样总的IO就变成 M + N</li>
-<li>假设 M &#x3D; 1000, m &#x3D; 10 0000, N &#x3D; 500, n &#x3D; 40000, 总的IO &#x3D; 1000  + 500 &#x3D; 1500</li>
-<li>假设 SSD 执行速度 0.1ms 一次IO，大概需要0.15s</li>
-</ul>
-<h3 id="Index-Nested-Loop-Join"><a href="#Index-Nested-Loop-Join" class="headerlink" title="Index Nested Loop Join"></a>Index Nested Loop Join</h3><p>假设s.id有索引，那么就可以根据索引进行匹配，加快速度.</p>
-<ul>
-<li>总的成本将是<code>M + (m * C)</code> C是索引需要的时间</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Tuple r: R) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Tuple s: Index(r = s)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.id == r.id) &#123;</span><br><span class="line">            <span class="comment">// 输出</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Sort-Merge-Join"><a href="#Sort-Merge-Join" class="headerlink" title="Sort Merge Join"></a>Sort Merge Join</h3><ul>
-<li>Sort：先对要join的字段进行排序</li>
-<li>Merge: 用两个指针进行匹配，如果数据匹配就输出，因为数据已经排序好了，所以只需要扫描一次就行了</li>
-<li>这样的话总IO就是 sort io + merge io, merge io &#x3D; M + N, sort io看具体的排序算法</li>
-<li>最好的情况是要join的key本身已经是有序的了，那么只需要merge io &#x3D; M + N,比如有索引，比如查询的时候使用了order by</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">sort R,S on join <span class="type">keys</span></span><br><span class="line"><span class="variable">cursorR</span> <span class="operator">=</span> RSorted, cursorS = Ssorted;</span><br><span class="line"><span class="keyword">while</span> (cursorR &amp;&amp; cursorS) &#123;</span><br><span class="line">    <span class="keyword">if</span> (cursorR &gt; cursorS) &#123;</span><br><span class="line">        <span class="comment">// 相当于内层循环指向下一个</span></span><br><span class="line">        cursorS++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (cursorR &lt; cursorS) &#123;</span><br><span class="line">        <span class="comment">// 相当于外层循环指向下一个</span></span><br><span class="line">        cursorR++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (cursorR == cursorS) &#123;</span><br><span class="line">        <span class="comment">// 输出 &amp;&amp; 内层循环指向下一个</span></span><br><span class="line">        cursorS++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Hash-Join"><a href="#Hash-Join" class="headerlink" title="Hash Join"></a>Hash Join</h3><ul>
-<li>Build: 先对左表要join的key进行hash，构建一个hash table</li>
-<li>probe: 在对右表要join的key进行hash, hash相同的会放入同一个 bucket,也就完成了匹配</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Tuple r: R) &#123;</span><br><span class="line">    insert <span class="title function_">hash</span><span class="params">(r)</span> into hash table ht</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (Tuple s: S) &#123;</span><br><span class="line">    insert <span class="title function_">hash</span><span class="params">(s)</span> into hash tbale ht</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Hash Join优化</p>
-<ul>
-<li>可以添加 <code>布隆过滤器</code> 来优化，这样的话在probe阶段，对右表的key， hash以后先查询布隆过滤器，如果false，就不需要在放入hash table去匹配了</li>
-<li>如果true在去hash table里面匹配数据完成输出</li>
-</ul>
-<p>Grace Hash Join</p>
-<ul>
-<li>在 hash join中，只构建一个hash table来存储左表数据，右表的hash完成直接匹配</li>
-<li>Grace hash join中，构建两个hash table，然后进行 nested loop join</li>
-<li>总的IO： 3(M + N),大约0.45s</li>
-</ul>
-<p>hash 几乎总是好的。<br>排序是好的情况有两种</p>
-<ul>
-<li>non-uniform数据，排序更好</li>
-<li>对于需要排序的数据，比如order by,排序更好</li>
-</ul>
-<p><img src="/../images/15445031.png" alt="031"></p>
-<h2 id="query-exec"><a href="#query-exec" class="headerlink" title="query exec"></a>query exec</h2><p>processing Method</p>
-<ul>
-<li>Iterator Model: 大多数数据库使用的</li>
-<li>Materialization Model：Iterator Model的一个特定版本，用在内存型数据库</li>
-<li>Vectorized&#x2F; Batch Model：Iterator Model差不多，要传入一大堆东西， 分析型用的多</li>
-</ul>
-<p>Iterator Model</p>
-<ul>
-<li>像java的stream， 流的方式执行</li>
-<li>先构建执行树，上层的通过<code>next</code>方法调用下层的方法并接收返回值</li>
-</ul>
-<p><img src="/../images/15445032.png" alt="032"></p>
-<p>Materalization Model</p>
-<ul>
-<li>去掉了<code>next</code>方法，使用了<code>output</code>方法，一次输出所有数据给上层</li>
-</ul>
-<p><img src="/../images/15445033.png" alt="033"></p>
-<p>Vectorized Model</p>
-<ul>
-<li>使用<code>next</code>方法，但是一次性返回一堆 tuples, 数量取决于 Buffer pool 大小</li>
-<li>使用OLAP，大多数的数仓使用这个</li>
-</ul>
-<p><img src="/../images/15445034.png" alt="034"></p>
-<p>Access Method</p>
-<ul>
-<li>顺序扫描</li>
-<li>索引扫描</li>
-<li>多索引扫描</li>
-</ul>
-<p>顺序扫描的优化</p>
-<p><img src="/../images/15445035.png" alt="035"></p>
-<p>多索引扫描</p>
-<ul>
-<li>对多个索引同时扫描</li>
-<li>将扫描结果取交集或并集等</li>
-<li>例如 <a target="_blank" rel="noopener" href="https://www.ibm.com/docs/en/dspafz/5.1.0?topic=report-multiple-index-scans">DB2 Multi index scan</a>,<a target="_blank" rel="noopener" href="https://www.postgresql.org/message-id/12553.1135634231@sss.pgh.pa.us">PostgreSQL bitmap scan</a>,<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.4/en/index-merge-optimization.html">MySQL Index Merge scan</a></li>
-</ul>
-<p>Zone Maps</p>
-<ul>
-<li>通过在page上面增加一个元数据，存储min,max,avg,count,sum信息</li>
-<li>当查询的时候比如where val &gt; 600,先查询 Zone Maps，如果发现max &lt; 600，那么就不用在扫描这个page了</li>
-<li>缺点是插入，更新，删除的时候还需要更新Zone Maps信息，所以适用于 OLAP数据库</li>
-</ul>
-<p>late materialization</p>
-<ul>
-<li>已经不需要的字段就不在往上层传了</li>
-</ul>
-<p>Expression Evaulate</p>
-<ul>
-<li>先建立where条件的 Expression tree,中间节点是操作符，比如<code>=</code>,<code>&gt;</code>,<code>&lt;</code>,<code>and</code>,<code>or</code>等。子节点是两边的值</li>
-<li>对于每个tuple执行这个表达式</li>
-<li>好的数据库会对表达式进行优化，比如优化成常量，像where 1 &#x3D; 1优化成 trues</li>
-</ul>
-<p>Process Models</p>
-<ul>
-<li>Process per DBMS Worker</li>
-<li>Process Model</li>
-<li>Thread per DBMS Worker</li>
-<li>Embedded DBMS</li>
-</ul>
-<p>Process per DBMS Worker</p>
-<ul>
-<li>每个进程是一个worker,负责执行任务</li>
-<li>通过<code>共享内存</code>进行buffer pool的通信，要不然每个进程都会有一个buffer pool。</li>
-<li>老得数据库大部分使用的这个，因为当时没有统一的线程API,像DB2,oracle,postgraSQL</li>
-</ul>
-<p>Process Model</p>
-<ul>
-<li>和 Process per DBMS Worker一样</li>
-<li>但是增加了 worker pool，有多个worker进行调度处理</li>
-<li>像DB2,postgraSQL（2015）</li>
-</ul>
-<p>Thread per DBMS Worker</p>
-<ul>
-<li>一个进程，多个线程执行，由数据库自己控制线程。</li>
-<li>现在的数据库几乎都使用这种，像DB2, MSSQL, MySQL, Oracle(2014)</li>
-</ul>
-<p>scheduling</p>
-<ul>
-<li>将查询分解为多少个任务？</li>
-<li>它使用多少个CPU核心？</li>
-<li>哪个CPU执行哪个任务？</li>
-<li>任务输出到哪里？</li>
-</ul>
-<p>Intra query parallelism</p>
-<ul>
-<li>Intra operator(水平)</li>
-<li>Inter operator(垂直)</li>
-<li>Bushy(上面两种的组合)</li>
-</ul>
-<p>Intra operator(水平)</p>
-<ul>
-<li>通过水平拆分数据，由多个线程执行，比如3个线程，一个线程处理一个page，以此类推</li>
-<li>处理完成以后通过<code>exchange operator</code>来进行合并，拆分也是通过它。</li>
-</ul>
-<p><img src="/../images/15445036.png" alt="036"></p>
-<p>Exchange operator</p>
-<ul>
-<li>Gather:从多个线程的结果合并成一个输出流，PostgreSQL用这个</li>
-<li>Repartition: 重新组织多个输入流到多个输出流的数据，像group by，BigQuery用这个</li>
-<li>Distribute: 拆分一个输入流到多个输出流</li>
-</ul>
-<p><img src="/../images/15445037.png" alt="037"></p>
-<p>Inter operator(垂直)</p>
-<ul>
-<li>重叠的操作从一个阶段到下一个阶段的pipeline数据，没有具体化</li>
-<li>workers同时执行多个operators从一个查询计划的不同部分</li>
-<li>也需要用到exchange operator</li>
-<li>Spark,Kafka常用这个</li>
-</ul>
-<p><img src="/../images/15445038.png" alt="038"></p>
-<p>Bushy</p>
-<p><img src="/../images/15445039.png" alt="039"></p>
-<h2 id="查询计划"><a href="#查询计划" class="headerlink" title="查询计划"></a>查询计划</h2><p>假设有以下sql，其中Emp表有10000个records, 1000个pages, Dept表有500个records, 50个pages</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> ename <span class="keyword">from</span> Emp E <span class="keyword">join</span> Dept D <span class="keyword">on</span> E.did <span class="operator">=</span> D.did <span class="keyword">where</span> D.dname <span class="operator">=</span> <span class="string">&#x27;Toy&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>数据库将构建以下关系代数的树</p>
-<p><img src="/../images/15445040.png" alt="040"></p>
-<p>按照这个关系代数的树来执行的话，总共需要 2M的IO</p>
-<p><img src="/../images/15445041.png" alt="041"></p>
-<p>接下来将笛卡尔积的代数换成join的代数，就算使用Nested Loop Join，也能获得54K的IO</p>
-<p><img src="/../images/15445042.png" alt="042"></p>
-<p>如果将Join算法替换成<code>Sort-Merge Join</code>，则可以将IO降低到<code>7159</code></p>
-<p><img src="/../images/15445043.png" alt="043"></p>
-<p>这个算法是基于<code>Materialization Model</code>的，所以每次还要写入文件，再读取。如果优化成<code>Veectorization Model</code>，减少重复的写入和读取，可以达到3151的IO</p>
-<p><img src="/../images/15445044.png" alt="044"></p>
-<p>wraning:</p>
-<ul>
-<li>这非常难！</li>
-<li>Andy对这部分知道的是最少得</li>
-<li>如果搞好了，很挣钱</li>
-</ul>
-<p>查询结构</p>
-<ul>
-<li>SQL rewrite (可选)：重写sql语句，对sql语句进行优化</li>
-<li>Parser: 解析SQL查询，构建语法树</li>
-<li>Binder: 查询catalog信息，并将表名等信息替换成内部标识，生成<code>逻辑查询计划</code></li>
-<li>Tree rewrite (可选)：重写树结构，包括关系代数等</li>
-<li>Optimizer: 调用成本模型，预估成本，选择合适的执行计划，生成<code>物理执行计划</code></li>
-</ul>
-<p><img src="/../images/15445045.png" alt="045"></p>
-<blockquote>
-<p>生成物理执行计划的时候，可能有多个执行路径，在短时间内可能无法从全部的路径中选出最佳的。</p>
-</blockquote>
-<h3 id="查询优化"><a href="#查询优化" class="headerlink" title="查询优化"></a>查询优化</h3><blockquote>
-<p>查询优化是很难的，有些数据库的查询优化做的很差，DB2曾引入机器学习做查询优化，效果并不好，被吐糟安装DB2要做的第一件事就是关掉这个功能</p>
-</blockquote>
-<p>查询优化</p>
-<ul>
-<li>静态规则&#x2F;条件触发<ul>
-<li>根据静态的规则，或者触发了某一个条件来重写查询，移除低效率的东西</li>
-<li>需要检查catalog查看信息，而不需要去检查数据</li>
-</ul>
-</li>
-<li>成本原则<ul>
-<li>使用模型预估查询成本</li>
-<li>估计出多个查询计划，选择其中成本最低的一个</li>
-</ul>
-</li>
-</ul>
-<h4 id="静态规则-x2F-条件触发"><a href="#静态规则-x2F-条件触发" class="headerlink" title="静态规则&#x2F;条件触发"></a>静态规则&#x2F;条件触发</h4><p>关系代数等价</p>
-<ul>
-<li>一个查询语句可以用多个关系代数来表示</li>
-<li>可以选择其中代价更小的那个关系代数</li>
-<li>这个被叫做 <code>query rewriting</code> 属于上面的 <code>Tree rewrite</code>阶段</li>
-<li>比如用join代替笛卡尔积</li>
-</ul>
-<p>predicate pushdown</p>
-<ul>
-<li>比如select a.name,b.code from a join b where a.name &#x3D; ‘abc’</li>
-<li>可以先join在where，也可以先where 再 join</li>
-<li>显然先where更好，把where放到join的下层执行</li>
-<li>还有可以再where之后只获取需要的列，其余不需要的列就不再往上层传递了</li>
-</ul>
-<p>projection pushdown</p>
-<ul>
-<li>比如select a.name,b.code from a join b on a.id &#x3D; b.aid</li>
-<li>可以在扫描a表的时候进行投影，获取id和name传到join节点处理，而不是全部字段传过去，b表同样</li>
-</ul>
-<p><img src="/../images/15445046.png" alt="046"></p>
-<p>语句重写</p>
-<ul>
-<li>比如select * from a where 1 &#x3D; 0; 那么不会返回任何数据。</li>
-<li>select * from a where 1 &#x3D; 1 会返回所有数据，重写成select * from a</li>
-</ul>
-<h4 id="成本原则"><a href="#成本原则" class="headerlink" title="成本原则"></a>成本原则</h4><blockquote>
-<p>mongoDB没有使用成本预测模型，而是执行所有的查询计划，哪个最先返回就用哪个</p>
-</blockquote>
-<p>最初是IBM提出的。枚举不同的查询计划，并估算他们的成本,在检查完所有的计划或者超时后，选择其中成本最低的一个。</p>
-<ul>
-<li>single relation</li>
-<li>multiple relation </li>
-<li>nested sub-queries</li>
-</ul>
-<p>single relation</p>
-<ul>
-<li>单表是比较简单的，比如根据后面的statistics决定走哪个索引更好</li>
-<li>可以顺序扫描 </li>
-<li>可以二分搜索</li>
-<li>可以走索引</li>
-</ul>
-<p>对于单表查询来说，一般会使用<code>启发式规则</code>，他来判断哪些where条件能筛掉更多的数据，就先进行哪个where。</p>
-<p><code>sargable (search argument able)</code>：他会比较不同的索引，比如这个索引合适，那么就会使用它，比如id&#x3D;1的，那么就会使用主键索引</p>
-<p>multiple relation </p>
-<ul>
-<li>有两种方法，第一种是自底向上</li>
-<li>还有是自顶向下</li>
-</ul>
-<h5 id="system-R-优化"><a href="#system-R-优化" class="headerlink" title="system R 优化"></a>system R 优化</h5><ul>
-<li>这是一个自底向上的multiple relation</li>
-<li>将查询分成block并为每个block生成逻辑运算</li>
-<li>为每个逻辑运算生成物理运算并实现它</li>
-<li>组合所有的join算法和访问路径</li>
-<li>生成一个left deep的树</li>
-</ul>
-<p>比如有下面的SQL,ALBUM.NAME 字段有索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ARTIST.NAME</span><br><span class="line"> <span class="keyword">FROM</span> ARTIST, APPEARS, ALBUM</span><br><span class="line"><span class="keyword">WHERE</span> ARTIST.ID<span class="operator">=</span>APPEARS.ARTIST_ID</span><br><span class="line"> <span class="keyword">AND</span> APPEARS.ALBUM_ID<span class="operator">=</span>ALBUM.ID</span><br><span class="line"> <span class="keyword">AND</span> ALBUM.NAME<span class="operator">=</span>&quot;Andy&#x27;s OG Remix&quot;</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> ARTIST.ID</span><br></pre></td></tr></table></figure>
-
-<p>进行第一步，可以得到三个表的扫描方法</p>
-<ul>
-<li>ARTIST：顺序扫描</li>
-<li>APPEARS：顺序扫描</li>
-<li>ALBUM：索引扫描</li>
-</ul>
-<p>接下来组合不同的join算法，我们可以先连接ARTIST和APPEARS表，也可以先连接APPEARS和ALBUM表，或者ALBUM和ARTIST表，并且可以使用hash join 或者 merge join</p>
-<p><img src="/../images/15445047.png" alt="047"></p>
-<p>最终为每个可能选择成本最低的join</p>
-<p><img src="/../images/15445048.png" alt="048"></p>
-<p>接下来为每个可能去join其他表，来完成最终的三个表join，这个时候还是有hash join和merge join,选择最适合的join方法，就会产生三个路径</p>
-<p><img src="/../images/15445049.png" alt="049"></p>
-<p>在从这三个中选择出成本最低的一个路径作为最终的路径</p>
-<p><img src="/../images/15445050.png" alt="050"></p>
-<h5 id="自顶向下优化"><a href="#自顶向下优化" class="headerlink" title="自顶向下优化"></a>自顶向下优化</h5><p>首先生成逻辑节点，最底下是三个表，最上面是三个表join并且order by，中间是两个表join</p>
-<p><img src="/../images/15445051.png" alt="051"></p>
-<p>接下来先生成三个表的一个物理操作，因为需要order by，所以可以认为merge join更好。</p>
-<p><img src="/../images/15445052.png" alt="052"></p>
-<p>接下来两个表的物理操作，可以选择hash join或这merge join，因为要排序，可以认为merge join更好</p>
-<p><img src="/../images/15445053.png" alt="053"></p>
-<p>最后在探测其他的路径，比如最上层还可能有hash join，或者先hash join，在排序，但是这些都没有merge join的成本低，所以在探测到以后就可以Pass掉了</p>
-<p><img src="/../images/15445054.png" alt="054"></p>
-<h5 id="子查询优化"><a href="#子查询优化" class="headerlink" title="子查询优化"></a>子查询优化</h5><ul>
-<li>重写去掉and&#x2F;or来把他们变成同一个层级</li>
-</ul>
-<p>比如以下SQL</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> sailors <span class="keyword">AS</span> S</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">EXISTS</span> (</span><br><span class="line"> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> reserves <span class="keyword">AS</span> R</span><br><span class="line"> <span class="keyword">WHERE</span> S.sid <span class="operator">=</span> R.sid</span><br><span class="line"> <span class="keyword">AND</span> R.day <span class="operator">=</span> <span class="string">&#x27;2022-10-25&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>可以被重写为</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name</span><br><span class="line"> <span class="keyword">FROM</span> sailors <span class="keyword">AS</span> S, reserves <span class="keyword">AS</span> R</span><br><span class="line"><span class="keyword">WHERE</span> S.sid <span class="operator">=</span> R.sid</span><br><span class="line"> <span class="keyword">AND</span> R.day <span class="operator">=</span> <span class="string">&#x27;2022-10-25&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>分解子查询并将结果存储在临时表中，比如使用CTE，避免每个tuple都需要执行子查询</li>
-</ul>
-<p>比如下面的SQL</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> S.sid, <span class="built_in">MIN</span>(R.day)</span><br><span class="line"> <span class="keyword">FROM</span> sailors S, reserves R, boats B</span><br><span class="line"><span class="keyword">WHERE</span> S.sid <span class="operator">=</span> R.sid</span><br><span class="line"> <span class="keyword">AND</span> R.bid <span class="operator">=</span> B.bid</span><br><span class="line"> <span class="keyword">AND</span> B.color <span class="operator">=</span> <span class="string">&#x27;red&#x27;</span></span><br><span class="line"> <span class="keyword">AND</span> S.rating <span class="operator">=</span> (<span class="keyword">SELECT</span> <span class="built_in">MAX</span>(S2.rating)</span><br><span class="line"> <span class="keyword">FROM</span> sailors S2)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> S.sid</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>可以将子查询提取出来变成</p>
-<p><img src="/../images/15445055.png" alt="055"></p>
-<p>catalog会记录一些成本信息，不同的DBMS有不同的更新策略，也可以手动更新,这被叫做<code>statistics</code></p>
-<ul>
-<li>PostgreSQL&#x2F;SQLite : ANALYZE</li>
-<li>Oracle&#x2F; Mysql: ANALYZE TABLE</li>
-<li>SQL server: UPDATE STATISTICS</li>
-<li>DB2: RUNSTATS</li>
-</ul>
-<p>statistics: 维护着下面的信息</p>
-<ul>
-<li>counter: 表中的tuple数量</li>
-<li>V(A,R): R表中的A字段的去重数量</li>
-<li>SC(A,R): <code>选择基数SC</code> 是 counter &#x2F; V(A,R) 的值</li>
-</ul>
-<p>选择率：有了上面的数据，就可以计算出要查询的数据的分布比例了。这里就是求概率。</p>
-<ul>
-<li>比如查询主键 id &#x3D; 1的数据，当前有数据5条，那么counter &#x3D; 5,V(A,R) &#x3D; 5, SC(A,R) &#x3D; 1, 选择率 &#x3D; 1&#x2F;5</li>
-<li>比如范围查询 id &gt; 2的数据，当前有数据5条，那么counter &#x3D; 5, V(A,R) &#x3D; 5, SC(A,R) &#x3D; 1, 选择率 &#x3D; (Max - A) &#x2F; (Max - Min) &#x3D; 5-2&#x2F;5-1 &#x3D; 3&#x2F;4,显然这事错误的预测，但是数据库就是这样</li>
-<li>比如not查询 id &lt;&gt; 1的数据，当前有数据5条，那么选择率 &#x3D; 1 - (id &#x3D; 1的选择率) &#x3D; 1 - 1&#x2F;5 &#x3D; 4&#x2F;5</li>
-<li>比如多个条件 and, 那么取交集，也就是 两个选择率 相乘 &#x3D; sel(AB),这种计算同样不太准确，比如有一个<code>汽车表</code>，有<code>make</code>字段代表生产商，<code>model</code>代表型号，我们知道model &#x3D; “帕萨特”，make 一定是 <code>大众</code>。按照我们的算法 假设make 有10个，选择率就是1&#x2F;10, model 100个，选择率就是 1&#x2F;100,总的选择率就是 1&#x2F;1000,但是帕萨特一定是大众的，所以真实选择率其实是1&#x2F;100。有些数据库可以设置字段关联来解决这个问题，比如oracle等，mysql和postgresql不行。</li>
-<li>比如多个条件 or, 那么取并集，也就是两个选择率相加 &#x3D; sel(A) + sel(B) - sel(AB)</li>
-</ul>
-<p><img src="/../images/15445056.png" alt="056"></p>
-<p>直方图的存储，由于存储所有信息的直方图可能很占空间，可以选择稀疏存储，合并一些数据，这样会牺牲一些准确率，但是节省空间。</p>
-<p>除了直方图以外，有些数据库还会使用抽样检查，花费一些时间进行抽样，然后根据样本来进行预测选择率。</p>
-<h2 id="并发控制原理"><a href="#并发控制原理" class="headerlink" title="并发控制原理"></a>并发控制原理</h2><p>原子性：事务的每个操作都是原子的，要么全成功，要么全失败，通过undo redo log实现<br>一致性：保证事务执行前和执行后是一致的，中间可以临时不一致，但最终要一致。通过raft等共识协议实现<br>隔离性：保证事务的隔离性，每个事务都是独立运行的，并发的时候通过<code>并发控制协议</code>来保证交错执行，通过latch保证正确性。通过并发控制实现<br>持久性：事务提交后数据持久保存了，通过undo redo log实现</p>
-<p>当转账的时候，事务被突然的中止，或者断电，该怎么做？</p>
-<ul>
-<li>Logging</li>
-<li>shadow paging</li>
-</ul>
-<p>Logging</p>
-<ul>
-<li>记录所有的操作，使得事务中止或者故障后可以undo 操作。</li>
-<li>在磁盘和内存中维护 undo records</li>
-<li>就像飞机上的黑盒子一样</li>
-</ul>
-<p>shadow paging</p>
-<ul>
-<li>将数据复制到一个副本中进行事务更新，如果成功了，将副本作为新的数据库，如果没成功也不影响当前的数据库</li>
-<li>起源于System R</li>
-<li>CouchDB和LMDB使用这个方法</li>
-</ul>
-<p>并发控制协议：</p>
-<ul>
-<li>悲观的：两阶段提交</li>
-<li>乐观的：时间戳</li>
-</ul>
-<p>顺序执行：</p>
-<ul>
-<li>顺序执行每个事务，保证事务的最终一致性</li>
-</ul>
-<p>交错执行：</p>
-<ul>
-<li>如果能达到顺序执行的结果，那么就是正确的执行 schedle</li>
-</ul>
-<p>假设a,b账户都有1000，那么经过t1事务和t2事务执行以后，总的结果应该不变，对于数据库来说，哪个事务先执行都可以，如果想控制事务执行顺序，应该由应用层控制。</p>
-<p><img src="/../images/15445057.png" alt="057"></p>
-<p>如果交错执行的结果和顺序执行的结果不一样，就是错误的</p>
-<p><img src="/../images/15445058.png" alt="058"></p>
-<p>总共会出现三种冲突</p>
-<ul>
-<li>读写冲突</li>
-<li>写读冲突</li>
-<li>写写冲突</li>
-</ul>
-<p>读写冲突（不可重复读）：当读第一次的时候，值被其他事务改变了，再次读的时候，值就和第一次读的时候不一样了</p>
-<p><img src="/../images/15445059.png" alt="059"></p>
-<p>写读冲突（读未提交或脏读）：A事务读取后，修改了值，B事务读取了修改的值，然后又修改了值，B事务提交后，A事务中止，回滚。</p>
-<p><img src="/../images/15445060.png" alt="060"></p>
-<p>写写冲突（覆盖数据）：两个事务同时写入一个值，有一个值会被覆盖掉。</p>
-<p><img src="/../images/15445061.png" alt="061"></p>
-<p>冲突可串行化,大多数数据库使用的，还有个视图可串行化，没数据库实现</p>
-<ul>
-<li>通过比较两个操作是否冲突，来修改顺序</li>
-<li>使用依赖图（优先图）来判断依赖是否出现环</li>
-</ul>
-<p>假设事务t1写入了A数据，事务t2同时读取A数据，那么事务t2就依赖了事务t1</p>
-<p><img src="/../images/15445062.png" alt="062"></p>
-<p>假设事务t2又写入了B，事务t1要读取B，那么事务t1就依赖了事务t2，这个时候就产生了循环依赖，就跟死锁一样，所以这个时候需要回滚一个事务</p>
-<p><img src="/../images/15445063.png" alt="063"></p>
-<h2 id="两阶段锁"><a href="#两阶段锁" class="headerlink" title="两阶段锁"></a>两阶段锁</h2><p>事务A先获取锁，事务B等待锁，事务A执行完成以后，释放锁，事务B才能拿到锁。</p>
-<p>共享锁，读锁，S-LOCK<br>独享锁，写锁，X-LOCK</p>
-<p><img src="/../images/15445064.png" alt="064"></p>
-<p>如上图所示，这样还是会出现不可重复读的问题，两阶段锁可以解决这个问题，两阶段锁是第一个正确的<code>并发控制协议</code></p>
-<p>两阶段锁,遵循这个方法，使得事务是<code>冲突可串行化</code>的，但是会有级联事务中止（cascading aborts），可以通过强严格两阶段锁解决这个问题。</p>
-<ul>
-<li>第一阶段Growing:每个事务从lock manager获取锁，事务释放锁以后进入第二阶段shrinking</li>
-<li>第二阶段Shrinking:事务释放锁以后不能获取新锁,只能释放锁或者提交事务释放持有的所有锁</li>
-</ul>
-<p>从生命周期来看，第一阶段是上升，第二阶段只会下降，不会再次上升，下图是正确的生命周期</p>
-<p><img src="/../images/15445065.png" alt="065"></p>
-<p>下图是错误的生命周期</p>
-<p><img src="/../images/15445066.png" alt="066"></p>
-<p>cascading aborts，如果事务t1中止回滚了，那么事务t2就发生了<code>脏读</code>，所以也需要回滚重来</p>
-<p><img src="/../images/15445067.png" alt="067"></p>
-<h3 id="严格两阶段锁"><a href="#严格两阶段锁" class="headerlink" title="严格两阶段锁"></a>严格两阶段锁</h3><p>在提交事务的时候才释放锁。可以解决脏读的问题。</p>
-<p>非两阶段锁执行如下：</p>
-<p><img src="/../images/15445068.png" alt="067"></p>
-<p>两阶段锁执行如下：</p>
-<p><img src="/../images/15445069.png" alt="067"></p>
-<p>严格两阶段锁执行如下：</p>
-<p><img src="/../images/15445070.png" alt="070"></p>
-<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>死锁检测：通过使用<code>wait-for</code>图来检测依赖关系，如果有环就是死锁</p>
-<p>检测的频率可以通过参数调整，这个需要权衡</p>
-<p>victim选择，选择出回滚哪个事务，这也是企业级系统和开源系统的区别</p>
-<ul>
-<li>可以根据时间戳，选择年龄小的那个，认为刚加入的回滚成本小</li>
-<li>根据持有锁的数量，选择持有锁少的那个回滚</li>
-<li>根据已完成的工作量，选择查询数量少的那个回滚，可以认为回滚一个查询的成本比几十个查询的成本小</li>
-<li>根据剩余的工作量</li>
-<li>根据回滚的次数，这个事务老回滚，可能同情它不让它回滚，以避免“饥饿”</li>
-</ul>
-<h3 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h3><p>根据时间戳来选择</p>
-<ul>
-<li>wait die: 老的等待新的，如果事务t1先开始，事务t2后开始，t2先获取了锁a, 然后t1要获取锁a，那么就等待，因为老的要等待新的，因为t1是老的，如果t1先获取锁a，t2新的后获取那么t2abort</li>
-<li>wound die: 新的等待老的，如果事务t1先开始，事务t2后开始，t2先获取了锁a,然后t1要获取锁a,那么t2就abort，给老的让路，因为老的优先级高，如果t1先获取锁a，t2新的后获取锁a，那么就等待，因为新的等待老的</li>
-</ul>
-<p><img src="/../images/15445071.png" alt="071"></p>
-<p>数据库锁层次</p>
-<p><img src="/../images/15445072.png" alt="072"></p>
-<h3 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h3><p>意向共享锁IS</p>
-<ul>
-<li>使用共享锁在较低级别锁定，共享锁粒度更细</li>
-</ul>
-<p>意向排它锁IX</p>
-<ul>
-<li>使用排它锁在较低级别锁定，排它锁粒度更细</li>
-</ul>
-<p>共享意向排它锁</p>
-<ul>
-<li>高级别用共享锁，低级别用排它锁</li>
-</ul>
-<p><img src="/../images/15445073.png" alt="073"></p>
-<p>假设t1事务要查询一个tuple,那么可以在table上一个IS锁，然后在具体的tuple上一个S锁，接下来t2事务要更新一个tuple，发现表上是IS锁，那么根据规则，可以在table上在加一个IX锁，然后在要更新的tuple上一个X锁，如果恰好是同一个tuple，那么就等待S锁释放，如果不是同一个，那么就并发执行成功</p>
-<p><img src="/../images/15445074.png" alt="073"></p>
-<p>假设t1事务要扫描所有tuple来找到一个tuple去更新，那么table上一个SIX锁，然后扫描到一个tuple，就给一个tuple上X锁，扫描完就释放X锁，接下来t2事务要读取一个tuple，发现表上是SIX锁，那么根据规则，可以在table上一个IS锁，然后在要查询的tuple上S锁，如果刚巧tuple上有X锁，那么就等待t1事务释放。</p>
-<p><img src="/../images/15445075.png" alt="073"></p>
-<h2 id="时间戳并发控制"><a href="#时间戳并发控制" class="headerlink" title="时间戳并发控制"></a>时间戳并发控制</h2><p>两阶段锁是一种<code>悲观</code>的协议，所有人都会上锁，会争抢，时间戳是一种不依赖锁的<code>乐观</code>的协议。</p>
-<p>Ti代表事务i得一个时间戳，Tj是j的，如果Ti &lt; Tj，那么i得事务会在j之前提交。</p>
-<p>时间戳的两个特性</p>
-<ul>
-<li>唯一性，每个时间戳必须是唯一的</li>
-<li>单调递增性，时间戳必须是增加的</li>
-</ul>
-<h3 id="基本时间戳协议"><a href="#基本时间戳协议" class="headerlink" title="基本时间戳协议"></a>基本时间戳协议</h3><p>每个tuple需要维护两个时间戳，一个<code>读时间戳</code>，一个<code>写时间戳</code>。</p>
-<h4 id="读"><a href="#读" class="headerlink" title="读"></a>读</h4><p>在读取的时候要保证，当前时间戳 &gt; 写时间戳，也就是读取的是最新的值，未来不会被改变的值。<br>如果 当前时间戳 &lt; 写时间戳，那么重启事务，分配一个新的时间戳，再试一次。<br>如果成功取到tuple，那么需要更新<code>读时间戳</code>，使用自己的时间戳和原来的时间戳中大的那个去更新。</p>
-<h4 id="写"><a href="#写" class="headerlink" title="写"></a>写</h4><p>写入的时候要保证，当前时间戳 &gt; 读时间戳 并且 &gt; 写时间戳<br>成功写入的时候要更新写时间戳，使用自己的时间戳和原来的时间戳中大的那个去更新。</p>
-<h4 id="托马斯写入优化"><a href="#托马斯写入优化" class="headerlink" title="托马斯写入优化"></a>托马斯写入优化</h4><p>在写入的时候，如果当前时间戳 &lt; 写入时间戳，本来应该<code>中止</code>的事务，可以继续执行，但是写入操作不写入数据库，因为数据库的数据是更新的，而是写入本地副本，方便这个事务后面使用。</p>
-<h3 id="乐观并发控制"><a href="#乐观并发控制" class="headerlink" title="乐观并发控制"></a>乐观并发控制</h3><p>另外一个是<code>乐观并发控制</code>。为每一个事务创建一个私有空间，他的所有操作都是先对私有空间的副本操作，最后执行到数据库里面的时候需要对比一下，是否能执行。如果不冲突，就可以执行。</p>
-<p>三个阶段</p>
-<ul>
-<li>read phase(work phase): 执行事务的操作，操作都在私有空间执行。</li>
-<li>validation phase: 提交事务的时候验证事务的有效性，是否冲突等，确实是否可以提交。在这个阶段才会分配时间戳。如果在之前需要写入时间戳，先暂时写入无穷大。并检测是否和其他事务的时间戳冲突，其他事务包括以前的所有事务和正在执行的事务</li>
-<li>write phase: 如果校验成功，将时间戳写入W-TS列，将修改写入全局工作区，否则abort事务，这是原子的。</li>
-</ul>
-<p>假设事务t1读取tuple A,将从全局工作区复制A到私有工作区</p>
-<p><img src="/../images/15445076.png" alt="076"></p>
-<p>接下来事务t2读取tuple A，也将从全局工作区复制A到私有工作区</p>
-<p><img src="/../images/15445077.png" alt="077"></p>
-<p>接下来事务t2进入validation阶段，然后分配时间戳为1，接下来进入写入阶段，什么也不做</p>
-<p><img src="/../images/15445078.png" alt="077"></p>
-<p>事务t1修改tuple A，然后再次读取tuple A，可以重复读取，因为读取私有工作区的tuple A</p>
-<p><img src="/../images/15445079.png" alt="077"></p>
-<p>事务t1进入validation阶段，分配时间戳为2，因为1已经分配给t2事务了，写入阶段将私有工作区的tuple A，更新到全局工作区</p>
-<p><img src="/../images/15445080.png" alt="077"></p>
-<p>数据库拥有全局视野，在validation phase阶段，是单线程比较事务是否可以执行，会有一个大的latch上锁</p>
-<ul>
-<li>backward validation: 和并发执行中更早已经提交的事务进行比较</li>
-<li>forward validation: 和并发执行中后面没有提交的事务进行比较</li>
-</ul>
-<h4 id="forward-validation"><a href="#forward-validation" class="headerlink" title="forward validation"></a>forward validation</h4><p>如果事务t1 &lt; t2,t1的写阶段在t2的读阶段之前，则没有任何冲突发生。</p>
-<p>如果事务t1 &lt; t2,但是t1的valition阶段在t2的validation阶段之前，则冲突，因为t1已经更改了tuple A ,而t2读取的是W-TS&#x3D;0的tuple A，如果t1事务的W-TS是1，t2是2,那么t2读取的应该是W-TS&#x3D;1的tuple A才对</p>
-<p><img src="/../images/15445081.png" alt="081"></p>
-<p>如果t2的validation阶段在前就没问题，因为t2分配W-TS&#x3D;1，t1是2</p>
-<p><img src="/../images/15445082.png" alt="082"></p>
-<p>如果事务t1 &lt; t2 ，t1的validation阶段在t2的前面，但是t1已经写入全局工作区以后，t2在读取这个tuple，就没有问题</p>
-<p><img src="/../images/15445083.png" alt="083"></p>
-<p>forward validation和没有提交的事务进行比较<br><img src="/../images/15445084.png" alt="084"></p>
-<p>backward 和已经提交的事务比较</p>
-<p><img src="/../images/15445085.png" alt="085"></p>
-<h3 id="partition-based-时间戳协议"><a href="#partition-based-时间戳协议" class="headerlink" title="partition based 时间戳协议"></a>partition based 时间戳协议</h3><p>按照时间戳水平分区，在同一个区里面，按照时间戳顺序执行，就不需要latch了。速度会很快。</p>
-<p>在不同区执行的话，就很复杂了。</p>
-<p>每个分区都是单线程执行的。这样不需要获取latch。</p>
-<h3 id="幻读问题"><a href="#幻读问题" class="headerlink" title="幻读问题"></a>幻读问题</h3><p>假设事务t1读取了table a的count(<em>)是99,事务t2插入了一条数据，事务t1再次读取count(</em>)就变成了100，因为t1只能lock已经存在的数据，要插入的数据没办法lock</p>
-<p><img src="/../images/15445086.png" alt="086"></p>
-<p>解决幻读的三个方法</p>
-<ul>
-<li>重新执行扫描：提交后重新执行扫描看结果是否一致，不一致就发生了幻读，少见</li>
-<li>predicate locking：System R提出的方案，锁定where语句，进行比较，很难实现，非常少见，duckDB,Hyper等实现了</li>
-<li>Index Locking: 索引锁定，常见</li>
-</ul>
-<h4 id="Index-Locking"><a href="#Index-Locking" class="headerlink" title="Index Locking"></a>Index Locking</h4><ul>
-<li>key-value locks</li>
-<li>Gap locks (间隙锁)</li>
-<li>Key-Range locks</li>
-<li>Hierarchical locks</li>
-</ul>
-<p>key-value locks只能锁定键值，需要一个virtual key来锁定不存在的key</p>
-<p><img src="/../images/15445087.png" alt="087"></p>
-<p>间隙锁，锁定键值和下一个键值之间的间隙</p>
-<p><img src="/../images/15445088.png" alt="088"></p>
-<p>key-Range locks，锁定键值以及和下一个键值之间的间隙</p>
-<p><img src="/../images/15445089.png" alt="089"></p>
-<p>Hierarchical locks使用IX,IS等意向锁</p>
-<p>不同隔离级别对应的问题，最受欢迎的隔离级别是读已提交，mysql默认是可重复读</p>
-<p><img src="/../images/15445090.png" alt="090"></p>
-<h2 id="多版本并发控制（MVCC）"><a href="#多版本并发控制（MVCC）" class="headerlink" title="多版本并发控制（MVCC）"></a>多版本并发控制（MVCC）</h2><p>MVCC(Multiple Version Concurrency Contronl)最早在1978年由一位MIT的Phd学生提出。在1980年被数据库实现。</p>
-<p>firefox 最开始叫 phoenix， 但是因为和其他的重名了需要改名字，然后改成了firebird, firebird是个最早开源的数据库，它使用了MVCC,所以火狐还要改名，就成了firefox。</p>
-<ul>
-<li>Writers don’t block readers</li>
-<li>Readers don’t block wirters</li>
-</ul>
-<p>只读事务读取快照，不需要锁。MVCC天然支持快照隔离，如果没有gc，支持time travel query，就是可以查询很久以前的更改</p>
-<p>版本维护有3个元数据</p>
-<ul>
-<li>version 版本号 从0开始，递增</li>
-<li>begin 开始的时间戳</li>
-<li>end 结束的时间戳，默认是无穷大，当写入以后要更新上一个版本的end</li>
-</ul>
-<p><img src="/../images/15445097.png" alt="090"></p>
-<p>还要维护一个事务状态表</p>
-<ul>
-<li>txnid: 比如事务t1,t2标识</li>
-<li>timestamp: 时间戳，如OCC那样</li>
-<li>status: 活动中，已提交等</li>
-</ul>
-<p><img src="/../images/15445098.png" alt="090"></p>
-<p>假设事务t1读取A0的数据，然后事务t2写入A1数据，然后更新A0的end-ts&#x3D;2，事务t1再次读取的时候还能看到A0</p>
-<p><img src="/../images/15445099.png" alt="090"></p>
-<p>假设事务t1读取A0的数据，然后写入A1的数据，事务t2读取A0的数据，写入A2的数据，这个时候t2会阻塞，因为t1持有A的锁，当t1事务commit后，释放锁，事务t2才能继续写入A2的数据</p>
-<p><img src="/../images/15445100.png" alt="100"></p>
-<p>当事务启动的时候，会看到启动时数据库里的一致的快照</p>
-<ul>
-<li>没有来自未提交的事务的撕裂写入</li>
-<li>如果两个事务更新同一个tuple，第一个写入将获胜</li>
-</ul>
-<p>快照隔离收到写入偏差异常(Write Skew Anomaly)的影响。</p>
-<p>写入偏差异常，假设当前有2个黑球，2个白球，事务t1要将白球更新成黑球，事务t2要将黑球更新成白球，这个时候事务t1读取到2个白球，只将这个两个白球更新成黑球了，而事务t2读取了2个黑球，只把这2个黑球更新成白球了，最终结果还是2黑2白</p>
-<p><img src="/../images/15445101.png" alt="100"></p>
-<p>但是顺序执行的话结果应该是全白或全黑。</p>
-<p><img src="/../images/15445102.png" alt="100"></p>
-<p>并发控制协议</p>
-<ul>
-<li>timestamp ordering:分配一个确定顺序的时间戳</li>
-<li>OCC:乐观并发控制</li>
-<li>两阶段锁</li>
-</ul>
-<h3 id="版本存储"><a href="#版本存储" class="headerlink" title="版本存储"></a>版本存储</h3><p>版本存储：为每个逻辑tuple创建一个链表，每个事务通过指针遍历链表获取对应的版本。索引指针指向链表的头节点。</p>
-<ul>
-<li>append only storage: 复制一个tuple,更新数据，放到后面的节点作为tuple的新版本。</li>
-<li>time travel storage: master version表中放最新版本的数据，老版本的数据放在 time travel 表中。master version表维护指向time travel表数据的指针。</li>
-<li>Delta Storage: 最佳方案，只维护对前一个版本数据的修改，不直接维护所有副本。</li>
-</ul>
-<h4 id="append-only-storage"><a href="#append-only-storage" class="headerlink" title="append only storage"></a>append only storage</h4><p>要么最新到最旧的连接，要么最旧到最新的连接，全都放在一个工作空间中，然后用指针连一起</p>
-<p><img src="/../images/15445091.png" alt="090"></p>
-<h4 id="time-travel-storage"><a href="#time-travel-storage" class="headerlink" title="time travel storage"></a>time travel storage</h4><p>这个是两个空间来存储，一个main table存储最新的，一个time travel table存储所有旧的，像Sql server这种最初没有设计MVCC的数据库，为了兼容使用了这种方法。</p>
-<p><img src="/../images/15445092.png" alt="090"></p>
-<h4 id="Delta-storage"><a href="#Delta-storage" class="headerlink" title="Delta storage"></a>Delta storage</h4><p>也是两个空间存储，不同的是旧空间只存储修改的列的值</p>
-<p><img src="/../images/15445093.png" alt="090"></p>
-<h3 id="garbage-collection"><a href="#garbage-collection" class="headerlink" title="garbage collection"></a>garbage collection</h3><p>garbage collection(垃圾回收)</p>
-<ul>
-<li>tuple level：通过比较时间戳来确定哪些版本已经不用了，可以进行回收了。</li>
-<li>transaction level：在事务提交的时候进行对比旧版本的数据是否可以删除</li>
-</ul>
-<h4 id="tuple-level-gc"><a href="#tuple-level-gc" class="headerlink" title="tuple level gc"></a>tuple level gc</h4><h5 id="vacuum"><a href="#vacuum" class="headerlink" title="vacuum"></a>vacuum</h5><p>后台线程的方式运行，每隔一段时间去扫描，还可以通过bit map来提升速度</p>
-<p>假设现在正在运行的事务有两个，最低时间戳是12，那么所有end-ts低于12的都可以被gc，数据库基本都用的这个</p>
-<p><img src="/../images/15445094.png" alt="090"></p>
-<h5 id="cooperative-cleaning"><a href="#cooperative-cleaning" class="headerlink" title="cooperative cleaning"></a>cooperative cleaning</h5><p>当查询某个tuple的时候，进行扫描这个tuple的旧版本，从而gc，缺点是如果这个tuple一直不被访问，那么就一直不gc，很罕见</p>
-<p><img src="/../images/15445095.png" alt="090"></p>
-<h4 id="transaction-level-gc"><a href="#transaction-level-gc" class="headerlink" title="transaction level gc"></a>transaction level gc</h4><p>在事务提交的时候进行对比旧版本的数据是否可以删除</p>
-<p><img src="/../images/15445096.png" alt="090"></p>
-<h3 id="索引管理"><a href="#索引管理" class="headerlink" title="索引管理"></a>索引管理</h3><p>索引管理</p>
-<ul>
-<li>逻辑指针：通过中间表转化指针和物理地址，二级索引指向主键索引。</li>
-<li>物理指针：直接记录指针</li>
-</ul>
-<h4 id="物理指针"><a href="#物理指针" class="headerlink" title="物理指针"></a>物理指针</h4><p>所有的索引都记录指针，缺点是更新的时候所有索引的指针都要更新</p>
-<p><img src="/../images/15445103.png" alt="103"></p>
-<h4 id="逻辑指针"><a href="#逻辑指针" class="headerlink" title="逻辑指针"></a>逻辑指针</h4><p>二级索引都记录主键，只有主键索引记录指针，mysql就这样的，这种方式更好</p>
-<p><img src="/../images/15445104.png" alt="104"></p>
-<h4 id="重复key问题"><a href="#重复key问题" class="headerlink" title="重复key问题"></a>重复key问题</h4><p>如果索引不是唯一索引，可以有多个key的话，假设事务t1读取A1，没问题</p>
-<p>假设事务t2更新了A1，又删除了A1，那么数据如图所示A1老版本指向新版本，但是新版本是被删除的<br><img src="/../images/15445105.png" alt="104"></p>
-<p>假设事务t3插入了一条A1数据，那么索引就指向两个A1数据</p>
-<p><img src="/../images/15445106.png" alt="104"></p>
-<p>MySQL使用两阶段锁，版本存储使用Delta Storage，垃圾回收是tuple level Vacuum,索引管理是逻辑指针。Mysql更快。<br>PostgreSQL使用两阶段锁，版本存储使用append only storage, 垃圾回收使用tuple level Vacuum，索引管理是物理指针。</p>
-<p>MVCC实现</p>
-<p><img src="/../images/15445107.png" alt="104"></p>
-<h2 id="Logging-Schemes"><a href="#Logging-Schemes" class="headerlink" title="Logging Schemes"></a>Logging Schemes</h2><p>在数据库运行时，还没有把数据写入磁盘的时候发生故障，这个时候需要恢复数据。</p>
-<h3 id="故障恢复"><a href="#故障恢复" class="headerlink" title="故障恢复"></a>故障恢复</h3><p>主要是两件事</p>
-<ul>
-<li>收集日志信息，以方便恢复</li>
-<li>根据日志信息进行恢复</li>
-</ul>
-<p>故障类型</p>
-<ul>
-<li>事务故障</li>
-<li>系统故障</li>
-</ul>
-<h3 id="UNDO-撤销-and-REDO-重做"><a href="#UNDO-撤销-and-REDO-重做" class="headerlink" title="UNDO(撤销) and REDO(重做)"></a>UNDO(撤销) and REDO(重做)</h3><p>Undo:维护一些信息，可以恢复事务对数据库中某个对象所做的任何修改。<br>Redo: 维护一些信息，可以重新执行某个事务对数据库中的某个对象所做的修改。可以重新执行一个已经提交的事务的修改。</p>
-<h3 id="buffer-pool-策略"><a href="#buffer-pool-策略" class="headerlink" title="buffer pool 策略"></a>buffer pool 策略</h3><p>两个策略</p>
-<ul>
-<li>steal:是否允许一个已提交事务写入磁盘的时候把这个page里面的未提交事务的修改也写入磁盘。</li>
-<li>force：提交事务的时候，是否允许事务的所有更新写入磁盘</li>
-</ul>
-<p>not steal + force</p>
-<ul>
-<li>优点：不需要恢复，因为只写入磁盘提交的事务更新的内容。磁盘就是已提交内容</li>
-<li>缺点：多个事务提交需要写入多次磁盘，写入磁盘麻烦点，因为要复制一个副本出来，副本中是这个事务修改的内容，把这个副本写入磁盘。</li>
-</ul>
-<p><img src="/../images/15445108.png" alt="104"></p>
-<p>shadow paging:</p>
-<ul>
-<li>有一个db root，记录当前使用的hash table</li>
-<li>hash table有一个master table是当前使用的，每个事务会有一个shadow page table，提交以后更新db root指向这个shadow page table，然后回收之前的master table和对应的page文件</li>
-</ul>
-<p><img src="/../images/15445109.png" alt="104"></p>
-<p>wirte ahead log</p>
-<ul>
-<li>先写入日志，在写入磁盘</li>
-<li>日志中包含的信息可以用来undo and redo。</li>
-<li>使用的策略是 steal + not force，所以不需要把事务的所有更新都写入磁盘。</li>
-</ul>
-<p>日志内容</p>
-<ul>
-<li>事务id</li>
-<li>对象id</li>
-<li>时间戳</li>
-<li>before value(undo)</li>
-<li>after value(redo)</li>
-<li>写入更快，但是恢复速度慢</li>
-</ul>
-<p>当事务执行的时候，写入日志到内存中，比如事务t1,将A从1修改到8，当事务提交的时候，先把日志写入磁盘，然后告诉客户端事务成功，如果这个时候发生断电等，可以读取日志来恢复事务，如果写入日志之前断电，那么无需恢复，因为没有告诉客户端成功，事务没有成功如何办是客户端要考虑的。</p>
-<p><img src="/../images/15445110.png" alt="104"></p>
-<p>group commit</p>
-<ul>
-<li>有两个log buffer，写满一个以后，写另一个，将满的log buffer写入磁盘</li>
-<li>除了满的时候写入磁盘，还有定时，如果知道写入磁盘的时间，可以定时成这个时间，没满的话时间到了也会写入磁盘。</li>
-</ul>
-<p>满了的写入磁盘可以异步写入，增加速度</p>
-<p><img src="/../images/15445111.png" alt="111"></p>
-<p>shadow paging 和 WAL 就是一种权衡，是看重运行时速度还是恢复速度，几乎所有的数据库都是用WAL,比如mysql的bin log, WAL运行时速度更快</p>
-<p><img src="/../images/15445112.png" alt="111"></p>
-<p>logging schemes</p>
-<ul>
-<li>物理日志：记录底层字节的修改，就像git diff一样能看见，但是修改1万条tuple,就会记录1万条tuple的修改。</li>
-<li>逻辑日志：记录高层的事务操作，像update,delete,insert等。比物理日志省空间，但是恢复的时候不知道哪些tuple已经写入了磁盘，所以恢复的时候还会在写入一遍。</li>
-<li>混合日志：记录相对底层的修改，但是不像git diff一样那么详细。</li>
-</ul>
-<p><img src="/../images/15445113.png" alt="111"></p>
-<h3 id="check-point"><a href="#check-point" class="headerlink" title="check point"></a>check point</h3><p>WAL的缺点是无限增长，如果崩溃后，则需要重现所有的WAL，增加检查点以后，可以只重现检查点以后的日志。</p>
-<p>日志中写入check point，check point之前的都是已经写入磁盘的，所以恢复的时候就不用管了。</p>
-<p>假设事务t1在检查点前commit了，则不需要恢复，因为已经提交了，事务t2在检查点后commit，在检查点前开始，则需要redo恢复事务t2，事务t3在检查点前开始，但是还没有commit，所以不需要恢复，直接撤销即可。</p>
-<p><img src="/../images/15445114.png" alt="114"></p>
-<h2 id="aries-recovery"><a href="#aries-recovery" class="headerlink" title="aries recovery"></a>aries recovery</h2><p>三步</p>
-<ul>
-<li>预写式日志</li>
-<li>Repeating history during redo: 重启并恢复事务到之前的状态</li>
-<li>logging changes during undo：再次写入预写式日志</li>
-</ul>
-<p>日志序列号(LSN)</p>
-<ul>
-<li>每个日志都要有一个序列号，在一个事务中，可能不是连续的，但是递增的。</li>
-<li>flushedLSN:在内存中，记录上一个刷到磁盘中的log的LSN</li>
-<li>pageLSN: 在page中，记录page最新的序列号</li>
-<li>recLSN: 在page中，记录最老的序列号，这个是不会变的，而pageLSN一直在更新。</li>
-<li>lastLSN: 记录事务中最新的一个日志</li>
-<li>Master Record: check point最新的LSN</li>
-</ul>
-<p>如果pageLSN &lt;&#x3D; flushedLSN, 表明这个page的数据都已经写入磁盘了</p>
-<p>事务提交的时候，往日志里面写入一个<code>txn end</code>。</p>
-<p>当事务commit后写入磁盘，然后更新flushedLSN，接下来添加txn end标识</p>
-<p><img src="/../images/15445115.png" alt="114"></p>
-<p>CLR:abort算法</p>
-<ul>
-<li>当事务abort的时候，进行撤销操作，日志里面添加CLR记录，before是对应的之前事务日志的after，CLR的after对应之前的before,undo next指针指向下个需要撤销的日志。</li>
-<li>撤销完成以后添加 <code>txn end</code>。</li>
-</ul>
-<p>写入的时候如同链表一样，除了记录本次的LSN以外，还要记录上一个的LSN,比如本次001，上次是Nil，本次002，上次001，以此找出这一次事务的所有日志，比如事务t1是001-nil,002-001，接下来事务t2是003-nil,004-003,然后事务t1是005-002。</p>
-<p>接下来插入CLR日志，CLR可以是026-011,CLR-002代表要撤销的是LSN&#x3D;002的日志，记录了从40恢复到30，最后在插入txn-end标识</p>
-<p><img src="/../images/15445116.png" alt="114"></p>
-<p>check point写入</p>
-<ul>
-<li>第一种方式是停止创建新事务，等所有事务完成的时候开始写入<ul>
-<li>优点是能完全保证数据一致性</li>
-<li>缺点是耗时，执行的时候不能创建新事务</li>
-</ul>
-</li>
-<li>第二种方法暂停更新的事务，只读事务不受影响，需要维护一个active transation table和一个dirty page table<ul>
-<li>active transation table包含事务id,lastLSN和状态，状态有运行中，提交中，等待undo</li>
-<li>dirty page table 包含所有的dirty page信息</li>
-</ul>
-</li>
-<li>第三种方法最好，叫fuzzy checkpoint，checkpoint的时候允许所有事务运行。<ul>
-<li>开始的时候记录checkpoint begin</li>
-<li>结束的时候记录checkpoint end,end里面包含了 checkpoint期间的active transation table和dirty page table信息。</li>
-</ul>
-</li>
-</ul>
-<p>ATT(Active Transation Table)</p>
-<p><img src="/../images/15445117.png" alt="114"></p>
-<p>DPT(Dirty Page Table)<br><img src="/../images/15445118.png" alt="114"></p>
-<p>第一个check point记录了ATT是T2事务，代表事务t2在check point之前开始，且未提交，而事务t1在check point之前已经提交了，所以不记录，DPT记录了事务t2在check point之前修改的脏页是P22</p>
-<p>第二个check point记录了事务T2,T3，因为T2虽然在第二个check point之前提交了，但是没有插入txn-end代表没有提交结束，DPT记录了两个check point之间的脏页P11和P33</p>
-<p><img src="/../images/15445119.png" alt="114"></p>
-<p>fuzzy check point </p>
-<p>因为所有事务都在运行中，所以增加了check point begin 和 end来标识check point的开始和结束，第一个check point end里面记录了事务t2和脏页P22，是因为这些发生在check point begin之前。</p>
-<p><img src="/../images/15445120.png" alt="120"></p>
-<p>arise recovery</p>
-<ul>
-<li>分析：根据master record跳到对应的check point的位置，然后开始扫描需要恢复的信息。</li>
-<li>redo: 重新执行所有的操作。</li>
-<li>undo: 从日志最后开始往上，撤销所有未提交的更改。这个时候已提交的已经写入磁盘，未提交的已经被撤销。</li>
-</ul>
-<p>分析阶段：从master record的位置开始扫描到最后，找出这之间的所有active transation table和dirty page table信息。</p>
-<p>redo: 根据分析出的信息，找到dirty page中最早的一个recLSN, 也就是最早的一个日志，然后从这里开始恢复数据，执行一遍所有的操作。来恢复buffer pool。</p>
-<p>undo: 从最后开始往上面扫描，把需要撤销的数据进行撤销。</p>
-<h2 id="分布式数据库介绍"><a href="#分布式数据库介绍" class="headerlink" title="分布式数据库介绍"></a>分布式数据库介绍</h2><p>并行数据库</p>
-<ul>
-<li>离得近的<br>分布式数据库</li>
-<li>离得远的</li>
-</ul>
-<p>系统架构</p>
-<ul>
-<li>shared everthing</li>
-<li>shared memory:常见于高性能计算领域，有多个CPU，共享内存和磁盘</li>
-<li>shared disk: 内存也有多个，共享磁盘，这个更常见，例如云数据库<ul>
-<li>更新数据的时候需要通知其余的节点</li>
-<li>spark,HBase</li>
-</ul>
-</li>
-<li>shared noting: 磁盘也是多个<ul>
-<li>有更好的效率，但是很难保证数据一致性和扩容</li>
-<li>mongo,ES,Etcd,Zookeeper,ClickHouse</li>
-</ul>
-</li>
-</ul>
-<p>shared noting example</p>
-<p>首先通过catalog查询应该请求哪个节点</p>
-<p><img src="/../images/15445121.png" alt="120"></p>
-<p>然后发送查询请求到相应的节点</p>
-<p><img src="/../images/15445122.png" alt="120"></p>
-<p>如果数据跨节点存储，那么数据会节点间通信，比如获取100和200的数据，node p1会请求p2获取200的数据，然后p1将两个数据返回给客户端</p>
-<p><img src="/../images/15445123.png" alt="120"></p>
-<p>shared disk example</p>
-<p>客户端请求节点获取数据，节点请求disk获取数据，然后返回</p>
-<p><img src="/../images/15445124.png" alt="120"></p>
-<p>但是更新的时候需要广播给其他节点</p>
-<p><img src="/../images/15445125.png" alt="120"></p>
-<p>mongo属于shared noting</p>
-<ul>
-<li>route节点，负责把请求路由到对应的节点上</li>
-<li>config节点，route从这里获取请求应该到哪个节点上</li>
-<li>db节点</li>
-</ul>
-<p>数据拆分</p>
-<ul>
-<li>将不同的数据放到每个shared上面</li>
-<li>不同的查询交给不同的shared去做，可以通过exchange operate来并行执行。</li>
-<li>最简单的方式是一个表一个分区，mongodb可以这样。</li>
-<li>水平分区<ul>
-<li>将数据水平分到每个分区中</li>
-<li>可以是hash，也可以是一个范围一个范围的分区</li>
-<li>hash的话，想增加分区很麻烦，可以使用<code>一致性hash</code>来解决增加分区的问题，而不是取余。</li>
-<li>采用一致性hash的有snowflake,memcached,cassandra等</li>
-</ul>
-</li>
-</ul>
-<p>SHARED-DISK PARTITIONING<br><img src="/../images/15445126.png" alt="120"></p>
-<p>SHARED-NOTHING PARTITIONING<br><img src="/../images/15445127.png" alt="120"></p>
-<p>一致性hash</p>
-<p>节点分布在环上，数据也分布在环上，顺时针旋转，数据就属于第一个到达的节点。</p>
-<p><img src="/../images/15445128.png" alt="120"></p>
-<p>增加节点的时候，只需要重新hash其中一个节点的数据就可以，比如增加p4，因为P4节点落在p3节点的范围里面，所以只需要重新hash节点p3的数据，其他节点无影响。</p>
-<p><img src="/../images/15445129.png" alt="120"></p>
-<p>如果需要复制数据，将数据存储在多个节点上，假设replication&#x3D;3，复制数据到三个节点，则顺时针旋转的3个节点都存储该数据。</p>
-<p><img src="/../images/15445130.png" alt="130"></p>
-<p>分布式事务</p>
-<ul>
-<li>通过中心化服务器，来分发lock，然后提交事务的时候通过他来请求每一个分区是否能提交事务，如果都可以，才提交事务</li>
-<li>去中心化事务提交</li>
-</ul>
-<p>spanner</p>
-<p>HNSW</p>
-<h2 id="分布式OLTP数据库"><a href="#分布式OLTP数据库" class="headerlink" title="分布式OLTP数据库"></a>分布式OLTP数据库</h2><p>假设所有节点是友好的</p>
-<p>replication:可以提高可用性</p>
-<ul>
-<li>分区 vs 非分区</li>
-<li>shared noting vs shared disk</li>
-<li>设计<ul>
-<li>副本配置</li>
-<li>传播方案</li>
-<li>传播时序</li>
-<li>更新方法</li>
-</ul>
-</li>
-</ul>
-<p>副本配置</p>
-<ul>
-<li>primary: 有一个主节点，其他是从节点，大部分都是这样的，主节点负责同步给其他从节点。比如主从复制，读写分离这种</li>
-<li>multi-primary: 事务可以在任何一个节点提交，并同步给其他节点，mysql group replication就支持这个。这种方案所有副本都可以读写，冲突的时候通过两阶段提交或者Paxos来觉得写入哪个。Facebook使用了这个。</li>
-</ul>
-<p>primary，写入主节点，读取可以在从节点</p>
-<p><img src="/../images/15445131.png" alt="130"></p>
-<p>multi-primary 任何节点都可以读写</p>
-<p><img src="/../images/15445132.png" alt="130"></p>
-<p>K-safety: 通过监控对象来看有哪些replica是活跃的。至少要有k个replica，如果小于k个，就认为宕机了。</p>
-<p>传播方案</p>
-<ul>
-<li>同步：强一致性，所有从节点都同步以后才返回成功</li>
-<li>异步：最终一致性，先返回成功，在同步给其他的从节点</li>
-<li>半同步：同步给一些节点后返回成功给客户端</li>
-</ul>
-<p>传播时序</p>
-<ul>
-<li>即时：立即传递给其他节点，同时当事务提交或回滚的时候也传递给其他节点</li>
-<li>提交：事务提交的时候才传播给其他节点</li>
-</ul>
-<p>事务提交的顺序由数据库状态决定，原子提交协议也是分布式的共识协议</p>
-<p>原子提交协议</p>
-<ul>
-<li>两阶段提交（1970）</li>
-<li>三阶段提交（1983）</li>
-<li>Viewstamped Replication (1988)</li>
-<li>Paxos（1989）</li>
-<li>Raft（2013）</li>
-<li>ZAB（2008）</li>
-</ul>
-<p>两阶段提交</p>
-<ul>
-<li>第一阶段 prepare, 像所有参与者发送请求，是否能提交事务，只有所有都可以提交，才进入第二阶段，如果有一个节点abort,那么事务就会进入第二阶段abort</li>
-<li>第二阶段 commit, 想所有参与者发送请求，进行提交事务。</li>
-<li>第二阶段 abort, 返回abort，然后所有参与者abort。</li>
-</ul>
-<p>假设客户端发送提交事务的请求，有一个协调器和若干个参与者，协调器接收请求以后，向参与者发送第一阶段prepare请求。</p>
-<p><img src="/../images/15445133.png" alt="130"></p>
-<p>如果所有参与者返回OK,表示全部同意提交，则可以提交。</p>
-<p><img src="/../images/15445134.png" alt="130"></p>
-<p>接下来协调器发送第二阶段commit请求给所有参与者</p>
-<p><img src="/../images/15445135.png" alt="130"></p>
-<p>所有参与者返回OK以后，协调器返回提交成功给客户端</p>
-<p><img src="/../images/15445136.png" alt="130"></p>
-<p>假设有任何一个参与者在第一阶段返回了不同意，则终止事务提交</p>
-<p><img src="/../images/15445137.png" alt="130"></p>
-<p>协调器向所有节点发送第二阶段abort请求</p>
-<p><img src="/../images/15445138.png" alt="130"></p>
-<p>等待所有节点返回OK以后，协调器返回abort给客户端</p>
-<p><img src="/../images/15445139.png" alt="130"></p>
-<p>崩溃恢复</p>
-<ul>
-<li>如果协调器崩溃了。要么全部abort，要么选出新的协调器继续执行事务。</li>
-<li>如果参与者崩溃了，那么协调器会认为参与者返回了abort，从而终止事务。</li>
-</ul>
-<p>优化</p>
-<ul>
-<li>early prepare voting: 这个很少，最后一个查询执行的时候，告诉他可以直接进入prepare阶段</li>
-<li>early Ack After Prepare: 这个很常见，prepare阶段结束就返回事务执行成功，然后自己再接着commit。</li>
-</ul>
-<p>early Ack After Prepare：当第一阶段prepare返回成功以后，立即给客户端返回成功。</p>
-<p><img src="/../images/15445140.png" alt="140"></p>
-<p>返回给客户端以后再发送第二阶段commit请求给其他参与者。</p>
-<p><img src="/../images/15445141.png" alt="140"></p>
-<p>Paxos，来自分布式计算领域，也被称为<code>共识协议</code>。两阶段提交是Paxos的一个子集。</p>
-<ul>
-<li>Paxos大部分节点同意提交就可以提交，而两阶段提交需要所有参与者同意，所以Paxos没有容错。</li>
-</ul>
-<p><img src="/../images/15445142.png" alt="140"></p>
-<p>multi-Paxos</p>
-<ul>
-<li>选举一个leader来进行提案，每隔一段时间重新选举</li>
-<li>防止有两个 proposer 来回提交导致的starving问题</li>
-</ul>
-<p>两阶段提交 vs Paxos vs Raft</p>
-<p>两阶段提交</p>
-<ul>
-<li>如果协调器在发送prepare消息后挂掉，则阻塞直到协调器恢复</li>
-</ul>
-<p>Paxos</p>
-<ul>
-<li>如果大多数参与者活着则非阻塞，前提是有足够长的时间不再出现故障</li>
-</ul>
-<p>Raft</p>
-<ul>
-<li>与Paxos类似，但节点类型较少。</li>
-<li>只有拥有最新日志的节点才能成为领导者</li>
-</ul>
-<p>CAP理论</p>
-<ul>
-<li>Consistent: 一致性</li>
-<li>Always Available: 始终可用</li>
-<li>Network Partition Tolerant:分区容错性</li>
-</ul>
-<p>Nosql基本都是AP,事务性的基本都是CP</p>
-<p>一致性代表从哪个节点获取的数据都是一样的</p>
-<p><img src="/../images/15445143.png" alt="140"></p>
-<p>可用性代表当节点挂了以后系统还可以使用</p>
-<p><img src="/../images/15445144.png" alt="140"></p>
-<p>分区容错性最难，容易出现<code>脑裂</code>问题。当网络挂掉以后从节点以为主节点挂了，所以把自己选举为主节点，就产生了两个主节点</p>
-<p><img src="/../images/15445145.png" alt="140"></p>
-<p>当网络恢复以后，两个节点的数据就不一样了。</p>
-<p><img src="/../images/15445146.png" alt="140"></p>
-<p>解决方法1：停止系统</p>
-<ul>
-<li>停止接受没有大多数节点的分区中的更新。</li>
-</ul>
-<p>解决方案2：允许拆分，协调更改</p>
-<ul>
-<li>允许分区的每一侧都接收更新</li>
-<li>根据时间来确定最后的版本，以最后的版本为准<ul>
-<li>服务端：last update wins 用最后的版本为准</li>
-<li>客户端：vector clocks（不要这么做）</li>
-</ul>
-</li>
-</ul>
-<p>2010年提议对CAP进行扩展</p>
-<ul>
-<li>Partition Tolerant:分区容忍</li>
-<li>Always Available：随时可用</li>
-<li>Consistent：一致<ul>
-<li>Latency：延迟</li>
-<li>Consistency： 一致性</li>
-</ul>
-</li>
-</ul>
-<h2 id="分布式OLAP数据库"><a href="#分布式OLAP数据库" class="headerlink" title="分布式OLAP数据库"></a>分布式OLAP数据库</h2><p>OLAP数据库也被称作<code>数据仓库</code>，通过ETL，把数据存入数据仓库。</p>
-<ul>
-<li>Extract</li>
-<li>Transform</li>
-<li>Load</li>
-</ul>
-<p>星形模型</p>
-<ul>
-<li>一个事实表</li>
-<li>几个dim表</li>
-</ul>
-<p>雪花模型</p>
-<ul>
-<li>一个事实表</li>
-<li>更多的dim表，dim表可以有他的dim表</li>
-</ul>
-<p>查询执行</p>
-<ul>
-<li>push: 发送查询到包含数据的节点,返回数据的时候会做过滤和处理，就像<code>条件下推</code>那样</li>
-<li>pull: 知道需要的数据在哪些page里面，把page取过来在执行查询。</li>
-</ul>
-<p>push</p>
-<p>pull</p>
-<p>查询计划</p>
-<ul>
-<li>物理操作： 先生成查询计划，然后将对应的需要执行的物理操作直接发送给其余节点，其余节点只负责执行，返回数据。大部分分布式数据库都这样。</li>
-<li>sql: 将sql发给每个节点，每个节点生成自己的执行计划。然后执行返回。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -4543,7 +2690,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

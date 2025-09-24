@@ -196,6 +196,859 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E5%A5%BD%E7%9A%84Prompt.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E5%A5%BD%E7%9A%84Prompt.html" class="post-title-link" itemprop="url">MySQL零基础教程表设计实战</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-18 10:12:47" itemprop="dateCreated datePublished" datetime="2025-03-18T10:12:47+08:00">2025-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-03 17:22:35" itemprop="dateModified" datetime="2025-04-03T17:22:35+08:00">2025-04-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E5%A5%BD%E7%9A%84Prompt.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程表设计实战" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E5%A5%BD%E7%9A%84Prompt.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E5%A5%BD%E7%9A%84Prompt.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="好的Prompt事半功倍"><a href="#好的Prompt事半功倍" class="headerlink" title="好的Prompt事半功倍"></a>好的Prompt事半功倍</h1><p>万能公式：定义角色 + 需求背景 + 实现目标 + 补充要求 + 示例</p>
+<p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="表设计"><a href="#表设计" class="headerlink" title="表设计"></a>表设计</h2><p>表设计可以聊的点其实是比较多的，这个也比较看具体的业务、流量等。</p>
+<p>比如，某一个字段是否应该放在这张表里？一张表里应该有哪些字段？如何设计字段类型？</p>
+<p>甚至于，如何设计字段的顺序？</p>
+<p>这里很多人不知道的一个点在于，字段的顺序也会影响性能，至于为什么，这个就偏低层一些了，下面会讲到。</p>
+<p>想要做表设计，那你首先需要知道<code>表</code>是什么，所以我们先来看看表到底是什么东西。</p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通常来说，ER图是在设计阶段完成的，先有ER图再有表结构。</p>
+<p>可如果你已经有了表结构，有没有办法生成ER图呢？</p>
+<p>也是有方法的，比如著名的<code>Navicat</code>工具，就支持这么做。</p>
+<p>此外，还有一个方法，就是使用在线工具<a target="_blank" rel="noopener" href="https://dbdiagram.io/d">dbdiagram</a>，这个工具可以导入现有的SQL，会生成ER图，如下。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql3-13.png" alt="概念学习"></p>
+<p>这个网站是通过左边的一个叫<code>dbml</code>的语言来生成ER图的，也支持直接导入SQL，转化成dbml格式再生成ER图。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MIT6.824%E5%AE%9E%E6%88%98.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/MIT6.824%E5%AE%9E%E6%88%98.html" class="post-title-link" itemprop="url">MySQL零基础教程表设计实战</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-18 10:12:47" itemprop="dateCreated datePublished" datetime="2025-03-18T10:12:47+08:00">2025-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-09-23 10:43:17" itemprop="dateModified" datetime="2025-09-23T10:43:17+08:00">2025-09-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/MIT6.824%E5%AE%9E%E6%88%98.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程表设计实战" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/MIT6.824%E5%AE%9E%E6%88%98.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/MIT6.824%E5%AE%9E%E6%88%98.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MIT6-824"><a href="#MIT6-824" class="headerlink" title="MIT6.824"></a>MIT6.824</h1><p>你在尝试构建分布式系统之前，应该先尝试单机系统，如果能满足的话不要搞分布式。</p>
+<p>因为单机系统比分布式简单的多。</p>
+<p>分布式的原因是需要获得更高的性能、某种并行性、大量的CPU、大量的内存、大量的磁盘。另一个原因是容忍故障，一个机器挂了还有别的机器提供服务。<br>还有些可能是自然的物理分布式，比如银行多个地方的转账。还有安全性，可以隔离出环境运行代码。来保证主环境的安全。</p>
+<p>分布式系统的挑战</p>
+<ul>
+<li>并发性</li>
+<li>部分故障</li>
+<li>性能</li>
+</ul>
+<p>本课程的目标是构建面向应用程序的基础设施：</p>
+<ul>
+<li>存储</li>
+<li>网络通信</li>
+<li>计算</li>
+</ul>
+<blockquote>
+<p>主要目的为抽象这些能力给外部应用提供接口，隐藏内部的分布式实现。</p>
+</blockquote>
+<p>一些已有的实现示例：</p>
+<ul>
+<li>RPC：隐藏了通信能力</li>
+<li>Thread：隐藏了多核操作系统的并发能力</li>
+</ul>
+<p>构建分布式系统的<code>高层次</code>的目标，这也解释了为什么构建分布式系统很难：</p>
+<ol>
+<li>可扩展性（）：系统的横向扩展能力，理想情况是加n台机器可以获得n台机器的性能。</li>
+<li>容错性（Fault Rable）：<ul>
+<li>可用性：系统的高可用能力，如果有多个机器的话，当一个机器挂了，还有其他机器可以提供服务，保证系统可用。</li>
+<li>故障恢复性：当故障恢复以后，系统可以和故障恢复之前一样运行，没有数据损失等。可以通过<code>复制</code>的能力实现，存储多个数据副本。</li>
+</ul>
+</li>
+<li>一致性（Consistency）：语义是当put(k,v)以后，一定会get(k)能得到v。但是对于分布式系统来说这是不一定的。<ul>
+<li>强一致性</li>
+<li>弱一致性</li>
+</ul>
+</li>
+</ol>
+<h2 id="MapReduce"><a href="#MapReduce" class="headerlink" title="MapReduce"></a>MapReduce</h2><p>最开始是Google提出的MapReduce，这篇论文可以追溯到2004年。有兴趣的可以阅读这个论文：<a target="_blank" rel="noopener" href="http://nil.csail.mit.edu/6.824/2020/papers/mapreduce.pdf">http://nil.csail.mit.edu/6.824/2020/papers/mapreduce.pdf</a></p>
+<p>当时Google面临的问题是要对数TB的数据进行计算。因为他们要从海量的数据中找出优先级最高的页面展示出来。</p>
+<p>他们迫切的希望用数千台计算机来共同完成，来加速这个工作，而不是用一台计算机独立完成。</p>
+<p>MapReduce希望开发者只需要编写<code>Map</code>函数和<code>Reduce</code>函数，其他的交给MapReduce框架来做。将这些函数放到无数的计算机上执行。</p>
+<p>核心思想：将输入分成多份，产生多个输入。并对每个输入调用Map函数。</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>Map函数将输入内容进行处理，输出一组key&#x3D;&gt;value结构。你可以把 Map 理解成<code>分类处理</code>的过程。</p>
+<p>示例1：Map将从输入中统计每个英文字母出现的次数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 =&gt; Map =&gt; 输出：a:1, b:1, c:0</span><br><span class="line">Input2 =&gt; Map =&gt; 输出：a:0, b:1, c:1</span><br><span class="line">Input3 =&gt; Map =&gt; 输出：a:1, b:0, c:0</span><br></pre></td></tr></table></figure>
+
+<p>简化的Map函数如下：<br>Map函数接收两个参数，k是文件名称，v是文件内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">split file <span class="comment">// 拆分文件内容</span></span><br><span class="line">Map(k, v)&#123;</span><br><span class="line">    <span class="comment">// 循环输出每个字母</span></span><br><span class="line">    <span class="keyword">for</span>(w:words) &#123;</span><br><span class="line">        <span class="comment">//3. 输出格式同样是k=》v，k是字母，v是出现次数。</span></span><br><span class="line">        <span class="comment">// emit函数是输出函数，由MapReduce框架提供</span></span><br><span class="line">        <span class="comment">// 为什么输出1？因为是简单的计数，每个字母出现1次</span></span><br><span class="line">        emit(w,<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际输出结果：a:1, b:1, b:1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Reduce"><a href="#Reduce" class="headerlink" title="Reduce"></a>Reduce</h3><p>对 <code>Map</code> 阶段产生的键值对，按 <code>key</code> 分组并聚合处理，得到最终的结果。</p>
+<p>你可以把 <code>Reduce</code> 理解成<code>对同一类的东西做总结</code>的过程。</p>
+<p>而Reduce函数同样接收输入，在这个示例中，我们的Reduce函数可以接收某一个字母和出现的次数做为输入，输出总的出现次数。比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input1 (a:1, a:0, a:1) =&gt; Reduce =&gt; 输出：a:2</span><br><span class="line">Input2 (b:1, b:1, b:1) =&gt; Reduce =&gt; 输出：b:3</span><br><span class="line">Input3 (c:0, c:1, c:0) =&gt; Reduce =&gt; 输出：c:1</span><br></pre></td></tr></table></figure>
+
+<p>简化的Reduce函数如下：<br>Reduce函数同样接收文件做为输入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reduce函数的输入，k是用来聚合的key，在这里，这个k就是字母，可能是a,b,c。对于计算来说，用不到这个k，v是map输出的值的list。</span></span><br><span class="line"><span class="comment">// 比如a:1, a:0, a:1, k是a, v是[1,1]</span></span><br><span class="line">Reduce(k, v) &#123;</span><br><span class="line">    <span class="comment">// 直接输出计数即可 因为list的长度就是计数，这是因为每个值都是1.</span></span><br><span class="line">    emit(len(v));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就计算出了所有输出中，abc三个字母出现的次数。</p>
+<p>最妙的设计在于，按照上述的例子，我们可以部署6个机器来同时完成任务。</p>
+<p>而且，对于Map和Reduce函数来说，优点有两个：</p>
+<ol>
+<li>逻辑简单，仅仅是简单的计算逻辑。因此运行速度快</li>
+<li>可以方便的横向扩展。</li>
+</ol>
+<p>最关键的点在于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序员只需关心逻辑，不用操心分布、容错、调度等复杂细节</span><br></pre></td></tr></table></figure>
+
+<h3 id="整体执行流程"><a href="#整体执行流程" class="headerlink" title="整体执行流程"></a>整体执行流程</h3><p>[执行流程图片]</p>
+<ol>
+<li>输入数据被分片（Split）</li>
+</ol>
+<ul>
+<li>原始的大数据（比如 1TB 的日志）被切分成多个小片（通常 64MB 或 128MB 一片）。</li>
+<li>每个数据片（split）会由一个 Map Task 处理。</li>
+</ul>
+<p>👉 比喻：像把一本厚书分成一页一页，由多个读者同时阅读处理。</p>
+<ol start="2">
+<li>Map 阶段执行（并行执行）</li>
+</ol>
+<ul>
+<li>系统在多台机器上启动多个 Map Worker，每个负责一个 split。</li>
+<li>每个 Map Worker：<ul>
+<li>读取数据片</li>
+<li>执行用户定义的 Map() 函数</li>
+<li>输出一组键值对 (key, value)</li>
+<li>把输出缓存在本地磁盘上，并根据 key 做分区（为接下来的 Reduce 做准备）</li>
+</ul>
+</li>
+</ul>
+<p>👉 比喻：每位工人处理一摞原材料，并将成果放入不同颜色的桶（按 key 分类）。</p>
+<ol start="3">
+<li>分区与 Shuffle（洗牌阶段）</li>
+</ol>
+<ul>
+<li>系统自动将所有 Map 的输出，按 <code>key</code> 分发给不同的 <code>Reduce Worker</code>。</li>
+<li>这个过程称为 <code>shuffle</code>，是 <code>MapReduce</code> 的核心。</li>
+<li>Reduce Worker 从各个 Map Worker 取自己负责的那一部分 key。</li>
+</ul>
+<p>👉 比喻：每个桶被送到对应的收集员手里，收集员只关心自己那种颜色的桶。</p>
+<ol start="4">
+<li>Reduce 阶段执行</li>
+</ol>
+<p>每个 Reduce Worker：</p>
+<ul>
+<li>接收所有属于自己负责 key 的 (key, [value list])</li>
+<li>执行 Reduce() 函数，输出最终结果</li>
+</ul>
+<p>👉 比喻：每个收集员把收到的同一类物品合并、统计或总结。</p>
+<ol start="5">
+<li>结果输出</li>
+</ol>
+<ul>
+<li>Reduce 结果被写入分布式文件系统（如 GFS 或 HDFS）</li>
+<li>每个 Reduce Worker 写一个文件，形成最终的输出集合。</li>
+</ul>
+<ol start="6">
+<li>容错机制（Fault Tolerance）</li>
+</ol>
+<ul>
+<li>MapReduce 最大的优势之一是它对机器故障有强大容错支持：</li>
+<li>任务失败了？——Master 会把任务重新分配给另一台机器。</li>
+<li>机器宕机？——系统检测心跳超时，把任务转移。</li>
+</ul>
+<p><code>Reduce</code> 不会从内存里读数据，而是从 <code>Map</code> 的本地磁盘拉，这样更安全。</p>
+<p>👉 比喻：如果一个工人累了&#x2F;走了，另一个人接手继续干，不影响整体结果。</p>
+<h3 id="容错机制"><a href="#容错机制" class="headerlink" title="容错机制"></a>容错机制</h3><p>这是 <code>MapReduce</code> 的亮点之一，它自动处理各种失败情况：</p>
+<p>🧯 Map 或 Reduce 任务失败<br>    - Worker 崩了？任务失败？<br>    - ✅ Master 重新调度任务，由其他空闲 Worker 重做</p>
+<p>💀 Worker 节点宕机<br>    - Master 检测不到心跳信号（比如 10 秒没回应）<br>    - ✅ 所有该节点上的任务都会被视为失败，重新调度</p>
+<p>📉 Reduce 不会因为 Map 崩了而挂掉<br>    - 因为 Map 的中间结果会写入磁盘，且 Reduce 是拉数据</p>
+<table>
+<thead>
+<tr>
+<th>优化点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据本地性</strong></td>
+<td>尽量将 Map 任务调度到数据所在的机器，减少网络传输</td>
+</tr>
+<tr>
+<td><strong>备份任务</strong>（Backup Tasks）</td>
+<td>在任务快结束时，为剩余最慢的任务启动副本，避免尾部拖慢整个任务（称为“<strong>straggler mitigation</strong>”）</td>
+</tr>
+<tr>
+<td><strong>流水线执行</strong></td>
+<td>Reduce Worker 可以在 Map 未完全结束时，开始拉部分数据</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>好处</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主从架构（Master&#x2F;Worker）</td>
+<td>易于调度和管理</td>
+</tr>
+<tr>
+<td>本地磁盘缓存中间结果</td>
+<td>提高容错性和效率</td>
+</tr>
+<tr>
+<td>Shuffle 自动进行</td>
+<td>程序员无需处理网络传输</td>
+</tr>
+<tr>
+<td>容错机制完备</td>
+<td>任意节点失败不会影响整体任务</td>
+</tr>
+<tr>
+<td>自动调度和重试</td>
+<td>解放程序员双手</td>
+</tr>
+</tbody></table>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><p>🧪 案例1：构建倒排索引（Inverted Index）<br>🌟 应用背景：<br>Google 搜索引擎需要知道每个词在哪些网页中出现。这个操作就叫“构建倒排索引”。</p>
+<p>📦 处理规模：</p>
+<ul>
+<li>输入数据：约 20TB（网页内容）</li>
+<li>Map 任务数：1万个</li>
+<li>Reduce 任务数：2千个</li>
+</ul>
+<p>⏱ 执行时间：<br>整个任务在几百台机器上并行，只花了几小时</p>
+<p>✅ 意义：<br>传统方式实现这样的任务要花几周甚至几个月，而 MapReduce 能快速完成，还能处理节点故障。</p>
+<p>🧪 案例2：分析网页连接图（PageRank 计算）<br>🌟 应用背景：<br>PageRank 是 Google 搜索排名的核心算法，需要处理整个互联网的网页链接关系。</p>
+<p>📦 处理规模：</p>
+<ul>
+<li>输入数据：超过 1TB 的链接图</li>
+<li>运行多个 MapReduce 迭代（每一轮都读取+写入）</li>
+</ul>
+<p>⏱ 执行时间：<br>单轮耗时在几十分钟到几小时之间，取决于迭代次数</p>
+<p>✅ 意义：<br>MapReduce 适合这种需要反复运行、聚合中间结果的图算法。</p>
+<h4 id="可扩展性实验"><a href="#可扩展性实验" class="headerlink" title="可扩展性实验"></a>可扩展性实验</h4><p>论文还专门做了 实验测试 MapReduce 的可扩展性，结果非常亮眼：</p>
+<p>实验设置：</p>
+<ul>
+<li>任务：排序 1TB 的数据（标准大数据计算任务）</li>
+<li>测试变量：机器数量（从几十台到几百台）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>机器数量</th>
+<th>执行时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>100 台</td>
+<td>~60 分钟</td>
+</tr>
+<tr>
+<td>200 台</td>
+<td>~35 分钟</td>
+</tr>
+<tr>
+<td>400 台</td>
+<td>~20 分钟</td>
+</tr>
+</tbody></table>
+<p>✅ 说明：机器数量翻倍 → 执行时间几乎减半<br>这叫做“近线性扩展性”，是分布式系统性能的理想状态。</p>
+<h4 id="容错能力实验"><a href="#容错能力实验" class="headerlink" title="容错能力实验"></a>容错能力实验</h4><p>论文还测试了在有机器故障的情况下系统能否稳住：</p>
+<p>实验方法：</p>
+<ul>
+<li>在运行中故意杀掉部分 Worker</li>
+<li>查看任务是否恢复 + 时间是否增加很多</li>
+</ul>
+<p>结果：</p>
+<ul>
+<li>系统能成功恢复失败任务</li>
+<li>整体执行时间仅略有增加（因为失败重试带来小延迟）</li>
+</ul>
+<p>✅ 意义：说明 MapReduce 的容错机制在实践中可靠，不会因为单点失败拖垮整个任务。</p>
+<h4 id="一些优化细节"><a href="#一些优化细节" class="headerlink" title="一些优化细节"></a>一些优化细节</h4><table>
+<thead>
+<tr>
+<th>优化策略</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>本地性调度（Data Locality）</td>
+<td>避免 Map 任务跨机器读取数据，减轻网络负担</td>
+</tr>
+<tr>
+<td>Map 输出写入本地磁盘</td>
+<td>避免 Reduce 拉取失败，提高稳定性</td>
+</tr>
+<tr>
+<td>Backup Task（备份任务）</td>
+<td>减少 straggler 影响，加快尾部执行</td>
+</tr>
+<tr>
+<td>Reduce 端部分排序</td>
+<td>避免 Reduce 端内存爆炸，提高聚合效率</td>
+</tr>
+</tbody></table>
+<h4 id="小结：为什么-MapReduce-性能优秀？"><a href="#小结：为什么-MapReduce-性能优秀？" class="headerlink" title="小结：为什么 MapReduce 性能优秀？"></a>小结：为什么 MapReduce 性能优秀？</h4><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>优势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>并行计算</td>
+<td>成千上万台机器并发执行任务</td>
+</tr>
+<tr>
+<td>任务分片合理</td>
+<td>拆成很多小任务，调度灵活</td>
+</tr>
+<tr>
+<td>自动容错</td>
+<td>节点失败不会拖垮任务</td>
+</tr>
+<tr>
+<td>IO 优化好</td>
+<td>避免不必要的网络流量</td>
+</tr>
+<tr>
+<td>扩展性强</td>
+<td>机器越多，速度越快，效率不降反升</td>
+</tr>
+</tbody></table>
+<h3 id="经验"><a href="#经验" class="headerlink" title="经验"></a>经验</h3><ol>
+<li>编程模型简单但表达力强<br>作者观点：<blockquote>
+<p>MapReduce 的接口非常简单（就两个函数：Map() 和 Reduce()），但几乎可以表达大部分并行数据处理逻辑。</p>
+</blockquote>
+</li>
+</ol>
+<p>实际例子：</p>
+<ul>
+<li>排序、去重、合并日志</li>
+<li>构建索引、计算网页权重、图处理</li>
+<li>数据挖掘任务如聚类、统计分析</li>
+</ul>
+<p>🧠 体会：<br>你不需要了解线程、锁、通信协议这些“硬核分布式知识”，也能写出能在几千台机器上跑的大数据程序。</p>
+<ol start="2">
+<li>对“失败”高度容忍是必须的<br>作者观点：<blockquote>
+<p>在几百上千台机器上运行任务，机器故障是常态，不是例外。系统设计要“默认它会失败”。</p>
+</blockquote>
+</li>
+</ol>
+<p>做法：</p>
+<ul>
+<li>Map&#x2F;Reduce Task 自动重试</li>
+<li>Master 负责监控和再调度</li>
+<li>中间结果写磁盘、持久化，方便恢复</li>
+</ul>
+<p>🧠 体会：<br>不要去“防止失败”，要“拥抱失败”，让失败变得对用户透明，这才是工业级分布式系统。</p>
+<ol start="3">
+<li>数据本地性是性能关键<br>作者观点：<blockquote>
+<p>尽量把计算调度到数据所在机器，可以显著减少网络压力。</p>
+</blockquote>
+</li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>在 Google 文件系统（GFS）中，数据有副本</li>
+<li>Master 可以根据副本位置，把 Map 任务调到数据“身边”</li>
+</ul>
+<p>🧠 体会：<br>在分布式系统中，“移动计算”比“移动数据”更高效</p>
+<ol start="4">
+<li>Straggler 问题是真实存在的<br>作者观点：<blockquote>
+<p>在成百上千个任务中，总会有几个“掉队者”（straggler），它们可能因为磁盘慢、CPU 抢占等原因拖慢整个作业。</p>
+</blockquote>
+</li>
+</ol>
+<p>解决方案：</p>
+<ul>
+<li>启动 Backup Task（备份任务）</li>
+<li>哪个先完成就用哪个，放弃另一个</li>
+</ul>
+<p>🧠 体会：<br>在大规模并发中，整体速度由“最慢的少数人”决定（这就是“长尾延迟”问题）</p>
+<ol start="5">
+<li>开发调试工具非常重要<br>作者观点：<blockquote>
+<p>运行成千上万个任务后，你很难靠肉眼看日志找问题，需要专门的 监控与调试工具。</p>
+</blockquote>
+</li>
+</ol>
+<p>Google 实践：</p>
+<ul>
+<li>为每个任务生成详细的 web 页面</li>
+<li>可以追踪任务状态、失败原因、数据流向</li>
+<li>所有任务的标准输出也会被收集并存档</li>
+</ul>
+<p>🧠 体会：<br>好的工具不仅能“看见”问题，更能“预防”问题。</p>
+<ol start="6">
+<li>通用性强，支持跨部门复用<br>作者观点：<blockquote>
+<p>最开始 MapReduce 是为构建索引设计的，后来被应用于：</p>
+</blockquote>
+</li>
+</ol>
+<ul>
+<li>日志分析</li>
+<li>机器学习数据预处理</li>
+<li>图结构计算</li>
+<li>分布式 Grep、排序、压缩</li>
+<li>多语言支持（C++、Java、Python 等）</li>
+</ul>
+<p>🧠 体会：<br>一个简单的思想，配上良好封装与容错机制，就能成为全公司的“生产力工具”</p>
+<p>✅ 最后，作者对读者说了什么？<br>他们希望告诉大家：</p>
+<blockquote>
+<p>“MapReduce 的核心思想是抽象：程序员只需要关注如何写 Map 和 Reduce，不需要去处理分布式的复杂性。”</p>
+</blockquote>
+<p>这种思想不仅影响了后来的 Hadoop&#x2F;Spark&#x2F;Flink，也启发了很多 “让人类专注业务逻辑，其余交给系统” 的工程思维。</p>
+<p>总结：</p>
+<table>
+<thead>
+<tr>
+<th>教训&#x2F;反思</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单接口胜过复杂灵活</td>
+<td>简单更易学更普及</td>
+</tr>
+<tr>
+<td>容错不是加上去的，是设计进来的</td>
+<td>面向失败编程</td>
+</tr>
+<tr>
+<td>调度比你想象的重要</td>
+<td>数据本地性和长尾问题会拖垮系统</td>
+</tr>
+<tr>
+<td>工具让大规模系统可维护</td>
+<td>千万别忽视监控、调试界面</td>
+</tr>
+<tr>
+<td>通用性不是副产物，是目标</td>
+<td>抽象设计时就考虑不同场景</td>
+</tr>
+</tbody></table>
+<h3 id="和其他的对比"><a href="#和其他的对比" class="headerlink" title="和其他的对比"></a>和其他的对比</h3><p>🧭 MapReduce 提出前，世界在干什么？<br>在 MapReduce 出现之前，<strong>“处理海量数据”</strong>是非常痛苦的事情，常常需要：</p>
+<ul>
+<li>自己手写分布式代码（多线程、RPC、容错逻辑）</li>
+<li>手动分片、调度、失败重试</li>
+<li>大量系统调优</li>
+</ul>
+<p>也就是说：门槛高、出错多、效率低。</p>
+<p>🧓 1. 前辈系统（先驱者）<br>MapReduce 借鉴并超越了很多已有的系统。作者提到了几个重要的前辈：</p>
+<p>🧱 Parallel Databases（并行数据库系统）<br>比如：Teradata, Gamma, Volcano</p>
+<ul>
+<li>通过 SQL 自动并行执行、查询优化</li>
+</ul>
+<p>但局限性明显：</p>
+<ul>
+<li>灵活性低，只适合结构化数据</li>
+<li>编程模型不够通用（不能表达复杂业务逻辑）</li>
+<li>扩展性不足（难以横向扩展到上千台机器）</li>
+</ul>
+<p>MapReduce 与之不同：</p>
+<ul>
+<li>不需要预定义 schema</li>
+<li>可处理任意数据（文本、图像、日志）</li>
+<li>扩展性和容错机制是核心设计点</li>
+</ul>
+<p>🧑‍🔧 Message Passing Systems（消息传递系统）<br>比如 MPI（Message Passing Interface）</p>
+<ul>
+<li>程序员手动控制数据传输、任务调度</li>
+<li>常用于科学计算、模拟类应用</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>编程复杂（需要手动处理并发、同步）</li>
+<li>容错性差（一个节点挂掉，全盘失败）</li>
+<li>不适合动态大规模分布式系统</li>
+</ul>
+<p>MapReduce 优势：</p>
+<ul>
+<li>自动分发任务与数据</li>
+<li>自动重试失败任务</li>
+<li>容错、调度机制隐藏在框架里</li>
+</ul>
+<p>🧑‍🏫 2. 编程模型的灵感来源<br>📚 Lisp、Functional Programming 的 Map 和 Reduce<br>“Map”和“Reduce”其实来自函数式编程语言 Lisp 的标准操作：</p>
+<ul>
+<li>map(f, list)：对列表中每个元素应用函数 f</li>
+<li>reduce(f, list)：将列表聚合为一个值（如求和）</li>
+</ul>
+<p>作者把这个小而美的思想推广到了分布式系统中：</p>
+<ul>
+<li>把一个“大列表”切成几千块，每块并发 map</li>
+<li>最后汇总（reduce）各部分结果</li>
+</ul>
+<p>创新点在于：</p>
+<blockquote>
+<p>不是函数名的新瓶装旧酒，而是加上了调度、分布式运行、容错、持久化、分区等“工程魂”。<br>把“函数式思想”变成了“工业级工具”。</p>
+</blockquote>
+<p>MapReduce 是在 Google 内部“全家桶式架构”中运行的，依赖以下底层支撑：</p>
+<table>
+<thead>
+<tr>
+<th>系统</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GFS（Google File System）</td>
+<td>存储海量数据块，支持副本、高可用</td>
+</tr>
+<tr>
+<td>Bigtable</td>
+<td>类似 NoSQL 的结构化数据存储</td>
+</tr>
+<tr>
+<td>Scheduler + Monitoring</td>
+<td>提供任务调度与健康监控能力</td>
+</tr>
+</tbody></table>
+<p>一些其他的系统：</p>
+<table>
+<thead>
+<tr>
+<th>系统</th>
+<th>简介</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Hadoop MapReduce</strong></td>
+<td>Apache 开源实现</td>
+<td>模仿 Google MapReduce，支持 HDFS</td>
+</tr>
+<tr>
+<td><strong>Dryad（微软）</strong></td>
+<td>更灵活的数据流图模型</td>
+<td>支持 DAG，但复杂度也更高</td>
+</tr>
+<tr>
+<td><strong>Spark</strong></td>
+<td>更快的内存计算模型</td>
+<td>适合交互式、大规模迭代任务</td>
+</tr>
+<tr>
+<td><strong>Flink</strong></td>
+<td>强实时数据处理</td>
+<td>支持流+批，语义更强</td>
+</tr>
+<tr>
+<td><strong>Beam</strong></td>
+<td>通用数据处理 API</td>
+<td>可部署到 Spark&#x2F;Flink 等系统之上</td>
+</tr>
+</tbody></table>
+<p>对比：</p>
+<table>
+<thead>
+<tr>
+<th>角度</th>
+<th>MapReduce 相比如何？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>与并行数据库相比</td>
+<td>更灵活、可扩展、面向通用计算</td>
+</tr>
+<tr>
+<td>与消息传递系统相比</td>
+<td>更易用、具备自动容错</td>
+</tr>
+<tr>
+<td>与函数式编程相比</td>
+<td>加入工程实现，能在真实集群跑</td>
+</tr>
+<tr>
+<td>与后续系统相比</td>
+<td>是“大数据系统”的思想源头，影响深远</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>MapReduce 的贡献不是提出了什么新理论，而是把“分布式计算”这件复杂的事做得像“写两个函数”那么简单，并真正让它在几千台机器上跑起来。</p>
+</blockquote>
+<h2 id="为什么这门课要使用GO语言"><a href="#为什么这门课要使用GO语言" class="headerlink" title="为什么这门课要使用GO语言"></a>为什么这门课要使用GO语言</h2><p>这门课之前使用过C++进行。</p>
+<p>使用GO的原因如下：</p>
+<ol>
+<li>GO有现成的RPC包，而C++没有。</li>
+<li>GO有线程和垃圾回收的支持。而C++需要自己管理内存进行垃圾回收。<ul>
+<li>因此，GO更加安全。</li>
+<li>GO更加简单。</li>
+<li>GO更不容易出错。</li>
+</ul>
+</li>
+<li>GO更加简单，错误处理也更加容易，C++的错误信息很难看出来是什么错误。</li>
+</ol>
+<p>这里指的线程是GO的协程。GO Routine。</p>
+<p>线程是分布式最大的难题。</p>
+<p>使用线程的原因：</p>
+<ul>
+<li>IO并发：不同的程序可以处于不同的状态。比如A线程在读取磁盘信息，而B线程在执行计算。比如很多线程发送了RPC请求，等待请求响应后进行处理。</li>
+<li>多核并行性：当遇到大量的计算任务时，使用多线程同时计算会显著提高效率。两个线程会同时运行在不同的CPU上面。</li>
+<li>便捷性：可能你就是希望在后台执行某些操作，或者定时执行某些操作。比如master用来确认其他的线程的存活状态，定时每秒发送一个请求这样。</li>
+</ul>
+<p>事件驱动：除了使用线程以外，还可以使用事件驱动来实现。</p>
+<ul>
+<li>优点：事件驱动的实现比线程更加高效，更好调试，可以用顺序的方式来编程。</li>
+<li>缺点：事件驱动只能实现并发性，而不能实现多核的并行性。无法发挥多核性能。<ul>
+<li>当然了，可以通过在每个核心上启动一个线程来实现事件驱动来发挥多核性能。</li>
+</ul>
+</li>
+</ul>
+<p>线程开发的挑战：</p>
+<ol>
+<li>内存共享：多个线程共享同样的内存数据，会产生<code>数据竞争</code>。<ul>
+<li>解决办法1：使用锁，但是这会导致锁开销，还要解决可能得死锁问题。有些内部的数据结构可能并不需要锁，但是你不得不支付锁的开销。这并不总是一个好主意。</li>
+<li>解决办法2：使数据不共享。</li>
+</ul>
+</li>
+<li>协调：当我们使用锁的时候，涉及的不同线程可能不知道其他线程的存在，他们只是想不在<code>任何人干扰</code>的情况下获取数据。但也有时候，你希望线程知道其他线程的存在，比如一个线程等待另一个线程完成后读取它的数据。<ul>
+<li>可以使用Channels来通信</li>
+<li>使用条件变量来通信</li>
+<li>使用Wait Group来通信</li>
+</ul>
+</li>
+<li>死锁：两个线程互相等待对方释放锁。</li>
+</ol>
+<h2 id="GFS-谷歌文件系统"><a href="#GFS-谷歌文件系统" class="headerlink" title="GFS(谷歌文件系统)"></a>GFS(谷歌文件系统)</h2><p>主要是<code>Big Storage</code>大型分布式存储系统。为分布式系统提供底层的存储功能。</p>
+<p>将存储的数据放到多个机器上面。</p>
+<p>有趣的循环：</p>
+<ul>
+<li>性能：将数据分散到多个机器上面。通常叫做<code>分片</code>。</li>
+<li>错误：当数据分散到多个机器上面，其中一个机器就有可能宕机，因此需要<code>容错性</code></li>
+<li>容错性：可以通过存储多个<code>副本</code>来解决容错性的问题。</li>
+<li>副本：存储多个副本又会引入数据<code>不一致</code>的问题。</li>
+<li>一致性：如果需要数据强一致性。又会需要牺牲性能。</li>
+</ul>
+<h3 id="强一致性"><a href="#强一致性" class="headerlink" title="强一致性"></a>强一致性</h3><p>来一个小示例：</p>
+<p>对于一个简单的服务器来说，没有分布式的功能。</p>
+<p>这个时候两个客户端同时发来了请求。</p>
+<ul>
+<li>C1 写入x的值为1</li>
+<li>C2 写入x的值为2</li>
+</ul>
+<p>请问，这个时候服务器的x值应该是多少？</p>
+<ul>
+<li>答案是不确定。</li>
+</ul>
+<p>但是对于后面的所有读请求来说，x的值要么都是1，要么都是2.</p>
+<p>对于分布式系统来说，只要能达到这个效果即可。</p>
+<h3 id="复制版本1（不好的复制设计）"><a href="#复制版本1（不好的复制设计）" class="headerlink" title="复制版本1（不好的复制设计）"></a>复制版本1（不好的复制设计）</h3><p>对于最简单的复制来说，就是直接启动两个服务器，S1和S2。</p>
+<p>对于所有客户端来说，都分别请求S1和S2进行写入，但是读的时候只读S1.当S1宕机以后读取S2.</p>
+<p>这个时候两个客户端同时发来了请求。</p>
+<ul>
+<li>C1 请求S1 写入x的值为1</li>
+<li>C2 请求S2 写入x的值为2</li>
+<li>C1 请求S2 写入x的值为1</li>
+<li>C2 请求S1 写入x的值为2</li>
+</ul>
+<p><img src="/../images/6824/1-1.png" alt="客户端写入"></p>
+<p>那么最终，S1存储x的值为2.S2存储x的值为1.也就产生了<code>数据不一致</code>。所以这是个最简单但也不好的复制设计。</p>
+<h3 id="GFS架构"><a href="#GFS架构" class="headerlink" title="GFS架构"></a>GFS架构</h3><p>GFS将一个文件分成多个<code>块</code>，每个块是64MB大小。每个块都可以存在不同的服务器上面。</p>
+<p>有一个<code>主服务器</code>，主服务器负责分发请求，记录了<code>文件名称</code>和<code>文件块</code>的映射。</p>
+<p>还有多个<code>块服务器</code>。块服务器存储了实际的块数据。</p>
+<p>主服务器存储了以下数据：</p>
+<ul>
+<li>文件名称和<code>chunk handles数组</code>的映射。也就是每个文件分成了哪些块。这个数据是需要持久化的。</li>
+<li>chunk handles和<code>chunk servers数组</code>的映射，也就是每个块存在哪些块服务器上。这是因为每个块都是有副本的，所以是一个服务器数组。并且客户端可以选择最近的服务器进行获取。</li>
+<li>服务器版本，需要持久化。</li>
+<li>是否是主服务器。</li>
+<li>任期结束时间。</li>
+</ul>
+<h4 id="GFS的持久化"><a href="#GFS的持久化" class="headerlink" title="GFS的持久化"></a>GFS的持久化</h4><p>GFS使用<code>Log</code>来记录持久化的信息，并通过<code>check point</code>来进行辅助。恢复的时候只需要从<code>check point</code>恢复就可以了。</p>
+<p>其实大多数的存储系统都是这么干的。</p>
+<h4 id="GFS读取过程"><a href="#GFS读取过程" class="headerlink" title="GFS读取过程"></a>GFS读取过程</h4><h2 id="读取过程"><a href="#读取过程" class="headerlink" title="读取过程"></a>读取过程</h2><h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2364,400 +3217,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/DeepSeek%E9%AB%98%E4%BB%B7%E6%8B%9B%E8%81%98.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/DeepSeek%E9%AB%98%E4%BB%B7%E6%8B%9B%E8%81%98.html" class="post-title-link" itemprop="url">DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-02-08 10:12:47" itemprop="dateCreated datePublished" datetime="2025-02-08T10:12:47+08:00">2025-02-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-02-10 15:19:25" itemprop="dateModified" datetime="2025-02-10T15:19:25+08:00">2025-02-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/DeepSeek%E9%AB%98%E4%BB%B7%E6%8B%9B%E8%81%98.html" class="post-meta-item leancloud_visitors" data-flag-title="DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/DeepSeek%E9%AB%98%E4%BB%B7%E6%8B%9B%E8%81%98.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/DeepSeek%E9%AB%98%E4%BB%B7%E6%8B%9B%E8%81%98.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘"><a href="#DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘" class="headerlink" title="DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘"></a>DeepSeek百万年薪招聘：AI领域人才争夺战的“顶配”条件与薪资揭秘</h1><p>随着人工智能技术的飞速发展，中国AI初创企业DeepSeek（杭州深度求索人工智能基础技术研究有限公司）凭借其高性价比的大模型与开源创新举措，迅速成为全球科技界的焦点。为支撑业务扩张与技术突破，DeepSeek近期发布了大规模招聘计划，52个在招职位涵盖深度学习、系统研发、UI设计等领域，并开出了<code>年薪最高154万元</code>的诱人待遇，引发行业热议</p>
-<p>AI人才如此值钱的当下，我们程序员该何去何从？</p>
-<p>想要拿到如此高的薪资，需要什么条件？</p>
-<p>DeepSeek甚至给校招实习生开出了<code>1000元</code>每天的工资，这些实习生的工资已经超过了大部分一线城市的程序员了。</p>
-<p>最重要的在于一句话<code>不看经验只看能力</code>。只要你能力够好，那么Deepseek就可以给你高薪。</p>
-<p>如同之前马斯克发的一句话，只要你能力够好，我们就可以给你发offer。</p>
-<h2 id="公司背景与行业趋势"><a href="#公司背景与行业趋势" class="headerlink" title="公司背景与行业趋势"></a>公司背景与行业趋势</h2><p>DeepSeek成立于2023年7月，由量化投资巨头幻方量化创立，2025年1月发布的DeepSeek-R1和DeepSeek-V3大模型因“低成本、高性能”引发全球关注，用户量激增，日活跃用户（DAU）突破2000万，跻身全球AI产品榜第二。此次招聘规模超现有团队1&#x2F;3（现有员工约150人），凸显其快速扩张需求。</p>
-<p>行业层面，AI人才缺口持续扩大。《2024年度人才迁徙报告》显示，大模型相关岗位占据技术岗平均月薪前十名的半数，算法工程师需求激增，预计到2030年中国AI人才缺口将达400万</p>
-<h2 id="招聘特点与竞争门槛"><a href="#招聘特点与竞争门槛" class="headerlink" title="招聘特点与竞争门槛"></a>招聘特点与竞争门槛</h2><ul>
-<li>学历放宽，校招优先：部分岗位（如核心系统研发工程师）对本科生开放，且校招薪酬高于社招，吸引年轻人才。</li>
-<li>成果导向：深度学习研究员需以论文、竞赛成绩或开源项目证明研究能力，强调“创新品味”与对AGI的信仰。</li>
-<li>抗压能力与热情：公司更青睐“年轻、反应敏捷、有冲劲”的候选人，要求具备持续学习能力和跨学科视野。</li>
-</ul>
-<h2 id="核心岗位与薪资结构"><a href="#核心岗位与薪资结构" class="headerlink" title="核心岗位与薪资结构"></a>核心岗位与薪资结构</h2><ol>
-<li>深度学习研究员-AGI</li>
-</ol>
-<ul>
-<li>薪资水平：月薪8万至11万元，按14薪计算，年薪最高达154万元。</li>
-<li>岗位要求：<ul>
-<li>精通机器学习和深度学习，需具备创新研究能力；</li>
-<li>熟练掌握至少两种编程语言（如Python、C++）；</li>
-<li>有国际顶会（如NeurIPS、ICML）或顶级期刊论文发表经验；<ul>
-<li>在知名AI竞赛中取得优异成绩者优先。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>目标人群：博士学历为主，优秀硕士或本科生亦可参与实习。</li>
-</ul>
-<ol start="2">
-<li>核心系统研发工程师（校招）</li>
-</ol>
-<ul>
-<li>薪资范围：月薪6万至9万元，年薪最高126万元。</li>
-<li>岗位要求：围绕大模型预训练、算法优化等展开工程化实现，要求熟悉软硬件协同开发，具备高性能计算经验</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek1-2.png" alt="deepseek1"></p>
-<ol start="3">
-<li>全栈开发工程师</li>
-</ol>
-<ul>
-<li>薪资水平：月薪4万至7万元，年薪最高98万元。</li>
-<li>能力要求：扎实的编程能力，优秀的设计能力和代码品味，较强的责任心。对主流开源软件有深入了解并对此有贡献者优先。具有自我驱动和自我管理能力。</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek1-3.png" alt="deepseek1"></p>
-<ol start="4">
-<li>实习生岗位</li>
-</ol>
-<ul>
-<li>AGI大模型实习生日薪500至1000元，按每月22天计算，月薪可达1.1万至2.2万元，要求掌握PyTorch框架，并有论文或开源项目经验。主要是顶会论文。</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/ai/deepseek1-1.png" alt="deepseek1"></p>
-<h2 id="我们如何努力破局？"><a href="#我们如何努力破局？" class="headerlink" title="我们如何努力破局？"></a>我们如何努力破局？</h2><p>目前有3类人急需掌握AI能力</p>
-<ol>
-<li>还没入行但是想入行的</li>
-<li>已经是程序员但是想破局的</li>
-<li>本科生、研究生、博士生这类学生。</li>
-</ol>
-<p>其实，看到这些招聘信息，我们可以提炼出几点信息。</p>
-<ol>
-<li>不看经验只看能力：所以能力尤为重要，我们需要尽快提升自己，那么如何提升自己？</li>
-<li>名校毕业生：如何成为名校毕业生？</li>
-<li>顶会论文：如何发表顶会论文？</li>
-</ol>
-<h3 id="如何提升自己"><a href="#如何提升自己" class="headerlink" title="如何提升自己"></a>如何提升自己</h3><p>提升自己的能力最重要的是持续学习能力，要持续不断的学习新的知识。利用业余时间、碎片时间等。</p>
-<p>学习知识也是有技巧的，需要<code>系统性学习</code>、<code>有目的的去学习</code>、找到<code>学习方法</code>、有正确的<code>学习路径</code>。</p>
-<p>在现在这个互联网发达的社会，网上的<code>学习资料</code>成百上千，如何选择？</p>
-<p>大头作为工作了快10年的开发，当过<code>上市公司的架构师</code>，当过<code>大厂资深研发</code>，管理过<code>10人团队</code>。</p>
-<p>大头会持续分享自身的经验以及学习方法、系统性的学习路径、教程。</p>
-<p>所有的信息都由大头本身经过严格的筛选，大家不需要自己去选择，以免走歪路。如果有想学习的小伙伴可以私信大头，免费1对1交流。</p>
-<p>目前大头正在输出<code>mysql数据库零基础教程</code>。后续还会输出更多的<code>系统性教程</code>。</p>
-<h3 id="如何提升学历"><a href="#如何提升学历" class="headerlink" title="如何提升学历"></a>如何提升学历</h3><p>从上面的招聘也可以看出来，虽然是看能力，可其实大多数要求还是要本科的。像顶会论文这些也需要名校的学生才能发布，其他的学校教学能力有限，学生很难发布顶会论文。</p>
-<p>尤其现在大环境不好，大头最开始工作的时候，完全不看学历，现在，就连外包都要求统招本科了。</p>
-<p>大头也遇见过很多优秀的人才，干的好好的，今年却被突然要求本科毕业证，哪怕是非统招的也可以，要不然就会面临不续合同、被裁员等。</p>
-<p>因此，提升学历也很重要。</p>
-<p>但是，如此多的提升学历的方法，如此多付费的广告，该如何选择呢？</p>
-<p>现在提升学历无非几种方案。</p>
-<ul>
-<li>非统招<ul>
-<li>成考&#x2F;业余&#x2F;函授&#x2F;非脱产：这四个现在是一样的，没区别，今年开始统一叫<code>非脱产</code>形式了。需要参加<code>成人高考</code>。相对来说比较简单，入学以后多数学校需要在周末去上课，参加考试，有平时分，毕业很简单。</li>
-<li>网络教育：无需上课，网上学习，参加考试即可毕业。也是很多机构推的方案。不过现在已经取消了。所以大家不要再相信了。</li>
-<li>国家开放大学：入学以后有的需要到学校学习，和非脱产类似，但是比非脱产容易毕业。</li>
-<li>自考：极难、没有入学一说，只要参加这个专业所有课程的考试并且考试合格就可以了。也不用到学校学习，适合有自制力且有时间的人。</li>
-</ul>
-</li>
-<li>统招：参加高考上大学，很多人有误区，以为现在不能高考了，其实没有年龄限制，只要你想还是可以去参加的。</li>
-</ul>
-<p>上面说的是本科，那么对于研究生来说也是一样的。</p>
-<ul>
-<li>非统招：参加研究生统一考试，入学以后工作日晚上和周末去上课，和统招的统一毕业条件，因此学习年限更久。学费更多。但是入学分数要低一些。因为竞争者少。</li>
-<li>统招：参加研究生统一考试，正常上课毕业。</li>
-<li>在职：在职研究生属于只有毕业证没有学位证的研究生，是以前的一种形式，以后会被非统招代替。在职研究生入学简单，毕业简单。</li>
-</ul>
-<h3 id="如何发表顶会论文"><a href="#如何发表顶会论文" class="headerlink" title="如何发表顶会论文"></a>如何发表顶会论文</h3><p>要满足顶会论文的要求，需从选题创新性、实验设计、论文写作、格式规范、投稿流程等多个环节系统把控。</p>
-<p>此外，需要不断的阅读优秀的文献，比如其他的顶会论文，学习他们的技巧。</p>
-<p>需要有不错的idea和综合能力支撑你的论文发表。</p>
-<p>平常可以多练习写作。</p>
-<p>对于已经工作的该如何做呢？</p>
-<p>可以多撰写软著、专利等。</p>
-<p>再比如提升自身的影响力，发表书籍等。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>DeepSeek的高薪招聘不仅反映了AI行业对顶尖人才的渴求，也揭示了技术驱动型企业“以薪酬换速度”的竞争策略。对于求职者而言，扎实的学术背景、工程能力与持续创新意识，是叩开百万年薪大门的核心钥匙。未来，随着AGI研发的深入，这场人才争夺战或将愈演愈烈。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%94%AF%E4%BB%98%E5%AE%9D%20P0%20%E4%BA%8B%E6%95%85%EF%BC%8C%E5%A4%AA%E7%A6%BB%E8%B0%B1%E4%BA%86%E3%80%82%E3%80%82%E3%80%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%94%AF%E4%BB%98%E5%AE%9D%20P0%20%E4%BA%8B%E6%95%85%EF%BC%8C%E5%A4%AA%E7%A6%BB%E8%B0%B1%E4%BA%86%E3%80%82%E3%80%82%E3%80%82.html" class="post-title-link" itemprop="url">支付宝 P0 事故，太离谱了。。。</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-01-19 10:12:47" itemprop="dateCreated datePublished" datetime="2025-01-19T10:12:47+08:00">2025-01-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%94%AF%E4%BB%98%E5%AE%9D%20P0%20%E4%BA%8B%E6%95%85%EF%BC%8C%E5%A4%AA%E7%A6%BB%E8%B0%B1%E4%BA%86%E3%80%82%E3%80%82%E3%80%82.html" class="post-meta-item leancloud_visitors" data-flag-title="支付宝 P0 事故，太离谱了。。。" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%94%AF%E4%BB%98%E5%AE%9D%20P0%20%E4%BA%8B%E6%95%85%EF%BC%8C%E5%A4%AA%E7%A6%BB%E8%B0%B1%E4%BA%86%E3%80%82%E3%80%82%E3%80%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%94%AF%E4%BB%98%E5%AE%9D%20P0%20%E4%BA%8B%E6%95%85%EF%BC%8C%E5%A4%AA%E7%A6%BB%E8%B0%B1%E4%BA%86%E3%80%82%E3%80%82%E3%80%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="支付宝P0事故"><a href="#支付宝P0事故" class="headerlink" title="支付宝P0事故"></a>支付宝P0事故</h2><p>大家好，我是大头。<br>就在2025年1月16号，支付宝平台被曝出现了P0级事故，真可谓是2025年的过年惊喜啊。</p>
-<p>怎么回事呢？<br>有网友晒出，在昨天下午14:40-14:45的这段时间里，通过支付宝支付时，均被提示“政府补贴”，减免优惠20%。</p>
-<p><img src="/../images/640.jpg" alt="P0"></p>
-<p>而这些优惠包括支付以及转账，什么概念呢？</p>
-<p>也就是说假设你手里有1万块钱，你把1万转给你媳妇，你只需要支付8000，你媳妇收到1万，白嫖2000。你媳妇再转给你，又能白嫖2000.</p>
-<p>来钱简直不要太快啊。如果你有100万呢？一次就是20万啊。</p>
-<p>不过呢，真这样可能有点刑。。。</p>
-<p>那么什么是P0事故呢？在互联网大厂里面，如何对事故定级呢？</p>
-<p>为什么支付宝可以如此快的处理这种事故？</p>
-<p>如果我们的公司遇到这种事故该如何处理？</p>
-<h3 id="什么是P0事故"><a href="#什么是P0事故" class="headerlink" title="什么是P0事故"></a>什么是P0事故</h3><p>在互联网企业中，P0代表最高级别的事故，通常是核心业务重要功能不可用，且影响范围广泛。以目前这起事故的严重程度来看，绝对是妥妥的P0级别事故了。</p>
-<p>除此之外，还会对于涉及到的金额进行资金定损，比如这一次事故中，造成了多少资金损失。</p>
-<p>大家别看只是短短的5分钟，对于支付宝这个体量来说，其造成的损失数额绝对不小，不过对于支付宝来说，可能洒洒水啦。</p>
-<p>那么除了P0事故来说，还有别的事故等级吗？</p>
-<p>当然是有的，还有P1、P2等等，其中P0是最严重的。</p>
-<p>相信对于程序员来说，最关心的一点还是，出了这么大的事故，对我有什么影响吗？</p>
-<p>不同的事故等级对应的影响也不一样。</p>
-<ul>
-<li>最低级的事故：可能只是通报批评，下次注意</li>
-<li>有一定损失或者影响的事故：比如P2事故，可能会影响你的当年绩效了</li>
-<li>有不少损失或者影响的事故：比如P1事故，那么不仅影响你当年的绩效奖金了，还会影响到你的评优、内部的奖项以及最重要的晋升，还可能影响到你直属leader的绩效奖金。</li>
-<li>有很大损失或者影响的事故：比如P0事故，那么不光影响上面那些，还包括了你leader的评优、奖项以及晋升。可能还会导致你们团队负责人的绩效、评优、晋升。再严重一些还会收到辞退。</li>
-</ul>
-<h3 id="为什么支付宝可以如此快的处理这种事故？"><a href="#为什么支付宝可以如此快的处理这种事故？" class="headerlink" title="为什么支付宝可以如此快的处理这种事故？"></a>为什么支付宝可以如此快的处理这种事故？</h3><p>大厂通常都有完善的上线流程以及监控处理。</p>
-<p>如何监控呢？</p>
-<ul>
-<li>链路服务监控</li>
-<li>日志机制</li>
-<li>报警机制</li>
-</ul>
-<p>大厂内部都有自己研发的一整套监控报警系统，所以可以快速的发现事故，并依据一整套完善的事故处理机制进行处理。</p>
-<p>那对于我们其他公司来说如何处理呢？</p>
-<p>对于链路服务监控，我们可以使用<code>SkyWalking</code>来进行监控，以及日志收集，那么当日志收集以后我们还需要进行报警，比如发送报警邮件、短信或者微信提醒。</p>
-<p>SkyWalking是什么？</p>
-<p>SkyWalking是分布式系统的应用程序性能监控工具，专为微服务、云原生和基于容器（Kubernetes）架构而设计。</p>
-<p>下面是SkyWalking官网。</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://skywalking.apache.org/">https://skywalking.apache.org/</a></p>
-</blockquote>
-<p>那么当发现事故以后，我们第一步该做什么？定位问题，然后修改？不不不….</p>
-<p>当然是第一时间回滚止损了。</p>
-<p>接下来才是定位问题、修复。</p>
-<p>这么一来就会发现，还需要完善的上线流程、回滚方案。事故处理方案。</p>
-<p>对于很多小问题的修改或者需求，我们可能会下意识的觉得，就改动这么点东西，没问题，上了吧。</p>
-<p>如果这个时候出了问题，你可能就傻了，根本没想过出问题的解决方案。而且出的问题可能和你改动的东西八竿子打不着，你都想不到是因为你上线导致的。</p>
-<p>所以大家切记，上线方案很重要！！！</p>
-<p>经验主义害死人啊！！！实践才是检验真理的唯一标准！！！</p>
-<h3 id="如果我们的公司遇到这种事故该如何处理"><a href="#如果我们的公司遇到这种事故该如何处理" class="headerlink" title="如果我们的公司遇到这种事故该如何处理"></a>如果我们的公司遇到这种事故该如何处理</h3><p>接下来，如果我们的公司遇到这种事故该如何处理？</p>
-<p>首先，像上面说的，我们需要几个方案</p>
-<ol>
-<li>完善的监控机制，可以使用SkyWalking</li>
-<li>完善的日志机制，可以帮助我们快速定位问题</li>
-<li>完善的报警机制，可以帮助我们发现问题</li>
-<li>完善的上线流程，这里包括代码Review，回滚方案，git分支管理方案等。可以帮助我们快速的解决问题</li>
-<li>完善的事故处理流程，当事故发生以后我们该如何处理</li>
-</ol>
-<h4 id="监控机制"><a href="#监控机制" class="headerlink" title="监控机制"></a>监控机制</h4><p>使用 SkyWalking 即可，官网已经放在上面了，可以根据官方文档进行学习。</p>
-<h4 id="日志机制"><a href="#日志机制" class="headerlink" title="日志机制"></a>日志机制</h4><p>不同的日志等级代表不同的日志，并且分开不同的文件，还有在一次请求的时候，需要有唯一ID来检查这一次请求的所有日志。</p>
-<p>此外，哪些地方需要记录日志呢？</p>
-<ul>
-<li>输入</li>
-<li>输出</li>
-<li>重要处理节点</li>
-<li>重要计算结果</li>
-<li>异常处理</li>
-<li>其他</li>
-</ul>
-<p>根据这些来快速定位问题。</p>
-<p>这里要注意：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不要在日志中记录一些容易报错的代码，你不能因为日志报错而影响主流程。</span><br></pre></td></tr></table></figure>
-
-<h4 id="报警机制"><a href="#报警机制" class="headerlink" title="报警机制"></a>报警机制</h4><p>当监控检测到错误的时候，我们可以进行报警通知，通过邮件、微信、短信等手段进行通知相关人员。</p>
-<p>这样可以快速的让相关人员知道出现事故了。接下来才能解决。</p>
-<h4 id="上线流程"><a href="#上线流程" class="headerlink" title="上线流程"></a>上线流程</h4><p>上线流程最重要的几点</p>
-<ul>
-<li>代码Review</li>
-<li>完善的测试</li>
-<li>回滚方案</li>
-</ul>
-<p>上线的时候一定要经过这些，哪怕是需求再小 or 改动再小。</p>
-<p>因为你永远不知道意外和明天哪一个先来。。。</p>
-<h4 id="事故处理流程"><a href="#事故处理流程" class="headerlink" title="事故处理流程"></a>事故处理流程</h4><p>当发现事故以后，如何处理就成为了重点。</p>
-<p>当报警机制触发以后，我们首先应该根据上线方案进行回滚。</p>
-<p>回滚以后，我们需要发送一些通知，让其他成员知道回滚了。以防止有人稀里糊涂的又把代码发布了或者覆盖了。</p>
-<p>接下来根据日志信息配合测试一起快速的定位问题。</p>
-<p>……</p>
-<p>最终将问题修复。</p>
-<p>再次上线。</p>
-<p>并将这次事故记录，复盘。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>话说回来了。那么支付宝这次事故。钱会不会追回呢？</p>
-<p><img src="/../images/641.jpg" alt="P0"></p>
-<p>答案是不会追回资金，支付宝还是很强大的，选择了自己承担这笔损失，当然了，具体哪些程序员倒霉就不知道了。</p>
-<p>如果你收到追回短信等，不要相信，都是骗子！！！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2825,7 +3289,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

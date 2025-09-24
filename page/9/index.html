@@ -196,6 +196,535 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第十四节</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-28 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-28T10:12:47+08:00">2021-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第十四节" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="数据库系统原理第十四节"><a href="#数据库系统原理第十四节" class="headerlink" title="数据库系统原理第十四节"></a>数据库系统原理第十四节</h1><h2 id="数据库安全和保护"><a href="#数据库安全和保护" class="headerlink" title="数据库安全和保护"></a>数据库安全和保护</h2><h3 id="事务与并发控制"><a href="#事务与并发控制" class="headerlink" title="事务与并发控制"></a>事务与并发控制</h3><p>所谓事务是用户定义的一个<code>数据操作序列</code>，这些操作可作为一个完整的工作单元，要么全部执行，要么全部不执行，是一个不可分割的工作单位。事务中的操作一般是对数据的更新操作，包括<code>增删改</code></p>
+<p>以 <code>begin transaction</code>开始<br>commit 或 rollback结束</p>
+<p>事务的特征 </p>
+<ul>
+<li>A 原子性</li>
+<li>C 一致性</li>
+<li>I 隔离性</li>
+<li>D 持续性</li>
+</ul>
+<h6 id="并发操作问题"><a href="#并发操作问题" class="headerlink" title="并发操作问题"></a>并发操作问题</h6><ul>
+<li>丢失更新</li>
+<li>不可重复读</li>
+<li>读‘脏’数据</li>
+</ul>
+<h6 id="封锁"><a href="#封锁" class="headerlink" title="封锁"></a>封锁</h6><p>封锁 是最常用的并发控制技术</p>
+<p>基本思想：需要时，事务通过向系统请求对它所希望的数据对象加锁，以确保它不被非预期改变</p>
+<p>一个<code>锁</code>实质上就是允许或阻止一个事务对一个数据对象的存取特权</p>
+<p>基本的封锁类型</p>
+<ul>
+<li>排它锁，用于写操作</li>
+<li>共享锁，用于读操作</li>
+</ul>
+<p>封锁的粒度<br>粒度越细，并发性就越大，但软件复杂性和系统开销也就越大</p>
+<p><code>封锁的级别</code>又称为一致性级别或隔离度</p>
+<ul>
+<li>0级封锁：不重写其他非0级封锁事务的未提交的更新数据</li>
+<li>1级封锁：不允许重写未提交的更新数据。防止了丢失更新的发生</li>
+<li>2级封锁：既不重写也不读未提交的更新数据（防止了读脏数据）</li>
+<li>3级封锁：不读未提交的更新数据，不写任何（包括读操作）未提交数据</li>
+</ul>
+<p>活锁：先来先服务<br>死锁：预防</p>
+<ul>
+<li>一次性锁请求</li>
+<li>锁请求排序</li>
+<li>序列化处理</li>
+<li>资源剥夺</li>
+</ul>
+<p>可串行性<br>一组事务的一个调度就是它们的基本操作的一种排序</p>
+<p>在数据库系统中，可串行性就是并发执行的<code>正确性准则</code></p>
+<p>两段封锁法</p>
+<ul>
+<li>发展或加锁阶段</li>
+<li>收缩或释放锁阶段</li>
+</ul>
+<h3 id="备份与恢复"><a href="#备份与恢复" class="headerlink" title="备份与恢复"></a>备份与恢复</h3><p>备份</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">into</span> outfile <span class="string">&#x27;file_name&#x27;</span> export_options  </span><br><span class="line">              dumpfile <span class="string">&#x27;file_name&#x27;</span></span><br><span class="line">    fields terminated <span class="keyword">by</span> <span class="string">&#x27;,&#x27;</span>  逗号分隔</span><br><span class="line">    optionally enclosed <span class="keyword">by</span> &quot;&quot;  字符串用双引号</span><br><span class="line">    lines terminated <span class="keyword">by</span> <span class="string">&#x27;?&#x27;</span>  问号分隔每行数据</span><br></pre></td></tr></table></figure>
+
+<p>dumpfile 导出的备份文件里面所有的数据都彼此紧挨着</p>
+<p>导入</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">load data infile <span class="string">&#x27;file_name&#x27;</span> <span class="keyword">into</span> <span class="keyword">table</span> table_name</span><br><span class="line">fields terminated <span class="keyword">by</span> <span class="string">&#x27;,&#x27;</span>  逗号分隔</span><br><span class="line">    optionally enclosed <span class="keyword">by</span> &quot;&quot;  字符串用双引号</span><br><span class="line">    lines terminated <span class="keyword">by</span> <span class="string">&#x27;?&#x27;</span>  问号分隔每行数据</span><br></pre></td></tr></table></figure>
+
+<p>数据库生命周期</p>
+<ul>
+<li>需求分析</li>
+<li>系统功能与数据库的设计</li>
+<li>系统功能与数据库的实现</li>
+<li>测试与维护</li>
+</ul>
+<h4 id="php-mysql应用"><a href="#php-mysql应用" class="headerlink" title="php mysql应用"></a>php mysql应用</h4><p>连接数据库非持久连接</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$con</span> = <span class="title function_ invoke__">mysql_connect</span>(<span class="string">&quot;localhost:3306&quot;</span>,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line"></span><br><span class="line">持久连接 mysql_pconnect</span><br><span class="line"></span><br><span class="line">选择数据库 <span class="title function_ invoke__">mysql_select_db</span>(<span class="string">&quot;test&quot;</span>, <span class="variable">$con</span>)</span><br><span class="line"></span><br><span class="line">执行 sql <span class="title function_ invoke__">mysql_query</span>(<span class="string">&quot;set names &#x27;gbk&#x27;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="variable">$res</span> = <span class="title function_ invoke__">mysql_query</span>(<span class="variable">$sql</span>, <span class="variable">$con</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$array</span> = <span class="title function_ invoke__">mysql_fetch_array</span>(<span class="variable">$res</span>, MYSQL_NUM);</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">mysql_close</span>(<span class="variable">$con</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;关闭失败&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" class="post-title-link" itemprop="url">学堂在线C++程序设计第十二章学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-23 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-23T10:12:47+08:00">2021-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" class="post-meta-item leancloud_visitors" data-flag-title="学堂在线C++程序设计第十二章学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/C++%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="学堂在线C-程序设计第十二章学习笔记"><a href="#学堂在线C-程序设计第十二章学习笔记" class="headerlink" title="学堂在线C++程序设计第十二章学习笔记"></a>学堂在线C++程序设计第十二章学习笔记</h1><h2 id="泛型程序设计和标准模板库"><a href="#泛型程序设计和标准模板库" class="headerlink" title="泛型程序设计和标准模板库"></a>泛型程序设计和标准模板库</h2><h3 id="泛型及STL"><a href="#泛型及STL" class="headerlink" title="泛型及STL"></a>泛型及STL</h3><p>泛型程序设计</p>
+<ul>
+<li>编写不依赖于具体数据类型的程序</li>
+<li>将算法从特定的数据结构中抽象出来成为通用的</li>
+<li>C++的模板为泛型程序设计奠定了关键的基础</li>
+</ul>
+<p>术语：概念</p>
+<ul>
+<li>可以比较大小的数据类型记作<code>Comparable</code></li>
+<li>具有公有的复制函数并可以用 &#x3D; 赋值的记作<code>Assignable</code></li>
+<li>将 可以比较大小 并且 具有公有复制函数可以用 &#x3D; 赋值的记作<code>Sortable</code></li>
+</ul>
+<p>对于两个不同的概念A，B,如果A所需求的所有功能也是B所需求的，那么B是A的子概念，比如，Sortable是 Comparable 的子概念，也是 Assignable的子概念</p>
+<p>术语：模型</p>
+<ul>
+<li>符合一个概念的数据类型称为该概念的模型</li>
+<li>比如 int 型是 Comparable的模型</li>
+<li>静态数组不是 Assignable的模型</li>
+</ul>
+<h4 id="STL"><a href="#STL" class="headerlink" title="STL"></a>STL</h4><ul>
+<li>标准模板库STL定义了一套概念体系，为泛型程序设计提供了逻辑基础</li>
+<li>STL中的各个类模板，函数模板的参数都是用这个体系中的概念来规定的</li>
+<li>使用STL模板时，类型参数既可以是C++标准库中已有的类型，也可以是自定义的类型–只要这些类型是所要求的概念的模型</li>
+</ul>
+<p>STL基本组件</p>
+<ul>
+<li>容器（container）：容纳，包含一组元素的对象<ul>
+<li>顺序容器：<br>  array,vector,双端队列，单链表，列表</li>
+<li>有序容器：<br>  集合，多重集合，map,多重映射</li>
+<li>无序关联容器<br>  无序集合，无序多重集合，无序映射，无序多重映射</li>
+</ul>
+</li>
+<li>迭代器（iterator）<ul>
+<li>提供了顺序访问容器中每个元素的方法</li>
+<li>可以使用 ++ 运算符来获得指向下一个元素的迭代器</li>
+<li>可以使用 * 运算符访问迭代器指向的元素，如果元素类型是类或结构体，还可以使用 -&gt; 运算符直接访问成员</li>
+<li>有些迭代器还支持通过 – 运算符获得指向上一个元素的迭代器</li>
+<li>迭代器是泛化的指针：指针也具有同样的特性，因此指针本身就是一种迭代器</li>
+<li>使用独立于STL容器的迭代器，需要包含头文件<iterator></li>
+</ul>
+</li>
+<li>函数对象（function object）</li>
+<li>算法（algorithms）</li>
+</ul>
+<p><code>迭代器</code>是<code>算法</code>和<code>容器</code>的桥梁</p>
+<ul>
+<li>将迭代器作为算法的参数，通过迭代器来访问容器而不是把容器直接作为算法参数</li>
+<li>将<code>函数对象</code>作为算法参数而不是将函数所执行的运算作为算法的一部分。</li>
+<li>使用STL中提供的或自定义的迭代器和函数对象，配合STL的算法，可以组合出各种各样的功能</li>
+</ul>
+<p>容器适配器</p>
+<ul>
+<li>栈</li>
+<li>队列</li>
+</ul>
+<h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><p>迭代器是算法和容器的桥梁</p>
+<ul>
+<li>迭代器用作访问容器中的元素</li>
+<li>算法不直接操作容器中的数据，而是通过迭代器间接操作</li>
+</ul>
+<p>算法和容器独立</p>
+<ul>
+<li>增加新的算法，无需影响容器的实现</li>
+<li>增加新的容器，原有的算法也可以适用</li>
+</ul>
+<p>输入流迭代器</p>
+<ul>
+<li>istream_iterator<T></li>
+<li>以输入流 如 cin 为参数构造</li>
+<li>可用 *(p++) 获得下一个输入的元素</li>
+</ul>
+<p>输出流迭代器</p>
+<ul>
+<li>ostream_iterator<T></li>
+<li>构造时需要提供输出流 如 cout</li>
+<li>可用 (*p++) &#x3D; x 将 x 输出到输出流</li>
+</ul>
+<p>二者都属于适配器</p>
+<ul>
+<li>适配器是用来为已有对象提供新的接口的对象</li>
+<li>输入流适配器和输出流适配器为流对象提供了迭代器的接口</li>
+</ul>
+<h3 id="容器的基本功能和分类"><a href="#容器的基本功能和分类" class="headerlink" title="容器的基本功能和分类"></a>容器的基本功能和分类</h3><ul>
+<li>容器类是容纳，包含一组元素或元素集合的对象</li>
+<li>基于容器中元素的组织方式分类：顺序容器，关联容器</li>
+<li>按照与容器所关联的迭代器类型分类：可逆容器，随机访问容器</li>
+</ul>
+<h3 id="顺序容器"><a href="#顺序容器" class="headerlink" title="顺序容器"></a>顺序容器</h3><h5 id="顺序容器的基本功能"><a href="#顺序容器的基本功能" class="headerlink" title="顺序容器的基本功能"></a>顺序容器的基本功能</h5><ul>
+<li>STL中的顺序容器<ul>
+<li>向量</li>
+<li>双端队列(deque)</li>
+<li>列表(list)</li>
+<li>单向链表(forward_list)</li>
+<li>数组(array)</li>
+</ul>
+</li>
+<li>元素线性排列，可以随时在指定位置插入元素和删除元素</li>
+<li>必须符合 Assignable 这一概念（具有共有的复制构造函数并可以用 ‘&#x3D;’ 赋值）</li>
+<li>array 对象的大小固定，forward_list有特殊的添加和删除操作</li>
+</ul>
+<p>顺序容器的接口（不包含单向链表和数组）</p>
+<ul>
+<li>构造函数</li>
+<li>赋值函数：assign</li>
+<li>插入函数: insert, push_front(只对list和deque)，push_back, emplace, emplace_front</li>
+<li>删除函数：erase, clear, pop_front, pop_back, emplace_back</li>
+<li>首尾元素的直接访问：front, back</li>
+<li>改变大小：resize</li>
+</ul>
+<h4 id="顺序容器的特征"><a href="#顺序容器的特征" class="headerlink" title="顺序容器的特征"></a>顺序容器的特征</h4><p>向量</p>
+<ul>
+<li>特点<ul>
+<li>一个可以扩展的动态数组</li>
+<li>随机访问，在尾部插入或删除元素块</li>
+<li>在中间或头部插入或删除元素慢</li>
+</ul>
+</li>
+<li>容量<ul>
+<li>容量：实际分配空间的大小</li>
+<li>s.capacity: 返回当前容量</li>
+<li>s.reserve(n): 容量小于n，则对s进行扩展，使其容量至少为n</li>
+</ul>
+</li>
+</ul>
+<p>双端队列</p>
+<ul>
+<li>特点<ul>
+<li>在两端插入或删除元素快</li>
+<li>在中间插入或删除元素慢</li>
+<li>随机访问较快，但比向量慢</li>
+</ul>
+</li>
+</ul>
+<p>列表</p>
+<ul>
+<li>特点<ul>
+<li>在任意位置插入和删除元素都很快</li>
+<li>不支持随机访问</li>
+</ul>
+</li>
+<li>接合操作（splice）<ul>
+<li>s.splice(p, s2, q1, q2): 将s2中[q1,q2)移动到s1中p所指向元素之前</li>
+</ul>
+</li>
+</ul>
+<h4 id="顺序容器的插入迭代器与适配器"><a href="#顺序容器的插入迭代器与适配器" class="headerlink" title="顺序容器的插入迭代器与适配器"></a>顺序容器的插入迭代器与适配器</h4><p>顺序容器的插入迭代器</p>
+<ul>
+<li>用于向容器头部，尾部或中间指定位置插入元素的迭代器</li>
+<li>包括前插迭代器（front_inserter），后插迭代器（back_inserter）和任意位置插入迭代器（inserter）</li>
+<li>例子：<br>  list<int> s;<br>  back_iserter iter(s);<br>  *(iter++) &#x3D; 5; &#x2F;&#x2F;通过iter把5插入s末尾</li>
+</ul>
+<p>顺序容器的适配器</p>
+<ul>
+<li>以顺序容器为基础构建一些常用数据结构，是对顺序容器的封装<ul>
+<li>栈</li>
+<li>队列</li>
+<li>优先级队列：最 <code>大</code> 的先弹出</li>
+</ul>
+</li>
+</ul>
+<p>栈和队列模板</p>
+<ul>
+<li>栈模板<br>  template &lt;class T, class Sequence &#x3D; deque<T>&gt; class stack;</li>
+<li>队列模板<br>  template &lt;class T,class FrontInsertionSequence &#x3D; deque<T>&gt; class queue;</li>
+<li>栈可以用任何一种顺序容器作为基础容器，而队列只允许用前插顺序容器（双端队列或列表）</li>
+</ul>
+<p>栈和队列共同支持的操作</p>
+<ul>
+<li>比较</li>
+<li>返回元素个数</li>
+<li>empty</li>
+<li>push</li>
+<li>pop</li>
+<li>不支持迭代器，因为不允许对任意元素访问</li>
+</ul>
+<p>栈和队列不同的操作</p>
+<ul>
+<li>栈的操作<br>  s.top 返回栈顶元素的引用</li>
+<li>队列操作<br>  s.front 获得队头元素的引用<br>  s.back 获得队尾元素的引用</li>
+</ul>
+<p>优先级队列</p>
+<ul>
+<li>优先级队列也像栈和队列一样支持元素的压入和弹出，但元素弹出顺序和元素大小有关，每次弹出最大的</li>
+<li>template &lt;class T, class Sequence &#x3D; Vector<T>&gt; class priority_queue</li>
+<li>优先级队列的基础容器必须是支持随机访问的顺序容器</li>
+<li>支持栈和队列的size,empty, push, pop几个函数</li>
+<li>优先级队列并不支持比较操作</li>
+<li>与栈类似，优先级队列提供一个 top 函数，可以获得下一个即将被弹出元素的引用</li>
+</ul>
+<h3 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h3><h4 id="分类和基本功能"><a href="#分类和基本功能" class="headerlink" title="分类和基本功能"></a>分类和基本功能</h4><p>关联容器的特点</p>
+<ul>
+<li>每个关联容器都有一个key</li>
+<li>可以根据key高效查找元素</li>
+</ul>
+<p>接口</p>
+<ul>
+<li>插入insert</li>
+<li>删除 erase</li>
+<li>查找 find</li>
+<li>定界 lower_bound,upper_bound,equal_bound</li>
+<li>计数 count</li>
+</ul>
+<h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><p>集合用来存储一组无重复的数据。用于集合的元素本身是有序的，可以高效查找元素，也可以方便的得到指定大小范围的元素在容器中所处的区间</p>
+<h4 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h4><p>映射和集合的主要区别</p>
+<ul>
+<li><p>集合的元素类型是key本身</p>
+</li>
+<li><p>映射的元素类型是key,value二元组</p>
+</li>
+<li><p>在集合中按照key查找一个元素时，一般只是确定这个元素是否存在。</p>
+</li>
+<li><p>映射中按照key查找时，除了能确定是否存在外，还可以得到相应的附加数据</p>
+</li>
+</ul>
+<h4 id="多重集合和多重映射"><a href="#多重集合和多重映射" class="headerlink" title="多重集合和多重映射"></a>多重集合和多重映射</h4><ul>
+<li>多重集合允许有重复元素的集合，多重映射允许一个key对应多个value</li>
+<li>多重集合与集合，多重映射与映射的用法差不多</li>
+</ul>
+<h3 id="函数对象"><a href="#函数对象" class="headerlink" title="函数对象"></a>函数对象</h3><p>函数对象</p>
+<ul>
+<li>一个行为类似函数的对象</li>
+<li>可以没有参数，也可以带有若干参数</li>
+<li>其功能是获取值，或者改变操作状态</li>
+<li>普通函数就是函数对象</li>
+<li>重载了 “()” 运算符的类的实例是函数对象</li>
+</ul>
+<h4 id="函数适配器"><a href="#函数适配器" class="headerlink" title="函数适配器"></a>函数适配器</h4><ul>
+<li>绑定适配器<ul>
+<li>bind1st, bind2nd: 将n元函数对象的指定参数绑定为一个常数，得到n-1元函数对象</li>
+</ul>
+</li>
+<li>组合适配器<ul>
+<li>not1,not2: 将指定谓词的结果取反</li>
+</ul>
+</li>
+<li>函数指针适配器<ul>
+<li>ptr_fun: 将一般函数指针转换为函数对象，使之能够作为其他函数适配器的输入</li>
+<li>在进行参数绑定或其他转换的时候，通常需要函数对象的类型信息</li>
+</ul>
+</li>
+<li>成员函数适配器:ptr_fun,ptr_fun_ref<ul>
+<li>对成员函数指针使用，把n元成员函数适配为n + 1元函数对象，该函数对象的第一个参数为调用该成员函数时的目的对象</li>
+<li>也就是 object-&gt;method() 变成 method(object)</li>
+<li>将 object-&gt;method(arg1) 变成 method(object, arg1)</li>
+</ul>
+</li>
+</ul>
+<h4 id="STL算法"><a href="#STL算法" class="headerlink" title="STL算法"></a>STL算法</h4><p>本身是一种函数模板</p>
+<ul>
+<li>通过迭代器获得输入数据</li>
+<li>通过函数对象对数据进行处理</li>
+<li>通过迭代器将结果输出</li>
+</ul>
+<p>STL算法是通用的，独立于具体的数据类型，容器类型</p>
+<p>分类</p>
+<ul>
+<li>不可变序列算法<ul>
+<li>不直接修改所操作的容器内容的算法</li>
+<li>用于查找指定元素，比较是否相等，对元素进行计数等</li>
+</ul>
+</li>
+<li>可变序列算法<ul>
+<li>可修改所操作的容器对象的算法</li>
+<li>包括复制，删除，替换，洗牌及生成一个序列的算法</li>
+</ul>
+</li>
+<li>排序和搜索算法<ul>
+<li>对序列排序</li>
+<li>搜索</li>
+<li>堆算法</li>
+</ul>
+</li>
+<li>数值算法<ul>
+<li>求和，求差，积等</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1555,864 +2084,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B8%83%E8%8A%82.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B8%83%E8%8A%82.html" class="post-title-link" itemprop="url">数据库系统原理第七节</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-07 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-07T10:12:47+08:00">2021-08-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">数据库系统原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B8%83%E8%8A%82.html" class="post-meta-item leancloud_visitors" data-flag-title="数据库系统原理第七节" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B8%83%E8%8A%82.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E7%AC%AC%E4%B8%83%E8%8A%82.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数据库系统原理第七节"><a href="#数据库系统原理第七节" class="headerlink" title="数据库系统原理第七节"></a>数据库系统原理第七节</h1><h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><h3 id="数据定义"><a href="#数据定义" class="headerlink" title="数据定义"></a>数据定义</h3><h4 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h4><p>mysql -u root -p </p>
-<h4 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h4><p>create database my_test;</p>
-<h4 id="查看数据库"><a href="#查看数据库" class="headerlink" title="查看数据库"></a>查看数据库</h4><p>show databases;</p>
-<h4 id="删除数据库"><a href="#删除数据库" class="headerlink" title="删除数据库"></a>删除数据库</h4><p>drop my_test;</p>
-<h4 id="进入数据库"><a href="#进入数据库" class="headerlink" title="进入数据库"></a>进入数据库</h4><p>use my_test;</p>
-<h4 id="表定义"><a href="#表定义" class="headerlink" title="表定义"></a>表定义</h4><p>创建表</p>
-<p>数据表被定义为字段的集合<br>按 <code>行</code> 和<code>列</code>的格式存储<br>每一行代表一条记录<br>每一列代表记录中一个字段的取值</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> [temporary] <span class="keyword">table</span> tbl_name</span><br><span class="line">(</span><br><span class="line">    字段名<span class="number">1</span> 数据类型 [列完整性约束条件] [默认值]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-
-<p>修改表</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> table_name</span><br></pre></td></tr></table></figure>
-
-<p>字句</p>
-<ul>
-<li>ADD [COLUMN] 子句</li>
-<li>change [COLUMN] 子句</li>
-<li>alter [column] 子句 修改或删除表中指定列的默认值<ul>
-<li>alter colum city set default ‘bj’</li>
-</ul>
-</li>
-<li>modify [column] 子句 只修改指定列的数据类型，不会干涉它的列名<ul>
-<li>modify column city char(50);</li>
-</ul>
-</li>
-<li>drop [column] 子句 删除指定列<ul>
-<li>drop column city;</li>
-</ul>
-</li>
-<li>rename [to] 子句 修改表名<ul>
-<li>rename to table_name</li>
-</ul>
-</li>
-<li>add index index_name(column_name) 创建索引</li>
-<li>drop index index_name</li>
-</ul>
-<p>修改表名：<br>rename table table_name to new_table_name</p>
-<p>删除表</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> [temporary] <span class="keyword">table</span> [if <span class="keyword">exists</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>查看表</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> colums <span class="keyword">from</span> table_name;</span><br></pre></td></tr></table></figure>
-
-<h4 id="索引定义"><a href="#索引定义" class="headerlink" title="索引定义"></a>索引定义</h4><p>索引时提高数据文件访问效率的有效方法</p>
-<p>缺点</p>
-<ul>
-<li><p>索引是以文件的形式存储的，如果有大量的索引，索引文件可能比数据文件更快达到最大的文件尺寸</p>
-</li>
-<li><p>索引在提高查询速度的同时，会降低更新表的速度</p>
-</li>
-<li><p>index 或 key 普通索引</p>
-</li>
-<li><p>unique 唯一性索引 候选码</p>
-</li>
-<li><p>primary key 主键</p>
-</li>
-</ul>
-<p>创建索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> [<span class="keyword">unique</span>] index index_name</span><br><span class="line"><span class="keyword">on</span> table_name(index_col_name)</span><br></pre></td></tr></table></figure>
-
-<p>索引删除</p>
-<p>drop index index_name on table_name</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%96%B0%E6%A6%82%E5%BF%B5%E8%8B%B1%E8%AF%AD%E7%AC%AC%E4%B8%80%E5%86%8C.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E6%96%B0%E6%A6%82%E5%BF%B5%E8%8B%B1%E8%AF%AD%E7%AC%AC%E4%B8%80%E5%86%8C.html" class="post-title-link" itemprop="url">新概念英语第一册</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-07 10:12:47" itemprop="dateCreated datePublished" datetime="2021-08-07T10:12:47+08:00">2021-08-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%8B%B1%E8%AF%AD/" itemprop="url" rel="index"><span itemprop="name">英语</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E6%96%B0%E6%A6%82%E5%BF%B5%E8%8B%B1%E8%AF%AD%E7%AC%AC%E4%B8%80%E5%86%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="新概念英语第一册" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E6%96%B0%E6%A6%82%E5%BF%B5%E8%8B%B1%E8%AF%AD%E7%AC%AC%E4%B8%80%E5%86%8C.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E6%96%B0%E6%A6%82%E5%BF%B5%E8%8B%B1%E8%AF%AD%E7%AC%AC%E4%B8%80%E5%86%8C.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="新概念英语第一册"><a href="#新概念英语第一册" class="headerlink" title="新概念英语第一册"></a>新概念英语第一册</h1><h2 id="21"><a href="#21" class="headerlink" title="21"></a>21</h2><h4 id="祈使句"><a href="#祈使句" class="headerlink" title="祈使句"></a>祈使句</h4><p>请给我一本书<br>give me a book please</p>
-<p>请递给我一本书<br>pass me a book</p>
-<p>pass me:递给</p>
-<p>哪一本书<br>which book?</p>
-<p>这一本书吗<br>this one?</p>
-<p>红色的这本<br>the red one</p>
-<p>不是那本<br>not that one</p>
-<p>给你<br>here you are</p>
-<h5 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h5><p>you give me a book<br>主语 谓语 宾语</p>
-<p>主语：人称代词主格 i you he she we they<br>宾语：人称代词宾格 me you him her us them</p>
-<h5 id="单词"><a href="#单词" class="headerlink" title="单词"></a>单词</h5><p>cup:杯子</p>
-<p>glass:玻璃杯</p>
-<p>bottle:瓶子</p>
-<p>knife:刀</p>
-<p>sharp:锋利的</p>
-<p>blunt:钝的</p>
-<p>fork:叉子</p>
-<p>spoon:勺子</p>
-<h2 id="23"><a href="#23" class="headerlink" title="23"></a>23</h2><p>请给我一些玻璃杯<br>give me some glasses please</p>
-<p>some glasses: 直接宾语<br>me: 间接宾语</p>
-<p>架子上这些吗<br>the ones on the shelf</p>
-<p>on : 介词 在…上面</p>
-<p>on the shelf: 介词短语用来修饰名词</p>
-<p>on the floor: 在地板上</p>
-<h2 id="25"><a href="#25" class="headerlink" title="25"></a>25</h2><p>这是一个冰箱<br>there is a refrigerator</p>
-<p>在厨房里面<br>in the kitchen</p>
-<p>in:介词，在…里面</p>
-<p>in the kitchen:介词短语 在厨房里面</p>
-<p>in the middle of the room:复合介词，在房间的中间</p>
-<p>这个杯子在桌子上<br>there is cup on the table<br>变疑问句<br>is there cup on the table?</p>
-<p>他在哪？<br>where is it?</p>
-<h5 id="单词-1"><a href="#单词-1" class="headerlink" title="单词"></a>单词</h5><p>refrigerator:冰箱<br>fridge:冰箱</p>
-<p>electric cooker: 炊具</p>
-<h2 id="27"><a href="#27" class="headerlink" title="27"></a>27</h2><p>在电视上有一些杂志<br>there are some magazines on the television</p>
-<p>照片在墙上<br>the pictures are on the wall</p>
-<p>on the wall:在墙上</p>
-<p>near the window:离窗户很近</p>
-<p>near the … : 介词，离…很近</p>
-<p>他们在哪里<br>where are they</p>
-<p>there is a …</p>
-<p>there are some ..<br>变疑问句<br>are there any …?<br>变否定句<br>there are not any …?</p>
-<p>some 疑问和否定变 any</p>
-<h5 id="单词-2"><a href="#单词-2" class="headerlink" title="单词"></a>单词</h5><p>armchair: 扶手椅</p>
-<p>bowl:碗</p>
-<p>cooker:炉子</p>
-<h2 id="29"><a href="#29" class="headerlink" title="29"></a>29</h2><p>请关门，祈使句<br>shut the door,please</p>
-<p>铺床<br>make the bed</p>
-<p>给化妆桌除尘<br>dust the dressing table</p>
-<p>扫地<br>then sweep the floor</p>
-<p>给房间通风<br>air the room</p>
-<p>我必须要干什么？<br>what must i do?</p>
-<p>must:情态动词,必须要，不可推卸</p>
-<p>我一定要打扫我的房间<br>i must tidy my room</p>
-<p>我必须要努力学习<br>i must study hard</p>
-<p>打开电视<br>turn on the TV</p>
-<p>短语动词<br>turn on: 打开…<br>turn off: 关闭…</p>
-<p>穿上大衣<br>put on the coat<br>put on: 穿上…<br>take off: 脱下…</p>
-<h5 id="形容词做动词"><a href="#形容词做动词" class="headerlink" title="形容词做动词"></a>形容词做动词</h5><p>empty :空的<br>这个杯子不是空的，倒空他<br>the cup is not empty, empty it!</p>
-<p>clean<br>这个窗户不干净，弄干净他<br>the window is not clean. clean it!</p>
-<p>shut<br>这个们没关上，关上他<br>the door is not shut, shut it!</p>
-<p>open<br>这个窗户没打开，打开它<br>the wardrobe is not open.open it!</p>
-<h5 id="单词-3"><a href="#单词-3" class="headerlink" title="单词"></a>单词</h5><p>wardrobe:衣柜</p>
-<p>dust:给…除尘，灰尘</p>
-<p>tidy:把…变整洁，整洁</p>
-<p>untidy:不干净的，不整洁的</p>
-<h2 id="31"><a href="#31" class="headerlink" title="31"></a>31</h2><p>xxxx 在哪里？<br>where is xxxx?</p>
-<p>she is …</p>
-<p>Tim 在公园里面吗？<br>is Tim in the garden?</p>
-<p>现在进行时的疑问句<br>what’s she doing?</p>
-<p>他现在正在树下面坐着<br>she’s sitting under the tree</p>
-<p><code>现在进行时 be + ing</code></p>
-<p>he is climbing the tree</p>
-<p><code>现在分词</code> +ing</p>
-<p>e 结尾的去 e + ing</p>
-<p>辅音+元音+辅音的 双写辅音字母 + ing</p>
-<p>短语动词，追逐<br>running after</p>
-<p>看….东西<br>looking at</p>
-<h2 id="33"><a href="#33" class="headerlink" title="33"></a>33</h2><p>今天是很好的一天<br>it’s a lovely day today</p>
-<p>今天的天气很好<br>it’s lovely weather today</p>
-<p>there be 这有，天空中有一些云<br>there are some clouds in the sky</p>
-<p>jones和他的家人在一起<br>Mr.jones is with his family</p>
-<p>他们正在桥上散步<br>they are walking over the bridge</p>
-<p>what are the children doing?</p>
-<p>they are doing …</p>
-<h4 id="单词-4"><a href="#单词-4" class="headerlink" title="单词"></a>单词</h4><p>with:介词，和…在一起</p>
-<p>over the bridge:在桥上</p>
-<p>boat: 船</p>
-<p>river: 河</p>
-<p>ship: 轮船</p>
-<p>aeroplane: 飞机</p>
-<p>over: 在 … 上面，不接触的</p>
-<p>over the river: 在河上空</p>
-<p>on the river: 在河上，在河表面</p>
-<p>wash dishes: 洗盘子</p>
-<p>wait for: 等 …</p>
-<h2 id="35"><a href="#35" class="headerlink" title="35"></a>35</h2><p>这是一张 我们的村庄 的照片<br>this is a photograph of our village</p>
-<p>our village is in a valley</p>
-<h5 id="单词-5"><a href="#单词-5" class="headerlink" title="单词"></a>单词</h5><p>photograph: 照片</p>
-<p>village: 村庄</p>
-<p>valley: 山谷</p>
-<p>hills: 小山丘</p>
-<p>alone: 沿着…</p>
-<p>banks of the river: 河岸</p>
-<p>across: </p>
-<p>beside: 在…旁边</p>
-<p>out of: 从 … 出来</p>
-<p>into: 进入…</p>
-<h2 id="37"><a href="#37" class="headerlink" title="37"></a>37</h2><p>你工作很努力<br>you are working hard</p>
-<p>be going to: <code>一般将来时</code></p>
-<p>你接下来要干啥？<br>what are you going to do now?</p>
-<p>我要给他上颜色了<br>I’m going to paint it.</p>
-<p>你现在正在干什么？<br>what are you doing now?</p>
-<p>回答：i’m listening to music</p>
-<p>I’m going to paint it pink<br>i:主语<br>paint:谓语动词<br>it:宾语<br>pink:宾语补足语</p>
-<p>这个书架不是给我的<br>this bookcase isn’t for me</p>
-<h5 id="单词-6"><a href="#单词-6" class="headerlink" title="单词"></a>单词</h5><p>hard: 副词 adv，修饰动词，努力的</p>
-<p>paint: 上色，上油漆</p>
-<p>for: 给某人，为某人准备的</p>
-<h2 id="39"><a href="#39" class="headerlink" title="39"></a>39</h2><p>对那个花瓶做什么<br>to do with that vase</p>
-<p>我不知道怎么办<br>i don’t konw what to do with it</p>
-<p>对这个书做什么<br>do with a book</p>
-<p><code>祈使句的否定形式</code><br>don’t do that</p>
-<p>别摔了它<br>don’t drop it</p>
-<p><code>双宾语</code> sb 间接宾语 sth 直接宾语<br>give sb sth<br>give sth to sb<br>比如：give me a book,  give the book to me</p>
-<blockquote>
-<p>give&#x2F;show&#x2F;send&#x2F;take 都一样</p>
-</blockquote>
-<p>send john that letter<br>send that letter to john</p>
-<p>使用it 把 it 放中间<br>turn on the TV &#x3D; turn it on<br>turn off the TV &#x3D; turn it off<br>put on your trousers &#x3D; put it on<br>take off your shoes &#x3D; take it off</p>
-<h2 id="41"><a href="#41" class="headerlink" title="41"></a>41</h2><p>那个包重吗<br>is that bag heavy</p>
-<p>is there a … in&#x2F;on that …?</p>
-<p>在房间里有一个椅子吗？<br>is there a chair in that room?</p>
-<p>桌子上有一个花瓶吗？<br>is there a vase on that table?</p>
-<p><code>不可数名词 a 替换成 any</code></p>
-<p>are there any … in&#x2F;on that …？</p>
-<p>there are some … in&#x2F;on that …</p>
-<p>is there any … in&#x2F;on that …?</p>
-<h3 id="短语"><a href="#短语" class="headerlink" title="短语"></a>短语</h3><p>p piece of 一片&#x2F;一块</p>
-<p>a loaf of 一条&#x2F;长条</p>
-<p>a bar of 一块</p>
-<p>a bottle of 一瓶</p>
-<p>a pound of 一磅</p>
-<p>half 一半</p>
-<p>a qurater of 四分之一</p>
-<p>a tin of tobacco 一听烟丝</p>
-<h3 id="单词-7"><a href="#单词-7" class="headerlink" title="单词"></a>单词</h3><p>certainly 当然</p>
-<h2 id="43"><a href="#43" class="headerlink" title="43"></a>43</h2><p>你能泡茶吗<br>can you make the tea?</p>
-<p>i can’t see any … 可以接可数名词复数也可以接不可数名词</p>
-<h3 id="短语-1"><a href="#短语-1" class="headerlink" title="短语"></a>短语</h3><p>boil the kettle  烧水</p>
-<p>hurry up 快点</p>
-<h3 id="单词-8"><a href="#单词-8" class="headerlink" title="单词"></a>单词</h3><p>teapot 茶壶</p>
-<p>behind 在 … 后面</p>
-<h2 id="45"><a href="#45" class="headerlink" title="45"></a>45</h2><p>你能过来一下吗<br>can you come here a minute please?</p>
-<p>她能为我打一下这个信吗<br>can she type this letter for me?</p>
-<h2 id="47"><a href="#47" class="headerlink" title="47"></a>47</h2><h2 id="49"><a href="#49" class="headerlink" title="49"></a>49</h2><h2 id="51"><a href="#51" class="headerlink" title="51"></a>51</h2><p>what’s sth like &#x3D; be + like &#x3D; 像什么。。。，什么样子的</p>
-<p>在你的国家气候是什么样子的?<br>what’s the climate like in your country?</p>
-<h3 id="单词-9"><a href="#单词-9" class="headerlink" title="单词"></a>单词</h3><p>climate: 气候</p>
-<p>pleasant: 宜人的</p>
-<p>Brazil: 巴西</p>
-<p>Brazilian: 巴西人</p>
-<p>Holland: 荷兰</p>
-<p>Dutch：荷兰人</p>
-<p>Norway: 挪威</p>
-<p>Norwagian: 挪威人</p>
-<p>Spain: 西班牙</p>
-<p>Spanish: 西班牙人</p>
-<p>Sweden: 瑞典</p>
-<p>Swedish: 瑞典人</p>
-<h2 id="53"><a href="#53" class="headerlink" title="53"></a>53</h2><p>你最喜欢哪个季节？<br>which seasons do you like best?</p>
-<h3 id="单词-10"><a href="#单词-10" class="headerlink" title="单词"></a>单词</h3><p>mild: 温和的</p>
-<p>season: 季节</p>
-<p>rise: 升起</p>
-<p>early: 早期的</p>
-<p>late: 晚的</p>
-<p>Australia: 澳大利亚</p>
-<p>Australian: 澳大利亚人</p>
-<p>Austria: 奥地利</p>
-<p>Austrian: 奥地利人</p>
-<p>Finland: 芬兰</p>
-<p>Finnish: 芬兰人</p>
-<p>India: 印度</p>
-<p>Indian: 印度人</p>
-<p>Nigeria: 尼日利亚</p>
-<p>Nigerian: 尼日利亚人 </p>
-<p>Turkey: 土耳其</p>
-<p>Turkish: 土耳其人</p>
-<p>Poland: 波兰</p>
-<p>Polish: 波兰人</p>
-<p>Thailand: 泰国</p>
-<p>Thai: 泰国人</p>
-<h2 id="55"><a href="#55" class="headerlink" title="55"></a>55</h2><p>你经常做什么？<br>what do you usually do （in the morning&#x2F;afternoon&#x2F;evening）?</p>
-<h3 id="单词-11"><a href="#单词-11" class="headerlink" title="单词"></a>单词</h3><h2 id="57"><a href="#57" class="headerlink" title="57"></a>57</h2><p>现在正在做某事…<br>be + v.-ing</p>
-<p>现在什么时间？<br>what’s the time now?<br>what time is it?</p>
-<h3 id="单词-12"><a href="#单词-12" class="headerlink" title="单词"></a>单词</h3><p>unurual : 不寻常的</p>
-<p>at the moment: 此时此刻</p>
-<h2 id="59"><a href="#59" class="headerlink" title="59"></a>59</h2><p>你有一些手写纸吗？<br>do you have any writing paper?</p>
-<p>这就是你要的所有东西了吗？<br>is that all?</p>
-<p>其他人呢？<br>who else?</p>
-<p>其他东西呢？<br>anything else?</p>
-<h3 id="单词-13"><a href="#单词-13" class="headerlink" title="单词"></a>单词</h3><p>envelope: 信封</p>
-<p>glue: 胶水</p>
-<p>writing paper: 书写纸</p>
-<p>pad: 便签</p>
-<p>chalk: 粉笔</p>
-<p>size: 型号，尺寸</p>
-<p>else: 其他</p>
-<p>wine: 红酒</p>
-<h2 id="61"><a href="#61" class="headerlink" title="61"></a>61</h2><p>他怎么了？<br>what’s the matter with him?</p>
-<p>他还好吗？<br>Is he all right?</p>
-<p>she has a headache</p>
-<h3 id="单词-14"><a href="#单词-14" class="headerlink" title="单词"></a>单词</h3><p>feel: 感觉,联系动词，后面可以跟形容词</p>
-<p>ill: 生病的，不舒服的</p>
-<p>sick: 生病的</p>
-<p>sad: 悲伤</p>
-<p>stay in bed： 卧床</p>
-<p>bad cold: 重感冒</p>
-<p>good news: 好消息</p>
-<p>stomach: 肚子</p>
-<p>stomach ache : 肚子疼</p>
-<p>medicine: 药</p>
-<p>take some medicine: 吃点药</p>
-<p>see a docter: 看医生</p>
-<p>have a temperature: 发烧</p>
-<p>flu: 流感</p>
-<p>measles: 麻疹</p>
-<h2 id="63"><a href="#63" class="headerlink" title="63"></a>63</h2><p>我能看看他吗<br>can i see him please</p>
-<p>can + 动词原形</p>
-<p>他可以每天下床两小时<br>he can get up for about two hours each day</p>
-<h3 id="单词-15"><a href="#单词-15" class="headerlink" title="单词"></a>单词</h3><p>better: well的比较级，比上次更好点</p>
-<p>yet: 仍然，一般用于否定句中</p>
-<p>rich food: 大鱼大肉，油腻的食物</p>
-<p>light food: 轻食</p>
-<p>aspirins: 阿司匹林</p>
-<p>take an aspirins: 吃阿司匹林</p>
-<p>lean out of : 身体探出。。。</p>
-<h2 id="65"><a href="#65" class="headerlink" title="65"></a>65</h2><p>一般将来时<br><code>be going to do</code> 你将要干什么 </p>
-<p>你不能晚回家<br>you mustn’t come home late.</p>
-<p>具体时间用 <code>at</code><br>日期用<code>on</code><br>月份年份用<code>in</code></p>
-<h3 id="单词-16"><a href="#单词-16" class="headerlink" title="单词"></a>单词</h3><p>be home: 在家</p>
-<p>come home: 回家</p>
-<p>half past ten: 10点半</p>
-<p>quarter past eleven: 11点十五</p>
-<p>past: 过了</p>
-<p>quarter to eleven: 10点45</p>
-<p>half to ten: 9点半</p>
-<h2 id="67"><a href="#67" class="headerlink" title="67"></a>67</h2><p><code>一般过去时</code><br>你刚才在肉店吗？<br>were you at the butcher’s?</p>
-<h3 id="单词-17"><a href="#单词-17" class="headerlink" title="单词"></a>单词</h3><p>过去式<br>am - was<br>is - was<br>are - were</p>
-<p>greengrocer: 蔬菜商人</p>
-<p>last week: 上周</p>
-<p>absent: 缺席</p>
-<p>in the country: 在乡下</p>
-<p>aren’t you luckly!： 你真幸运！</p>
-<h2 id="69"><a href="#69" class="headerlink" title="69"></a>69</h2><p>回家的路上<br>on the way home</p>
-<h3 id="单词-18"><a href="#单词-18" class="headerlink" title="单词"></a>单词</h3><p>race: 比赛，竞赛</p>
-<p>handreds of: 成百上千</p>
-<p>finish：完成，最后，结局</p>
-<p>stationer’s:文具店</p>
-<h2 id="71"><a href="#71" class="headerlink" title="71"></a>71</h2><p>他昨天给我打了4次电话<br>he telephoned me four times yesterday</p>
-<p>前天给我打了3次电话<br>and three times the day before yesterday</p>
-<p><code>过去式</code><br>规则动词 + ed<br>不规则动词</p>
-<h3 id="单词-19"><a href="#单词-19" class="headerlink" title="单词"></a>单词</h3><p>yesterday: 昨天</p>
-<p>the day before yesterday: 前天</p>
-<p>four times: 四次</p>
-<p>last night: 昨天晚上</p>
-<p>the night before last: 前天晚上</p>
-<h2 id="73"><a href="#73" class="headerlink" title="73"></a>73</h2><p>他很不了解伦敦<br>she does not know London very well</p>
-<h3 id="单词-20"><a href="#单词-20" class="headerlink" title="单词"></a>单词</h3><p>very well：很好，非常好，修饰know,表示程度</p>
-<p>lose: 过去式 lost 丢失</p>
-<p>suddenly: 突然地</p>
-<p>see: 过去式 saw</p>
-<p>pleasantly: 副词，修饰动词，表示程度，开心的，愉快地，舒服的</p>
-<p>speak: 过去式 spoke</p>
-<p>phrasebook: 短语书</p>
-<p>take: 过去式 took</p>
-<p>slowly: 慢慢的</p>
-<p>hurriedly: 副词，匆忙地</p>
-<p>badly:副词，严重的</p>
-<p>give-gave</p>
-<p>drink- drank</p>
-<p>thirstily: y 结尾 变i加ly 很渴的</p>
-<p>meet-met</p>
-<p>warmly: 温暖的，热情的</p>
-<p>swim-swam</p>
-<h2 id="75"><a href="#75" class="headerlink" title="75"></a>75</h2><p>他是在这里买的吗？<br>did she buy them here？</p>
-<p>我恐怕没办法帮你<br>I’m afraid that i can’t</p>
-<p>我恐怕。。。<br>i’m afraid … </p>
-<p>你在什么时候做了什么事情<br>when did you …?</p>
-<h3 id="单词-21"><a href="#单词-21" class="headerlink" title="单词"></a>单词</h3><p>a month age: 一个月之前</p>
-<p>afraid: 恐怕</p>
-<p>jump off: 跳下</p>
-<h2 id="77"><a href="#77" class="headerlink" title="77"></a>77</h2><p>你不能一直等到下午吗？<br>can’t you wait till this afternoon?</p>
-<h3 id="单词-22"><a href="#单词-22" class="headerlink" title="单词"></a>单词</h3><p>appointment: 预约</p>
-<p>urgnet: 紧急的，急迫的</p>
-<p>awful: 糟糕的</p>
-<p>till: 一直到…</p>
-<h2 id="79"><a href="#79" class="headerlink" title="79"></a>79</h2><p>much + 不可数名词 在否定和疑问句中表示没有很多了，只有一点了</p>
-<p>many + 可数名词 在否定和疑问句中表示没有很多了，只有一点了</p>
-<p>any 在否定句中表示一点也没有了</p>
-<p>at all 在否定句中表示一点也没有了</p>
-<h3 id="单词-23"><a href="#单词-23" class="headerlink" title="单词"></a>单词</h3><p>a lot of : 大量的，许多的</p>
-<p>haven’t got &#x3D; don’t have: 没有</p>
-<p>jam: 果酱</p>
-<p>groceries: 杂货，零食</p>
-<p>newsagent: 报刊亭</p>
-<p>stationery: 文具</p>
-<p>chemist: 药剂师，化学家</p>
-<h2 id="81"><a href="#81" class="headerlink" title="81"></a>81</h2><p>be + doing : 现在进行时，现在正在做某事</p>
-<p>have a cigaretee  抽个烟吧</p>
-<p>have a glass of whisky 喝杯威士忌吧</p>
-<p>have + 名词 替代相应的动作</p>
-<p>have a bath 洗澡吧</p>
-<p>have dinner 吃完餐吧</p>
-<p>have a lesson 上个课吧</p>
-<p>have a good time 玩的开心</p>
-<h3 id="单词-24"><a href="#单词-24" class="headerlink" title="单词"></a>单词</h3><p>whisky: 威士忌</p>
-<p>roast： 烘焙，烤</p>
-<p>video game: 电子游戏，视频游戏</p>
-<p>postcard: 明信片</p>
-<h2 id="83"><a href="#83" class="headerlink" title="83"></a>83</h2><p>你想和我们一起吃午餐吗<br>do you want to have lunch with us?</p>
-<p><code>现在完成时</code>  have&#x2F;has + 过去分词<br>我已经吃了午餐<br>I have already had lunch</p>
-<p>不好意思，让你看到这么乱<br>Excuse the mess</p>
-<p>我已经吃了一些…<br>I’ve already had some …</p>
-<p>我已经吃了一个了<br>I’ve already had one</p>
-<p>some + 不可数名词 one 是可数名词</p>
-<p>变疑问句</p>
-<p>你吃过午餐了吗<br>have you had lunch yet?</p>
-<p>yet 用于现在完成时，表示到现在为止吃过午餐了吗</p>
-<p>have you had any vegetables or fruit? 你到现在吃蔬菜或水果了吗？<br>i haven’t had any vegetables 我没有吃蔬菜<br>i’ve just had some fruit 我仅仅吃了一些水果 just:仅仅</p>
-<h3 id="单词-25"><a href="#单词-25" class="headerlink" title="单词"></a>单词</h3><p>mess: 混乱，乱的</p>
-<p>untidy: 不整洁的</p>
-<p>suitcase: 行李箱</p>
-<h2 id="85"><a href="#85" class="headerlink" title="85"></a>85</h2><p>你刚刚去看过电影了吗<br>have you just been to the cinema?<br>yes i have</p>
-<p>你刚刚去过…<br>Have you just been to …</p>
-<p>现在有什么电影上映?<br>What’s on?</p>
-<p>我从未去过这里<br>i’ve never been there</p>
-<p>你曾经去过这里吗？<br>have you ever been there?</p>
-<h3 id="单词-26"><a href="#单词-26" class="headerlink" title="单词"></a>单词</h3><p>just: 刚刚，不久</p>
-<p>never: 从未</p>
-<p>ever: 曾经</p>
-<h2 id="87"><a href="#87" class="headerlink" title="87"></a>87</h2><p>我的车准备好了吗？<br>is my car ready yet?</p>
-<p>那个不是你的车吗？<br>isn’t that you car?</p>
-<p>你做过什么事情了吗？<br>have you … yet?</p>
-<h3 id="单词-27"><a href="#单词-27" class="headerlink" title="单词"></a>单词</h3><p>bring: 带来</p>
-<p>mechanics: 机械师，修理工</p>
-<p>still: 仍然</p>
-<p>garage: 车库</p>
-<p>crash: 车祸</p>
-<p>lamp-post: 路灯</p>
-<p>repair: 修理，修补</p>
-<h2 id="89"><a href="#89" class="headerlink" title="89"></a>89</h2><p>我相信这个房子是待售的，that引导的从句，that引导的我相信的内容<br>i believe that this house is for sale</p>
-<p>我可以看看他吗？ may引导的疑问句，表示有礼貌的<br>may i have a look at it, please?</p>
-<p>你居住在这里多久了？ 回答要用现在完成时<br>How long have you lived here?</p>
-<p>我已经居住在这里20年了  have lived 现在完成时，回答how long用for + 一段时间<br>i have lived here for twenty years</p>
-<p>我自从1976年开始就在这里了<br>i have been here since 1976</p>
-<p>他值得每一个便士<br>it’s worth every penny of it</p>
-<h3 id="单词-28"><a href="#单词-28" class="headerlink" title="单词"></a>单词</h3><p>for sale: 待售的</p>
-<p>since: 自从</p>
-<p>retire: 退休</p>
-<p>cost: 成本，花费，代价</p>
-<p>worth: 价值，值得</p>
-<p>decide: 决定</p>
-<p>last word: 最后的话，遗言</p>
-<h2 id="91"><a href="#91" class="headerlink" title="91"></a>91</h2><p>他到现在为止一直是一个好邻居<br>he has always been a good neighbor</p>
-<p><code>一般将来时</code><br>will + do</p>
-<p>我将来会想她的<br>i’ll miss him</p>
-<p>你今天要去看lan吗<br>will you see lan today</p>
-<h3 id="单词-29"><a href="#单词-29" class="headerlink" title="单词"></a>单词</h3><p>neighbor: 邻居</p>
-<p>the day after tomorrow: 后天</p>
-<p>poor: 贫穷的，可怜的</p>
-<p>the night after next: 后天晚上</p>
-<h2 id="93"><a href="#93" class="headerlink" title="93"></a>93</h2><p>你下个月要去东京吗<br>will you go to Tokyo next month?</p>
-<p>不，我们不是下个月去，will 的否定用 won’t<br>No, we won’t go to Tokyo next month</p>
-<h3 id="单词-30"><a href="#单词-30" class="headerlink" title="单词"></a>单词</h3><p>next-door: 下一家</p>
-<p>pilot: 飞行员</p>
-<p>the month after next: 下下个月</p>
-<p>at the moment: 此时此刻</p>
-<p>Madrid: 马德里</p>
-<p>the week after next: 下下周</p>
-<p>Athens: 雅典</p>
-<p>Berlin: 柏林</p>
-<p>Geneva: 日内瓦</p>
-<p>Moscow: 莫斯科</p>
-<p>Rome: 罗马</p>
-<p>Seoul: 汉城，首尔</p>
-<p>Stockholm: 斯德哥尔摩</p>
-<p>Sydney: 悉尼</p>
-<p>Tokyo: 东京</p>
-<h2 id="95"><a href="#95" class="headerlink" title="95"></a>95</h2><p>请给我两张去伦敦的往返车票<br>two return tickets to London,please</p>
-<p>赶火车<br>catch the train</p>
-<p>我们想要赶8点19去伦敦的火车<br>we want to catch the eight nineteen to London</p>
-<p>等待某人…<br>wait for sb</p>
-<p>in + 一段时间表示未来一段时间内<br>i will go to Beijing in a year’s time</p>
-<h3 id="单词-31"><a href="#单词-31" class="headerlink" title="单词"></a>单词</h3><p>plenty of:大量的，很多的</p>
-<p>had better: 最好…</p>
-<p>exact: 确切的，精确的</p>
-<p>exact time: 确切的时间</p>
-<h2 id="97"><a href="#97" class="headerlink" title="97"></a>97</h2><p>我那天在去往伦敦的火车上落下的箱子<br>i left a suitcase on the train to London the other day</p>
-<p>is this case yours?</p>
-<p>No, that’s not mine</p>
-<p>yours 是<code>名词性物主代词</code> &#x3D; your suitcase &#x3D; 形容词性物主代词 + 名词<br>mine &#x3D; my suitcase</p>
-<p>属于谁…<br>belong to …</p>
-<h3 id="单词-32"><a href="#单词-32" class="headerlink" title="单词"></a>单词</h3><p>the other day: 那天</p>
-<p>zip: 拉链</p>
-<p>belong: 属于</p>
-<h2 id="99"><a href="#99" class="headerlink" title="99"></a>99</h2><h3 id="单词-33"><a href="#单词-33" class="headerlink" title="单词"></a>单词</h3><p>slip: 滑到</p>
-<p>sure: 确信的，确切的</p>
-<h2 id="101"><a href="#101" class="headerlink" title="101"></a>101</h2><p>你知道 他是YHA的成员<br>you know he’s a member of the Y.H.A</p>
-<h3 id="单词-34"><a href="#单词-34" class="headerlink" title="单词"></a>单词</h3><p>youth: 青年</p>
-<p>member: 成员</p>
-<p>association: 协会，社团</p>
-<p>speak up: 大点声</p>
-<h2 id="103"><a href="#103" class="headerlink" title="103"></a>103</h2><p>英语和数学试卷对我来说不是足够简单的<br>the english and Maths papers weren’t easy enough for me</p>
-<h3 id="单词-35"><a href="#单词-35" class="headerlink" title="单词"></a>单词</h3><p>exam: 考试</p>
-<p>easy enough: 足够简单</p>
-<p>enough: 足够的</p>
-<p>fail: 失败，挂科</p>
-<p>too: 过于</p>
-<p>rest: 剩余的</p>
-<p>difficult: 困难的</p>
-<p>hate: 恨</p>
-<p>mark: 分数，记号，标记</p>
-<p>cheer up: 振奋一点，开心一点</p>
-<h2 id="105"><a href="#105" class="headerlink" title="105"></a>105</h2><p>to + do &#x3D; 动词不定式 可以用来做宾语</p>
-<p>我想要某人做某事<br>i want you to do</p>
-<p>告诉某人做某事<br>tell you to do</p>
-<p>i don’t want you to do </p>
-<p>tell you not to do </p>
-<h3 id="单词-36"><a href="#单词-36" class="headerlink" title="单词"></a>单词</h3><p>at once: 马上来</p>
-<p>intelligent: 聪明的</p>
-<p>be full of: 充满了…</p>
-<p>present: 礼物</p>
-<p>correct: 正确，修正，纠正</p>
-<h2 id="107"><a href="#107" class="headerlink" title="107"></a>107</h2><p>你想试一下吗？<br>Would you like to try it?</p>
-<p>形容词比较级 + than<br>他比那个蓝色的更小<br>it’s <code>smarller than</code> the blud one</p>
-<p>pretty 变比较级 y 变 i 加 er &#x3D; prettier</p>
-<p>large 变比较级 直接 + r &#x3D; larger</p>
-<p>最高级 + the</p>
-<p>smarll - smarller - smarllest</p>
-<p>large - larger - largest</p>
-<p>tall - taller - tallest</p>
-<p>hot - hotter - hottest</p>
-<p>heavy - heavier - heaviest</p>
-<h3 id="单词-37"><a href="#单词-37" class="headerlink" title="单词"></a>单词</h3><p>smart: 漂亮的，时髦的</p>
-<p>smarller: 比…更小</p>
-<p>suit: 适合</p>
-<p>at all: 否定句最后表示一点也不</p>
-<p>compare: 比较</p>
-<p>crowd: 人群</p>
-<p>ever seen: 见过</p>
-<h2 id="109"><a href="#109" class="headerlink" title="109"></a>109</h2><p>a little: 一点点 + 不可数名词</p>
-<p>a few: 一点点 几个 + 可数名词</p>
-<p>what a pity!</p>
-<p>what + 名词</p>
-<p>数量比较</p>
-<p>不可数名词，多<br>much - more - the moest</p>
-<p>litte - less - the least</p>
-<p>few - fewer - fewest</p>
-<p>形容词比较级</p>
-<p>good - better - best</p>
-<p>bad - worse - worst</p>
-<h3 id="单词-38"><a href="#单词-38" class="headerlink" title="单词"></a>单词</h3><p>teaspoonful: 满茶勺</p>
-<p>pity: 可怜，遗憾</p>
-<p>instead: 代替，反而</p>
-<p>advice: 建议</p>
-<h2 id="111"><a href="#111" class="headerlink" title="111"></a>111</h2><p>他多少钱？<br>how much does it cost?</p>
-<p>他没有贵的那个好 as … as<br>it’s not as good as the expensive one</p>
-<p>青苹果和红苹果一样甜 as sweet as 一样甜<br>the green apple is as sweet as the red one</p>
-<p>白车不如黑车干净，not as clean as 没有那个干净<br>the white car is not as clean as the black one</p>
-<p><code>多音节形容词</code><br>difficult - more difficult - the most difficult<br>interesting - less interesting - the least interesting</p>
-<h3 id="单词-39"><a href="#单词-39" class="headerlink" title="单词"></a>单词</h3><p>cost: 价格,成本</p>
-<p>afford: 买得起</p>
-<p>instalment: 分期付款</p>
-<p>deposit: 储蓄，存款，订金</p>
-<p>price: 价格，单价</p>
-<h2 id="113"><a href="#113" class="headerlink" title="113"></a>113</h2><p>我也没有  either 否定的也<br>i haven’t got any either</p>
-<p>我也不能<br>neither can i &#x3D; i can’t either </p>
-<p>我们的乘客没有人能找开这个钱<br>none of our passengers can change this note</p>
-<p>我有一些零钱<br>i’ve got some shall change</p>
-<h3 id="单词-40"><a href="#单词-40" class="headerlink" title="单词"></a>单词</h3><p>small change: 小额零钱</p>
-<p>fare: 票价，车费</p>
-<p>Square: 广场</p>
-<p>note: 笔记，注意，纸币</p>
-<p>passenger: 乘客，旅客</p>
-<p>either：两，二者之一</p>
-<p>none: 没有任何，一点也不</p>
-<p>neither: 两者都不，也不</p>
-<p>shall: 将，将要</p>
-<h2 id="115"><a href="#115" class="headerlink" title="115"></a>115</h2><h3 id="单词-41"><a href="#单词-41" class="headerlink" title="单词"></a>单词</h3><p>复合不定代词<br>everything: 每个东西</p>
-<p>impossible: 不可能的</p>
-<p>anything: 任何东西</p>
-<p>everyone: 每个人</p>
-<p>everybody: 每个人</p>
-<p>anyone: 任何人</p>
-<p>someone: 某人</p>
-<p>no one: 没有人</p>
-<p>everywhere: 每个地方</p>
-<p>nowhere: 无处，到处都无</p>
-<h2 id="117"><a href="#117" class="headerlink" title="117"></a>117</h2><p><code>过去进行时</code> was&#x2F;were + doing</p>
-<p><code>过去完成时</code> had + 过去分词</p>
-<p>出来的小男孩<br>out little boy</p>
-<p>那天早上晚些时候<br>later that morning</p>
-<p>但是我还没有看到任何变化<br>but i haven’t had any change yet</p>
-<p>正当我开门的时候，电话响了<br>just as i was opening the front door, the telephone rang</p>
-<h3 id="单词-42"><a href="#单词-42" class="headerlink" title="单词"></a>单词</h3><p>dining room: 餐厅</p>
-<p>look for: 寻找</p>
-<p>swallow: 吞，吞噬，吞咽</p>
-<p>toilet: 洗手间，厕所</p>
-<p>rang: 响了</p>
-<p>just as: 正当…</p>
-<p>while: 正当… 只能接过去进行时</p>
-<h2 id="119"><a href="#119" class="headerlink" title="119"></a>119</h2><p>我的一个朋友<br>a friend of mine</p>
-<p>怎么啦<br>what’s up?</p>
-<h3 id="单词-43"><a href="#单词-43" class="headerlink" title="单词"></a>单词</h3><p>thief: 小偷</p>
-<p>torch: 火把，手电筒</p>
-<p>exercise: 练习，锻炼，训练，习题</p>
-<h2 id="121"><a href="#121" class="headerlink" title="121"></a>121</h2><p>戴着帽子的男人， in a hat 定语从句 戴帽子的<br>the man in a hat</p>
-<p>站在柜台后面的这个女士 who 引导定语从句 指示人<br>the lady <code>who is standing behind the counter</code></p>
-<p>在柜台上的这本书 which 引导定语从句，指示物的位置<br>the books <code>which are on the counter</code></p>
-<p>that 引导的定语从句，关系代词，既可以指示人也可以指示物<br>is this man <code>that you served</code></p>
-<h3 id="单词-44"><a href="#单词-44" class="headerlink" title="单词"></a>单词</h3><p>counter: 柜台</p>
-<p>recognize: 认出，辨认</p>
-<h2 id="123"><a href="#123" class="headerlink" title="123"></a>123</h2><p>看，Scott，这是我去澳大利亚旅游的照片  photograph在定语从句中做<code>宾语</code>，所以that可以省略<br>look,Scott,this is a photograph (that) i took during my trip to Australia</p>
-<h3 id="单词-45"><a href="#单词-45" class="headerlink" title="单词"></a>单词</h3><p>during: 期间</p>
-<p>bear: 胡子</p>
-<h2 id="125"><a href="#125" class="headerlink" title="125"></a>125</h2><p>我必须先给花园浇水<br>i must water the garden first</p>
-<p>have to 将来时 will have to<br>过去式 had to<br>过去完成时 have had to</p>
-<p>don’t need to: 我不需要做，有其他的选择<br>don’t have to: 我没有责任做，不必要做</p>
-<h3 id="单词-46"><a href="#单词-46" class="headerlink" title="单词"></a>单词</h3><p>nuisance: 讨厌的人</p>
-<p>have to: 必须 表示客观的必须</p>
-<p>immediately: 立即，马上</p>
-<h2 id="127"><a href="#127" class="headerlink" title="127"></a>127</h2><p>must还可以表示猜测 我猜是…<br>i must be …</p>
-<p>Karen Marsh 看起来真老呀，不是吗！<br>Doesn’t Karen Marsh look old!</p>
-<p>没有那么久<br>not that long ago</p>
-<p>我自己还没有29那么大呢<br>i’m not more than twenty-nine myself</p>
-<p>不可能<br>can’t be</p>
-<p>他不可能生病<br>he can’t be ill</p>
-<p>他一定是累了<br>he must be tired</p>
-<h3 id="单词-47"><a href="#单词-47" class="headerlink" title="单词"></a>单词</h3><p>actress: 女演员</p>
-<p>at least: 至少</p>
-<h2 id="129"><a href="#129" class="headerlink" title="129"></a>129</h2><p>must have been: 表示肯定，对过去的一件事情猜测</p>
-<p>你肯定有开到每小时70米<br>you <code>must have been driving</code> at seventy miles an hour</p>
-<p>我没有吧<br>i can’t have been</p>
-<p>我肯定在梦游<br>i must have been dreaming</p>
-<h3 id="单词-48"><a href="#单词-48" class="headerlink" title="单词"></a>单词</h3><p>wave: 波浪，海浪，挥手</p>
-<p>overtake: 超过</p>
-<p>speed limit: 限速</p>
-<h2 id="131"><a href="#131" class="headerlink" title="131"></a>131</h2><p>度假<br>spend your holidays</p>
-<p>我们不能下决心 make up sb minds<br>we can’t <code>make up our minds</code></p>
-<p>别那么确定<br>don’t be so sure</p>
-<p>我不确定<br>I’m not sure</p>
-<p>may be: 可能<br>may have been: 过去可能，用在过去发生的事情里面</p>
-<h3 id="单词-49"><a href="#单词-49" class="headerlink" title="单词"></a>单词</h3><p>aborad:国外</p>
-<p>by sea: 坐船</p>
-<p>by air: 坐飞机</p>
-<p>cheap: 便宜的</p>
-<p>might not: 也许不会</p>
-<p>look after: 照顾</p>
-<p>take care of sb: 照顾某人</p>
-<p>in the end: 到最后</p>
-<h2 id="133"><a href="#133" class="headerlink" title="133"></a>133</h2><p><code>间接引语</code>转述的时候，都要变成<code>过去式</code></p>
-<h3 id="单词-50"><a href="#单词-50" class="headerlink" title="单词"></a>单词</h3><p>sensational：轰动性的，爆炸性的</p>
-<p>airport: 飞机场</p>
-<p>mink: 貂皮  </p>
-<h2 id="135"><a href="#135" class="headerlink" title="135"></a>135</h2><p>我拿不定主意<br>i can’t make up my mind</p>
-<p>were going to 转述变成 would</p>
-<p>can 转述变成 could</p>
-<h3 id="单词-51"><a href="#单词-51" class="headerlink" title="单词"></a>单词</h3><p>get married:结婚</p>
-<h2 id="137"><a href="#137" class="headerlink" title="137"></a>137</h2><p>如果你赢了很多钱，你要怎么做？ if 引导的条件状语从句 if前面是一般将来时，后面跟一般现在时，主将从现<br>what will you do <code>if you win a lot of money</code>?</p>
-<h3 id="单词-52"><a href="#单词-52" class="headerlink" title="单词"></a>单词</h3><p>football pools:足球赌注</p>
-<p>nearly: 几乎</p>
-<p>depend:依赖</p>
-<p>depends on: 取决于…</p>
-<p>seaside: 海边</p>
-<h2 id="139"><a href="#139" class="headerlink" title="139"></a>139</h2><p>我不知道我什么时候会完成 when 引导的从句<br>i don’t konw when i’ll finish</p>
-<p>by the way: 顺便说一下</p>
-<p>他想知道你是否累了，if表示是否的意思<br>he wants to know if you are tired</p>
-<p>疑问句转述变成陈述句，用if引导</p>
-<p>如果疑问句中有特殊疑问词，那么直接用特殊疑问词引导从句</p>
-<h2 id="141"><a href="#141" class="headerlink" title="141"></a>141</h2><p><code>被动语态</code> be + 过去分词<br>was invited to a children’s party</p>
-<h3 id="单词-53"><a href="#单词-53" class="headerlink" title="单词"></a>单词</h3><p>middle-aged: 中年的</p>
-<p>opposite: 对立的</p>
-<p>curiously: 好奇的</p>
-<p>powder: 粉</p>
-<p>powder compact: 粉饼</p>
-<p>put away: 收起来</p>
-<p>kindly: 亲切的</p>
-<p>amused: 被逗乐了</p>
-<p>amuse: 动词，逗笑某人</p>
-<h2 id="143"><a href="#143" class="headerlink" title="143"></a>143</h2><p>我居住在一个被美丽的森林环绕着的老小镇 被动语态用by表示主语，正常语句是 beautiful woods is surround …<br>i live in a very old town which <code>is surrounded by</code> beautiful woods</p>
-<p>ask to do … 要求做某事<br>游客 be asked被要求做某事 have been现在完成时，游客到现在一直被要求保持森林干净和整洁<br>visitors <code>have been asked</code> to keep the woods clean and tidy</p>
-<p>垃圾筐现在已经被摆放在树下面<br>litter baskets <code>have been placed</code> under the trees</p>
-<p>我所看到的使我非常难过<br>what i saw made me very sad</p>
-<p>我数了数有7辆旧车<br>i counted seven old cars</p>
-<p>cover with sth 被什么东西覆盖<br>地面被很多纸<br>ground was covered with pieces of paper</p>
-<p>任何留下垃圾在这个森林里的人都将被依法处置<br>anyone who leaves litter in these woods will be prosecuted</p>
-<h3 id="单词-54"><a href="#单词-54" class="headerlink" title="单词"></a>单词</h3><p>beauty spot: 景点</p>
-<p>litter:垃圾</p>
-<p>go for a walk:去散步</p>
-<p>sad:难过</p>
-<p>cover:覆盖</p>
-<p>rusty:生锈的</p>
-<p>among: 在…之中</p>
-<p>prosecute: 起诉</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2480,7 +2156,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

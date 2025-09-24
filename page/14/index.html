@@ -196,6 +196,497 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" class="post-title-link" itemprop="url">数据链路层CRC(循环冗余码)差错校验码详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-26 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-26T15:28:49+08:00">2020-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" class="post-meta-item leancloud_visitors" data-flag-title="数据链路层CRC(循环冗余码)差错校验码详解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82CRC%E5%B7%AE%E9%94%99%E6%A0%A1%E9%AA%8C%E7%A0%81%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="数据链路层CRC-循环冗余码-差错校验码详解"><a href="#数据链路层CRC-循环冗余码-差错校验码详解" class="headerlink" title="数据链路层CRC(循环冗余码)差错校验码详解"></a>数据链路层CRC(循环冗余码)差错校验码详解</h1><p><code>CRC</code>差错校验码是数据链路层用来进行差错校验的一个码。</p>
+<h3 id="CRC编码过程"><a href="#CRC编码过程" class="headerlink" title="CRC编码过程"></a>CRC编码过程</h3><p>假设要编码的<code>数据D</code>，有<code>d个比特</code>，发送节点要将它发送给接收节点。发送方和接收方要先协商一个<code>r + 1</code>比特模式，成为<code>生成多项式</code>。我们将其表示为<code>G</code>。我们将要求G的最高有效位（最左边）的比特是1。</p>
+<p>我们要有一个数据D，比如 1001<br>这个数据有d个比特，也就是4个比特<br>需要附加 r 个比特作为校验码 R<br>编码过后会变成数据会变成D + R<br>数据有d + r个比特<br>使得得到的数据D+R进行模2运算恰好能被G整除</p>
+<h3 id="CRC差错检测过程"><a href="#CRC差错检测过程" class="headerlink" title="CRC差错检测过程"></a>CRC差错检测过程</h3><p>接收方用G去除接收到的D+R数据，如果余数为非0，则有差错，如果余数为0，则无差错</p>
+<h3 id="CRC计算"><a href="#CRC计算" class="headerlink" title="CRC计算"></a>CRC计算</h3><p>所有CRC计算采用模2算术来做，在加法中不进位，在减法中不借位。这意味着加法和减法是相同的，而且这两种操作等价于<code>异或</code>（XOR）操作。</p>
+<p>1011 XOR 0101 &#x3D; 1110</p>
+<p><code>异或</code>操作：不同的为1，相同为0。也就是0 XOR 0 &#x3D; 0,1 XOR 1 &#x3D; 0,0 XOR 1 &#x3D; 1。</p>
+<p>乘法和除法是相同的。</p>
+<p>给定D 和 R, D * 2<sup>r</sup> XOR R就等于 D + R数据。</p>
+<h3 id="如何计算R"><a href="#如何计算R" class="headerlink" title="如何计算R"></a>如何计算R</h3><p>我们要求出R使得对于n有：<br>D * 2<sup>r</sup> XOR R &#x3D; nG</p>
+<p>也就是说，我们要选择 R 使得G能除 D * 2<sup>r</sup> XOR R 而没有余数。如果对上面的等式两边都 XOR R.</p>
+<p>D * 2<sup>r</sup> &#x3D; nG XOR R</p>
+<p>根据上面的等式可以得出，如果我们用G 除 D * 2<sup>r</sup>，余数刚好是R</p>
+<p>R &#x3D; remainder (D * 2<sup>r</sup> &#x2F; G)</p>
+<p>也就是使用D * 2<sup>r</sup>去除以 G。余数就是R。</p>
+<h3 id="如何计算G"><a href="#如何计算G" class="headerlink" title="如何计算G"></a>如何计算G</h3><p>G 作为多项式，有两种写法，一种是x<sup>2</sup> + x + 1的写法，一种是二进制写法 111。</p>
+<p>我们需要用 D * 2<sup>r</sup> 除以 G 。所以我们需要求出G的二进制写法，才能做除法运算。</p>
+<p>这个转换的方法：</p>
+<ol>
+<li>首先把末尾的1看成x<sup>0</sup>，也就是x的0次幂</li>
+<li>这样提取出x的所有幂</li>
+<li>对应幂的位置填1，如果没有对应幂的位置则填0</li>
+</ol>
+<h5 id="转换例子1"><a href="#转换例子1" class="headerlink" title="转换例子1"></a>转换例子1</h5><p>G &#x3D; x<sup>4</sup> + x + 1</p>
+<p>提取出来的幂分别是 4,1,0。<br>没有的幂是3,2。<br>在对应的位置填上1或0。<br>4 3(无) 2(无) 1 0<br>1 0     0     1 1<br>这个G的二进制就是 10011。</p>
+<p>其实很简单，0次幂对应个位，1次幂对应十位，一直往上加就行了，有1次幂十位就是1，没有就是0.</p>
+<h5 id="转换例子2"><a href="#转换例子2" class="headerlink" title="转换例子2"></a>转换例子2</h5><p>G &#x3D; x<sup>6</sup> + x<sup>4</sup> + x<sup>2</sup> + 1</p>
+<p>6 5(无) 4 3(无) 2 1(无) 0<br>1 0     1 0     1 0     1</p>
+<p>对应的二进制就是 1010101</p>
+<h3 id="计算CRC编码"><a href="#计算CRC编码" class="headerlink" title="计算CRC编码"></a>计算CRC编码</h3><p>给定 D &#x3D; 101110, G &#x3D; 1001, d &#x3D; 6, r &#x3D; 3。计算D的CRC编码后的数据</p>
+<p>首先求R。</p>
+<p>用D&#x2F;G可以得出结果为101011，余数为011，余数就是R。</p>
+<p>然后把R放到D后面。</p>
+<p>编码后就是 101110 011</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" class="post-title-link" itemprop="url">网络原理自顶向下四网络层</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-26 15:28:49" itemprop="dateCreated datePublished" datetime="2020-12-26T15:28:49+08:00">2020-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" class="post-meta-item leancloud_visitors" data-flag-title="网络原理自顶向下四网络层" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%9B%9B%E7%BD%91%E7%BB%9C%E5%B1%82.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h1><p>网络层核心功能：转发与路由</p>
+<p>转发：将分组从路由器的输入端口转移到合适的输出端口</p>
+<p>转发表确定在本路由器如何转发分组</p>
+<p>路由：确定分组从源到目的经过的路径。</p>
+<ul>
+<li>路由算法：确定通过网络的端到端路径。</li>
+</ul>
+<p>某些网络的重要功能：连接建立</p>
+<p>数据分组传输前需要建立连接，和运输层不一样的是所有网络设备路由器都会参与建立连接。</p>
+<p>网络层是两个主机建立连接</p>
+<p>运输层是两个应用进程建立连接</p>
+<p>无连接服务</p>
+<ul>
+<li>不事先为分组确定传输路径</li>
+<li>每个分组独立路径</li>
+<li>不同分组可能传输路径不同</li>
+<li>数据报网络</li>
+</ul>
+<p>连接服务：</p>
+<ul>
+<li>首先为分组确定传输路径</li>
+<li>沿这个路径传输</li>
+<li>系列分组传输路径相同</li>
+<li>传输结束后拆除</li>
+<li>虚电路网络</li>
+</ul>
+<p><code>数据报网络</code>和<code>虚电路网络</code>是典型两类分组交换网络。</p>
+<p>类似UDP和TCP。但是网络层是<code>主机到主机</code>.<code>网络核心实现</code>.</p>
+<h3 id="虚电路"><a href="#虚电路" class="headerlink" title="虚电路"></a>虚电路</h3><p>一条从源主机到目的主机，类似于电路的路径。</p>
+<ul>
+<li>分组交换</li>
+<li>每个分组的传输利用链路的全部带宽</li>
+<li>源主机到目的主机的所有网络设备完成虚电路连接和功能</li>
+</ul>
+<p>通信过程：</p>
+<ul>
+<li>呼叫建立（call setup） -》 数据传输 -》 拆除呼叫</li>
+<li>每个分组携带虚电路标识（VC ID），而不是目的主机地址</li>
+<li>虚电路经过的每个网络设备，维护每条经过他的虚电路连接状态</li>
+<li>链路，网络设备资源可以面向VC进行预分配<ul>
+<li>预分配资源 &#x3D; 可预期服务性能</li>
+<li>如ATM的电路仿真（CBR）</li>
+</ul>
+</li>
+</ul>
+<p>每条虚电路包括：</p>
+<ul>
+<li>从源主机到目的主机的一条路径</li>
+<li>虚电路号（VCID），沿路每段链路一个编号</li>
+<li>沿路每个网络层设备，利用转发表记录经过的每条虚电路</li>
+</ul>
+<p>分组携带虚电路号VCID，而不是目的地址。<br>同一条VC,在每段链路上的VCID通常不同。</p>
+<ul>
+<li>路由器转发分组时依据转发表改写&#x2F;替换虚电路号</li>
+</ul>
+<h5 id="虚电路信令协议"><a href="#虚电路信令协议" class="headerlink" title="虚电路信令协议"></a>虚电路信令协议</h5><p>用于VC的建立，维护与拆除</p>
+<ul>
+<li>路径选择</li>
+</ul>
+<p>应用于虚电路网络</p>
+<ul>
+<li>如ATM</li>
+</ul>
+<p>目前的internet不采用</p>
+<h3 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络"></a>数据报网络</h3><ul>
+<li>无连接</li>
+<li>每个分组携带目的地址</li>
+<li>路由器根据分组的目的地址转发分组<ul>
+<li>基于路由协议&#x2F;算法构建转发表</li>
+<li>检索转发表</li>
+<li>每个分组独立选路</li>
+</ul>
+</li>
+<li>Internet网络是数据报网络</li>
+<li>路由算法<ul>
+<li>根据地址范围进行转发</li>
+<li>最长前缀匹配优先</li>
+</ul>
+</li>
+</ul>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>Internet(数据报网络) </p>
+<ul>
+<li>计算机之间的数据交换<ul>
+<li>弹性服务，没有严格要求</li>
+</ul>
+</li>
+<li>链路类型众多<ul>
+<li>特点性能各异</li>
+<li>同一服务困难</li>
+</ul>
+</li>
+</ul>
+<p>ATM(虚电路网络)</p>
+<ul>
+<li>电话网络演变而来</li>
+<li>核心业务是实时对话<ul>
+<li>严格的时间，可靠性需求</li>
+<li>需要有保障的服务</li>
+</ul>
+</li>
+<li>非智能端系统<ul>
+<li>电话机</li>
+<li>传真机</li>
+</ul>
+</li>
+</ul>
+<h2 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h2><p>路由协议</p>
+<ul>
+<li>路径选择</li>
+<li>RIP OSPF BGP</li>
+</ul>
+<p>IP协议</p>
+<ul>
+<li>寻址规约</li>
+<li>数据报格式</li>
+<li>分组处理规约</li>
+</ul>
+<p>ICMP协议</p>
+<ul>
+<li>差错报告</li>
+<li>路由器“信令”</li>
+</ul>
+<h3 id="IP数据报"><a href="#IP数据报" class="headerlink" title="IP数据报"></a>IP数据报</h3><ul>
+<li>首部<ul>
+<li>版本号 4比特 ipv4就是4</li>
+<li>首部长度 4比特 首部的长度，以4字节为单位 默认是5 表示20字节</li>
+<li>服务类型 8比特 期望获得哪种类型的服务 只有在网络提供区分服务时使用 通常是0</li>
+<li>总长度 16比特 IP数据报的长度（首部 + 数据），以字节为单位， 最大IP分组总长度 65535B 最小分组首部 20B IP分组数据最大可以是 65515B</li>
+<li>标识 16比特 ID，计数器+1</li>
+<li>标志位 3比特 保留1比特 DF &#x3D; 1禁止分片 0 允许分片 MF &#x3D; 1非最后一片 0 最后一片或未分片</li>
+<li>片偏移 13比特 IP分组分片封装原IP分组数据的相对偏移量 以8字节为单位</li>
+<li>生存时间 8比特 IP分组在网络中可以通过的路由器数（跳步数）</li>
+<li>协议 8比特 指示IP分组封装的是哪个协议的数据包 6是TCP或者17是UDP</li>
+<li>首部校验和 16比特 IP分组首部的差错检测 逐步计算</li>
+<li>源IP地址 32比特  </li>
+<li>目的IP地址 32比特</li>
+<li>选项字段 变长 范围 1 - 40B 携带安全，源选路径，时间戳和路由记录等内容 实际很少被使用</li>
+<li>填充字段 变长 范围 0 - 3B 补齐整个首部，保证32位对齐</li>
+</ul>
+</li>
+<li>数据</li>
+</ul>
+<h3 id="IP分片"><a href="#IP分片" class="headerlink" title="IP分片"></a>IP分片</h3><p>链路最大数据单元MTU。如果现在的IP分组大于下个链路的MTU就可以进行分片。</p>
+<ul>
+<li>如果进行分片就分片，然后重组</li>
+<li>如果不可以分片则丢弃分组</li>
+</ul>
+<p>分片过程：<br>假设IP分组长L，带转发MTU为M<br>若L &gt; M且DF &#x3D; 0,则可以分片<br>分片时每个分片的标识复制原IP分组的标识<br>通常分片时，除最后一个分片，都为MTU允许的最大分片<br>一个最大分片可封装的应该是 8 的倍数。<br>d &#x3D; M - 20 &#x2F; 8 * 8<br>n &#x3D; L - 20 &#x2F; d<br>分片偏移量<br>Fi &#x3D; d &#x2F; 8 * (i - 1)<br>每片总长度<br>d + 20<br>最后一个<br>L - （n - 1）d</p>
+<h3 id="IP编址"><a href="#IP编址" class="headerlink" title="IP编址"></a>IP编址</h3><p>32比特（IPv4） 11011111 00000001 00000001 00000001 &#x3D; 233.1.1.1<br>IP地址与每个接口关联</p>
+<ul>
+<li>网络号：高位比特</li>
+<li>主机号：低位比特</li>
+</ul>
+<h3 id="IP子网"><a href="#IP子网" class="headerlink" title="IP子网"></a>IP子网</h3><p>IP子网：</p>
+<ul>
+<li>IP地址具有相同的网络号</li>
+<li>不跨越路由器可以彼此物理联通</li>
+<li>233.1.1.0&#x2F;24</li>
+</ul>
+<p><code>有类编址</code><br>A类地址：</p>
+<ul>
+<li>网络号 8比特 主机号 24比特 50% 0.0.0.0 - 127.255.255.255<br>B类地址：</li>
+<li>网络号 16比特 主机号 16比特 25% 128.0.0.0 - 191.255.255.255<br>C类地址：</li>
+<li>网络号 24比特 主机号 8比特 12.5% 192。0.0.0 - 223.255.255.255<br>D类地址：</li>
+<li>6.25% 224.0.0.0 - 239.255.255.255<br>E类地址：</li>
+<li>6.25% 240.0.0.0 - 255.255.255.255</li>
+</ul>
+<p>私有IP地址：</p>
+<ul>
+<li>A类：网络号10开头的 10.<em>.</em>.*</li>
+<li>B类：172.16 - 172.31 16个</li>
+<li>C类：192.168.0 - 192.168.255</li>
+</ul>
+<p>IP地址：</p>
+<ul>
+<li>网络号：高位比特</li>
+<li>子网号：原主机号的部分</li>
+<li>主机号：地位比特</li>
+</ul>
+<p>子网掩码：网络号和子网号取255，主机号取0</p>
+<ul>
+<li>A类网络子网掩码 255.255.255.0</li>
+</ul>
+<p>子网地址 + 子网掩码 &#x3D; 准确确定子网大小</p>
+<h4 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h4><p>子网 201.2.3.0 子网掩码 255.255.255.0，划分为4个等长的子网。</p>
+<ul>
+<li>201.2.3.0 &#x3D; 201.2.3.00000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
+<li>201.2.3.64 &#x3D; 201.2.3.01000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
+<li>201.2.3.128 &#x3D; 201.2.3.10000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
+<li>201.2.3.192 &#x3D; 201.2.3.11000000 255.255.255.11000000 &#x3D; 255.255.255.192</li>
+</ul>
+<p>将IP分组的目的IP地址与子网掩码<code>按位与</code>运算，提取子网地址。<br>目的IP:172.32.1.112 &#x3D; 10101100.00100000.00000001.01110000<br>子网掩码：255.255.254.0 &#x3D; 11111111.11111111.11111110.00000000<br>子网地址：10101100.00100000.00000000.00000000 &#x3D; 172.32.0.0<br>地址范围：172.32.0.0 - 172.32.1.255<br>可分配地址范围：172.32.0.1 - 172.32.1.254<br>广播地址：172.32.1.255</p>
+<h3 id="CIDR与路由聚合"><a href="#CIDR与路由聚合" class="headerlink" title="CIDR与路由聚合"></a>CIDR与路由聚合</h3><p>无类域间路由CIDR</p>
+<ul>
+<li>消除传统的A类，B类，C类地址划分</li>
+<li>网络号 + 子网号 &#x3D; 网络前缀 可以任意长度</li>
+<li>融合子网地址和子网掩码，方便子网划分<ul>
+<li>无类地址格式：a.b.c.d&#x2F;x 其中x为网络前缀长度</li>
+</ul>
+</li>
+<li>提高IPv4地址空间分配效率</li>
+<li>提高路由效率<ul>
+<li>将多个子网构成一个大的子网</li>
+<li>构造超网</li>
+<li>路由聚合</li>
+</ul>
+</li>
+</ul>
+<p>例如：<br>前23位是网络前缀，后9位是主机号<br>11001000 00010111 00010000 00000000<br>200.23.16.0&#x2F;23</p>
+<p>11001000.00010111.00010010.00000000<br>200.23.18.0&#x2F;23</p>
+<p>11001000.00010111.00010100.00000000<br>200.23.20.0&#x2F;23<br>聚合成超网：<br>11001000 00010111 00010000 00000000<br>200.23.16.0&#x2F;20</p>
+<p>如果有一个子网不在也没事，路由记录两条信息。根据<code>最长前缀匹配优先</code>。不会出错。</p>
+<h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h3><p>动态分配路由协议：<br>客户：DHCP discover</p>
+<ul>
+<li>src:0.0.0.0:68</li>
+<li>dest:255.255.255.255:67 广播</li>
+<li>yiaddr:0.0.0.0</li>
+<li>transactionID:654</li>
+</ul>
+<p>DHCP服务器：DHCP offer</p>
+<ul>
+<li>src:223.1.2.5:67 DHCP服务器的IP</li>
+<li>dest:255.255.255.255:68 广播</li>
+<li>yiaddr:223.1.2.4  分配的IP</li>
+<li>transactionID:654</li>
+<li>lifetime:3600 secs</li>
+</ul>
+<p>客户：DHCP req</p>
+<ul>
+<li>src:0.0.0.0:68</li>
+<li>dest:255.255.255.255:67 广播</li>
+<li>yiaddr:223.1.2.4  分配的IP</li>
+<li>transactionID:655</li>
+<li>lifetime:3600 secs</li>
+</ul>
+<p>DHCP服务器：DHCP ACK</p>
+<ul>
+<li>src:223.1.2.5:67 DHCP服务器的IP</li>
+<li>dest:255.255.255.255:68 广播</li>
+<li>yiaddr:223.1.2.4  分配的IP</li>
+<li>transactionID:655</li>
+<li>lifetime:3600 secs</li>
+</ul>
+<h3 id="网络地址转换NAT"><a href="#网络地址转换NAT" class="headerlink" title="网络地址转换NAT"></a>网络地址转换NAT</h3><p>子网使用一个公共IP。发送网络数据的时候路由器替换源IP地址。</p>
+<p>动机：</p>
+<ul>
+<li>只需从ISP申请一个IP地址<ul>
+<li>IPv4地址耗尽</li>
+</ul>
+</li>
+<li>本地网络地址是私有的，局部的，IP地址变更根外界没有影响</li>
+<li>变更ISP时候，无需修改内部网络IP</li>
+<li>内部网络设备对外界网络不可见，更加安全</li>
+</ul>
+<p>实现：</p>
+<ul>
+<li>替换<ul>
+<li>利用（NAT IP地址，新端口号）替换每一个<code>外出IP数据报</code>的（源IP地址，源端口号）</li>
+</ul>
+</li>
+<li>记录<ul>
+<li>将每对（NAT IP地址，新端口号）和（源IP地址，源端口号）记录在<code>NAT转换表</code>中</li>
+</ul>
+</li>
+<li>替换<ul>
+<li>根据<code>NAT转换表</code>，利用（源IP地址，源端口号）替换（NAT IP地址，新端口号）</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E4%BA%94%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1490,237 +1981,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" class="post-title-link" itemprop="url">thinkphp-queue队列使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" class="post-meta-item leancloud_visitors" data-flag-title="thinkphp-queue队列使用" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/thinkphp-queue%E9%98%9F%E5%88%97%E4%BD%BF%E7%94%A8.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="thinkphp-queue队列使用"><a href="#thinkphp-queue队列使用" class="headerlink" title="thinkphp-queue队列使用"></a>thinkphp-queue队列使用</h1><p>在我们写程序的时候，经常会用到队列来完成一些操作，关于队列的介绍和使用场景，注意事项可以看我的这个文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105344675">你不知道的队列使用技巧</a></p>
-<h2 id="在tp里面使用队列"><a href="#在tp里面使用队列" class="headerlink" title="在tp里面使用队列"></a>在tp里面使用队列</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p><code>tp</code>框架提供了一个扩展包，叫做<code>think-queue</code>。我们先来安装这个扩展包。</p>
-<blockquote>
-<p>composer require topthink&#x2F;think-queue</p>
-</blockquote>
-<h3 id="配置消息队列"><a href="#配置消息队列" class="headerlink" title="配置消息队列"></a>配置消息队列</h3><p>等待安装完成之后，我们需要进行配置，消息队列的消息存放在哪里，可以配置成redis。</p>
-<p>配置在你的<code>config/queue.php</code>里面。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">&#x27;default&#x27;</span>     =&gt; <span class="string">&#x27;redis&#x27;</span>,  <span class="comment">//默认是sync，改成redis</span></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;connections&#x27;</span> =&gt; [</span><br><span class="line">        <span class="string">&#x27;redis&#x27;</span>    =&gt; [</span><br><span class="line">            <span class="string">&#x27;type&#x27;</span>       =&gt; <span class="string">&#x27;redis&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;queue&#x27;</span>      =&gt; <span class="string">&#x27;default&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;host&#x27;</span>       =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.host&#x27;</span>, <span class="string">&#x27;127.0.0.1&#x27;</span>),</span><br><span class="line">            <span class="string">&#x27;port&#x27;</span>       =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.port&#x27;</span>, <span class="number">6379</span>),</span><br><span class="line">            <span class="string">&#x27;password&#x27;</span>   =&gt; <span class="title function_ invoke__">env</span>(<span class="string">&#x27;queue.password&#x27;</span>, <span class="string">&#x27;&#x27;</span>),</span><br><span class="line">            <span class="string">&#x27;select&#x27;</span>     =&gt; <span class="number">0</span>,      <span class="comment">// 使用哪一个 db，默认为 db0</span></span><br><span class="line">            <span class="string">&#x27;timeout&#x27;</span>    =&gt; <span class="number">0</span>,      <span class="comment">// redis连接的超时时间</span></span><br><span class="line">            <span class="string">&#x27;persistent&#x27;</span> =&gt; <span class="literal">false</span>,  <span class="comment">// 是否是长连接</span></span><br><span class="line">        ],</span><br><span class="line">    ],</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="创建消息"><a href="#创建消息" class="headerlink" title="创建消息"></a>创建消息</h3><p>配置完成以后我们就可以开始使用了。</p>
-<p>在我们的<code>controller</code>里面把一个消息推送到队列里面。这里我们定义一个队列名称叫做<code>message</code>,定义一个处理队列消息的消费者类<code>app\common\queue\consumer</code>。然后调用<code>Queue</code>门面的<code>push</code>方法，把消费者，队列名称，数据传入进去就可以了。这个时候就会把数据放到<code>message</code>这个队列里面。然后消费者取出数据进行处理。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">app</span>\<span class="title class_">api</span>\<span class="title class_">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">app</span>\<span class="title">BaseController</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">facade</span>\<span class="title">Queue</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">extends</span> <span class="title">BaseController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$consumer</span> = <span class="string">&#x27;app\common\queue\consumer&#x27;</span>;  <span class="comment">//消费者类</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$queue</span> = <span class="string">&#x27;message&#x27;</span>; <span class="comment">//队列名称</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">$this</span>-&gt;request-&gt;<span class="title function_ invoke__">isPost</span>()) &#123;</span><br><span class="line">            <span class="comment">//要推送到队列里面的数据</span></span><br><span class="line">            <span class="variable">$jobData</span> = [];</span><br><span class="line">            <span class="variable">$jobData</span>[<span class="string">&quot;a&quot;</span>] = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">            <span class="variable">$jobData</span>[<span class="string">&#x27;b&#x27;</span>] = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="variable">$res</span> = <span class="title class_">Queue</span>::<span class="title function_ invoke__">push</span>(<span class="variable language_">$this</span>-&gt;consumer, <span class="variable">$data</span>, <span class="variable language_">$this</span>-&gt;queue);</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">json</span>([]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="消费消息"><a href="#消费消息" class="headerlink" title="消费消息"></a>消费消息</h3><p>我们接下来实现我们上面定义的消费者。来处理我们的逻辑。</p>
-<p>消费者<code>app\common\queue\consumer</code>类。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> <span class="keyword">namespace</span> <span class="title class_">app</span>\<span class="title class_">common</span>\<span class="title class_">queue</span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">use</span> <span class="title">think</span>\<span class="title">queue</span>\<span class="title">Job</span>;</span><br><span class="line"></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">consumer</span> </span>&#123;</span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * fire方法是消息队列默认调用的方法</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> Job            $job      当前的任务对象</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> array|mixed    $data     发布任务时自定义的数据</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fire</span>(<span class="params">Job <span class="variable">$job</span>,<span class="variable">$data</span></span>)</span></span><br><span class="line"><span class="function">     </span>&#123;</span><br><span class="line">         <span class="comment">// 有些消息在到达消费者时,可能已经不再需要执行了</span></span><br><span class="line">         <span class="variable">$isJobStillNeedToBeDone</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">check</span>(<span class="variable">$data</span>);</span><br><span class="line">         <span class="keyword">if</span>(!<span class="variable">$isJobStillNeedToBeDone</span>)&#123;</span><br><span class="line">             <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();  <span class="comment">//删除任务</span></span><br><span class="line">             <span class="keyword">return</span>;</span><br><span class="line">         &#125;</span><br><span class="line">       </span><br><span class="line">         <span class="comment">//执行任务</span></span><br><span class="line">         <span class="variable">$isJobDone</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">doJob</span>(<span class="variable">$data</span>);</span><br><span class="line">       </span><br><span class="line">         <span class="keyword">if</span> (<span class="variable">$isJobDone</span>) &#123;</span><br><span class="line">             <span class="comment">// 如果任务执行成功， 记得删除任务</span></span><br><span class="line">             <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();</span><br><span class="line">         &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">             <span class="keyword">if</span> (<span class="variable">$job</span>-&gt;<span class="title function_ invoke__">attempts</span>() &gt; <span class="number">3</span>) &#123;</span><br><span class="line">                 <span class="comment">//通过这个方法可以检查这个任务已经重试了几次了</span></span><br><span class="line"> 				  <span class="variable">$job</span>-&gt;<span class="title function_ invoke__">delete</span>();</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     </span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 有些消息在到达消费者时,可能已经不再需要执行了</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> array|mixed    $data     发布任务时自定义的数据</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@return</span> boolean                 任务执行的结果</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"><span class="variable">$data</span></span>)</span>&#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 根据消息中的数据进行实际的业务处理...</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">     <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">doJob</span>(<span class="params"><span class="variable">$data</span></span>) </span></span><br><span class="line"><span class="function">     </span>&#123;</span><br><span class="line">         <span class="title function_ invoke__">dump</span>(<span class="variable">$data</span>);</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这样我们就完成了代码的逻辑，也就是发布消息，消费消息。</p>
-<p>接下来我们启动这个队列。</p>
-<h3 id="启动队列"><a href="#启动队列" class="headerlink" title="启动队列"></a>启动队列</h3><p>启动队列有两种方式。</p>
-<ul>
-<li>work</li>
-<li>listen</li>
-</ul>
-<p><code>work</code>方式启动。这种方式是单进程运行。如果你更新了代码需要手动重启队列。</p>
-<blockquote>
-<p>php think queue:work –queue message  &#x2F;&#x2F;我们刚刚定义的队列名称</p>
-</blockquote>
-<p><code>listen</code>方式启动。这种方式是master-worker模型。一个master主进程来监听，当请求进来了启动一个work子进程来运行上面的work方式启动。</p>
-<blockquote>
-<p>php think queue:listen –queue message</p>
-</blockquote>
-<p>我更推荐listen方式来运行。这种方式更新代码后也不需要手动重启。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" class="post-title-link" itemprop="url">thinkphp-queue队列导致MySQL server has gone away</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-25 10:12:47" itemprop="dateCreated datePublished" datetime="2020-08-25T10:12:47+08:00">2020-08-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-01-26 10:07:53" itemprop="dateModified" datetime="2025-01-26T10:07:53+08:00">2025-01-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" class="post-meta-item leancloud_visitors" data-flag-title="thinkphp-queue队列导致MySQL server has gone away" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/thinkphp-queue%E9%98%9F%E5%88%97%E5%AF%BC%E8%87%B4MySQL%20server%20has%20gone%20away.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="thinkphp-queue队列导致MySQL-server-has-gone-away"><a href="#thinkphp-queue队列导致MySQL-server-has-gone-away" class="headerlink" title="thinkphp-queue队列导致MySQL server has gone away"></a>thinkphp-queue队列导致MySQL server has gone away</h1><p>虽然队列一时爽，不过还是有缺点的，比如当队列运行时间长了会报错 MySQL server has gone away</p>
-<p>原因是使用<code>work</code>模式运行时间长了以后没有释放mysql数据库的链接，导致时间长了以后被mysql server端判断超时切断了链接。</p>
-<p>可以改用<code>listen</code>模式运行，这样每次都是启动一个新的work进程来运行程序，每次都会新链接数据库。</p>
-<p>可以使用tp的断线重连功能。修改配置文件<code>config/database.php</code></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 数据库连接配置信息</span></span><br><span class="line">    <span class="string">&#x27;connections&#x27;</span>     =&gt; [</span><br><span class="line">        <span class="string">&#x27;mysql&#x27;</span> =&gt; [</span><br><span class="line">            <span class="comment">// 是否需要断线重连</span></span><br><span class="line">            <span class="string">&#x27;break_reconnect&#x27;</span>   =&gt; <span class="literal">true</span>,</span><br><span class="line">        ],</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/15/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/15/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1788,7 +2053,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

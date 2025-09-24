@@ -196,6 +196,583 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E5%9B%9B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E5%9B%9B.html" class="post-title-link" itemprop="url">DDD记账软件实战四</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-23 14:30:00" itemprop="dateCreated datePublished" datetime="2025-09-23T14:30:00+08:00">2025-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-09-24 16:03:29" itemprop="dateModified" datetime="2025-09-24T16:03:29+08:00">2025-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DDD/" itemprop="url" rel="index"><span itemprop="name">DDD</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E5%9B%9B.html" class="post-meta-item leancloud_visitors" data-flag-title="DDD记账软件实战四" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E5%9B%9B.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E5%9B%9B.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送”MySQL知识图谱”领取完整的MySQL学习路线。<br>发送”电子书”即可领取价值上千的电子书资源。<br>发送”大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送”AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="DDD记账软件实战四"><a href="#DDD记账软件实战四" class="headerlink" title="DDD记账软件实战四"></a>DDD记账软件实战四</h1><h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>在实战三中，我们完成了登录系统的设计与实现，运用了策略模式、工厂模式等设计模式，实现了一个可扩展的多种登录方式的认证系统。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd4-1.png" alt="架构图"></p>
+<p>我们已经按照DDD划分了目录并创建了项目结构：</p>
+<ul>
+<li>starter: 接口层，包括HTTP接口、队列的消费者、DTO、启动类</li>
+<li>api: 接口层，提供RPC接口，包括外部RPC接口需要使用的DTO、枚举等</li>
+<li>application：应用服务层，放应用服务，负责编排领域服务、聚合根等。</li>
+<li>domain：领域服务层，放领域相关的一切信息，领域服务负责编排聚合根，聚合根负责完成自身的业务逻辑。</li>
+<li>infrastructure: 基础设施层，放配置、仓储、工厂、对外部的请求、发送MQ消息等。</li>
+<li>common: 放一些公共信息。</li>
+</ul>
+<p>技术栈版本：</p>
+<ul>
+<li>Spring Boot 3.5.4</li>
+<li>Java 21</li>
+</ul>
+<h2 id="如何设计一个记账微服务"><a href="#如何设计一个记账微服务" class="headerlink" title="如何设计一个记账微服务"></a>如何设计一个记账微服务</h2><p>在完成用户认证系统后，我们要开始实现核心的业务功能了。对于记账软件来说，记账功能是最核心的模块。</p>
+<p>记账功能看似简单，但是涉及的业务逻辑其实不少，比如：</p>
+<ul>
+<li>账本管理<ul>
+<li>账本列表</li>
+<li>创建账本</li>
+<li>更新账本信息</li>
+<li>删除账本</li>
+<li>更新账本预算</li>
+<li>查询账本预算</li>
+<li>查询账本信息</li>
+<li>邀请用户加入账本</li>
+<li>用户加入账本</li>
+<li>账本成员管理</li>
+</ul>
+</li>
+<li>收入支出记录管理<ul>
+<li>查看收支记录</li>
+<li>记账</li>
+</ul>
+</li>
+<li>分类管理<ul>
+<li>用户分类管理<ul>
+<li>用户分类列表</li>
+<li>创建用户分类</li>
+<li>删除用户分类</li>
+</ul>
+</li>
+<li>系统分类管理<ul>
+<li>系统分类列表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>面对如此复杂的记账业务，如何设计一个既能满足当前需求，又能支持未来扩展的微服务架构呢？</p>
+<p>有办法的，兄弟，DDD来解决。</p>
+<h3 id="业务流程"><a href="#业务流程" class="headerlink" title="业务流程"></a>业务流程</h3><p>基于DDD的核心思想，我们需要先理解业务，然后识别核心领域，最后通过代码来实现业务逻辑。</p>
+<p>而针对复杂的业务场景，在软件设计上已经有了很多前人的智慧，比如领域驱动设计原则、各种企业级设计模式等。</p>
+<p>首先，我们应该梳理一下记账的核心业务流程。深入理解业务是做好架构设计的基础。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-1.png" alt="记账业务流程图"></p>
+<p>用户进入记账小程序页面后，首先看到的就是一个账本列表，需要从账本列表中选择一个账本，然后点击记账、选择收入&#x2F;支出类型，接着选择分类（如餐饮、交通等），填写金额和备注，最后保存记录。</p>
+<p>从这个流程可以看出，记账涉及三个核心业务概念：</p>
+<ol>
+<li><strong>账本（AccountBook）</strong> - 用户可以创建多个账本，比如个人账本、家庭账本</li>
+<li><strong>记录（Record）</strong> - 具体的收入支出记录</li>
+<li><strong>分类（Category）</strong> - 对收支进行分类管理</li>
+</ol>
+<p>因此，我们可以识别出三个核心领域模型。</p>
+<h3 id="领域分析"><a href="#领域分析" class="headerlink" title="领域分析"></a>领域分析</h3><p>基于DDD的思想，我们需要对记账业务进行领域分析，识别出核心的聚合根、实体和值对象。</p>
+<h4 id="账本领域（AccountBook-Domain）"><a href="#账本领域（AccountBook-Domain）" class="headerlink" title="账本领域（AccountBook Domain）"></a>账本领域（AccountBook Domain）</h4><p>账本是用户记账的载体，一个用户可以有多个账本。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-2.png" alt="账本业务流程图"></p>
+<p><strong>核心业务逻辑：</strong></p>
+<ol>
+<li>创建账本</li>
+<li>修改账本信息</li>
+<li>删除账本</li>
+<li>查询账本列表</li>
+<li>查询账本信息</li>
+<li>更新账本预算</li>
+<li>加入账本</li>
+<li>查询账本的成员列表</li>
+</ol>
+<p><strong>业务规则：</strong></p>
+<ul>
+<li>同一用户下的账本名称不能重复</li>
+<li>删除账本时需要检查是否还有记录</li>
+<li>只有账本管理员可以删除账本</li>
+</ul>
+<h4 id="记录领域（Record-Domain）"><a href="#记录领域（Record-Domain）" class="headerlink" title="记录领域（Record Domain）"></a>记录领域（Record Domain）</h4><p>记录是记账的核心，包含收入和支出两种类型。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-3.png" alt="记录业务流程图"></p>
+<p><strong>核心业务逻辑：</strong></p>
+<ol>
+<li>添加收支记录</li>
+<li>修改记录信息</li>
+<li>删除记录</li>
+<li>查询记录列表</li>
+</ol>
+<p><strong>业务规则：</strong></p>
+<ul>
+<li>金额必须大于0</li>
+<li>记录必须归属于某个账本</li>
+<li>记录必须有分类</li>
+<li>记录时间不能超过当前时间</li>
+<li>删除记录需要权限验证</li>
+</ul>
+<h4 id="分类领域（Category-Domain）"><a href="#分类领域（Category-Domain）" class="headerlink" title="分类领域（Category Domain）"></a>分类领域（Category Domain）</h4><p>分类是记账系统中对收支记录进行归类管理的重要功能，帮助用户更好地分析自己的消费习惯和收入来源。分类分为<code>系统分类</code>和<code>用户分类</code>。</p>
+<p>系统分类是系统自带的一些分类，这些分类是所有用户都可以使用的，一些通用的分类。</p>
+<p>用户分类是用户自身维护的一些分类，可以根据用户自己的使用习惯来创建不同的分类，这些分类只能用户自己使用，方便用户自定义自身的需求。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-4.png" alt="分类业务流程图"></p>
+<p><strong>核心业务逻辑：</strong></p>
+<ol>
+<li><strong>系统分类管理</strong><ul>
+<li>查询系统默认分类列表</li>
+<li>系统分类不可删除和修改</li>
+</ul>
+</li>
+<li><strong>用户分类管理</strong><ul>
+<li>创建用户自定义分类</li>
+<li>修改用户分类信息</li>
+<li>删除用户分类</li>
+<li>查询用户分类列表</li>
+</ul>
+</li>
+<li><strong>分类层级管理</strong><ul>
+<li>支持父子分类关系（如：餐饮 -&gt; 早餐&#x2F;午餐&#x2F;晚餐）</li>
+<li>查询完整分类树结构</li>
+<li>分类层级深度限制（建议最多3层）</li>
+</ul>
+</li>
+<li><strong>分类统计分析</strong><ul>
+<li>按分类统计收支金额</li>
+<li>分类使用频率统计</li>
+<li>分类趋势分析</li>
+</ul>
+</li>
+</ol>
+<p><strong>业务规则：</strong></p>
+<ul>
+<li><strong>分类层级规则</strong>：支持树形结构，最多支持2级分类（一级分类 -&gt; 二级分类）</li>
+<li><strong>删除约束</strong>：删除分类时需要检查是否被记录引用，如有引用则不能删除</li>
+<li><strong>系统分类保护</strong>：系统提供的默认分类不可删除和修改，保证基础功能可用</li>
+<li><strong>用户分类权限</strong>：用户只能管理自己创建的分类，不能修改他人分类</li>
+<li><strong>分类名称唯一性</strong>：同一层级下的分类名称不能重复</li>
+<li><strong>分类图标</strong>：每个分类可以设置图标，提升用户体验</li>
+</ul>
+<p><strong>常见系统默认分类：</strong><br>收入分类：</p>
+<ul>
+<li>工资收入</li>
+<li>投资收益</li>
+<li>兼职收入</li>
+<li>其他收入</li>
+</ul>
+<p>支出分类：</p>
+<ul>
+<li>餐饮美食（早餐、午餐、晚餐、夜宵）</li>
+<li>交通出行（打车、公交、地铁、加油）</li>
+<li>购物消费（服装、数码、日用品）</li>
+<li>娱乐休闲（电影、游戏、旅游）</li>
+<li>医疗健康（看病、买药、体检）</li>
+<li>生活缴费（水电费、房租、话费）</li>
+<li>学习教育（培训、书籍、课程）</li>
+</ul>
+<p>接下来我们需要分析，这三个领域之间的关系和需要使用哪些能力。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-5.png" alt="记账业务架构图"></p>
+<p>从业务架构图可以看出：</p>
+<ul>
+<li>账本是聚合根，管理属于它的记录</li>
+<li>记录依赖分类进行归类</li>
+<li>三个领域之间通过领域事件进行解耦</li>
+<li>统计分析等功能可以通过读模型实现</li>
+</ul>
+<p>这样，我们就明确了记账微服务的核心业务能力和领域边界。</p>
+<h3 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h3><p>在明确了业务领域和架构边界后，我们需要设计系统架构来支撑这些业务能力。</p>
+<h4 id="微服务分层架构"><a href="#微服务分层架构" class="headerlink" title="微服务分层架构"></a>微服务分层架构</h4><p>基于DDD的分层架构，记账微服务的系统架构如下：</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-6.png" alt="记账系统架构图"></p>
+<p><strong>网关层（GateWay Layer）</strong></p>
+<ul>
+<li>路由转发</li>
+<li>认证鉴权</li>
+<li>限流熔断</li>
+<li>日志监控</li>
+</ul>
+<p><strong>应用服务层（Application Layer）</strong></p>
+<ul>
+<li>账本应用服务（LedgerCommandApplicationService）</li>
+<li>记录应用服务（TransactionStatementCommandApplicationService）</li>
+<li>分类应用服务（CategoryCommandApplicationService）</li>
+<li>通知应用服务（NotificationService）</li>
+</ul>
+<p><strong>领域层（Domain Layer）</strong></p>
+<ul>
+<li>账本聚合（Leger Aggregate）</li>
+<li>记录聚合（TransactionStatement Aggregate）</li>
+<li>分类聚合（Category Aggregate）</li>
+<li>领域服务</li>
+<li>领域事件</li>
+</ul>
+<p><strong>基础设施层（Infrastructure Layer）</strong></p>
+<ul>
+<li>数据库仓储</li>
+<li>缓存</li>
+<li>消息队列</li>
+<li>注册中心</li>
+<li>日志分析</li>
+</ul>
+<h4 id="数据存储设计"><a href="#数据存储设计" class="headerlink" title="数据存储设计"></a>数据存储设计</h4><p>基于领域模型，我们设计了以下数据表结构：</p>
+<ul>
+<li><strong>ledger</strong>: 账本表</li>
+<li><strong>ledger_budget</strong>: 账本预算表</li>
+<li><strong>leger_members</strong>: 账本成员表（支持共享账本）</li>
+<li><strong>invitation</strong>: 邀请码表</li>
+<li><strong>invitation_usage</strong>: 邀请码使用表</li>
+<li><strong>transaction_statement</strong>: 记录表</li>
+<li><strong>sys_category</strong>: 系统分类表</li>
+<li><strong>user_category</strong>: 用户分类表</li>
+</ul>
+<p>这样的设计既能保证数据一致性，又能支撑高并发的业务场景。</p>
+<h3 id="详细设计"><a href="#详细设计" class="headerlink" title="详细设计"></a>详细设计</h3><p>经过上面的架构设计以后，我们明确了下面几点：</p>
+<ol>
+<li>明确了记账微服务的三个核心领域</li>
+<li>明确了各领域的责任边界和交互关系</li>
+<li>明确了系统的技术架构和存储设计</li>
+</ol>
+<p>接下来，我们需要进行详细设计，明确具体的实现方案。</p>
+<h4 id="用例设计"><a href="#用例设计" class="headerlink" title="用例设计"></a>用例设计</h4><p>我们通过用例图来理解记账微服务的核心功能。</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-7.png" alt="记账系统用例图"></p>
+<p><strong>主要用例：</strong></p>
+<ol>
+<li><p>账本管理</p>
+<ul>
+<li>创建账本</li>
+<li>编辑账本</li>
+<li>删除账本</li>
+<li>账本成员管理</li>
+</ul>
+</li>
+<li><p>记录管理</p>
+<ul>
+<li>添加收入记录</li>
+<li>添加支出记录</li>
+<li>编辑记录</li>
+<li>删除记录</li>
+<li>查询记录</li>
+</ul>
+</li>
+<li><p>分类管理</p>
+<ul>
+<li>创建分类</li>
+<li>编辑分类</li>
+<li>删除分类</li>
+<li>分类统计</li>
+</ul>
+</li>
+<li><p>统计分析</p>
+<ul>
+<li>收支统计</li>
+<li>分类统计</li>
+<li>趋势分析</li>
+</ul>
+</li>
+</ol>
+<h4 id="领域模型UML设计"><a href="#领域模型UML设计" class="headerlink" title="领域模型UML设计"></a>领域模型UML设计</h4><p>基于DDD的领域建模，我们设计了以下核心领域模型：</p>
+<p><img src="https://thepatterraining.github.io/images/ddd/ddd6-8.png" alt="记账领域模型UML图"></p>
+<p><strong>设计亮点：</strong></p>
+<ol>
+<li><strong>聚合根设计</strong>：以AccountBook为聚合根，管理所有相关的Record</li>
+<li><strong>值对象设计</strong>：Money、RecordType等作为值对象，封装业务规则</li>
+<li><strong>领域服务</strong>：处理复杂的业务逻辑，如统计、校验等</li>
+<li><strong>仓储模式</strong>：抽象数据访问，解耦领域和基础设施</li>
+</ol>
+<p><strong>架构优势：</strong></p>
+<ul>
+<li>高内聚低耦合：各领域职责清晰</li>
+<li>易于测试：领域逻辑独立于基础设施</li>
+<li>易于扩展：新增功能不影响现有代码</li>
+<li>符合业务语言：代码结构反映业务概念</li>
+</ul>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><p>当设计完成以后就可以进入开发阶段了。这里给出记账微服务的核心代码实现。</p>
+<h4 id="接口层（Interface-Layer）"><a href="#接口层（Interface-Layer）" class="headerlink" title="接口层（Interface Layer）"></a>接口层（Interface Layer）</h4><p><strong>LedgerController - 账本管理控制器</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/ledger&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LedgerController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerCommandApplicationService ledgerCommandApplicationService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerQueryApplicationService ledgerQueryApplicationService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/create&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">createLedger</span><span class="params">(<span class="meta">@RequestBody</span> CreateLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">ledgerNo</span> <span class="operator">=</span> ledgerCommandApplicationService.createLedger(request);</span><br><span class="line">        <span class="keyword">return</span> Result.success(ledgerNo);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/update&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">updateLedger</span><span class="params">(<span class="meta">@RequestBody</span> UpdateLedgerRequest request)</span> &#123;</span><br><span class="line">        ledgerCommandApplicationService.updateLedger(request);</span><br><span class="line">        <span class="keyword">return</span> Result.success();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DeleteMapping()</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">deleteLedger</span><span class="params">(<span class="meta">@RequestBody</span> DeleteLedgerRequest request)</span> &#123;</span><br><span class="line">        ledgerCommandApplicationService.deleteLedger(request.getLedgerNo());</span><br><span class="line">        <span class="keyword">return</span> Result.success();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/list&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;PageRes&lt;LedgerListRes&gt;&gt; <span class="title function_">getLedgerList</span><span class="params">(QueryLedgerListRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Result.success(ledgerQueryApplicationService.getLedgerList(request));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/detail&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;LedgerDetailRes&gt; <span class="title function_">getLedgerDetail</span><span class="params">(QueryLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Result.success(ledgerQueryApplicationService.getLedger(request));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/update/budget&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">updateLedgerBudget</span><span class="params">(<span class="meta">@RequestBody</span> UpdateLedgerBudgetRequest request)</span> &#123;</span><br><span class="line">        ledgerCommandApplicationService.updateLedgerBudget(request);</span><br><span class="line">        <span class="keyword">return</span> Result.success();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/join&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;String&gt; <span class="title function_">joinLedger</span><span class="params">(<span class="meta">@RequestBody</span> JoinLedgerRequest request)</span> &#123;</span><br><span class="line">        ledgerCommandApplicationService.joinLedger(request);</span><br><span class="line">        <span class="keyword">return</span> Result.success();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/memberList&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result&lt;List&lt;LedgerMemberListRes&gt;&gt; <span class="title function_">memberList</span><span class="params">(QueryLedgerMemberListRequest request)</span> &#123;</span><br><span class="line">        List&lt;LedgerMemberListRes&gt; memberList = ledgerQueryApplicationService.getMemberList(request);</span><br><span class="line">        <span class="keyword">return</span> Result.success(memberList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用服务层（Application-Layer）"><a href="#应用服务层（Application-Layer）" class="headerlink" title="应用服务层（Application Layer）"></a>应用服务层（Application Layer）</h4><p>整体采用<code>CQRS</code>来实现，所以应用服务分成两种，分别是增删改的command应用服务和只负责查询的query应用服务<br><strong>LedgerCommandApplicationService - 账本command应用服务</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LedgerCommandApplicationService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationEventPublisher eventPublisher;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerDomainService ledgerDomainService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerFactory ledgerFactory;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> InvitationDomainService invitationDomainService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deleteLedger</span><span class="params">(String ledgerNo)</span> &#123;</span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerDomainService.findByNo(ledgerNo);</span><br><span class="line">        <span class="keyword">if</span> (ledgerAgg == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AggNotExistsException</span>(ResultCode.LEDGER_NOT_FOUND);</span><br><span class="line">        &#125;</span><br><span class="line">        ledgerAgg.delete();</span><br><span class="line">        ledgerDomainService.save(ledgerAgg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">createLedger</span><span class="params">(CreateLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户ID</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">userNo</span> <span class="operator">=</span> UserContextHolder.getCurrentUserNo();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 查询该账本是否已经存在</span></span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledger</span> <span class="operator">=</span> ledgerDomainService.findByNameInUser(request.getLedgerName(), userNo);</span><br><span class="line">        <span class="keyword">if</span> (ledger != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AggNotExistsException</span>(ResultCode.LEDGER_ALREADY_EXISTS);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 账本不存在则创建</span></span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerFactory.createLedgerAgg(request.getLedgerName(), userNo, request.getLedgerDesc(),</span><br><span class="line">                request.getLedgerImage());</span><br><span class="line">        ledgerAgg.create();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 插入数据库</span></span><br><span class="line">        ledgerDomainService.save(ledgerAgg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取注册的事件进行发布</span></span><br><span class="line">        List&lt;DomainEvent&gt; domainEventList = ledgerAgg.getDomainEvents();</span><br><span class="line">        domainEventList.forEach(event -&gt; eventPublisher.publishEvent(event));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回账本编号</span></span><br><span class="line">        <span class="keyword">return</span> ledgerAgg.getLedgerNo();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateLedger</span><span class="params">(UpdateLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 查询该账本是否已经存在</span></span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerDomainService.findByNo(request.getLedgerNo());</span><br><span class="line">        <span class="keyword">if</span> (ledgerAgg == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AggNotExistsException</span>(ResultCode.LEDGER_NOT_FOUND);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 账本存在则更新</span></span><br><span class="line">        ledgerAgg.save(request.getLedgerName(), request.getLedgerDesc(), request.getLedgerImage());</span><br><span class="line">        ledgerDomainService.save(ledgerAgg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取注册的事件进行发布</span></span><br><span class="line">        List&lt;DomainEvent&gt; domainEventList = ledgerAgg.getDomainEvents();</span><br><span class="line">        eventPublisher.publishEvent(domainEventList);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateLedgerBudget</span><span class="params">(UpdateLedgerBudgetRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 查询该账本是否已经存在</span></span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerDomainService.findByNo(request.getLedgerNo());</span><br><span class="line">        <span class="keyword">if</span> (ledgerAgg == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">AggNotExistsException</span>(ResultCode.LEDGER_NOT_FOUND);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 账本存在则更新</span></span><br><span class="line">        <span class="type">LedgerBudgetVO</span> <span class="variable">ledgerBudget</span> <span class="operator">=</span> ledgerFactory.createLedgerBudget(request.getLedgerNo(), request.getBudgetAmount(), request.getBudgetDate());</span><br><span class="line">        ledgerAgg.updateBudget(ledgerBudget);</span><br><span class="line">        ledgerDomainService.save(ledgerAgg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取注册的事件进行发布</span></span><br><span class="line">        List&lt;DomainEvent&gt; domainEventList = ledgerAgg.getDomainEvents();</span><br><span class="line">        eventPublisher.publishEvent(domainEventList);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">joinLedger</span><span class="params">(JoinLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">userNo</span> <span class="operator">=</span> UserContextHolder.getCurrentUserNo();</span><br><span class="line">        <span class="comment">// 1. 使用邀请码</span></span><br><span class="line">        invitationDomainService.useInvitationCode(request.getInvitationCode(), userNo);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 查询账本信息</span></span><br><span class="line">        <span class="type">InvitationAgg</span> <span class="variable">invitationAgg</span> <span class="operator">=</span> invitationDomainService.loadByCode(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvitationCodeVO</span>(request.getInvitationCode()));</span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerDomainService.findByNo(invitationAgg.getLedgerNo());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 插入成员信息</span></span><br><span class="line">        <span class="type">LedgerMemberEntity</span> <span class="variable">ledgerMember</span> <span class="operator">=</span> ledgerFactory.createLedgerMember(</span><br><span class="line">                ledgerAgg.getLedgerNo(), userNo, LedgerMemberRoleVO.MEMBER);</span><br><span class="line">        ledgerAgg.addMember(ledgerMember);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 保存账本信息</span></span><br><span class="line">        ledgerDomainService.save(ledgerAgg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取注册的事件进行发布</span></span><br><span class="line">        List&lt;DomainEvent&gt; domainEventList = ledgerAgg.getDomainEvents();</span><br><span class="line">        eventPublisher.publishEvent(domainEventList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>LedgerQueryApplicationService - 账本query应用服务</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LedgerQueryApplicationService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerMapper ledgerMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerMemberMapper ledgerMemberMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerDomainService ledgerDomainService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> UserInfoService userInfoService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;LedgerListRes&gt; <span class="title function_">convertToLedgerListResList</span><span class="params">(List&lt;LedgerMemberPO&gt; memberList, Map&lt;String, LedgerPO&gt; ledgerMap)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (CollectionUtils.isEmpty(memberList)) &#123;</span><br><span class="line">            <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> memberList.stream().map(member -&gt; &#123;<span class="keyword">return</span> convertToLedgerListRes(member, ledgerMap.get(member.getLedgerNo()));&#125;).filter(Objects::nonNull).collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerListRes <span class="title function_">convertToLedgerListRes</span><span class="params">(LedgerMemberPO memberPO, LedgerPO ledgerPO)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (memberPO == <span class="literal">null</span> || ledgerPO == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">LedgerListRes</span> <span class="variable">res</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LedgerListRes</span>();</span><br><span class="line">        res.setLedgerName(ledgerPO.getLedgerName());</span><br><span class="line">        res.setLedgerImage(ledgerPO.getLedgerImage());</span><br><span class="line">        res.setLedgerNo(ledgerPO.getLedgerNo());</span><br><span class="line">        res.setLedgerDesc(ledgerPO.getLedgerDesc());</span><br><span class="line">        res.setLedgerStatus(ledgerPO.getLedgerStatus());</span><br><span class="line">        res.setCreateTime(LocalDateTimeUtil.format(ledgerPO.getCreateTime()));</span><br><span class="line">        res.setUpdateTime(LocalDateTimeUtil.format(ledgerPO.getUpdateTime()));</span><br><span class="line">        res.setRole(LedgerMemberRoleVO.of(memberPO.getRole()).getLabel());</span><br><span class="line">        res.setJoinTime(LocalDateTimeUtil.format(memberPO.getJoinTime()));</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> LedgerDetailRes <span class="title function_">getLedger</span><span class="params">(QueryLedgerRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户ID</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">userNo</span> <span class="operator">=</span> UserContextHolder.getCurrentUserNo();</span><br><span class="line">        <span class="comment">// 加载账本聚合</span></span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> ledgerDomainService.findByNo(request.getLedgerNo());</span><br><span class="line">        <span class="keyword">if</span> (ledgerAgg == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 判断这个用户是否有查看权限</span></span><br><span class="line">        <span class="keyword">if</span> (!ledgerAgg.hasViewPermission(userNo)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 有查看权限则返回数据</span></span><br><span class="line">        <span class="keyword">return</span> convertToLedgerRes(ledgerAgg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerDetailRes <span class="title function_">convertToLedgerRes</span><span class="params">(LedgerAgg ledgerAgg)</span> &#123;</span><br><span class="line">        <span class="type">LedgerDetailRes</span> <span class="variable">res</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LedgerDetailRes</span>();</span><br><span class="line">        res.setLedgerNo(ledgerAgg.getLedgerNo());</span><br><span class="line">        res.setLedgerName(ledgerAgg.getLedgerName());</span><br><span class="line">        res.setLedgerDesc(ledgerAgg.getLedgerDesc());</span><br><span class="line">        res.setLedgerStatus(ledgerAgg.getLedgerStatus().getLabel());</span><br><span class="line">        res.setLedgerBudget(buildLedgerBudget(ledgerAgg.getLastLedgerBudget()));</span><br><span class="line">        res.setLedgerSummary(buildLedgerSummary(ledgerAgg.getLastLedgerSummary()));</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerSummaryRes <span class="title function_">buildLedgerSummary</span><span class="params">(LedgerSummaryVO summaryVO)</span> &#123;</span><br><span class="line">        <span class="type">LedgerSummaryRes</span> <span class="variable">res</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LedgerSummaryRes</span>();</span><br><span class="line">        res.setIncome(summaryVO.getIncome());</span><br><span class="line">        res.setExpense(summaryVO.getExpense());</span><br><span class="line">        res.setRemained(summaryVO.getRemained());</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerBudgetRes <span class="title function_">buildLedgerBudget</span><span class="params">(LedgerBudgetVO budgetPO)</span> &#123;</span><br><span class="line">        <span class="type">LedgerBudgetRes</span> <span class="variable">res</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LedgerBudgetRes</span>();</span><br><span class="line">        res.setAmount(MoneyUtil.fen2Yuan(budgetPO.getBudgetAmount()));</span><br><span class="line">        res.setUsed(MoneyUtil.fen2Yuan(budgetPO.getUsedAmount()));</span><br><span class="line">        res.setRemained(MoneyUtil.fen2Yuan(budgetPO.getRemainedAmount()));</span><br><span class="line">        res.setBudgetDate(LocalDateTimeUtil.format(budgetPO.getBudgetDate()));</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> PageRes&lt;LedgerListRes&gt; <span class="title function_">getLedgerList</span><span class="params">(QueryLedgerListRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取用户ID</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">userNo</span> <span class="operator">=</span> UserContextHolder.getCurrentUserNo();</span><br><span class="line">        <span class="comment">// 查询用户有哪些账本</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerMemberPO&gt; wrapper1 = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper1.eq(LedgerMemberPO::getUserNo, userNo)</span><br><span class="line">                .eq(LedgerMemberPO::getStatus, LedgerMemberStatusVO.NORMAL.getCode())</span><br><span class="line">                .eq(LedgerMemberPO::getIsDeleted, <span class="literal">false</span>)</span><br><span class="line">                .orderByDesc(LedgerMemberPO::getJoinTime);</span><br><span class="line">        Page&lt;LedgerMemberPO&gt; pageList = ledgerMemberMapper.selectPage(Page.of(request.getPage(), request.getSize()),</span><br><span class="line">                wrapper1);</span><br><span class="line">        <span class="keyword">if</span> (pageList.getTotal() == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 组装返回</span></span><br><span class="line">            PageRes&lt;LedgerListRes&gt; pageRes = <span class="keyword">new</span> <span class="title class_">PageRes</span>&lt;&gt;();</span><br><span class="line">            pageRes.setPageNum(pageList.getCurrent());</span><br><span class="line">            pageRes.setPageSize(pageList.getSize());</span><br><span class="line">            pageRes.setTotal(pageList.getTotal());</span><br><span class="line">            pageRes.setList(Collections.emptyList());</span><br><span class="line">            <span class="keyword">return</span> pageRes;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 查询用户账本信息</span></span><br><span class="line">        List&lt;String&gt; ledgerNoList = pageList.getRecords().stream()</span><br><span class="line">                .map(LedgerMemberPO::getLedgerNo).collect(Collectors.toList());</span><br><span class="line">        LambdaQueryWrapper&lt;LedgerPO&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.in(LedgerPO::getLedgerNo, ledgerNoList)</span><br><span class="line">                .eq(LedgerPO::getIsDeleted, <span class="literal">false</span>);</span><br><span class="line">        List&lt;LedgerPO&gt; ledgerList = ledgerMapper.selectList(wrapper);</span><br><span class="line">        Map&lt;String, LedgerPO&gt; ledgerMap = ledgerList.stream()</span><br><span class="line">                .collect(Collectors.toMap(LedgerPO::getLedgerNo, Function.identity()));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 组装返回</span></span><br><span class="line">        PageRes&lt;LedgerListRes&gt; pageRes = <span class="keyword">new</span> <span class="title class_">PageRes</span>&lt;&gt;();</span><br><span class="line">        pageRes.setPageNum(pageList.getCurrent());</span><br><span class="line">        pageRes.setPageSize(pageList.getSize());</span><br><span class="line">        pageRes.setTotal(pageList.getTotal());</span><br><span class="line">        pageRes.setList(convertToLedgerListResList(pageList.getRecords(), ledgerMap));</span><br><span class="line">        <span class="keyword">return</span> pageRes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;LedgerMemberListRes&gt; <span class="title function_">getMemberList</span><span class="params">(QueryLedgerMemberListRequest request)</span> &#123;</span><br><span class="line">        <span class="comment">// 获取成员列表</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerMemberPO&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.eq(LedgerMemberPO::getLedgerNo, request.getLedgerNo())</span><br><span class="line">                .eq(LedgerMemberPO::getStatus, LedgerMemberStatusVO.NORMAL.getCode())</span><br><span class="line">                .eq(LedgerMemberPO::getIsDeleted, <span class="literal">false</span>);</span><br><span class="line">        List&lt;LedgerMemberPO&gt; memberList = ledgerMemberMapper.selectList(wrapper);</span><br><span class="line">        <span class="keyword">if</span> (CollectionUtils.isEmpty(memberList)) &#123;</span><br><span class="line">            <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 判断权限</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">userNo</span> <span class="operator">=</span> UserContextHolder.getCurrentUserNo();</span><br><span class="line">        <span class="keyword">if</span> (memberList.stream().noneMatch(member -&gt; member.getUserNo().equals(userNo))) &#123;</span><br><span class="line">            <span class="comment">// 没有权限</span></span><br><span class="line">            <span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用dubbo查询用户服务的用户信息</span></span><br><span class="line">        List&lt;String&gt; userNoList = memberList.stream()</span><br><span class="line">                .map(LedgerMemberPO::getUserNo)</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        List&lt;UserInfoBO&gt; userBOList = userInfoService.batchQueryUserInfo(userNoList);</span><br><span class="line">        Map&lt;String, UserInfoBO&gt; userBOMap = userBOList.stream()</span><br><span class="line">                .collect(Collectors.toMap(UserInfoBO::getUserNo, Function.identity()));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 转换返回</span></span><br><span class="line">        <span class="keyword">return</span> memberList.stream()</span><br><span class="line">                .map(member -&gt; convertToMemberListRes(member, userBOMap.get(member.getUserNo())))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerMemberListRes <span class="title function_">convertToMemberListRes</span><span class="params">(LedgerMemberPO memberPO, UserInfoBO userBO)</span> &#123;</span><br><span class="line">        <span class="type">LedgerMemberListRes</span> <span class="variable">res</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LedgerMemberListRes</span>();</span><br><span class="line">        res.setUserNo(memberPO.getUserNo());</span><br><span class="line">        res.setRole(LedgerMemberRoleVO.of(memberPO.getRole()).getLabel());</span><br><span class="line">        res.setJoinTime(LocalDateTimeUtil.format(memberPO.getJoinTime()));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (userBO != <span class="literal">null</span>) &#123;</span><br><span class="line">            res.setUsername(userBO.getUserName());</span><br><span class="line">            res.setAvatar(userBO.getUserAvatar());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="领域层（Domain-Layer）"><a href="#领域层（Domain-Layer）" class="headerlink" title="领域层（Domain Layer）"></a>领域层（Domain Layer）</h4><p><strong>LedgerAgg - 账本聚合根</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LedgerAgg</span> <span class="keyword">extends</span> <span class="title class_">AbstractAgg</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String ledgerNo;</span><br><span class="line">    <span class="keyword">private</span> String ledgerName;</span><br><span class="line">    <span class="keyword">private</span> String ownerNo;</span><br><span class="line">    <span class="keyword">private</span> LedgerStatusVO ledgerStatus;</span><br><span class="line">    <span class="keyword">private</span> String ledgerDesc;</span><br><span class="line">    <span class="keyword">private</span> String ledgerImage;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createTime;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime updateTime;</span><br><span class="line">    <span class="keyword">private</span> Boolean isDeleted;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最新的一个预算信息</span></span><br><span class="line">    <span class="keyword">private</span> LedgerBudgetVO lastLedgerBudget;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最新的一个汇总信息</span></span><br><span class="line">    <span class="keyword">private</span> LedgerSummaryVO lastLedgerSummary;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 账本成员列表</span></span><br><span class="line">    <span class="keyword">private</span> Set&lt;LedgerMemberEntity&gt; memberSet;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 插入成员列表</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addMember</span><span class="params">(LedgerMemberEntity member)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (memberSet == <span class="literal">null</span>) &#123;</span><br><span class="line">            memberSet = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">        memberSet.add(member);</span><br><span class="line">        <span class="comment">// 创建用户加入账本事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">UserJoinedLedgerEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (memberSet != <span class="literal">null</span>) &#123;</span><br><span class="line">            memberSet.forEach(LedgerMemberEntity::delete);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (lastLedgerBudget != <span class="literal">null</span>) &#123;</span><br><span class="line">            lastLedgerBudget.delete();</span><br><span class="line">        &#125;</span><br><span class="line">        isDeleted = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">// 删除账本事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">LedgerDeletedEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deleteTransaction</span><span class="params">(Integer amount)</span> &#123;</span><br><span class="line">        <span class="comment">// 增加预算</span></span><br><span class="line">        lastLedgerBudget.increase(amount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transaction</span><span class="params">(Integer amount, TransactionTypeVO transactionType)</span> &#123;</span><br><span class="line">        <span class="comment">//判断收入 or 支出</span></span><br><span class="line">        <span class="keyword">if</span> (transactionType.isExpenditure()) &#123;</span><br><span class="line">            <span class="comment">// 支出，减少预算</span></span><br><span class="line">            lastLedgerBudget.reduce(amount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(String ledgerName, String ledgerDesc, String ledgerImage)</span> &#123;</span><br><span class="line">        updateSelf(ledgerName, ledgerDesc, ledgerImage);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建账本更新事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">LedgerUpdatedEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateBudget</span><span class="params">(LedgerBudgetVO ledgerBudget)</span> &#123;</span><br><span class="line">        lastLedgerBudget = ledgerBudget;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">updateSelf</span><span class="params">(String ledgerName, String ledgerDesc, String ledgerImage)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.ledgerName = ledgerName;</span><br><span class="line">        <span class="built_in">this</span>.ledgerDesc = ledgerDesc;</span><br><span class="line">        <span class="built_in">this</span>.ledgerImage = ledgerImage;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">create</span><span class="params">()</span> &#123;</span><br><span class="line">        ledgerStatus = LedgerStatusVO.NORMAL;</span><br><span class="line">        createTime = LocalDateTime.now();</span><br><span class="line">        updateTime = createTime;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注册账本已创建事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">LedgerCreatedEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Boolean <span class="title function_">checkUserPermission</span><span class="params">(String userNo)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ownerNo.equals(userNo);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Boolean <span class="title function_">hasViewPermission</span><span class="params">(String userNo)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> memberSet.stream().anyMatch(member -&gt; member.getUserNo().equals(userNo));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>TransactionStatementAgg - 记录聚合根</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TransactionStatementAgg</span> <span class="keyword">extends</span> <span class="title class_">AbstractAgg</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String transactionStatementNo;</span><br><span class="line">    <span class="keyword">private</span> String ledgerNo;</span><br><span class="line">    <span class="keyword">private</span> Integer amount;</span><br><span class="line">    <span class="keyword">private</span> TransactionTypeVO transactionType;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime transactionTime;</span><br><span class="line">    <span class="keyword">private</span> String transactionDesc;</span><br><span class="line">    <span class="keyword">private</span> Integer transactionStatus;</span><br><span class="line">    <span class="comment">// 分类信息快照</span></span><br><span class="line">    <span class="keyword">private</span> CategorySnapshotVO categorySnapshot;</span><br><span class="line">    <span class="comment">// 分类信息引用</span></span><br><span class="line">    <span class="keyword">private</span> CategoryVO category;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createTime;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime updateTime;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Boolean deleted;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">create</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">        <span class="built_in">this</span>.setCreateTime(now);</span><br><span class="line">        <span class="built_in">this</span>.setUpdateTime(now);</span><br><span class="line">        <span class="built_in">this</span>.setTransactionTime(now);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注册交易流水已创建事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">TransactionStatementCreatedEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">()</span> &#123;</span><br><span class="line">        deleted = <span class="literal">true</span>;</span><br><span class="line">        updateTime = LocalDateTime.now();</span><br><span class="line">        <span class="comment">// 注册交易流水已删除事件</span></span><br><span class="line">        registerDomainEvent(<span class="keyword">new</span> <span class="title class_">TransactionStatementCreatedEvent</span>(<span class="built_in">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Money - 金额值对象</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Money</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Money</span> <span class="variable">ZERO</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Money</span>(BigDecimal.ZERO);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BigDecimal amount;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Money</span><span class="params">(BigDecimal amount)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (amount == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;金额不能为空&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.amount = amount.setScale(<span class="number">2</span>, RoundingMode.HALF_UP);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Money <span class="title function_">of</span><span class="params">(BigDecimal amount)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Money</span>(amount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Money <span class="title function_">of</span><span class="params">(<span class="type">double</span> amount)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Money</span>(BigDecimal.valueOf(amount));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Money <span class="title function_">add</span><span class="params">(Money other)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Money</span>(<span class="built_in">this</span>.amount.add(other.amount));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Money <span class="title function_">subtract</span><span class="params">(Money other)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Money</span>(<span class="built_in">this</span>.amount.subtract(other.amount));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">lessThanOrEqual</span><span class="params">(Money other)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.amount.compareTo(other.amount) &lt;= <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span> == obj) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (obj == <span class="literal">null</span> || getClass() != obj.getClass()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="type">Money</span> <span class="variable">money</span> <span class="operator">=</span> (Money) obj;</span><br><span class="line">        <span class="keyword">return</span> amount.equals(money.amount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> amount.hashCode();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="基础设施层（Infrastructure-Layer）"><a href="#基础设施层（Infrastructure-Layer）" class="headerlink" title="基础设施层（Infrastructure Layer）"></a>基础设施层（Infrastructure Layer）</h4><p><strong>AccountBookRepositoryImpl - 账本仓储实现</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LedgerRepositoryImpl</span> <span class="keyword">implements</span> <span class="title class_">LedgerRepository</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerMapper ledgerMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerBudgetMapper ledgerBudgetMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerMemberMapper ledgerMemberMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> TransactionStatementMapper transactionStatementMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> LedgerFactory ledgerFactory;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Transactional(rollbackFor = Exception.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(LedgerAgg ledgerAgg)</span> &#123;</span><br><span class="line">        <span class="comment">// 插入账本信息</span></span><br><span class="line">        <span class="type">LedgerPO</span> <span class="variable">ledgerPO</span> <span class="operator">=</span> <span class="built_in">this</span>.toPO(ledgerAgg);</span><br><span class="line">        ledgerMapper.insert(ledgerPO);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 插入账本预算信息</span></span><br><span class="line">        <span class="type">LedgerBudgetPO</span> <span class="variable">ledgerBudgetPO</span> <span class="operator">=</span> toLedgerBudgetPO(ledgerAgg.getLastLedgerBudget());</span><br><span class="line">        ledgerBudgetMapper.insert(ledgerBudgetPO);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 插入成员信息</span></span><br><span class="line">        saveMemberSet(ledgerAgg.getMemberSet());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">insertMember</span><span class="params">(Set&lt;LedgerMemberEntity&gt; memberSet)</span> &#123;</span><br><span class="line">        <span class="type">LedgerMemberEntity</span> <span class="variable">memberEntity</span> <span class="operator">=</span> memberSet.stream().findFirst().orElse(<span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">if</span> (memberEntity == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ledgerMemberMapper.insert(toMemberPO(memberEntity));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerPO <span class="title function_">toPO</span><span class="params">(LedgerAgg userAgg)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> LedgerPO.builder()</span><br><span class="line">                .id(userAgg.getId())</span><br><span class="line">                .ledgerName(userAgg.getLedgerName())</span><br><span class="line">                .ledgerNo(userAgg.getLedgerNo())</span><br><span class="line">                .ledgerStatus(userAgg.getLedgerStatus().getCode())</span><br><span class="line">                .ownerNo(userAgg.getOwnerNo())</span><br><span class="line">                .ledgerDesc(userAgg.getLedgerDesc())</span><br><span class="line">                .ledgerImage(userAgg.getLedgerImage())</span><br><span class="line">                .isDeleted(userAgg.getIsDeleted())</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerBudgetPO <span class="title function_">toLedgerBudgetPO</span><span class="params">(LedgerBudgetVO ledgerBudgetVO)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> LedgerBudgetPO.builder()</span><br><span class="line">                .id(ledgerBudgetVO.getId())</span><br><span class="line">                .ledgerNo(ledgerBudgetVO.getLedgerNo())</span><br><span class="line">                .budgetAmount(ledgerBudgetVO.getBudgetAmount())</span><br><span class="line">                .usedAmount(ledgerBudgetVO.getUsedAmount())</span><br><span class="line">                .remainedAmount(ledgerBudgetVO.getRemainedAmount())</span><br><span class="line">                .budgetDate(ledgerBudgetVO.getBudgetDate())</span><br><span class="line">                .isDeleted(ledgerBudgetVO.getIsDeleted())</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerMemberPO <span class="title function_">toMemberPO</span><span class="params">(LedgerMemberEntity memberEntity)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> LedgerMemberPO.builder()</span><br><span class="line">                .id(memberEntity.getId())</span><br><span class="line">                .ledgerNo(memberEntity.getLedgerNo())</span><br><span class="line">                .userNo(memberEntity.getUserNo())</span><br><span class="line">                .role(memberEntity.getRole().getCode())</span><br><span class="line">                .joinTime(memberEntity.getJoinTime())</span><br><span class="line">                .status(memberEntity.getStatus().getCode())</span><br><span class="line">                .isDeleted(memberEntity.getIsDeleted())</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> LedgerAgg <span class="title function_">findByNameInUser</span><span class="params">(String name, String userNo)</span> &#123;</span><br><span class="line">        <span class="comment">// 查询账本基本信息</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerPO&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.eq(LedgerPO::getLedgerName, name)</span><br><span class="line">                .eq(LedgerPO::getOwnerNo, userNo);</span><br><span class="line">        <span class="type">LedgerPO</span> <span class="variable">ledgerPO</span> <span class="operator">=</span> ledgerMapper.selectOne(wrapper);</span><br><span class="line">        <span class="keyword">if</span> (ledgerPO == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> toEntity(ledgerPO, <span class="literal">null</span>, <span class="literal">null</span>, <span class="number">0L</span>, <span class="number">0L</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LedgerAgg <span class="title function_">toEntity</span><span class="params">(LedgerPO ledgerPO, LedgerBudgetPO ledgerBudgetPO, List&lt;LedgerMemberPO&gt; memberList, Long income, Long expense)</span> &#123;</span><br><span class="line">        <span class="type">LedgerAgg</span> <span class="variable">ledgerAgg</span> <span class="operator">=</span> LedgerAgg.builder()</span><br><span class="line">                .id(ledgerPO.getId())</span><br><span class="line">                .ledgerName(ledgerPO.getLedgerName())</span><br><span class="line">                .ledgerNo(ledgerPO.getLedgerNo())</span><br><span class="line">                .ledgerStatus(LedgerStatusVO.of(ledgerPO.getLedgerStatus()))</span><br><span class="line">                .ownerNo(ledgerPO.getOwnerNo())</span><br><span class="line">                .ledgerDesc(ledgerPO.getLedgerDesc())</span><br><span class="line">                .ledgerImage(ledgerPO.getLedgerImage())</span><br><span class="line">                .createTime(ledgerPO.getCreateTime())</span><br><span class="line">                .updateTime(ledgerPO.getUpdateTime())</span><br><span class="line">                .build();</span><br><span class="line">        <span class="comment">// 预算信息</span></span><br><span class="line">        <span class="keyword">if</span> (ledgerBudgetPO != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="type">LedgerBudgetVO</span> <span class="variable">ledgerBudgetVO</span> <span class="operator">=</span> LedgerBudgetVO.builder()</span><br><span class="line">                    .ledgerNo(ledgerBudgetPO.getLedgerNo())</span><br><span class="line">                    .budgetAmount(ledgerBudgetPO.getBudgetAmount())</span><br><span class="line">                    .usedAmount(ledgerBudgetPO.getUsedAmount())</span><br><span class="line">                    .remainedAmount(ledgerBudgetPO.getRemainedAmount())</span><br><span class="line">                    .budgetDate(ledgerBudgetPO.getBudgetDate())</span><br><span class="line">                    .createTime(ledgerBudgetPO.getCreateTime())</span><br><span class="line">                    .updateTime(ledgerBudgetPO.getUpdateTime())</span><br><span class="line">                    .build();</span><br><span class="line">            ledgerAgg.setLastLedgerBudget(ledgerBudgetVO);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!CollectionUtils.isEmpty(memberList)) &#123;</span><br><span class="line">            Set&lt;LedgerMemberEntity&gt; memberSet = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">            memberList.forEach(member -&gt; &#123;</span><br><span class="line">                <span class="type">LedgerMemberEntity</span> <span class="variable">memberEntity</span> <span class="operator">=</span> LedgerMemberEntity.builder()</span><br><span class="line">                        .id(member.getId())</span><br><span class="line">                        .ledgerNo(member.getLedgerNo())</span><br><span class="line">                        .userNo(member.getUserNo())</span><br><span class="line">                        .joinTime(member.getJoinTime())</span><br><span class="line">                        .role(LedgerMemberRoleVO.of(member.getRole()))</span><br><span class="line">                        .status(LedgerMemberStatusVO.of(member.getStatus()))</span><br><span class="line">                        .createTime(member.getCreateTime())</span><br><span class="line">                        .updateTime(member.getUpdateTime())</span><br><span class="line">                        .build();</span><br><span class="line">                memberSet.add(memberEntity);</span><br><span class="line">            &#125;);</span><br><span class="line">            ledgerAgg.setMemberSet(memberSet);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">LedgerSummaryVO</span> <span class="variable">ledgerSummaryVO</span> <span class="operator">=</span> ledgerFactory.createLedgerSummary(income, expense);</span><br><span class="line">        ledgerAgg.setLastLedgerSummary(ledgerSummaryVO);</span><br><span class="line">        <span class="keyword">return</span> ledgerAgg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> LedgerAgg <span class="title function_">load</span><span class="params">(String ledgerNo)</span> &#123;</span><br><span class="line">        <span class="comment">// 查询账本基本信息</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerPO&gt;  wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.eq(LedgerPO::getLedgerNo, ledgerNo)</span><br><span class="line">                .last(<span class="string">&quot;limit 1&quot;</span>);</span><br><span class="line">        <span class="type">LedgerPO</span> <span class="variable">ledgerPO</span> <span class="operator">=</span> ledgerMapper.selectOne(wrapper);</span><br><span class="line">        <span class="keyword">if</span> (ledgerPO == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 查询账本最新的预算信息</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerBudgetPO&gt; wrapperBudget = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapperBudget.eq(LedgerBudgetPO::getLedgerNo, ledgerPO.getLedgerNo())</span><br><span class="line">                .orderByDesc(LedgerBudgetPO::getId)</span><br><span class="line">                .last(<span class="string">&quot;limit 1&quot;</span>);</span><br><span class="line">        <span class="type">LedgerBudgetPO</span> <span class="variable">ledgerBudgetPO</span> <span class="operator">=</span> ledgerBudgetMapper.selectOne(wrapperBudget);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 加载成员信息</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerMemberPO&gt; wrapperMember = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapperMember.eq(LedgerMemberPO::getLedgerNo, ledgerPO.getLedgerNo())</span><br><span class="line">                .orderByDesc(LedgerMemberPO::getId)</span><br><span class="line">                .last(<span class="string">&quot;limit 10&quot;</span>);</span><br><span class="line">        List&lt;LedgerMemberPO&gt; memberList = ledgerMemberMapper.selectList(wrapperMember);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 加载汇总信息</span></span><br><span class="line">        <span class="type">Long</span> <span class="variable">incomeAmount</span> <span class="operator">=</span> transactionStatementMapper.getSummaryAmount(ledgerPO.getLedgerNo(), TransactionTypeVO.INCOME.getCode());</span><br><span class="line">        <span class="type">Long</span> <span class="variable">expenditureAmount</span> <span class="operator">=</span> transactionStatementMapper.getSummaryAmount(ledgerPO.getLedgerNo(), TransactionTypeVO.EXPENDITURE.getCode());</span><br><span class="line">        <span class="keyword">return</span> toEntity(ledgerPO, ledgerBudgetPO, memberList, incomeAmount, expenditureAmount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(LedgerAgg ledgerAgg)</span> &#123;</span><br><span class="line">        <span class="comment">// 插入账本信息</span></span><br><span class="line">        <span class="type">LedgerPO</span> <span class="variable">ledgerPO</span> <span class="operator">=</span> <span class="built_in">this</span>.toPO(ledgerAgg);</span><br><span class="line">        ledgerMapper.updateById(ledgerPO);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 插入账本预算信息</span></span><br><span class="line">        <span class="type">LedgerBudgetPO</span> <span class="variable">ledgerBudgetPO</span> <span class="operator">=</span> toLedgerBudgetPO(ledgerAgg.getLastLedgerBudget());</span><br><span class="line">        <span class="comment">// 查询预算是否存在，决定插入还是更新</span></span><br><span class="line">        LambdaQueryWrapper&lt;LedgerBudgetPO&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.eq(LedgerBudgetPO::getLedgerNo, ledgerBudgetPO.getLedgerNo())</span><br><span class="line">                .eq(LedgerBudgetPO::getBudgetDate, LocalDateTimeUtil.format(ledgerBudgetPO.getBudgetDate(), LocalDateTimeUtil.DATE_FORMATTER_MONTH_ONE));</span><br><span class="line">        <span class="type">LedgerBudgetPO</span> <span class="variable">budget</span> <span class="operator">=</span> ledgerBudgetMapper.selectOne(wrapper);</span><br><span class="line">        <span class="keyword">if</span> (budget == <span class="literal">null</span>) &#123;</span><br><span class="line">            ledgerBudgetMapper.insert(ledgerBudgetPO);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            ledgerBudgetPO.setId(budget.getId());</span><br><span class="line">            ledgerBudgetPO.setUsedAmount(budget.getUsedAmount());</span><br><span class="line">            ledgerBudgetPO.setRemainedAmount(ledgerBudgetPO.getBudgetAmount() - ledgerBudgetPO.getUsedAmount());</span><br><span class="line">            ledgerBudgetMapper.updateById(ledgerBudgetPO);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新成员信息</span></span><br><span class="line">        saveMemberSet(ledgerAgg.getMemberSet());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">saveMemberSet</span><span class="params">(Set&lt;LedgerMemberEntity&gt; memberSet)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (CollectionUtils.isEmpty(memberSet)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        memberSet.forEach(member -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (member.getId() == <span class="literal">null</span>) &#123;</span><br><span class="line">                ledgerMemberMapper.insert(toMemberPO(member));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ledgerMemberMapper.updateById(toMemberPO(member));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Boolean <span class="title function_">exists</span><span class="params">(String ledgerNo)</span> &#123;</span><br><span class="line">        LambdaQueryWrapper&lt;LedgerPO&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">        wrapper.eq(LedgerPO::getLedgerNo, ledgerNo);</span><br><span class="line">        <span class="keyword">return</span> ledgerMapper.exists(wrapper);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文重点在如何进行设计系统，部分代码如上所示，完整代码可私信领取。</p>
+<p>我们从0-1，完整实现了一个<code>可扩展</code>的记账微服务设计，包括：</p>
+<ol>
+<li><strong>领域分析</strong>：识别出账本、记录、分类三个核心领域</li>
+<li><strong>架构设计</strong>：基于DDD的分层架构，明确各层职责</li>
+<li><strong>详细设计</strong>：用例图和UML类图指导开发实现</li>
+<li><strong>代码实现</strong>：完整的四层架构代码示例</li>
+</ol>
+<p><strong>核心设计亮点：</strong></p>
+<ul>
+<li><strong>领域驱动</strong>：以业务为核心，代码结构反映业务概念</li>
+<li><strong>聚合设计</strong>：LedgerAgg作为聚合根，保证数据一致性</li>
+<li><strong>值对象</strong>：Money等值对象封装业务规则</li>
+<li><strong>分层架构</strong>：职责清晰，易于维护和扩展</li>
+<li><strong>仓储模式</strong>：抽象数据访问，解耦领域和基础设施</li>
+</ul>
+<p><strong>架构优势：</strong></p>
+<ul>
+<li>高内聚低耦合，各模块职责明确</li>
+<li>易于单元测试，领域逻辑独立</li>
+<li>支持后续功能扩展，如报表分析等</li>
+<li>符合企业级开发规范</li>
+</ul>
+<p>通过这个设计思路，我们可以继续实现其他微服务模块，构建完整的记账系统。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D.html" class="post-title-link" itemprop="url">MySQL零基础教程崩溃恢复</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-08-13 10:12:47 / 修改时间：19:29:16" itemprop="dateCreated datePublished" datetime="2025-08-13T10:12:47+08:00">2025-08-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程崩溃恢复" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="应用学习"></p>
+<h2 id="零基础MySQL教程之崩溃恢复：从灾难中重生"><a href="#零基础MySQL教程之崩溃恢复：从灾难中重生" class="headerlink" title="零基础MySQL教程之崩溃恢复：从灾难中重生"></a>零基础MySQL教程之崩溃恢复：从灾难中重生</h2><p>今天，我们将一起探索如何在数据库崩溃后恢复数据，帮助那些初级开发工程师和测试人员在面对数据库问题时从容应对。准备好迎接挑战了吗？让我们开始吧！</p>
+<h3 id="MySQL崩溃恢复基础介绍"><a href="#MySQL崩溃恢复基础介绍" class="headerlink" title="MySQL崩溃恢复基础介绍"></a>MySQL崩溃恢复基础介绍</h3><p>在开始实战之前，我们需要了解一些基础知识。MySQL的崩溃恢复主要依赖于以下几个机制：</p>
+<ul>
+<li>事务日志（binlog）：记录所有更改操作，帮助在崩溃后重建数据。</li>
+<li>重做日志（redo log）：确保事务的持久性，即使在崩溃后也能恢复。</li>
+<li>撤销日志（undo log）：用于回滚未完成的事务，保持数据一致性。</li>
+</ul>
+<h3 id="实战案例：手把手恢复崩溃数据"><a href="#实战案例：手把手恢复崩溃数据" class="headerlink" title="实战案例：手把手恢复崩溃数据"></a>实战案例：手把手恢复崩溃数据</h3><ol>
+<li>步骤一：检查崩溃原因</li>
+</ol>
+<p>首先，我们需要了解数据库崩溃的原因。通常，崩溃可能由于硬件故障、软件错误或人为操作失误导致。检查MySQL错误日志文件（通常位于&#x2F;var&#x2F;log&#x2F;mysql目录）可以帮助我们快速找到问题的根源。</p>
+<ol start="2">
+<li>步骤二：备份数据</li>
+</ol>
+<p>在进行任何恢复操作之前，确保数据安全是关键。使用以下命令备份当前数据库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -u root -p --all-databases &gt; all_databases_backup.sql</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>步骤三：恢复数据库</li>
+</ol>
+<ul>
+<li>启动MySQL服务：确保MySQL服务正在运行。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start mysql</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>应用事务日志：使用<code>mysqlbinlog</code>工具应用事务日志以恢复数据。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog /var/lib/mysql/mysql-bin.000001 | mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>检查数据一致性：使用<code>CHECK TABLE</code>命令验证数据完整性。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CHECK</span> <span class="keyword">TABLE</span> my_table;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>步骤四：测试恢复结果</li>
+</ol>
+<p>一旦恢复完成，进行测试以确保所有数据已成功恢复。运行一些查询验证数据的完整性和准确性。</p>
+<h3 id="说明与建议"><a href="#说明与建议" class="headerlink" title="说明与建议"></a>说明与建议</h3><ul>
+<li>定期备份：养成定期备份数据库的习惯，使用工具如mysqldump或MySQL Enterprise Backup。</li>
+<li>监控系统：使用监控工具如Prometheus或Grafana监控数据库健康状态。</li>
+<li>升级硬件：确保数据库运行在稳定的硬件环境中，减少崩溃风险。</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>掌握MySQL崩溃恢复不仅能提高您的数据库管理技能，还能为您的职业发展提供坚实的基础。希望这篇文章能帮助您在面对数据库崩溃时保持冷静，并迅速恢复数据。记住，数据安全是数据库管理的核心，定期备份和监控是确保数据安全的重要手段。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ddd/a.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2046,614 +2623,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html" class="post-title-link" itemprop="url">MySQL零基础教程高阶应用实战</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-07-02 10:12:47" itemprop="dateCreated datePublished" datetime="2025-07-02T10:12:47+08:00">2025-07-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-07-22 15:45:00" itemprop="dateModified" datetime="2025-07-22T15:45:00+08:00">2025-07-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程高阶应用实战" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
-<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="应用学习"></p>
-<h2 id="高阶应用实战"><a href="#高阶应用实战" class="headerlink" title="高阶应用实战"></a>高阶应用实战</h2><p>除了常用的增删改查以外，MySQL还有很多的功能。比如<code>CTE</code>、<code>窗口函数</code>这种。再比如一些特性比如<code>视图</code>，<code>触发器</code>等。</p>
-<p>这次我们就来看一下对于这些如何使用。</p>
-<p>有些功能用好了可以完成很多实际业务需求的。</p>
-<h3 id="CTE-common-table-expressions"><a href="#CTE-common-table-expressions" class="headerlink" title="CTE(common table expressions)"></a>CTE(common table expressions)</h3><p>在MySQL中，<strong>CTE（Common Table Expressions，公共表表达式）</strong>是一种临时的结果集，可以在查询中被引用。CTE通常用于简化复杂的查询，使查询更易于理解和维护。CTE在MySQL 8.0及更高版本中得到了支持。</p>
-<h4 id="CTE的主要特点"><a href="#CTE的主要特点" class="headerlink" title="CTE的主要特点"></a>CTE的主要特点</h4><p>临时结果集：</p>
-<ul>
-<li>CTE是一个临时的结果集，可以在查询中被引用。它类似于子查询，但更易于阅读和维护。<br>简化复杂查询：</li>
-<li>CTE可以将复杂的查询分解为多个简单的部分，使查询更易于理解和维护。<br>可重用性：</li>
-<li>CTE可以被多次引用，减少了代码重复，提高了开发效率。<br>递归查询：</li>
-<li>CTE支持递归查询，可以用于处理层次结构或递归数据。</li>
-</ul>
-<p>使用<code>CTE</code>实现获取每个课程中分数最高的学生信息。</p>
-<p>通过<code>WITH</code>语句来声明一个临时表。表名<code>cteSource</code>，表的内容就是最的sid，通过<code>SELECT MAX(sid) FROM enrolled</code>查询出来的结果。字段名叫<code>maxId</code>。</p>
-<p>然后在查询语句里面就可以连接<code>cteSource</code>表，然后通过sid &#x3D; cteSource.maxId 来获取到sid最大的用户信息。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cteSource (maxId) <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">MAX</span>(sid) <span class="keyword">FROM</span> enrolled</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> name <span class="keyword">FROM</span> student, cteSource</span><br><span class="line"><span class="keyword">WHERE</span> student.sid <span class="operator">=</span> cteSource.maxId</span><br></pre></td></tr></table></figure>
-
-<p>还有一些其他的用法，比如:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> cte1 (col1) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">1</span></span><br><span class="line">),</span><br><span class="line">cte2 (col2) <span class="keyword">AS</span> (</span><br><span class="line"><span class="keyword">SELECT</span> <span class="number">2</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> cte1, cte2;</span><br></pre></td></tr></table></figure>
-
-<h4 id="CTE（公共表表达式）使用场景"><a href="#CTE（公共表表达式）使用场景" class="headerlink" title="CTE（公共表表达式）使用场景"></a>CTE（公共表表达式）使用场景</h4><ol>
-<li>递归查询（如树形结构）</li>
-</ol>
-<p>CTE最常见的场景之一是递归查询，比如组织架构、分类目录、菜单结构等树状数据。例如，查询某个员工的所有下属员工。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> <span class="keyword">RECURSIVE</span> subordinates <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> id, name, manager_id</span><br><span class="line">  <span class="keyword">FROM</span> employees</span><br><span class="line">  <span class="keyword">WHERE</span> manager_id <span class="keyword">IS</span> <span class="keyword">NULL</span> <span class="comment">-- 顶层经理</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">UNION</span> <span class="keyword">ALL</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">SELECT</span> e.id, e.name, e.manager_id</span><br><span class="line">  <span class="keyword">FROM</span> employees e</span><br><span class="line">  <span class="keyword">INNER</span> <span class="keyword">JOIN</span> subordinates s <span class="keyword">ON</span> e.manager_id <span class="operator">=</span> s.id</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> subordinates;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>简化复杂查询逻辑，提高可读性</li>
-</ol>
-<p>当查询逻辑复杂时，可以将中间结果用CTE分段处理，让SQL更易读。例如，先筛选出某类用户，再基于这些用户做进一步统计。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> active_users <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> user_id</span><br><span class="line">  <span class="keyword">FROM</span> user_logins</span><br><span class="line">  <span class="keyword">WHERE</span> login_date <span class="operator">&gt;</span> <span class="built_in">CURRENT_DATE</span> <span class="operator">-</span> <span class="type">INTERVAL</span> <span class="string">&#x27;30 days&#x27;</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> user_id <span class="keyword">IN</span> (<span class="keyword">SELECT</span> user_id <span class="keyword">FROM</span> active_users);</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>多次引用中间结果，避免重复计算</li>
-</ol>
-<p>如果某个子查询需要被多次引用，CTE可以定义一次，后续多次调用，避免重复书写和计算，提高效率。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> sales_summary <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> product_id, <span class="built_in">SUM</span>(amount) <span class="keyword">AS</span> total_sales</span><br><span class="line">  <span class="keyword">FROM</span> sales</span><br><span class="line">  <span class="keyword">GROUP</span> <span class="keyword">BY</span> product_id</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> sales_summary <span class="keyword">WHERE</span> total_sales <span class="operator">&gt;</span> <span class="number">1000</span>;</span><br><span class="line"><span class="comment">-- 也可以在后续多个查询中引用 sales_summary</span></span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>分步处理数据，逐步细化结果</li>
-</ol>
-<p>例如，先计算每个部门的总销售额，再筛选出销售额最高的部门。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> dept_sales <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> department_id, <span class="built_in">SUM</span>(sales) <span class="keyword">AS</span> total_sales</span><br><span class="line">  <span class="keyword">FROM</span> employees</span><br><span class="line">  <span class="keyword">GROUP</span> <span class="keyword">BY</span> department_id</span><br><span class="line">),</span><br><span class="line">top_dept <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> department_id</span><br><span class="line">  <span class="keyword">FROM</span> dept_sales</span><br><span class="line">  <span class="keyword">ORDER</span> <span class="keyword">BY</span> total_sales <span class="keyword">DESC</span></span><br><span class="line">  LIMIT <span class="number">1</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id <span class="keyword">IN</span> (<span class="keyword">SELECT</span> department_id <span class="keyword">FROM</span> top_dept);</span><br></pre></td></tr></table></figure>
-
-<ol start="5">
-<li>数据去重和排名</li>
-</ol>
-<p>CTE可以配合窗口函数实现数据去重、分组排名等需求。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> ranked_orders <span class="keyword">AS</span> (</span><br><span class="line">  <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">         <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> customer_id <span class="keyword">ORDER</span> <span class="keyword">BY</span> order_date <span class="keyword">DESC</span>) <span class="keyword">AS</span> rn</span><br><span class="line">  <span class="keyword">FROM</span> orders</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> ranked_orders <span class="keyword">WHERE</span> rn <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h4><p>比如我之前的业务。有一个公司表，一个公司合同表，一个公司合同申请表。在后台的公司合同列表里面，要展示最新的申请记录和申请状态。</p>
-<p>如果没有CTE的话，我们就需要使用<code>子查询</code>来实现。这对于一个列表来说，性能是很低的。</p>
-<p>表结构假设:</p>
-<ul>
-<li>company：公司表，字段如 company_id, company_name 等。</li>
-<li>company_contract：公司合同表，字段如 contract_id, company_id, contract_no 等。</li>
-<li>company_contract_application：公司合同申请表，字段如 application_id, contract_id, apply_time, status 等。</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    c.company_id,</span><br><span class="line">    c.company_name,</span><br><span class="line">    cc.contract_id,</span><br><span class="line">    cc.contract_no,</span><br><span class="line">    cca.application_id,</span><br><span class="line">    cca.apply_time,</span><br><span class="line">    cca.status</span><br><span class="line"><span class="keyword">FROM</span> company c</span><br><span class="line"><span class="keyword">JOIN</span> company_contract cc <span class="keyword">ON</span> c.company_id <span class="operator">=</span> cc.company_id</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> company_contract_application cca</span><br><span class="line">    <span class="keyword">ON</span> cc.contract_id <span class="operator">=</span> cca.contract_id</span><br><span class="line">    <span class="keyword">AND</span> cca.apply_time <span class="operator">=</span> (</span><br><span class="line">        <span class="keyword">SELECT</span> <span class="built_in">MAX</span>(apply_time)</span><br><span class="line">        <span class="keyword">FROM</span> company_contract_application</span><br><span class="line">        <span class="keyword">WHERE</span> contract_id <span class="operator">=</span> cc.contract_id</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
-
-<p>而有了CTE以后，我们可以通过CTE来实现，这样可以提升性能。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> latest_applications <span class="keyword">AS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span></span><br><span class="line">        application_id,</span><br><span class="line">        contract_id,</span><br><span class="line">        apply_time,</span><br><span class="line">        status,</span><br><span class="line">        <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> contract_id <span class="keyword">ORDER</span> <span class="keyword">BY</span> apply_time <span class="keyword">DESC</span>) <span class="keyword">AS</span> rn</span><br><span class="line">    <span class="keyword">FROM</span> company_contract_application</span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    c.company_id,</span><br><span class="line">    c.company_name,</span><br><span class="line">    cc.contract_id,</span><br><span class="line">    cc.contract_no,</span><br><span class="line">    la.application_id,</span><br><span class="line">    la.apply_time,</span><br><span class="line">    la.status</span><br><span class="line"><span class="keyword">FROM</span> company c</span><br><span class="line"><span class="keyword">JOIN</span> company_contract cc <span class="keyword">ON</span> c.company_id <span class="operator">=</span> cc.company_id</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> latest_applications la <span class="keyword">ON</span> cc.contract_id <span class="operator">=</span> la.contract_id <span class="keyword">AND</span> la.rn <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="窗口函数"><a href="#窗口函数" class="headerlink" title="窗口函数"></a>窗口函数</h3><p>窗口函数（Window Function）是SQL标准中的一种功能强大的工具，它允许在查询中对一组行进行计算，而不会像聚合函数那样消除行的个数。窗口函数在MySQL 8.0及更高版本中得到了支持，它们可以用于计算移动平均值、累积和、排名等复杂的分析任务。</p>
-<h4 id="窗口函数的主要特点"><a href="#窗口函数的主要特点" class="headerlink" title="窗口函数的主要特点"></a>窗口函数的主要特点</h4><p>行级计算：</p>
-<ul>
-<li>窗口函数在每一行上执行计算，同时可以访问同一组中的其他行。</li>
-<li>这与聚合函数不同，聚合函数会将多行数据合并为一行。<br>分区和排序：</li>
-<li>窗口函数可以使用PARTITION BY子句将数据分成多个分区，每个分区独立计算。</li>
-<li>可以使用ORDER BY子句在每个分区内对数据进行排序。<br>灵活的范围定义：</li>
-<li>窗口函数可以定义计算的范围，如当前行的前几行或后几行。</li>
-<li>使用ROWS或RANGE子句可以指定计算的范围。<br>多种功能：</li>
-<li>窗口函数提供了多种功能，如ROW_NUMBER()、RANK()、DENSE_RANK()、NTILE()、SUM()、AVG()、LEAD()、LAG()等。</li>
-</ul>
-<p><code>ROW_NUMBER</code>和<code>RANK</code>都需要和<code>OVER</code>一起使用。</p>
-<ul>
-<li>ROW_NUMBER(): 显示当前行号</li>
-<li>RANK() : 显示排序后的排名，如果没有排序，都是1</li>
-<li>OVER()<ul>
-<li>PARTITION BY 进行分组</li>
-<li>GROUP BY 进行分组</li>
-<li>ORDER BY 排序</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/15445001.png" alt="001"></p>
-<p><img src="https://thepatterraining.github.io/images/15445002.png" alt="002"></p>
-<p><img src="https://thepatterraining.github.io/images/15445003.png" alt="003"></p>
-<h4 id="实战：获取每个课程中分数最高的学生信息"><a href="#实战：获取每个课程中分数最高的学生信息" class="headerlink" title="实战：获取每个课程中分数最高的学生信息"></a>实战：获取每个课程中分数最高的学生信息</h4><p>下面的SQL，在postgresql中执行成功，mysql8执行报错。</p>
-<p>首先查询所有课程信息，并按照课程分组，按照分数排序。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line"><span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line"><span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://thepatterraining.github.io/images/15445004.png" alt="004"></p>
-<p>接着搜索上表中分数为1，也就是分数最高的学生。也就是每个课分数最高的学生信息。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">    <span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line">    <span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled) <span class="keyword">AS</span> ranking</span><br><span class="line"><span class="keyword">WHERE</span> ranking.rank <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://thepatterraining.github.io/images/15445005.png" alt="005"></p>
-<h3 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h3><p>在MySQL中，<strong>视图（View）</strong>是一种虚拟表，其内容由SQL查询定义。视图并不存储实际的数据，而是根据定义的查询动态生成数据。视图可以简化复杂的SQL操作，提供数据的逻辑抽象，并且可以限制对某些数据的访问，从而增强数据的安全性。</p>
-<p>MySQL中的视图是<code>虚拟视图</code>，说白了就是一条SQL语句，当查询视图的时候执行SQL语句而已。</p>
-<p>除此之外，还有一个东西叫做<code>物化视图</code>，MySQL并没有实现这个东西，物化视图就是一张真的表，而不是一个SQL语句，因此查询效率更好。</p>
-<h4 id="视图的主要特点"><a href="#视图的主要特点" class="headerlink" title="视图的主要特点"></a>视图的主要特点</h4><p>虚拟表：</p>
-<ul>
-<li>视图是一个虚拟表，其内容由SQL查询定义。视图本身并不存储数据，而是根据定义的查询动态生成数据。</li>
-</ul>
-<p>简化复杂查询：</p>
-<ul>
-<li>视图可以简化复杂的SQL操作，将复杂的查询逻辑封装起来，使用户可以像查询普通表一样查询视图。</li>
-</ul>
-<p>数据抽象：</p>
-<ul>
-<li>视图提供数据的逻辑抽象，隐藏了底层表的复杂性，使用户可以更直观地访问数据。</li>
-</ul>
-<p>安全性：</p>
-<ul>
-<li>视图可以限制对某些数据的访问，增强数据的安全性。通过视图，用户只能访问视图定义的特定数据，而不能访问底层表的全部数据。</li>
-</ul>
-<p>更新限制：</p>
-<ul>
-<li>视图可以是可更新的，也可以是不可更新的。可更新视图允许用户通过视图插入、更新或删除数据，但需要满足一定的条件。不可更新视图则不允许用户通过视图修改数据。</li>
-</ul>
-<p>创建一个视图。下面的语句，创建一个视图，视图名称是<code>sales_employees</code>，内容就是后面的Select语句的结果。当原始表<code>employees</code>变化以后，视图的内容也会跟着变化。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> sales_employees <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> name, salary</span><br><span class="line"><span class="keyword">FROM</span> employees</span><br><span class="line"><span class="keyword">WHERE</span> department <span class="operator">=</span> <span class="string">&#x27;Sales&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="实战：交易聚合"><a href="#实战：交易聚合" class="headerlink" title="实战：交易聚合"></a>实战：交易聚合</h4><p>我之前有一个业务，存在两个表，一个是买单表，代表买方要买一个产品出的价格。一个是卖单表，代表卖方要卖一个产品出的价格。</p>
-<p>现在有一个需求是：在C端的一个页面上，要求混合展示买单信息和卖单信息，按照价格从低到高排序</p>
-<p>数据库假设：</p>
-<ul>
-<li>buy: 买单表</li>
-<li>sell: 卖单表</li>
-<li>order: 交易视图</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> <span class="keyword">order</span> <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> buy, sell</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> price <span class="keyword">asc</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h3><p>在MySQL中，<strong>触发器（Trigger）</strong>是一种特殊的存储过程，它在特定的数据库操作（如INSERT、UPDATE、DELETE）发生时自动执行。触发器可以用于实现复杂的业务逻辑，确保数据的完整性和一致性，以及自动维护数据的同步。</p>
-<h4 id="触发器的主要特点"><a href="#触发器的主要特点" class="headerlink" title="触发器的主要特点"></a>触发器的主要特点</h4><p>自动执行：</p>
-<ul>
-<li>触发器在特定的数据库操作发生时自动执行，无需显式调用。这使得触发器可以用于实现自动化的数据处理和维护。</li>
-</ul>
-<p>数据完整性：</p>
-<ul>
-<li>触发器可以用于确保数据的完整性和一致性。例如，可以在插入或更新数据时自动检查数据的有效性，或者在删除数据时自动清理相关数据。</li>
-</ul>
-<p>业务逻辑：</p>
-<ul>
-<li>触发器可以用于实现复杂的业务逻辑。例如，可以在插入或更新数据时自动计算某些字段的值，或者在删除数据时自动更新相关表的数据。</li>
-</ul>
-<p>数据同步：</p>
-<ul>
-<li>触发器可以用于自动维护数据的同步。例如，可以在插入或更新数据时自动更新相关表的数据，或者在删除数据时自动清理相关表的数据。</li>
-</ul>
-<h4 id="触发器的类型"><a href="#触发器的类型" class="headerlink" title="触发器的类型"></a>触发器的类型</h4><ul>
-<li>BEFORE INSERT：<ul>
-<li>在插入数据之前执行触发器逻辑。</li>
-</ul>
-</li>
-<li>AFTER INSERT：<ul>
-<li>在插入数据之后执行触发器逻辑。</li>
-</ul>
-</li>
-<li>BEFORE UPDATE：<ul>
-<li>在更新数据之前执行触发器逻辑。</li>
-</ul>
-</li>
-<li>AFTER UPDATE：<ul>
-<li>在更新数据之后执行触发器逻辑。</li>
-</ul>
-</li>
-<li>BEFORE DELETE：<ul>
-<li>在删除数据之前执行触发器逻辑。</li>
-</ul>
-</li>
-<li>AFTER DELETE：<ul>
-<li>在删除数据之后执行触发器逻辑。</li>
-</ul>
-</li>
-</ul>
-<h4 id="触发器的限制"><a href="#触发器的限制" class="headerlink" title="触发器的限制"></a>触发器的限制</h4><p>性能影响：</p>
-<ul>
-<li>触发器的执行会增加数据库操作的开销，可能会影响性能。因此，应谨慎使用触发器，避免在高频操作的表上定义过多的触发器。<br>复杂性：</li>
-<li>触发器的逻辑可以非常复杂，但过多的复杂逻辑可能导致触发器难以维护和调试。因此，应尽量保持触发器的逻辑简单明了。<br>调试困难：</li>
-<li>触发器的调试相对困难，因为它们在特定的操作发生时自动执行，难以直接观察和调试。因此，建议在开发和测试阶段充分测试触发器的逻辑。</li>
-</ul>
-<p>因此，实际开发中基本不使用触发器。</p>
-<h3 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h3><p>在MySQL中，<strong>存储过程（Stored Procedure）</strong>是一种预编译的SQL语句集合，它存储在数据库中，可以通过调用其名称并传递参数来执行。存储过程可以包含复杂的逻辑和多个SQL语句，用于完成特定的任务。它们类似于其他编程语言中的函数或方法。</p>
-<p>可以把存储过程想成一个函数。只不过是在MySQL中的函数，这个函数可以实现各种功能。可以实现一些复杂的SQL处理，这样可以简化调用。</p>
-<h4 id="存储过程的主要特点"><a href="#存储过程的主要特点" class="headerlink" title="存储过程的主要特点"></a>存储过程的主要特点</h4><p>预编译：</p>
-<ul>
-<li>存储过程在创建时被预编译并存储在数据库中，这使得它们的执行速度比单独的SQL语句更快。<br>代码重用：</li>
-<li>存储过程可以被多次调用，减少了代码重复，提高了开发效率。<br>减少网络流量：</li>
-<li>存储过程在服务器端执行，减少了客户端和服务器之间的网络流量，因为只需要发送存储过程的名称和参数，而不是大量的SQL语句。<br>安全性：</li>
-<li>存储过程可以限制用户对底层数据的直接访问，只允许通过存储过程进行数据操作，从而增强数据的安全性。<br>事务管理：</li>
-<li>存储过程可以包含事务控制语句，如COMMIT和ROLLBACK，确保数据操作的完整性和一致性。</li>
-</ul>
-<h4 id="存储过程的限制"><a href="#存储过程的限制" class="headerlink" title="存储过程的限制"></a>存储过程的限制</h4><p>性能影响：</p>
-<ul>
-<li>存储过程的执行会增加数据库操作的开销，可能会影响性能。因此，应谨慎使用存储过程，避免在高频操作的表上定义过多的存储过程。<br>复杂性：</li>
-<li>存储过程的逻辑可以非常复杂，但过多的复杂逻辑可能导致存储过程难以维护和调试。因此，应尽量保持存储过程的逻辑简单明了。<br>调试困难：</li>
-<li>存储过程的调试相对困难，因为它们在服务器端执行，难以直接观察和调试。因此，建议在开发和测试阶段充分测试存储过程的逻辑。</li>
-</ul>
-<h4 id="实战案例-1"><a href="#实战案例-1" class="headerlink" title="实战案例"></a>实战案例</h4><p>存储过程的实际应用场景有限。</p>
-<p>我们之前有一个场景，是需要批量处理数据，有几十行SQL语句。因此将这些SQL封装到了一个存储过程中，这样只需要执行这个存储过程就可以了。</p>
-<p>这里给出一个简单的实战案例：</p>
-<p>创建一个存储过程get_employee_details，用于根据员工ID获取员工的详细信息：</p>
-<p>DELIMITER用来设置结束符，比如正常的句子结束符是句号。代码结束符是分号；</p>
-<p>IN代表输入参数，也就是这个函数有一个输入参数emp_id，是int类型。<br>还有out代表输出参数，用于返回结果。<br>INOUT代表既可以输入参数也可以是输出参数。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> get_employee_details(<span class="keyword">IN</span> emp_id <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> name, department, salary</span><br><span class="line">    <span class="keyword">FROM</span> employees</span><br><span class="line">    <span class="keyword">WHERE</span> id <span class="operator">=</span> emp_id;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
-
-<p>上面这个存储过程的函数体，就是一段select查询语句。</p>
-<h3 id="存储函数"><a href="#存储函数" class="headerlink" title="存储函数"></a>存储函数</h3><p>在MySQL中，<strong>存储函数（Stored Function）</strong>是一种预编译的SQL语句集合，类似于存储过程，但它返回一个值。存储函数可以被SQL语句直接调用，就像调用普通的函数一样。存储函数通常用于封装复杂的逻辑，并在查询中重用这些逻辑。</p>
-<p>存储函数同样是一个函数，和上面的存储过程差不多。</p>
-<h4 id="存储过程和存储函数的区别"><a href="#存储过程和存储函数的区别" class="headerlink" title="存储过程和存储函数的区别"></a>存储过程和存储函数的区别</h4><table>
-<thead>
-<tr>
-<th>区别类别</th>
-<th>存储过程</th>
-<th>存储函数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>返回值</td>
-<td>1. 可以返回多个值，通过OUT或INOUT参数返回。<br>2. 可执行多个SQL语句，但不直接返回单一值。</td>
-<td>1. 必须返回一个单一的值。<br>2. 可以被SQL语句直接调用，就像普通函数一样。</td>
-</tr>
-<tr>
-<td>调用方式</td>
-<td>1. 通过CALL语句调用。<br>2. 可执行复杂逻辑，包括多个SQL语句和事务控制。</td>
-<td>1. 可直接在SQL语句中调用，如普通函数。<br>2. 通常用于封装复杂逻辑，并在查询中重用。</td>
-</tr>
-</tbody></table>
-<h4 id="存储函数的主要特点"><a href="#存储函数的主要特点" class="headerlink" title="存储函数的主要特点"></a>存储函数的主要特点</h4><table>
-<thead>
-<tr>
-<th>主要特点</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>返回值</td>
-<td>存储函数必须返回一个值，这使得它们可以被SQL语句直接调用。</td>
-</tr>
-<tr>
-<td>代码重用</td>
-<td>存储函数可以被多次调用，减少了代码重复，提高了开发效率。</td>
-</tr>
-<tr>
-<td>减少网络流量</td>
-<td>存储函数在服务器端执行，减少了客户端和服务器之间的网络流量，因为只需要发送函数的名称和参数，而不是大量的SQL语句。</td>
-</tr>
-<tr>
-<td>安全性</td>
-<td>存储函数可以限制用户对底层数据的直接访问，只允许通过函数进行数据操作，从而增强数据的安全性。</td>
-</tr>
-<tr>
-<td>事务管理</td>
-<td>存储函数可以包含事务控制语句，如COMMIT和ROLLBACK，确保数据操作的完整性和一致性。</td>
-</tr>
-</tbody></table>
-<h4 id="实战案例-2"><a href="#实战案例-2" class="headerlink" title="实战案例"></a>实战案例</h4><p>创建一个存储函数get_employee_salary，用于根据员工ID获取员工的薪资：</p>
-<p>可以看到和上面存储过程的区别，声明了一个返回值，类型是DECIMAL,最后通过return返回了，并且声明了一个变量。参数也没有IN、OUT这种了。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> get_employee_salary(emp_id <span class="type">INT</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> emp_salary <span class="type">DECIMAL</span>(<span class="number">10</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">SELECT</span> salary <span class="keyword">INTO</span> emp_salary</span><br><span class="line">    <span class="keyword">FROM</span> employees</span><br><span class="line">    <span class="keyword">WHERE</span> id <span class="operator">=</span> emp_id;</span><br><span class="line">    <span class="keyword">RETURN</span> emp_salary;</span><br><span class="line"><span class="keyword">END</span> <span class="operator">/</span><span class="operator">/</span></span><br><span class="line"></span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本次讲解了MySQL的高级功能和实战应用的一些场景。</p>
-<p>只有知道了场景才能活学活用。这里面最常用的其实还是CTE和窗口函数。</p>
-<p>可以多多练习，希望遇到这些场景的时候，大家能想起来使用这些功能。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html" class="post-title-link" itemprop="url">MySQL零基础教程增删改查实战</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-07-01 10:12:47" itemprop="dateCreated datePublished" datetime="2025-07-01T10:12:47+08:00">2025-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-07-08 17:03:33" itemprop="dateModified" datetime="2025-07-08T17:03:33+08:00">2025-07-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程增删改查实战" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
-<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="应用学习"></p>
-<h2 id="增删改查实战"><a href="#增删改查实战" class="headerlink" title="增删改查实战"></a>增删改查实战</h2><p>MySQL是最常用的关系型数据库之一，掌握基本的增、删、改、查（CRUD）操作是学习MySQL的基础。本篇文章将通过详细示例，帮助零基础的读者快速上手MySQL的增、删、改、查操作。无论是新手还是有一定数据库基础的开发者，都能从中受益。</p>
-<h2 id="1-MySQL环境准备"><a href="#1-MySQL环境准备" class="headerlink" title="1. MySQL环境准备"></a>1. MySQL环境准备</h2><p>在进行任何操作之前，首先需要确保你已经成功安装了MySQL数据库，并能顺利连接到数据库。如果没有安装MySQL，请参考MySQL官方网站或相关教程进行安装。</p>
-<h3 id="连接到MySQL"><a href="#连接到MySQL" class="headerlink" title="连接到MySQL"></a>连接到MySQL</h3><p>在终端中使用以下命令登录MySQL：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<p>输入密码后，成功登录后会进入MySQL命令行界面。</p>
-<h3 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h3><p>在MySQL中，所有的操作都发生在数据库中，因此我们首先需要创建一个数据库：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE mydb;</span><br></pre></td></tr></table></figure>
-
-<p>然后进入到mydb数据库：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USE mydb;</span><br></pre></td></tr></table></figure>
-
-<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><p>在进行增删改查操作之前，先创建一个简单的表。假设我们要管理一个学生信息表，表结构如下：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> students (</span><br><span class="line">    id <span class="type">INT</span> AUTO_INCREMENT <span class="keyword">PRIMARY</span> KEY,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">50</span>),</span><br><span class="line">    age <span class="type">INT</span>,</span><br><span class="line">    grade <span class="type">VARCHAR</span>(<span class="number">10</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>表结构说明：</p>
-<ul>
-<li>id：学生的唯一标识，使用AUTO_INCREMENT自增。</li>
-<li>name：学生的姓名，VARCHAR(50)表示最多存储50个字符。</li>
-<li>age：学生的年龄，使用INT表示整数类型。</li>
-<li>grade：学生的年级，VARCHAR(10)表示最多存储10个字符。</li>
-</ul>
-<h2 id="2-增：插入数据（INSERT）"><a href="#2-增：插入数据（INSERT）" class="headerlink" title="2. 增：插入数据（INSERT）"></a>2. 增：插入数据（INSERT）</h2><p>在MySQL中，使用INSERT INTO语句来插入数据。我们可以插入一条或多条记录。</p>
-<h3 id="插入一条记录"><a href="#插入一条记录" class="headerlink" title="插入一条记录"></a>插入一条记录</h3><p>插入一条记录到students表：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> students (name, age, grade) </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;John Doe&#x27;</span>, <span class="number">20</span>, <span class="string">&#x27;Sophomore&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>INSERT INTO students (name, age, grade)</code>：指定插入的数据列。</li>
-<li><code>VALUES (&#39;John Doe&#39;, 20, &#39;Sophomore&#39;)</code>：插入的数据值，注意顺序要和列名匹配。</li>
-</ul>
-<h3 id="插入多条记录"><a href="#插入多条记录" class="headerlink" title="插入多条记录"></a>插入多条记录</h3><p>我们也可以一次性插入多条记录：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> students (name, age, grade) </span><br><span class="line"><span class="keyword">VALUES</span> </span><br><span class="line">    (<span class="string">&#x27;Alice&#x27;</span>, <span class="number">19</span>, <span class="string">&#x27;Freshman&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;Bob&#x27;</span>, <span class="number">21</span>, <span class="string">&#x27;Junior&#x27;</span>),</span><br><span class="line">    (<span class="string">&#x27;Charlie&#x27;</span>, <span class="number">22</span>, <span class="string">&#x27;Senior&#x27;</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>通过多个VALUES列表插入多条记录，减少了插入的语句数量，提升了效率。</li>
-</ul>
-<h3 id="插入数据并返回自动生成的ID"><a href="#插入数据并返回自动生成的ID" class="headerlink" title="插入数据并返回自动生成的ID"></a>插入数据并返回自动生成的ID</h3><p>如果表中有<code>AUTO_INCREMENT</code>字段（如id），可以使用<code>LAST_INSERT_ID()</code>函数获取插入后生成的ID：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> students (name, age, grade) </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;David&#x27;</span>, <span class="number">23</span>, <span class="string">&#x27;Graduate&#x27;</span>);</span><br><span class="line"><span class="keyword">SELECT</span> LAST_INSERT_ID();</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-查：查询数据（SELECT）"><a href="#3-查：查询数据（SELECT）" class="headerlink" title="3. 查：查询数据（SELECT）"></a>3. 查：查询数据（SELECT）</h2><p>MySQL使用<code>SELECT</code>语句从表中查询数据。可以查询全部列，也可以选择特定列，还可以进行条件过滤、排序等。</p>
-<h3 id="查询所有记录"><a href="#查询所有记录" class="headerlink" title="查询所有记录"></a>查询所有记录</h3><p>查询<code>students</code>表中所有的数据：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>*表示查询所有列的数据。</li>
-</ul>
-<h3 id="查询特定列"><a href="#查询特定列" class="headerlink" title="查询特定列"></a>查询特定列</h3><p>查询<code>name</code>和<code>age</code>列的数据：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, age <span class="keyword">FROM</span> students;</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用WHERE条件筛选数据"><a href="#使用WHERE条件筛选数据" class="headerlink" title="使用WHERE条件筛选数据"></a>使用WHERE条件筛选数据</h3><p>查询年纪大于20的学生：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students <span class="keyword">WHERE</span> age <span class="operator">&gt;</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>WHERE用于添加条件，过滤符合条件的记录。</li>
-</ul>
-<h3 id="排序查询结果"><a href="#排序查询结果" class="headerlink" title="排序查询结果"></a>排序查询结果</h3><p>按年龄升序排列学生：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">ASC</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>ASC</code>表示升序（默认），如果要降序排列，可以使用<code>DESC</code>：</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用LIMIT限制返回结果数量"><a href="#使用LIMIT限制返回结果数量" class="headerlink" title="使用LIMIT限制返回结果数量"></a>使用LIMIT限制返回结果数量</h3><p>如果只想查看前两条记录：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students LIMIT <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="模糊查询（LIKE）"><a href="#模糊查询（LIKE）" class="headerlink" title="模糊查询（LIKE）"></a>模糊查询（LIKE）</h3><p>使用<code>LIKE</code>进行模糊查询，查找名字中包含“a”的学生：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> students <span class="keyword">WHERE</span> name <span class="keyword">LIKE</span> <span class="string">&#x27;%a%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>%是通配符，表示任意字符。</li>
-</ul>
-<h3 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h3><p>MySQL提供了多种聚合函数，如<code>COUNT()</code>、<code>AVG()</code>、<code>SUM()</code>等。</p>
-<p>查询学生人数：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> students;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>查询平均年龄：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">AVG</span>(age) <span class="keyword">FROM</span> students;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="4-改：更新数据（UPDATE）"><a href="#4-改：更新数据（UPDATE）" class="headerlink" title="4. 改：更新数据（UPDATE）"></a>4. 改：更新数据（UPDATE）</h2><p>使用UPDATE语句修改表中已有的数据。可以根据条件更新特定记录，也可以批量更新。</p>
-<h3 id="更新单条记录"><a href="#更新单条记录" class="headerlink" title="更新单条记录"></a>更新单条记录</h3><p>更新<code>id=1</code>的学生姓名为“John Smith”：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> students </span><br><span class="line"><span class="keyword">SET</span> name <span class="operator">=</span> <span class="string">&#x27;John Smith&#x27;</span> </span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>SET用于指定需要更新的列和新的值。</li>
-<li>WHERE用于指定要更新的记录，确保不修改所有记录。</li>
-</ul>
-<h3 id="更新多条记录"><a href="#更新多条记录" class="headerlink" title="更新多条记录"></a>更新多条记录</h3><p>更新所有年龄大于20的学生年级为“Graduate”：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> students </span><br><span class="line"><span class="keyword">SET</span> grade <span class="operator">=</span> <span class="string">&#x27;Graduate&#x27;</span> </span><br><span class="line"><span class="keyword">WHERE</span> age <span class="operator">&gt;</span> <span class="number">20</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="更新多个字段"><a href="#更新多个字段" class="headerlink" title="更新多个字段"></a>更新多个字段</h3><p>同时更新多个字段：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> students </span><br><span class="line"><span class="keyword">SET</span> age <span class="operator">=</span> <span class="number">23</span>, grade <span class="operator">=</span> <span class="string">&#x27;Postgraduate&#x27;</span> </span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="5-删：删除数据（DELETE）"><a href="#5-删：删除数据（DELETE）" class="headerlink" title="5. 删：删除数据（DELETE）"></a>5. 删：删除数据（DELETE）</h2><p>使用<code>DELETE</code>语句删除表中的记录，可以删除特定记录或删除所有记录。</p>
-<h3 id="删除单条记录"><a href="#删除单条记录" class="headerlink" title="删除单条记录"></a>删除单条记录</h3><p>删除<code>id=1</code>的学生：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> students <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>WHERE子句用于指定删除条件，确保只删除满足条件的记录。</li>
-</ul>
-<h3 id="删除多条记录"><a href="#删除多条记录" class="headerlink" title="删除多条记录"></a>删除多条记录</h3><p>删除所有年龄大于20的学生：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> students <span class="keyword">WHERE</span> age <span class="operator">&gt;</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除所有记录"><a href="#删除所有记录" class="headerlink" title="删除所有记录"></a>删除所有记录</h3><p>删除<code>students</code>表中的所有记录（注意：表结构不变）：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> students;</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除表中的记录（TRUNCATE）"><a href="#删除表中的记录（TRUNCATE）" class="headerlink" title="删除表中的记录（TRUNCATE）"></a>删除表中的记录（TRUNCATE）</h3><p><code>TRUNCATE</code>语句与<code>DELETE</code>类似，但其删除的是所有数据并且不记录日志，因此效率更高：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> students;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>TRUNCATE会立即清空表中的所有数据，并且不能恢复。</li>
-</ul>
-<h3 id="删除表（DROP）"><a href="#删除表（DROP）" class="headerlink" title="删除表（DROP）"></a>删除表（DROP）</h3><p>如果需要删除整个表，包括表结构：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> students;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>DROP会删除表以及表中所有的数据，无法恢复，因此要小心使用。</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在MySQL中，增、删、改、查（CRUD）操作是数据库管理的基础。通过上述操作，我们能够对数据库表中的数据进行增删改查，并且可以通过各种条件、排序和聚合功能来灵活查询数据。</p>
-<p>这里，要特别注意<code>更新</code>和<code>删除</code>操作。一定要加条件，不然就会更新全表数据，或者删除全表数据。大家有没有误操作过呢？一起分享下。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2721,7 +2695,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">210</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
