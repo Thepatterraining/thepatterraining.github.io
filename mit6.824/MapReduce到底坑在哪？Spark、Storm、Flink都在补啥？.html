@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式MapReduce系统设计与实现">
+<meta property="og:url" content="https://thepatterraining.github.io/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-09-29T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-09-30T06:15:17.045Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="MapReduce">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/bottom1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分布式MapReduce系统设计与实现 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式MapReduce系统设计与实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-29 10:12:47" itemprop="dateCreated datePublished" datetime="2025-09-29T10:12:47+08:00">2025-09-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-09-30 14:15:17" itemprop="dateModified" datetime="2025-09-30T14:15:17+08:00">2025-09-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MIT6-824/" itemprop="url" rel="index"><span itemprop="name">MIT6.824</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html" class="post-meta-item leancloud_visitors" data-flag-title="分布式MapReduce系统设计与实现" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂"><a href="#为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂" class="headerlink" title="为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂"></a>为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂</h1><p>之前，我们已经从0-1设计并实现过一个基于Golang的<code>MapReduce</code>系统了，当然，我们实现的系统还有一些缺陷，今天，我们就来看一下这些开源的基于MapReduce升级版的系统。他们的设计思想，优化点是哪些。</p>
+<blockquote>
+<p>凌晨3点，数据平台报警：某金融风控模型训练任务卡死，团队一边排查Hadoop集群，一边感叹——“怎么还是老掉牙的MapReduce？”<br>其实，不管是Spark、Storm还是Flink，你会发现它们的底层设计都绕不开MapReduce。但为什么这些新框架还要不断“改造”前辈？到底有哪些局限被突破，又有哪些坑依然存在？这篇文章，我就带你拆解分布式计算框架的技术谱系和演进逻辑。</p>
+</blockquote>
+<h2 id="问题的本质：MapReduce到底解决了什么，又卡在哪儿？"><a href="#问题的本质：MapReduce到底解决了什么，又卡在哪儿？" class="headerlink" title="问题的本质：MapReduce到底解决了什么，又卡在哪儿？"></a>问题的本质：MapReduce到底解决了什么，又卡在哪儿？</h2><p>首先，我们需要明白MapReduce为什么是<code>基石</code>，它凭什么坚定了以后的分布式计算的基础。因为它把分布式计算最难啃的几块骨头——编程抽象、容错机制、数据本地性、自动并行化——都做到了极致：</p>
+<ul>
+<li>编程抽象：只需写好map和reduce两个函数，剩下复杂度全交给系统。</li>
+<li>容错机制：任务级别自动重试，不怕节点挂掉。</li>
+<li>数据本地性：让计算主动靠近数据，减少网络传输。</li>
+<li>自动并行化：开发者不用关心分片、调度等细节。</li>
+</ul>
+<p>但用过的人都知道，这套模式也有硬伤，毕竟是04年发表的论文，到现在已经过去很久了，技术的日新月异，导致当时看来很厉害的技术，现在已经过时了：</p>
+<ul>
+<li>磁盘I&#x2F;O瓶颈：每轮任务都要落盘，中间结果反复读写磁盘，性能拉胯。</li>
+<li>批处理导向：只能做离线大批量处理，对实时&#x2F;流式场景无能为力。</li>
+<li>编程灵活性差：只有两种操作（map&#x2F;reduce），复杂逻辑很难表达。</li>
+<li>迭代效率低下：比如机器学习算法，每次迭代都得重新读写磁盘，非常慢。</li>
+</ul>
+<p>说实话，这些痛点直接催生了后续所有主流分布式计算框架。</p>
+<blockquote>
+<p>有次我们广告CTR模型训练，用MapReduce跑了一晚上还没动静，同事直接开喷：“这TM也太慢了吧！”</p>
+</blockquote>
+<h2 id="技术方案解析"><a href="#技术方案解析" class="headerlink" title="技术方案解析"></a>技术方案解析</h2><h3 id="Apache-Spark——内存计算革命"><a href="#Apache-Spark——内存计算革命" class="headerlink" title="Apache Spark——内存计算革命"></a>Apache Spark——内存计算革命</h3><p><code>Spark</code>就是主要解决了MapReduce中的磁盘IO问题，因为MapReduce每次都是写入和读取磁盘，我们知道，磁盘的速度是远远低于内存的。</p>
+<p><code>Spark</code>的核心创新就是<code>RDD弹性分布式数据集</code>，可以.cache()到内存，再也不用反复读写HDFS。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">val rdd = sc.textFile(<span class="string">&quot;hdfs://...&quot;</span>)</span><br><span class="line">  .flatMap(_.split(<span class="string">&quot; &quot;</span>))</span><br><span class="line">  .<span class="keyword">map</span>((_, <span class="number">1</span>))</span><br><span class="line">  .reduceByKey(_ + _)</span><br><span class="line">  .cache() <span class="comment">// 内存缓存！</span></span><br></pre></td></tr></table></figure>
+
+<p>下面这几点就是Spark解决掉的MapReduce的一些痛点问题，也是Spark的优势，当我们要做一些技术选型的时候，我们可以根据这些来判断我们是否要使用Spark。</p>
+<ul>
+<li>内存计算：RDD可以缓存中间结果到内存，大幅减少磁盘I&#x2F;O。</li>
+<li>DAG执行引擎：支持任意复杂的数据流图，不再受限于两阶段模型。</li>
+<li>多语言支持：Scala、Java、Python、R全覆盖。</li>
+<li>统一生态圈：SQL分析（Spark SQL）、机器学习（MLlib）、图计算（GraphX）、流处理（Streaming）一网打尽。</li>
+</ul>
+<p>做过一些测试，测试数据如下：</p>
+<ul>
+<li>MR版耗时2小时，全程CPU不到30%，I&#x2F;O飙90%</li>
+<li>Spark版18分钟搞定，CPU利用率70%，I&#x2F;O只有20%</li>
+</ul>
+<blockquote>
+<p>老板看到报表直接说：“以后这种活都用Spark整。”</p>
+</blockquote>
+<p>下表是一些对比，简单明了。</p>
+<table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">MapReduce</th>
+<th align="left">Spark</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">计算模型</td>
+<td align="left">两阶段</td>
+<td align="left">DAG随便整</td>
+</tr>
+<tr>
+<td align="left">数据存储</td>
+<td align="left">磁盘</td>
+<td align="left">内存+磁盘</td>
+</tr>
+<tr>
+<td align="left">迭代性能</td>
+<td align="left">菜鸡</td>
+<td align="left">牛逼</td>
+</tr>
+<tr>
+<td align="left">实时性</td>
+<td align="left">批处理</td>
+<td align="left">准实时微批</td>
+</tr>
+</tbody></table>
+<p>虽说<code>Spark</code>解决了磁盘IO的问题，但是我们要明白，内存虽然速度快，但是。。。它贵啊，一般来说内存都是比较小的，因此我们要谨慎使用内存，不要光顾着快了。持久才是王道。</p>
+<h3 id="Apache-Storm——真正的实时流处理"><a href="#Apache-Storm——真正的实时流处理" class="headerlink" title="Apache Storm——真正的实时流处理"></a>Apache Storm——真正的实时流处理</h3><p>如果说<code>Spark</code>和<code>MapReduce</code>都是离线数据处理的话，那么<code>Storm</code>就可以实现实时数据处理了。</p>
+<p>它采用Spout-Bolt拓扑结构，实现毫秒级延迟的数据处理：</p>
+<blockquote>
+<p>Topology就是一张有向图，把Spout和Bolt连起来，每条消息像水一样流过去。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">TopologyBuilder</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TopologyBuilder</span>();</span><br><span class="line">builder.setSpout(<span class="string">&quot;sentences&quot;</span>, <span class="keyword">new</span> <span class="title class_">RandomSentenceSpout</span>(), <span class="number">5</span>);</span><br><span class="line">builder.setBolt(<span class="string">&quot;split&quot;</span>, <span class="keyword">new</span> <span class="title class_">SplitSentence</span>(), <span class="number">8</span>)</span><br><span class="line">    .shuffleGrouping(<span class="string">&quot;sentences&quot;</span>);</span><br><span class="line">builder.setBolt(<span class="string">&quot;count&quot;</span>, <span class="keyword">new</span> <span class="title class_">WordCount</span>(), <span class="number">12</span>)</span><br><span class="line">    .fieldsGrouping(<span class="string">&quot;split&quot;</span>, <span class="keyword">new</span> <span class="title class_">Fields</span>(<span class="string">&quot;word&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h4 id="革命性特性："><a href="#革命性特性：" class="headerlink" title="革命性特性："></a>革命性特性：</h4><ul>
+<li>毫秒级延迟，消息来了立刻处理，不用等下一轮批量触发。</li>
+<li>Spout-Bolt拓扑结构，自由组合各种算子，比MR灵活太多。</li>
+<li>At-least-once语义，有丢包自动重试，不怕漏数。</li>
+<li>Worker&#x2F;Supervisor故障自恢复，上次生产环境挂了一台机器，都没人发现。</li>
+</ul>
+<h4 id="应用场景举例："><a href="#应用场景举例：" class="headerlink" title="应用场景举例："></a>应用场景举例：</h4><ul>
+<li>系统指标监控报警</li>
+<li>用户行为推荐</li>
+<li>金融交易风控</li>
+</ul>
+<p>但Storm同样也有一些缺点，比如：状态管理不行</p>
+<h3 id="Apache-Flink——流批一体化新范式"><a href="#Apache-Flink——流批一体化新范式" class="headerlink" title="Apache Flink——流批一体化新范式"></a>Apache Flink——流批一体化新范式</h3><p>其实，我们仔细看就会发现，Spark解决了磁盘IO的问题，Storm实现了从离线数据计算到实时计算的跨越，而Flink解决了Storm状态管理的问题。</p>
+<p>对于Flink来说，同一个API既能跑离线批处理，也能搞实时流分析：</p>
+<p>Flink具有以下核心优势，这些优势是Flink不同于其他几个框架的最大的竞争力：</p>
+<ul>
+<li>同一个API同时搞定批处理和流处理，不用切换框架脑壳疼。</li>
+<li><code>事件时间</code>+<code>Watermark</code>，对<code>乱序</code>数据友好得很。（之前Storm遇到乱序就懵逼）</li>
+<li>精确一次语义（Exactly-once），金融场景必备，再也不怕账算错了被罚钱。</li>
+<li><code>状态管理</code>强大，有分布式状态后端，还能快照恢复。</li>
+</ul>
+<p>一些简单的代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">DataStream</span> <span class="variable">stream</span> <span class="operator">=</span> env.socketTextStream(<span class="string">&quot;localhost&quot;</span>, <span class="number">9999</span>);</span><br><span class="line">stream.flatMap(<span class="keyword">new</span> <span class="title class_">Splitter</span>())</span><br><span class="line">    .keyBy(<span class="number">0</span>)</span><br><span class="line">    .window(TumblingProcessingTimeWindows.of(Time.seconds(<span class="number">5</span>)))</span><br><span class="line">    .sum(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="技术突破点："><a href="#技术突破点：" class="headerlink" title="技术突破点："></a>技术突破点：</h4><ul>
+<li>Dataflow模型实现Google论文思路，比传统DAG更灵活；</li>
+<li>检查点机制保证高可用；</li>
+<li>自适应反压机制防止下游堵塞崩溃；</li>
+<li>不过Flink学习曲线是真的陡，新人入坑容易爬不出来…</li>
+</ul>
+<h2 id="技术谱系-amp-现代架构长啥样？"><a href="#技术谱系-amp-现代架构长啥样？" class="headerlink" title="技术谱系&amp;现代架构长啥样？"></a>技术谱系&amp;现代架构长啥样？</h2><p>说个真实例子，我们曾经在广告点击日志处理中，从Hadoop迁移到Spark后，单次ETL耗时从6小时降到40分钟；而在用户行为实时推荐上，用Storm实现后端流水线，把延迟从10秒降到了500毫秒。</p>
+<p>下面使用Mermaid画一个流程图，来看一下从MapReduce一直到Flink的技术进化史，感受一下技术的日新月异，也不要忘了致敬经典，吃水不忘挖井人：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[MapReduce] --&gt; B[Hadoop生态]</span><br><span class="line">A --&gt; C[Spark]</span><br><span class="line">A --&gt; D[Storm]</span><br><span class="line">C --&gt; E[Spark Streaming]</span><br><span class="line">D --&gt; F[Flink]</span><br><span class="line">F --&gt; G[流批一体化]</span><br></pre></td></tr></table></figure>
+
+<h2 id="深度思考：“湖仓一体”和云原生才是终极形态？"><a href="#深度思考：“湖仓一体”和云原生才是终极形态？" class="headerlink" title="深度思考：“湖仓一体”和云原生才是终极形态？"></a>深度思考：“湖仓一体”和云原生才是终极形态？</h2><p>回头看这些年大数据平台的发展，有几个趋势特别明显：</p>
+<ul>
+<li>共性特征<ul>
+<li>计算与存储彻底解耦</li>
+<li>Spark&#x2F;Flink负责算力调度；HDFS&#x2F;S3&#x2F;Delta Lake负责海量存储；YARN&#x2F;K8s负责资源管理。</li>
+</ul>
+</li>
+<li>全面云原生化<ul>
+<li>Docker容器部署，大规模弹性伸缩变得容易；微服务架构让各模块独立升级维护不再痛苦。</li>
+</ul>
+</li>
+<li>湖仓一体融合<ul>
+<li>数据湖保存原始明细，仓库负责结构化分析，两者通过统一接口协作，实现离线+实时混合查询能力。</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后，总结一下这几个框架的优缺点：</p>
+<table>
+<thead>
+<tr>
+<th align="left">框架</th>
+<th align="left">优势</th>
+<th align="left">劣势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Spark</td>
+<td align="left">批量分析快、生态丰富</td>
+<td align="left">真正实时差、吃内存多</td>
+</tr>
+<tr>
+<td align="left">Storm</td>
+<td align="left">毫秒级响应、运维简单</td>
+<td align="left">状态弱、生态单一</td>
+</tr>
+<tr>
+<td align="left">Flink</td>
+<td align="left">流批统一、一致性强</td>
+<td align="left">学习曲线陡峭</td>
+</tr>
+</tbody></table>
+<p>根据这些优缺点，可以根据具体业务的需要来进行选择，如果只是需要离线数据运算的话，可以选择Spark，如果是要进行实时数据的话，可以选择Storm或者Flink。</p>
+<p>如果有对具体框架感兴趣的可以进行留言，我会深挖框架的源码，并出一个从0-1设计实现的文章。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MapReduce/" rel="tag"># MapReduce</a>
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BJava%E5%BA%94%E7%94%A8%E8%BF%9E%E6%8E%A5MySQL%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B.html" rel="prev" title="MySQL零基础教程Java应用连接MySQL使用教程">
+      <i class="fa fa-chevron-left"></i> MySQL零基础教程Java应用连接MySQL使用教程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html" rel="next" title="优化MapReduce，10个核心功能决定能否进化为工业级">
+      优化MapReduce，10个核心功能决定能否进化为工业级 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A1%86%E6%9E%B6%E9%83%BD%E9%80%83%E4%B8%8D%E5%87%BAMapReduce%E7%9A%84%E2%80%9C%E5%BD%B1%E5%AD%90%E2%80%9D%EF%BC%9F3%E4%B8%AA%E8%BF%9B%E5%8C%96%E6%96%B9%E5%90%91%E4%BD%A0%E5%BF%85%E9%A1%BB%E7%9C%8B%E6%87%82"><span class="nav-number">1.</span> <span class="nav-text">为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%9A%84%E6%9C%AC%E8%B4%A8%EF%BC%9AMapReduce%E5%88%B0%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%8C%E5%8F%88%E5%8D%A1%E5%9C%A8%E5%93%AA%E5%84%BF%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">问题的本质：MapReduce到底解决了什么，又卡在哪儿？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88%E8%A7%A3%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">技术方案解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Apache-Spark%E2%80%94%E2%80%94%E5%86%85%E5%AD%98%E8%AE%A1%E7%AE%97%E9%9D%A9%E5%91%BD"><span class="nav-number">1.2.1.</span> <span class="nav-text">Apache Spark——内存计算革命</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Apache-Storm%E2%80%94%E2%80%94%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%AE%9E%E6%97%B6%E6%B5%81%E5%A4%84%E7%90%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">Apache Storm——真正的实时流处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A9%E5%91%BD%E6%80%A7%E7%89%B9%E6%80%A7%EF%BC%9A"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">革命性特性：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%BE%E4%BE%8B%EF%BC%9A"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">应用场景举例：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Apache-Flink%E2%80%94%E2%80%94%E6%B5%81%E6%89%B9%E4%B8%80%E4%BD%93%E5%8C%96%E6%96%B0%E8%8C%83%E5%BC%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">Apache Flink——流批一体化新范式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E7%AA%81%E7%A0%B4%E7%82%B9%EF%BC%9A"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">技术突破点：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%B0%B1%E7%B3%BB-amp-%E7%8E%B0%E4%BB%A3%E6%9E%B6%E6%9E%84%E9%95%BF%E5%95%A5%E6%A0%B7%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">技术谱系&amp;现代架构长啥样？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E6%80%9D%E8%80%83%EF%BC%9A%E2%80%9C%E6%B9%96%E4%BB%93%E4%B8%80%E4%BD%93%E2%80%9D%E5%92%8C%E4%BA%91%E5%8E%9F%E7%94%9F%E6%89%8D%E6%98%AF%E7%BB%88%E6%9E%81%E5%BD%A2%E6%80%81%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">深度思考：“湖仓一体”和云原生才是终极形态？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.6.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

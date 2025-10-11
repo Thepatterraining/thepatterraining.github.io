@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="chatGPT深入研究功能，不愧是AI届的扛把子">
+<meta property="og:url" content="https://thepatterraining.github.io/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/ai/ai5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-10-11T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-10-11T10:25:57.324Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/ai/ai5.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>chatGPT深入研究功能，不愧是AI届的扛把子 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          chatGPT深入研究功能，不愧是AI届的扛把子
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-10-11 10:12:47 / 修改时间：18:25:57" itemprop="dateCreated datePublished" datetime="2025-10-11T10:12:47+08:00">2025-10-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html" class="post-meta-item leancloud_visitors" data-flag-title="chatGPT深入研究功能，不愧是AI届的扛把子" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="chatGPT深入研究功能，不愧是AI届的扛把子"><a href="#chatGPT深入研究功能，不愧是AI届的扛把子" class="headerlink" title="chatGPT深入研究功能，不愧是AI届的扛把子"></a>chatGPT深入研究功能，不愧是AI届的扛把子</h1><p>openAI一向是AI届的风向标，就如同手机都对标苹果，汽车都对标特斯拉，AI也都在对标chatGPT。</p>
+<p>2025年2月2日，chatGPT发布了一项新功能，<code>深入研究</code>功能。当时是给Pro用户开放的，而现在，普通用户也有每个月5次的使用机会，大家可以体验一下。</p>
+<p>效果确实很好，比思考要好用的多。</p>
+<p><code>深入研究</code>功能是一款能通过推理整合海量在线信息，并为您完成多步骤研究任务的智能代理。</p>
+<p>这是一项新的代理功能，可在互联网上针对复杂任务进行多步骤研究。它可以在数十分钟内完成人工需要数小时才能完成的任务。</p>
+<p>深入研究是<code>OpenAI</code>下一代能够自主为您完成任务的智能代理——只需要提供一个提示，<code>ChatGPT</code> 就会查找、分析并整合数百个在线来源，生成具有研究分析师水平的全面报告。</p>
+<p>整合知识的能力是创造新知识的先决条件。因此，深入研究标志着向开发 <code>AGI</code> 这一更广泛的目标迈出了重要一步，我们很早就设想 <code>AGI</code> 能够产生新的科学研究成果。</p>
+<p>下面有一个视频。</p>
+<p><video src="https://openai.com/zh-Hans-CN/index/introducing-deep-research/?video=1052827364"></video></p>
+<h2 id="为什么要关注“深入研究”这类代理？"><a href="#为什么要关注“深入研究”这类代理？" class="headerlink" title="为什么要关注“深入研究”这类代理？"></a>为什么要关注“深入研究”这类代理？</h2><p>很多团队碰到的痛点是：信息太分散，人工查资料耗时。像我以前做竞品分析，常常需要翻几十篇白皮书，像剥洋葱一样慢。深入研究型智能代理能跨网页、PDF、图片检索并做推理。结果是什么？效率提升，但也伴随成本和风险。</p>
+<p>举个生活例子：你叫外卖，速度快了，但偶尔会送错菜；同样，代理能快，但会“自信地撒谎”（hallucination）。这篇文章要帮你判断在哪些场景值得用，怎么安全地把它丢进工作流里。</p>
+<blockquote>
+<p>该功能在查找需要浏览大量网站的细分、非直观信息方面尤为有效。深入研究只需一次查询，即可代您快速完成复杂耗时的网络调研，从而节省宝贵时间。深入研究可以独立发现、推理和整合来自整个网络的见解。</p>
+</blockquote>
+<p>这项功能可以大大提升我们的效率，如果说<code>第一代搜索引擎</code>是百度、谷歌这种传统搜索引擎，<code>第二代搜索引擎</code>是chatGPT、Cluade、DeepSeek、Kimi这样的AI大模型，可以直接给出我们想要的答案，并且可以替我们搜索网页获得答案。那么<code>深入研究</code>就可以称得上是<code>2.5代搜索引擎</code>，它比单纯的AI大模型提供了更加优秀的搜索、整合、推理功能。</p>
+<p>比如，你要分析一些竞品公司，那么可以直接用这个功能，整合这些竞品公司的各种数据，直接生成报表等，方便你进行分析查看，并且会给出分析建议。</p>
+<h3 id="核心能力与现状"><a href="#核心能力与现状" class="headerlink" title="核心能力与现状"></a>核心能力与现状</h3><ul>
+<li>能力焦点：多步骤网页浏览 + PDF&#x2F;图片解析 + Python 数据处理 + 引用回溯。就像请了个会翻书还会写脚注的助理。例子：把 200 页技术白皮书压缩成 3 页要点，像把大米煮成粥——省事但要把火候掌握好。</li>
+<li>可用度与配额（示例）：Pro 用户优先开放，最初版本对 Pro 每月配额更高（示例：250 次轻量&#x2F;100 次完整版等，具体以官方为准）。想象成健身房会员等级，高级卡能先用器械。</li>
+<li>准确率（内部评估示例）：在某些基准上，深入研究模型表现显著优于传统模型（示例数值：模型在“人类终极测试”上得分 26.6%），但这并不等于“百分百可信”。就像高考分高不代表专业合格。</li>
+</ul>
+<h3 id="3-个适合交给“深入研究”的实战场景"><a href="#3-个适合交给“深入研究”的实战场景" class="headerlink" title="3 个适合交给“深入研究”的实战场景"></a>3 个适合交给“深入研究”的实战场景</h3><h4 id="初步情报收集与文献综述"><a href="#初步情报收集与文献综述" class="headerlink" title="初步情报收集与文献综述"></a>初步情报收集与文献综述</h4><p>场景：团队需要 24 小时内得到一份覆盖面广的背景报告。</p>
+<ul>
+<li>为什么合适：代理能并行抓取多个来源，做出结构化摘要。例子：要评估竞争对手 10 项专利时，代理能先做出专利矩阵，像把书架上的书按颜色分类一样快。</li>
+<li>风险与对策：引用格式可能有问题。对策：要求代理输出“原文句子 + 源链接 + 抓取时间”。</li>
+</ul>
+<h4 id="数据整合与可视化原型"><a href="#数据整合与可视化原型" class="headerlink" title="数据整合与可视化原型"></a>数据整合与可视化原型</h4><p>场景：你需要把不同来源的表格合并并绘图支持决策。</p>
+<ul>
+<li>为什么合适：代理带 Python 工具可以帮你清洗、合并、画图。生活例子：像把冰箱里剩菜拼成一顿正餐，省时但口味需调。</li>
+<li>风险与对策：数据缺失或单位不一。对策：在代理任务里明确“校验步骤”与“异常报告”。</li>
+</ul>
+<h4 id="商业可行性与快速市场筛查"><a href="#商业可行性与快速市场筛查" class="headerlink" title="商业可行性与快速市场筛查"></a>商业可行性与快速市场筛查</h4><p>场景：想要短时间判断市场机会（如你刚才提供的 iOS&#x2F;Android + 语言学习场景）。</p>
+<ul>
+<li>为什么合适：代理能产出候选市场清单并排序。例子：像速配 APP 的“初筛”，把 50 个市场筛成 5 个。</li>
+<li>风险与对策：法律或本地可用性（如某些地区无法访问服务）。对策：把“法律&#x2F;可用性检查”作为单独子任务。</li>
+</ul>
+<h2 id="如何使用深入研究"><a href="#如何使用深入研究" class="headerlink" title="如何使用深入研究"></a>如何使用深入研究</h2><p>在 ChatGPT 中，在消息编辑器中选择“深入研究”，然后输入您的查询。告诉 ChatGPT 您的需求——无论是关于流媒体平台的竞争分析，还是关于最佳通勤自行车的个性化报告。您可以附加文件或电子表格，为您的问题添加背景信息。一旦开始运行，侧边栏就会显示所采取步骤和所用资料来源的摘要。</p>
+<blockquote>
+<p>深入研究可能需要 5 到 30 分钟才能完成工作，该时长可确保对网络信息进行充分深入的挖掘。在此期间，您可以离开或处理其他任务，研究完成后您会收到通知。最终输出会以报告形式显示在聊天工具中。在接下来的几周内，我们还将在这些报告中添加嵌入式图片、数据可视化和其他分析输出，以提供更清晰的解读视角和背景信息。</p>
+</blockquote>
+<p>这里，可以明显发现深入研究的时长比较长，正常来说，我们直接使用AI工具是最快的，如果加上<code>思考</code>功能，会慢一些，而<code>深入研究</code>功能会更慢，当然了，效果也会更好。</p>
+<p>与深入研究相比，<code>GPT‑4o</code> 是实时、多模态对话的理想选择。对于需要深度和细节的多方面专业领域查询，深入研究能够进行广泛探索，并对每项主张进行引证，这就是快速摘要与有据可查、经过验证并可作为工作成果使用的答案之间的区别。</p>
+<p>接下来看两个例子：</p>
+<ol>
+<li>商业应用</li>
+</ol>
+<p>给出一个问题：</p>
+<blockquote>
+<p>请帮我找到过去10年iOS和android的采用率，想学习另一门语言的百分比，以及移动渗透率的变化，按GDP排名前10的发达国家和发展中国家。将这些信息放在表格中，并将统计数据分成不同的列，并包括ChatGPT针对新iOS翻译应用的市场推荐，重点关注ChatGPT目前活跃的市场。</p>
+</blockquote>
+<p>我们来看一下普通的回答：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">由于数据的限制，编纂关于iOS和Android采用率、有兴趣学习另一种语言的人口百分比以及过去十年移动渗透率变化的综合数据对于GDP排名前10的发达国家和发展中国家来说是具有挑战性的。然而，基于现有的信息，我们可以通过一个由ChatGPT驱动的新的iOS翻译应用程序为目标市场提供见解和建议。</span><br><span class="line"></span><br><span class="line">Top 10 Developed Countries by GDP:</span><br><span class="line"></span><br><span class="line">1.United States</span><br><span class="line">2.Japan</span><br><span class="line">3.Germany</span><br><span class="line">4.United Kingdom</span><br><span class="line">5.France</span><br><span class="line">6.Italy</span><br><span class="line">7.Canada</span><br><span class="line">8.South Korea</span><br><span class="line">9.Australia</span><br><span class="line">10.Spain</span><br><span class="line"></span><br><span class="line">Top 10 Developing Countries by GDP:</span><br><span class="line"></span><br><span class="line">1.China</span><br><span class="line">2.India</span><br><span class="line">3.Brazil</span><br><span class="line">4.Russia</span><br><span class="line">5.Indonesia</span><br><span class="line">6.Mexico</span><br><span class="line">7.Turkey</span><br><span class="line">8.Saudi Arabia</span><br><span class="line">9.Argentina</span><br><span class="line">10.South Africa</span><br><span class="line"></span><br><span class="line">Insights:</span><br><span class="line"></span><br><span class="line">- iOS和Android的采用率：在全球范围内，Android占据着大约70.93%的主导市场份额，而iOS在2024年占了大约28.32%。在美国，iOS以58.81%的市场份额领先。日本、加拿大、澳大利亚和英国等其他发达国家也对iOS设备表现出更高的偏好。相比之下，印度和巴西等发展中国家的Android设备普及率更高。</span><br><span class="line">-对语言学习的兴趣：虽然对学习另一门语言感兴趣的人口的具体比例还不清楚，但像Duolingo这样的语言学习应用程序在全球的流行，在2024年7月大约有1430万次下载，表明人们的兴趣很大。在语言环境多样或英语不是主要语言的国家，这种兴趣可能更高。</span><br><span class="line">-过去十年的手机渗透率：全球手机拥有量大幅增长。在美国，智能手机的拥有率从2011年的35%上升到2024年的91%。发展中国家也经历了移动普及率的显著增长，有助于更多地获得数字服务。</span><br><span class="line"></span><br><span class="line">建议:</span><br><span class="line"></span><br><span class="line">根据现有数据和ChatGPT的活跃市场，以下发达国家有望成为iOS翻译新应用的目标市场:</span><br><span class="line">-美国：iOS市场占有率高，人们对语言学习的兴趣浓厚。</span><br><span class="line">-英国：大量的iOS用户基础和具有不同语言需求的多元文化人口。</span><br><span class="line">-加拿大：iOS的广泛应用和双语人口（英语和法语）增加了对翻译服务的需求。</span><br><span class="line"></span><br><span class="line">在发展中国家中，下列情况值得注意:</span><br><span class="line"></span><br><span class="line">- 中国：尽管安卓占据主导地位，但中国人口众多，人们对英语和其他语言的兴趣也在不断增长，这是一个重要的机会。</span><br><span class="line">- 印度：安卓的使用率很高，但中产阶级也在不断壮大，iOS的普及率也在不断提高，对语言学习的兴趣也很强，尤其是英语。</span><br><span class="line">- 巴西：主要是Android用户，但有相当大的语言学习应用市场，尤其是英语和西班牙语。</span><br><span class="line"></span><br><span class="line">专注于这些市场符合ChatGPT目前的可用性，并利用了现有的移动应用趋势和语言学习兴趣。</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上面的结果中规中矩，当然了，要比我们自己去搜索更加省事。</p>
+<p>我们再看看<code>深入研究</code>的回答。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">十大发达经济体（GDP排名）——智能手机操作系统份额、语言学习兴趣和移动渗透率增长</span><br><span class="line"></span><br><span class="line">[这里是一个巨大的表格数据，表格比较详细，比较大，我就不放这里了]</span><br><span class="line"></span><br><span class="line">十大发展中/新兴经济体（按GDP计算）-（考虑ChatGPT可用性）</span><br><span class="line"></span><br><span class="line">[同上，一个大表格]</span><br><span class="line"></span><br><span class="line">资料来源：智能手机操作系统份额来自StatCounter/Statista data（2023-24）。语言兴趣指标来自Preply， Eurobarometer， Babbel等的调查（例如，英国73%的人感兴趣；美国70%的人后悔没有语言；日本&gt;的50%想要英语；培生全球调查）。移动渗透率是通过智能手机拥有率来衡量的——在过去的十年中，发展中市场（如巴西+40个百分点）显著增长，发达市场（如英国~82%）的饱和度也很高。</span><br><span class="line"></span><br><span class="line">基于以上，新的ChatGPT支持的iOS翻译应用的主要目标是那些拥有庞大的iOS用户群和强大的语言学习需求，并且可以使用ChatGPT的国家。值得注意的是，日本、美国、英国、加拿大和澳大利亚成为首选。这些市场将iOS的高使用率（50-60%以上的份额）与对语言学习的巨大热情相结合——例如，日本的iPhone主导地位和学习英语的普遍愿望使其成为理想选择。像美国、英国、加拿大和澳大利亚这样的英语国家，尽管是单语社会，但对学习其他语言（如西班牙语或法语）表现出了浓厚的兴趣，这些国家都有超过80%的智能手机普及率和数百万的iPhone用户。</span><br><span class="line"></span><br><span class="line">在新兴经济体中，墨西哥和巴西是次要目标：尽管Android盛行，但其庞大的人口规模意味着存在数千万iPhone用户，而且出于职业和教育原因，人们对英语的兴趣非常高。这些拉丁美洲市场（ChatGPT活跃地区）可能会为ios版应用带来巨大的市场份额，特别是考虑到人们学习英语的动机。相反，中国和俄罗斯则不太可行——中国的操作系统分裂为Android， ChatGPT在那里没有正式可用，俄罗斯面临准入和监管方面的不确定性。</span><br><span class="line"></span><br><span class="line">总而言之，专注于ios密集型、支持学习的市场：日本和西方国家（美国、英国、加拿大、澳大利亚，以及德国和法国等高收入欧洲国家）应该是第一梯级目标。他们将iOS的稳健使用与良好的语言学习态度结合起来。第二梯队包括人口众多的发展中市场（墨西哥、巴西，也许还有沙特阿拉伯，因为其iPhone的历史使用率很高），这些市场对英语的兴趣很强——一旦应用程序在主要市场获得吸引力，这些市场就可以接近。这样的策略可以确保应用程序在发布时最大程度地符合平台（iOS）存在和用户对翻译/语言工具的需求，从而最大限度地提高采用和增长的可能性。</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上面的一些区别，对于普通回答来说，深入研究有着更丰富的信息来源，更强大的信息查找能力，基于这些信息，会给出更加优秀的推理结果。</p>
+<ol start="2">
+<li>用户体验设计</li>
+</ol>
+<p>给出一个问题：</p>
+<blockquote>
+<p>找到证据，证明带有图标和标签的按钮比没有标签的按钮或没有图标的按钮更有用。我知道有很多关于它的用户研究，希望看到一份详细的报告以及一个关于有效性的高水平的、一旦确定的答案。</p>
+</blockquote>
+<p>普通回答：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">研究表明，组合了图标和文本标签的按钮通常比只包含其中一种元素的按钮更有效。由于不同上下文的不同解释，图标本身通常是模棱两可的。例如，像红心或星星这样的符号可能代表收藏夹、书签或评分，这会导致用户困惑。附带文本标签的图标明确了它们的预期功能，增强了可用性。</span><br><span class="line"></span><br><span class="line">史蒂夫·麦卡锡的一项研究表明，当用户看到没有标签的常见图标时，他们很难准确识别它们的含义。这就强调了文本标签在确保用户理解图标目的方面的重要性。</span><br><span class="line"></span><br><span class="line">然而，值得注意的是，在用户已经非常熟悉特定图标的界面中，没有标签可能不会影响可用性，甚至可以简化界面。然而，对于更广泛的受众，特别是在不同的背景下，将图标与文本标签相结合是可取的，可以减少歧义并增强用户体验。</span><br><span class="line"></span><br><span class="line">总之，虽然图标可以增强界面的美感和效率，但将它们与文本标签配对可以确保清晰度并提高整体可用性。</span><br></pre></td></tr></table></figure>
+
+<p>深入研究回答：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">带有图标和标签的按钮的有效性：可用性比较分析</span><br><span class="line"></span><br><span class="line">总结</span><br><span class="line">用户界面中的按钮可以用图标和文本标签来显示，也可以只用图标，也可以只用文本标签。可用性研究一致表明，将图标和文本标签结合在一起往往会为大多数用户提供最佳的整体效果。总的来说，图标+标签按钮减少了歧义性，帮助用户以更少的错误执行任务，是大多数用户的首选。如果图标非常熟悉，那么只有图标的按钮有时可以让用户快速识别，但它们通常不够清晰，当用户误解图标时，任务完成速度会变慢，甚至会出错。纯文本按钮通常很清晰，但缺乏图标所能提供的快速视觉线索和美学吸引力。总的来说，包含图标和标签的按钮达到了最佳平衡——提供了视觉锚点和明确的含义——从而在不同用户群体中带来了更好的效率、准确性、满意度和可访问性。以下详细的发现，来自同行评审的研究和权威的用户体验来源，支持这一结论。</span><br><span class="line"></span><br><span class="line">任务完成时间和效率</span><br><span class="line">用户找到并点击正确的按钮有多快？关于任务时间和效率的研究探索了图标是否加快了识别速度，标签是否提高了可查找性。主要发现包括：</span><br><span class="line">- 图标可以快速-如果立即识别。在某些用户可以快速识别符号的情况下，只有图标的按钮会导致选择时间稍微快一些。例如，一项眼球追踪研究发现，没有文本标签的图标网格被选择得最快，这表明当图标易于识别并有效排列时（以熟悉的矩阵布局），它们可以最小化搜索时间。这表明图标具有促进快速视觉扫描的潜力。</span><br><span class="line">- 模棱两可的图标拖慢了用户的速度。当一个图标的含义不明显时，用户会犹豫或花费额外的时间来弄清楚。在这种情况下，文本标签通过立即传达功能大大减少了认知负荷。Nielsen Norman Group强调，几乎所有的图标在没有上下文的情况下都是模棱两可的——即使是一个微小的变化或一个不太常见的符号也会让用户感到困惑。在可用性测试中，用户经常不得不“思考”未标记图标的含义，增加了交互时间。因此，如果用户不得不解读图标，那么图标的速度优势就会消失。</span><br><span class="line">- 图标+文本组合设计的效果和单独设计一样好，甚至更好。经验测试通常表明，为图标添加标签不会显著损害效率——有时还可以提高效率。在一项比较纯文本UI、纯图标UI和图标+文本UI的研究中，三者的总体任务完成时间非常相似。完成一组任务的中位数时间，纯文本按钮约为78秒，纯图标按钮约为76秒，组合按钮约为93.5秒——差异没有统计学意义。这表明，平均而言，用户在使用组合格式时并不会变慢。事实上，阅读文本的任何轻微延迟往往会被选择正确选项的信心增加所抵消。</span><br><span class="line">- icon+标签在复杂或新颖任务中的效率提高。当任务更复杂或用户不熟悉界面时，同时使用图标和标签可以简化流程。用户不会浪费时间猜测按钮的用途——图标吸引了注意力，标签也证实了这一点。特别是在导航菜单中，从一开始就在图标旁边显示文本（而不是在工具提示中隐藏标签或悬停时）可以防止额外的交互，并使导航更加高效。</span><br><span class="line">- 年龄较大的用户受益于标签的速度。对老年人的研究表明，当图标伴随文本时，他们定位功能的速度要快得多。一项针对老年人（包括一些有轻度认知障碍的人）的实验发现，他们在使用带有文本的图标时表现最好，而在使用只有图标的按钮时表现困难且速度较慢。这意味着对于某些用户群体（较老的用户）来说，icon+label并不仅仅是同样有效——它比单独的图标更有效。</span><br><span class="line"></span><br><span class="line">最重要的是——时间/效率：对于熟悉的符号和有经验的用户来说，图标可以很快地被识别，但在大多数情况下，添加一个文本标签并不会减慢用户的速度，而且通常可以防止由混淆引起的延迟。图标+标签按钮支持快速发现，通过结合直观的清晰提示，帮助用户快速自信地完成任务。</span><br><span class="line"></span><br><span class="line">用户错误率</span><br><span class="line">本节将讨论每种按钮样式对错误的影响——例如，点击了错误的按钮，遗漏了某个功能，或者因为误解了按钮的含义而误用了某个功能。</span><br><span class="line">- 只有图标的界面通常会因为误解而产生更多的错误。没有标签，用户只能猜测图标的含义，这可能会导致错误的选择。研究表明，人们经常会错误识别未标记的图标。例如，一项经典的研究发现，用户在经常使用Microsoft Word后，只能说出大约6个工具栏图标的名称，这常常使许多人感到困惑。另一个有趣的发现是：一个用户认为标准的“保存”图标（软盘）是一台电视机，这说明符号是多么容易被误读。这种误解可能会导致错误（点击了一个意想不到的操作），或者导致用户完全避免使用图标（担心出现未知的结果）。在实际使用中，关键功能一直被忽视，直到添加了标签——例如，早期版本的MS Outlook有一个只有图标的工具栏，大多数非专业用户完全忽略了（实际上是遗漏错误），因为他们不理解这些图标。</span><br><span class="line">- 纯文本按钮的解释错误很低，但也可能发生其他类型的错误。有了清晰的文本标签，用户很少会误解这个功能——“没有什么比‘保存’这个词更能表达‘保存’了。”由于歧义导致的错误被最小化。然而，纯文本界面的浏览速度可能会慢一些，如果用户浏览速度过快，可能会不小心跳过某个选项。一般来说，标签本身对于沟通功能是非常可靠的，在大多数情况下比单独的图标更少导致选择错误。</span><br><span class="line">- 带有标签的图标错误率最低。这种组合提供了冗余：如果图标本身可能会误导，则标签会纠正它。相反，如果用户不阅读完整的标签，图标熟悉的形状或颜色可以吸引他们的眼球作为提示。许多可用性专家认为图标+文本是减少错误的最佳实践。为之前被忽略的Outlook工具栏图标添加标签导致了使用上的彻底转变——突然间“所有技能水平的人都开始正确使用它们”。这表明标签消除了混淆（用户现在知道每个按钮的作用），有效地消除了之前的使用错误。在另一个例子中，一项UI改进研究报告称，在图标旁边引入文本标签“立即解决了可用性问题”，人们不再点击错误的工具栏按钮。总之，图标+标签的设计往往是不言自明的，因此用户很少会选择错误的控件或忽略功能，与只使用图标的设计相比，大大降低了错误率。</span><br><span class="line">- 早期的研究表明，在学习后，图标的准确性可以等同于或超过文本。值得注意的是，在受控的实验室条件下，用户拥有一组预先定义好的精心设计的符号，单独的图标有时会在错误率上匹配甚至超过文本。例如，一个早期的实验（Remington &amp; Williams, 1986）发现，在视觉搜索任务中，参与者使用图标比使用文本标签犯的错误更少。然而，这个场景假定用户已经有效地了解了每个图标的含义，或者这些图标非常直观。在实际的日常软件使用中，这样的理想条件很少存在。在实验室之外，用户面临着许多抽象的图标，而无需训练——在这种情况下，文本标签要安全得多，可以防止错误。现在的共识是，除非你的图标像“垃圾桶=删除”或“打印机=打印”那样显而易见，否则仅仅依靠图标可能会让用户出错。</span><br><span class="line">- 工具提示（悬停文字）是一个备用方案，而不是一个修复。界面有时试图通过在鼠标悬停（或长按）时显示文本提示来减少图标的模糊性。虽然这可以通过最终揭示标签来帮助减少错误，但它不能替代可见标签。首先，用户必须将鼠标悬停在每个图标上才能知道它是做什么的，本质上是反复试验。这会减慢它们的速度，并且仍然会导致初始错误。其次，对于触控设备或不太懂技术的用户来说，鼠标悬停提示可能根本就找不到。专家警告说“你的用户不应该到处寻找工具提示”——文本标签从来不需要这样的悬停帮助，这一事实有力地表明文本本身就更清晰。因此，为了尽量减少错误，最好直接显示标签，而不是隐藏它。</span><br><span class="line"></span><br><span class="line">底线-错误：依赖只有图标的按钮通常会因为模糊性而增加用户错误（错误点击或错过选项）的风险。文本标签大大减少了解释错误，当与图标搭配时，它们几乎消除了识别按钮功能的混淆。图标+标签的格式是最抗错误的，特别是对于关键功能，错误会付出代价。</span><br><span class="line"></span><br><span class="line">用户满意度与偏好</span><br><span class="line">用户满意度是指用户有多喜欢这个界面以及他们使用它的主观舒适度/信心。用户偏好通常会在可用性研究中通过调查、访谈或可用性评分得出。以下是研究表明的用户对图标和文本的看法：</span><br><span class="line"></span><br><span class="line">- 清晰驱动满足感。当用户能够轻松地理解界面时，他们往往是最开心的。不出所料，导致混乱的界面（通常只有图标的设置）导致沮丧。许多用户表示，他们不喜欢必须猜测符号含义的界面。“好的UI应该总是清晰的，”正如一位用户所说——当面对使用没有标签的图标的应用程序时，人们通常会求助于随机点击，并且感觉不太满意。另一方面，当按钮被明确标记（图标+文本或纯文本）时，用户会有更多的掌控感和自信，这提高了满意度。</span><br><span class="line">- 图标和文本相结合的界面通常是评分最高的。当被问及偏好时，用户通常会选择同时具有图标和标签的设计，认为这是最友好的。在一项可用性比较研究中，参与者尝试了所有三种风格，图标+标签界面获得了最高的系统可用性量表（SUS）分数（标准化的可用性满意度指标）。具体来说，组合设计的得分约为91/100（这是一个“优秀”的分数），相比之下，只有文本的得分约为85，只有图标的得分要低得多（~75或更低）。这表明用户认为图标+标签的版本是最简单和最有效的。尽管纯文本版本的可用性也很好，但人们对添加的图标更满意，而纯图标版本在可用性方面远远落后。</span><br><span class="line">- 图标增强了主观吸引力（当与文本搭配时）。从视觉上看，用户通常喜欢图标的存在——它们增加了色彩和趣味性，打破了原本单调的文本。带有图标的界面通常被描述为更“吸引人”和更容易浏览，因为图形将眼球吸引到关键选项上。然而，这种对审美满意度的积极影响只有在图标不引入混淆的情况下才会起作用。有了标签，用户就可以从图标的视觉吸引力中获得好处，而不会产生歧义，从而给人一种积极的印象。研究发现，用户有时会认为有图标的应用程序更容易使用，即使他们的实际任务性能并没有提高——这是Wiedenbeck（1999）观察到的现象。在该研究中，参与者认为图标+文本界面学习起来更“舒适”，可能是因为它看起来友好且信息丰富，尽管它们的成功率与纯文本界面相似。这表明了一种心理上的好处：用户只是喜欢使用有用的视觉效果的界面，只要它们具有解释性。</span><br><span class="line">- 首选项因上下文而异，但icon+text是安全的默认值。用户的偏好取决于他们的目标。对于快速重复的操作，一些专业用户说他们更喜欢只有图标的工具栏（一旦他们学会了），因为它很简洁。但对于任何新的或不常见的任务，大多数用户表示希望有一个可见的标签。他们经常引用这样的理由：“我不想记住图标的意思”或“文本让它很明显”。在设计调查和A/B测试中，大多数用户选择标签图标作为他们最喜欢的设计，认为它“清晰且视觉上令人愉悦”。它达到了一种平衡——纯粹的文本可能会让人觉得无聊或难以浏览，而纯粹的图标则让人感觉神秘；这种结合既吸引人又可以理解。</span><br><span class="line">- 使用图标+标签降低认知负荷。用户满意度与使用界面所需的心理投入密切相关。一项测量NASA-TLX（任务负载指数）的研究发现，严重依赖图标的界面具有最高的心理负荷，而同时具有图标和文本的界面具有最低的心理负荷（用户发现它的要求最低）。当用户不需要理解含义时，它会减少压力。参与者还评论说，当他们通过阅读标题来确认图标的含义时，他们感觉更放松，而只有图标的情况下，他们感觉必须记住或猜测，这可能会让他们感到压力。这种减少的精神努力转化为更高的主观满意度。</span><br><span class="line"></span><br><span class="line">底线——满意度：绝大多数用户更喜欢易于理解和视觉上有帮助的界面。同时带有图标和标签的按钮正好满足了这一点——它们通常因清晰、自信和美观而受欢迎。只有图标的按钮通常会让用户感到沮丧（除非他们是专家），而只有文本的按钮虽然清晰，但在视觉上可能并不赏心悦目。将文本与图标组合在一起的满意度最高，这也是用户在问及他们喜欢的样式时的最常见选择。</span><br><span class="line"></span><br><span class="line">可访问性的考虑</span><br><span class="line">- 无障碍确保界面对残疾人或有残疾的人可用，包括使用辅助技术（如屏幕阅读器）的人、有视觉障碍、认知障碍的人等。当比较图标、文本和两者时，可访问性有一些重要的影响：</span><br><span class="line">- 屏幕阅读器的兼容性：按钮上的文本标签可以立即被屏幕阅读器读取（为盲人或弱视用户读取UI元素的软件）。图标本身本质上是一个图像；如果没有文本标签，开发人员必须提供一个替代文本（“aria-label”或类似的文本），以便屏幕阅读器可以指出图标的作用。这是可访问性标准的要求（WCAG成功标准1.1.1：非文本内容必须有文本替代）。在实践中，当图标旁边有一个可见标签时，该标签通常用作按钮的可访问名称——这是一个健壮的解决方案。对于只有图标的按钮，如果缺少替代文本或写得不好，按钮将被宣布为“按钮”或其他模糊的东西，使界面对盲人用户不可用。因此，图标+文本是满足可访问性指导原则的最安全选择，因为文本是内置的，并且总是可用于辅助技术。</span><br><span class="line">- 视力障碍和视力低下：视力低下的用户经常放大或使用屏幕放大镜。文本标签通常可以很好地缩放（特别是当UI使用响应式文本时）。图标缩放可能不那么清晰，或者可能像素化，如果在高缩放时人们只能看到屏幕的一部分，那么不熟悉的图标可能无法识别。此外，一些用户很难感知细节或颜色——一个小图标可能无法区分（例如，一个细线条的图标可能看起来只是一个污迹）。对于这些用户来说，文本标签至关重要。色盲用户也可以从标签中获益——例如，一个依赖于颜色编码的图标（如红色和绿色符号）对他们来说是无法区分的，但标签可以明确任何颜色的操作。同时提供两种模态（图标形状和文本）可以提高在错过另一种模态时，至少一种模态可以清晰显示的机会。</span><br><span class="line">- 认知和学习障碍：图标在认知上具有挑战性——它们本质上是一种必须学习的视觉语言。有认知障碍、阅读困难或记忆问题的用户可能会发现很难记住给定的图标代表什么，特别是当它是抽象的。另一方面，文本标签可以用用户自己的语言阅读（或通过辅助技术听到），减少认知解码的工作量。对轻度认知障碍用户的研究表明，在图标中添加文本可以显著提高他们识别正确功能的能力。同样，自闭症患者或有注意力障碍的人往往更喜欢明确的指令（文本），而不是符号指令；标签可以通过消除歧义帮助他们专注于任务。总的来说，icon+text被认为更具有认知可及性，因为它不仅仅依赖于符号解释。</span><br><span class="line">- 运动和灵巧性的考虑：如果用户有运动障碍，并且正在使用开关控制或语音命令进行导航，为目标设置清晰的标签可能很重要。语音控制软件通常让用户说出按钮的名称。如果按钮只是一个没有可访问标签的图标，用户可能不知道要说什么词（或者可能没有合适的名称）。对于可见文本，他们可以简单地说出该文本。对于只使用开关或键盘的用户来说，轻按控制键，听到有意义的标签被大声朗读，这对他们知道何时聚焦到正确的按钮至关重要。如果没有正确标记，只有图标的按钮可能会减慢或阻碍这些导航方法。</span><br><span class="line">- 为了可访问性避免依赖于悬停的标签：一些设计隐藏了文本标签，只在悬停时显示它（工具提示）。这在多个方面都是可访问性的问题。首先，hover对于触屏用户（手机或平板电脑）来说是不存在的，所以这些用户可能根本看不到标签。其次，灵巧度有限的用户可能会发现很难在小图标上准确地悬停。第三，如前所述，屏幕阅读器默认不会触发鼠标悬停提示；它们依赖于底层的可访问名称。Nielsen Norman Group明确建议图标标签应该在任何时候都是可见的，而不仅仅是在鼠标悬停时，因为隐藏它们会“降低效果”，并且在触控设备上失败。简而言之，永久可见的文本比只在鼠标悬停时显示的文本更容易访问。</span><br><span class="line">- 用户控制和自定义：作为辅助功能增强，一些应用程序提供了一种设置，可以在纯图标、纯文本或两者之间进行切换。这允许用户选择最适合他们的方式——例如，如果应用程序以某种方式默认只使用图标，视障用户可能会打开“图标上的文本标签”模式。专家建议，如果界面必须使用只有图标的按钮（可能是由于空间限制），最好至少允许文本标签的选项（或“可访问模式”）。然而，只需简单地为每个人默认使用带有标签的图标，就可以完全避免对这些选项的需求。</span><br></pre></td></tr></table></figure>
+
+<p>深入研究的回答其实后面还有很多内容，强烈建议大家去试一试，非常好用。</p>
+<p>这个例子的对比更加明显，能看出来<code>深入研究</code>的回答更像一位专业的助手，你吩咐下去一个任务，他会去自己找资料，自己总结，并给你一份文档，你只需要看这个文档就可以了。</p>
+<p>像不像老板和秘书？而且是有专业知识的秘书？</p>
+<p>如果你是老板，你会选择雇佣谁呢？评论区一起讨论下～</p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><p>深入研究采用端到端强化学习方法，针对跨领域复杂浏览与推理任务进行训练。通过这种训练，它学会了规划和执行多步骤轨迹来查找所需的数据，并在必要时进行回溯和对实时信息做出反应。该模型还能浏览用户上传的文件，使用 <code>Python</code> 工具绘制和迭代图形，在回复中嵌入生成的图形和网站图片，并引用来源中的特定句子或段落。经此训练，该系统在多项面向现实问题的公开评估中达到全新性能峰值。</p>
+<h2 id="人类终极测试"><a href="#人类终极测试" class="headerlink" title="人类终极测试"></a>人类终极测试</h2><p>在最近发布的人类终极测试⁠（在新窗口中打开） (Humanity’s Last Exam) 评估中，深入研究模型的准确率达到 26.6%，创下新高。这项测试涵盖多学科专家级难题，包括 3,000 多道选择题和简答题，涉及 100 多个学科，从语言学到火箭科学，从古典文学到生态学。与 OpenAI o1 相比，该模型在化学、人文和社会科学以及数学学科的进步最大。为深入研究提供技术支持的模型能够按需高效获取专业化信息，展示了类似于人类的方法。</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th align="right">准确率 (%)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-4o</td>
+<td align="right">3.3</td>
+</tr>
+<tr>
+<td>Grok-2</td>
+<td align="right">3.8</td>
+</tr>
+<tr>
+<td>Claude 3.5 Sonnet</td>
+<td align="right">4.3</td>
+</tr>
+<tr>
+<td>Gemini Thinking</td>
+<td align="right">6.2</td>
+</tr>
+<tr>
+<td>OpenAI o1</td>
+<td align="right">9.1</td>
+</tr>
+<tr>
+<td>DeepSeek-R1</td>
+<td align="right">9.4</td>
+</tr>
+<tr>
+<td>OpenAI o3-mini（均衡版）</td>
+<td align="right">10.5</td>
+</tr>
+<tr>
+<td>OpenAI o3-mini（高性能版）</td>
+<td align="right">13.0</td>
+</tr>
+<tr>
+<td>OpenAI 深入研究</td>
+<td align="right">26.6</td>
+</tr>
+</tbody></table>
+<p>可以看到准确率<code>遥遥领先</code>。。。</p>
+<h2 id="GAIA"><a href="#GAIA" class="headerlink" title="GAIA"></a>GAIA</h2><p>在 GAIA⁠（针对真实世界问题评估人工智能的公共基准）上，为深入研究提供技术支持的模型达到了新的技术水平 (SOTA)，在外部排行榜⁠（在新窗口中打开）上名列前茅。这些任务包括三个难度级别的问题，成功完成这些任务需要具备推理、多模式流畅性、网络浏览和工具使用熟练程度等能力。</p>
+<table>
+<thead>
+<tr>
+<th>GAIA</th>
+<th align="right">1 级</th>
+<th align="right">2 级</th>
+<th align="right">3 级</th>
+<th align="right">平均值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上一个 SOTA</td>
+<td align="right">67.92</td>
+<td align="right">67.44</td>
+<td align="right">42.31</td>
+<td align="right">63.64</td>
+</tr>
+<tr>
+<td>深入研究 (pass@1)</td>
+<td align="right">74.29</td>
+<td align="right">69.06</td>
+<td align="right">47.6</td>
+<td align="right">67.36</td>
+</tr>
+<tr>
+<td>深入研究 (cons@64)</td>
+<td align="right">78.66</td>
+<td align="right">73.21</td>
+<td align="right">58.03</td>
+<td align="right">72.57</td>
+</tr>
+</tbody></table>
+<h2 id="专家级任务"><a href="#专家级任务" class="headerlink" title="专家级任务"></a>专家级任务</h2><p>在跨领域专家级任务的内部评估中，深入研究功能经领域专家评定，可自动化完成需数小时人工完成的复杂调研工作。 </p>
+<p><img src="https://thepatterraining.github.io/images/ai/ai5.png" alt="最高工具调用次数"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这个功能现在可能还有一些问题，但是相比于其他模型来说，准确率已经算不错的了。因此还是很推荐大家使用的。</p>
+<p>我觉得唯一的缺点就是使用次数太少了，普通用户每个月5次。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html" rel="prev" title="优化MapReduce，10个核心功能决定能否进化为工业级">
+      <i class="fa fa-chevron-left"></i> 优化MapReduce，10个核心功能决定能否进化为工业级
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90"><span class="nav-number">1.</span> <span class="nav-text">chatGPT深入研究功能，不愧是AI届的扛把子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%85%B3%E6%B3%A8%E2%80%9C%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E2%80%9D%E8%BF%99%E7%B1%BB%E4%BB%A3%E7%90%86%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要关注“深入研究”这类代理？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%83%BD%E5%8A%9B%E4%B8%8E%E7%8E%B0%E7%8A%B6"><span class="nav-number">1.1.1.</span> <span class="nav-text">核心能力与现状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%AA%E9%80%82%E5%90%88%E4%BA%A4%E7%BB%99%E2%80%9C%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E2%80%9D%E7%9A%84%E5%AE%9E%E6%88%98%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.2.</span> <span class="nav-text">3 个适合交给“深入研究”的实战场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E6%AD%A5%E6%83%85%E6%8A%A5%E6%94%B6%E9%9B%86%E4%B8%8E%E6%96%87%E7%8C%AE%E7%BB%BC%E8%BF%B0"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">初步情报收集与文献综述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%95%B4%E5%90%88%E4%B8%8E%E5%8F%AF%E8%A7%86%E5%8C%96%E5%8E%9F%E5%9E%8B"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">数据整合与可视化原型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%95%86%E4%B8%9A%E5%8F%AF%E8%A1%8C%E6%80%A7%E4%B8%8E%E5%BF%AB%E9%80%9F%E5%B8%82%E5%9C%BA%E7%AD%9B%E6%9F%A5"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">商业可行性与快速市场筛查</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6"><span class="nav-number">1.2.</span> <span class="nav-text">如何使用深入研究</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E7%B1%BB%E7%BB%88%E6%9E%81%E6%B5%8B%E8%AF%95"><span class="nav-number">1.4.</span> <span class="nav-text">人类终极测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GAIA"><span class="nav-number">1.5.</span> <span class="nav-text">GAIA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%93%E5%AE%B6%E7%BA%A7%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.6.</span> <span class="nav-text">专家级任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.8.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

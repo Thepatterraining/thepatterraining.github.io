@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优化MapReduce，10个核心功能决定能否进化为工业级">
+<meta property="og:url" content="https://thepatterraining.github.io/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-09-30T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-09-30T08:04:52.462Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="MapReduce">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/bottom1.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>优化MapReduce，10个核心功能决定能否进化为工业级 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          优化MapReduce，10个核心功能决定能否进化为工业级
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-09-30 10:12:47 / 修改时间：16:04:52" itemprop="dateCreated datePublished" datetime="2025-09-30T10:12:47+08:00">2025-09-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MIT6-824/" itemprop="url" rel="index"><span itemprop="name">MIT6.824</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html" class="post-meta-item leancloud_visitors" data-flag-title="优化MapReduce，10个核心功能决定能否进化为工业级" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mit6.824/%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="优化MapReduce，10个核心功能决定能否进化为工业级"><a href="#优化MapReduce，10个核心功能决定能否进化为工业级" class="headerlink" title="优化MapReduce，10个核心功能决定能否进化为工业级"></a>优化MapReduce，10个核心功能决定能否进化为工业级</h1><p>在上一篇文章中，我们已经使用golang从0-1设计实现了一个MapReduce系统，主要参考了<code>google</code>的<code>MapReduce</code>论文。</p>
+<p>今天我们就来聊聊：<strong>从教学版到工业级MapReduce，到底还差哪些关键特性？</strong>我会结合真实代码片段、架构图和踩坑经验，梳理出10个必须补齐的核心功能，并给出优先级建议。</p>
+<h2 id="问题的本质：为什么“能跑”不等于“可用”？"><a href="#问题的本质：为什么“能跑”不等于“可用”？" class="headerlink" title="问题的本质：为什么“能跑”不等于“可用”？"></a>问题的本质：为什么“能跑”不等于“可用”？</h2><p>我们刚开始做MapReduce项目时，都是“一台机器读文件、分配任务、收集结果”，看起来没啥问题。但一旦遇到超大文件、节点故障、网络瓶颈，这套方案立刻原形毕露：</p>
+<p>比如：</p>
+<ul>
+<li>单点的Master，容易出现单点故障</li>
+<li>任务的划分纬度是文件纬度的，论文中的任务是数据块纬度的</li>
+<li>不支持分布式文件系统，论文中使用的是google的GFS分布式文件系统</li>
+<li>慢节点会拖慢整体的计算速度</li>
+<li>网络传输没有一些优化措施</li>
+</ul>
+<p>说实话，这些痛点不是纸上谈兵，而是每个工程师都会踩过的坑。下面我们逐条拆解论文要求和实际实现之间的鸿沟。</p>
+<h2 id="技术方案解析"><a href="#技术方案解析" class="headerlink" title="技术方案解析"></a>技术方案解析</h2><ol>
+<li>分布式文件系统支持（GFS集成）</li>
+</ol>
+<p>论文要求</p>
+<ul>
+<li>数据自动分片、副本管理</li>
+<li>任务调度考虑数据位置（数据本地性）</li>
+</ul>
+<p>当前实现现状</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 教学版直接读取本地文件</span></span><br><span class="line">content := readFile(task.Filename[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<p>缺失分析:</p>
+<ul>
+<li>没有分布式存储，单机容量受限</li>
+<li>无法利用副本提升容错能力</li>
+<li>数据本地性完全缺失</li>
+</ul>
+<p>工业级改进思路:</p>
+<p>根据论文的描述，论文中集成的是GFS分布式文件系统，但这个是google自己内部使用的，我们可以使用一些开源的，比如Hadoop的HDFS。实现自动分片与副本管理。</p>
+<p>其实，著名的开源软件<code>Hadoop</code>就是一个使用JAVA完美实现了MapReduce的系统。如果有人看过Hadoop的源码，就会发现和我们上一篇的实现很像。</p>
+<p>我们还可以优化一下任务调度机制，任务调度时优先选择拥有目标数据块副本的Worker。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    A[用户提交作业] --&gt; B[GFS Master]</span><br><span class="line">    B --&gt; C[GFS ChunkServer1]</span><br><span class="line">    B --&gt; D[GFS ChunkServer2]</span><br><span class="line">    C &amp; D --&gt; E[Worker节点]</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>输入数据分片机制</li>
+</ol>
+<p>论文要求:</p>
+<ul>
+<li>自动将大文件切成64MB块（或动态调整）</li>
+<li>分片元数据记录位置和大小</li>
+</ul>
+<p>我们自己的实现版本如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一个文件对应一个Map任务，不支持大文件并行处理</span></span><br><span class="line"><span class="keyword">for</span> _, filename := <span class="keyword">range</span> files &#123;</span><br><span class="line">    task := Task&#123;</span><br><span class="line">        Number:   maxTaskNumber,</span><br><span class="line">        Filename: []<span class="type">string</span>&#123;filename&#125;,</span><br><span class="line">        Type:     MapTask,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一些改进的建议:应该实现文件分片</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">splitFile</span><span class="params">(filename <span class="type">string</span>, splitSize <span class="type">int64</span>)</span></span> []Split &#123;</span><br><span class="line">    splits := []Split&#123;&#125;</span><br><span class="line">    file, _ := os.Open(filename)</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line">    fileInfo, _ := file.Stat()</span><br><span class="line">    fileSize := fileInfo.Size()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> offset := <span class="type">int64</span>(<span class="number">0</span>); offset &lt; fileSize; offset += splitSize &#123;</span><br><span class="line">        split := Split&#123;</span><br><span class="line">            Filename: filename,</span><br><span class="line">            Offset:   offset,</span><br><span class="line">            Length:   min(splitSize, fileSize-offset),</span><br><span class="line">        &#125;</span><br><span class="line">        splits = <span class="built_in">append</span>(splits, split)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> splits</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有意思的是，大部分人都忽略了元数据管理。如果没有记录每个split的位置和长度，后续恢复&#x2F;重试会非常麻烦。</p>
+<ol start="3">
+<li>数据本地性调度优化</li>
+</ol>
+<p>论文核心机制:</p>
+<ul>
+<li>优先级：本地 &gt; 同机架 &gt; 跨机架远程</li>
+<li>网络拓扑感知 + 负载均衡</li>
+</ul>
+<p>我们自己的实现版本如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker := &lt;- m.IdleWorkers <span class="comment">// 任意空闲Worker，无视数据位置</span></span><br></pre></td></tr></table></figure>
+
+<p>一些改进的建议</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Master)</span></span> selectBestWorker(task Task) *WorkerStruct &#123;</span><br><span class="line">      <span class="comment">// 1. 优先选择数据本地的Worker</span></span><br><span class="line">      <span class="keyword">for</span> _, worker := <span class="keyword">range</span> m.IdleWorkers &#123;</span><br><span class="line">          <span class="keyword">if</span> worker.hasLocalData(task.DataLocation) &#123;</span><br><span class="line">              <span class="keyword">return</span> worker</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 2. 选择同机架的Worker</span></span><br><span class="line">      <span class="keyword">for</span> _, worker := <span class="keyword">range</span> m.IdleWorkers &#123;</span><br><span class="line">          <span class="keyword">if</span> worker.inSameRack(task.DataLocation) &#123;</span><br><span class="line">              <span class="keyword">return</span> worker</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 3. 选择任意Worker</span></span><br><span class="line">      <span class="keyword">return</span> m.IdleWorkers[<span class="number">0</span>]</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>优化的流程图如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[收到新任务] --&gt; B&#123;有无Local Data Worker?&#125;</span><br><span class="line">    B -- 是 --&gt; C[派发给Local Worker]</span><br><span class="line">    B -- 否 --&gt; D&#123;同Rack Worker?&#125;</span><br><span class="line">    D -- 是 --&gt; E[派发给Rack内Worker]</span><br><span class="line">    D -- 否 --&gt; F[随机派发远程Worker]</span><br></pre></td></tr></table></figure>
+
+<p>踩过坑的人都知道，如果不做这个优化，大型集群下网络流量会炸锅！</p>
+<ol start="4">
+<li>Master容错机制（检查点+热备）</li>
+</ol>
+<p>风险分析:</p>
+<ul>
+<li>当前Master是单点故障，一旦挂掉所有作业全部失败。</li>
+<li>无法从中间状态恢复作业</li>
+<li>大型作业重启的成本也比较高</li>
+</ul>
+<p>我们自己的实现版本如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Master <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// 没有持久化状态，也没有备份机制！</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>工业级方案:</p>
+<ul>
+<li>定期保存检查点+日志重放+多Master热备：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram  </span><br><span class="line">participant M as 主Master  </span><br><span class="line">participant S as Standby Master  </span><br><span class="line">M-&gt;&gt;S: 定期同步状态  </span><br><span class="line">M--&gt;&gt;S: 崩溃后由Standby接管并恢复状态</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">数据不会撒谎：`Google MapReduce`生产环境里，每天数千次作业重启，如果没有容错机制根本扛不住！</span><br><span class="line"></span><br><span class="line">5. 高级容错特性——慢任务检测与推测执行</span><br><span class="line"></span><br><span class="line">&gt; 慢节点拖累整体速度，是大规模集群最常见的问题之一。</span><br><span class="line"></span><br><span class="line">`MapReduce`有一个问题就是Reduce任务需要等所有的Map任务执行完成以后才能开始执行，而如果最后一个Map的任务执行的很慢，那么就会拖累整个集群的计算速度。</span><br><span class="line"></span><br><span class="line">因为所有的worker节点都需要等待这个Map任务的完成。</span><br><span class="line"></span><br><span class="line">论文中提供了一个方法，就是将这些最后执行较慢的任务，多分配几个worker一起执行，哪个worker最先执行完毕，这个任务就执行完了。</span><br><span class="line"></span><br><span class="line">代码示例如下</span><br><span class="line">```go</span><br><span class="line">func (m *Master) detectStragglers() &#123;</span><br><span class="line">   for _, task := range m.runningTasks &#123;</span><br><span class="line">       if time.Since(task.StartTime) &gt; expectedTime*1.5 &#123;</span><br><span class="line">           m.launchBackupTask(task)</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实战中，经常遇到某台机器磁盘坏道或者CPU异常导致某些task极慢。推测执行可以显著提升尾部延迟表现。</p>
+<ol start="6">
+<li>网络拓扑感知能力</li>
+</ol>
+<p>不仅仅是“同机架优先”，更要考虑带宽、交换机层次等因素：</p>
+<p>代码示例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> NetworkTopology <span class="keyword">struct</span> &#123;</span><br><span class="line">    Racks <span class="keyword">map</span>[<span class="type">string</span>][]<span class="type">string</span>  <span class="comment">// 机架到机器的映射</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(nt *NetworkTopology)</span></span> getDistance(node1, node2 <span class="type">string</span>) <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> node1 == node2 &#123; <span class="keyword">return</span> <span class="number">0</span> &#125;           <span class="comment">// 同节点</span></span><br><span class="line">    <span class="keyword">if</span> nt.sameRack(node1, node2) &#123; <span class="keyword">return</span> <span class="number">1</span> &#125; <span class="comment">// 同机架</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>                                   <span class="comment">// 不同机架</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在超大规模集群下，没有拓扑感知很容易出现跨交换机流量拥堵。</p>
+<ol start="7">
+<li>性能优化特性</li>
+</ol>
+<ul>
+<li>Combiner预聚合<ul>
+<li>在Map端提前聚合，可以减少大量重复key的数据传输：</li>
+</ul>
+</li>
+</ul>
+<p>代码示例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Combiner <span class="function"><span class="keyword">func</span><span class="params">(key <span class="type">string</span>, values []<span class="type">string</span>)</span></span> []<span class="type">string</span> </span><br><span class="line"><span class="comment">// Map输出前调用Combiner进行预聚合 </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>压缩支持<ul>
+<li>中间结果写入前压缩，有效降低I&#x2F;O压力：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeCompressedOutput</span><span class="params">(data []KeyValue)</span></span> &#123; <span class="comment">/* gzip压缩 */</span> &#125; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存缓冲批量写入<ul>
+<li>减少频繁磁盘操作，提高吞吐：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应该实现内存缓冲，批量写入</span></span><br><span class="line"><span class="keyword">type</span> OutputBuffer <span class="keyword">struct</span> &#123;</span><br><span class="line">    buffer []KeyValue</span><br><span class="line">    size   <span class="type">int</span></span><br><span class="line">    maxSize <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>性能测试显示，仅Combiner和压缩两项优化，就能让典型WordCount作业提速30%以上！</p>
+<p>当大数据量进行离线计算的时候，性能尤其重要，尤其是企业级真正使用的时候，对于性能是非常看重的，这些性能的具体优化可以参考<code>Hadoop</code>，或者你有更好的方案实现，那么你还可以优化Hadoop，成为开源的贡献者。</p>
+<ol start="8">
+<li>运维监控与调试支持</li>
+</ol>
+<p>根据MapReduce论文里面的要求，我们还需要有一些监控手段：</p>
+<ul>
+<li>Web界面：实时监控作业进度</li>
+<li>性能计数器：统计各种指标</li>
+<li>日志聚合：集中收集所有节点日志</li>
+</ul>
+<p>对于监控，就需要一些前端的实现了，这个比较简单，提供一些API接口即可。</p>
+<ol start="9">
+<li>配置参数化能力</li>
+</ol>
+<p>灵活配置各类参数，让系统适应不同规模和场景需求,比如：</p>
+<ul>
+<li>比如每个worker节点的Map任务数量，Reduce任务数量</li>
+<li>比如分片的大小</li>
+<li>比如缓冲区的大小</li>
+<li>比如压缩算法用哪个算法</li>
+</ul>
+<p>我们可以将这些变成参数配置，随时修改。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MapReduceConfig <span class="keyword">struct</span> &#123;</span><br><span class="line">    MapTasksPerNodeint    <span class="comment">// 每节点Map任务数</span></span><br><span class="line">    ReduceTasksPerNode <span class="type">int</span>    <span class="comment">// 每节点Reduce任务数</span></span><br><span class="line">    SplitSize         <span class="type">int64</span>   <span class="comment">// 分片大小</span></span><br><span class="line">    SortBufferSize    <span class="type">int</span>     <span class="comment">// 排序缓冲区大小</span></span><br><span class="line">    CompressionType   <span class="type">string</span>  <span class="comment">// 压缩算法</span></span><br><span class="line">    ReplicationFactor <span class="type">int</span>     <span class="comment">// 副本数量</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="10">
+<li>优先级改进建议</li>
+</ol>
+<p>上面说了这么多的优化能力，但是不可能一下子全部实现，因此，对于这些也是可以有一个优先级的。</p>
+<p>最高优先级的，肯定是一些核心的功能优化，比如</p>
+<ul>
+<li>文件的分片机制，可以将一个大文件分片成小的文件块进行处理</li>
+<li>Master检查点，可以进行中断恢复，不至于一下子失败了要从头开始</li>
+<li>慢任务优化，优化整体性能</li>
+</ul>
+<p>中优先级的则是一些性能优化相关的改进，这些改进可以让我们的系统支持大数据量的计算，真正的投入生产使用</p>
+<ul>
+<li>数据本地调度，可以较少网络开销</li>
+<li>Combiner预聚合支持，可以提升Map任务性能</li>
+<li>压缩支持，可以减少IO开销，提升速度</li>
+</ul>
+<p>低优先级的改进，这些也是需要的，但是相比于上面的优化来说，优先级更低</p>
+<ul>
+<li>Web监控界面</li>
+<li>网络拓扑感知</li>
+<li>配置参数化调整</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>如果能把上面的都实现，其实就相当于实现了一个<code>Hadoop</code>，因此，我们实现的时候，也可以参照Hadoop的源码。</p>
+<p>有什么更好的优化思路，可以留言一起交流～</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MapReduce/" rel="tag"># MapReduce</a>
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html" rel="prev" title="分布式MapReduce系统设计与实现">
+      <i class="fa fa-chevron-left"></i> 分布式MapReduce系统设计与实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/AI/chatGPT%E6%B7%B1%E5%85%A5%E7%A0%94%E7%A9%B6%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%B8%8D%E6%84%A7%E6%98%AFAI%E5%B1%8A%E7%9A%84%E6%89%9B%E6%8A%8A%E5%AD%90.html" rel="next" title="chatGPT深入研究功能，不愧是AI届的扛把子">
+      chatGPT深入研究功能，不愧是AI届的扛把子 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96MapReduce%EF%BC%8C10%E4%B8%AA%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%BF%9B%E5%8C%96%E4%B8%BA%E5%B7%A5%E4%B8%9A%E7%BA%A7"><span class="nav-number">1.</span> <span class="nav-text">优化MapReduce，10个核心功能决定能否进化为工业级</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%9A%84%E6%9C%AC%E8%B4%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E2%80%9C%E8%83%BD%E8%B7%91%E2%80%9D%E4%B8%8D%E7%AD%89%E4%BA%8E%E2%80%9C%E5%8F%AF%E7%94%A8%E2%80%9D%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">问题的本质：为什么“能跑”不等于“可用”？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88%E8%A7%A3%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">技术方案解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.4.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
