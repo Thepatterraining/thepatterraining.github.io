@@ -538,12 +538,12 @@ public class UserApplication {
 > 发送“AI”即可领取AI学习资料。
 > 部分电子书如图所示。
 
-![概念学习](https://thepatterraining.github.io/images/bottom1.png)
+![](https://thepatterraining.github.io/images/bottom1.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom2.png)
+![](https://thepatterraining.github.io/images/bottom2.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom3.png)
+![](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom4.png)
+![](https://thepatterraining.github.io/images/bottom4.png)
 
 
