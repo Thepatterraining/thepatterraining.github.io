@@ -196,6 +196,389 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html" class="post-title-link" itemprop="url">MySQL零基础教程导入导出</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-08-04 10:12:47 / 修改时间：13:26:23" itemprop="dateCreated datePublished" datetime="2025-08-04T10:12:47+08:00">2025-08-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html" class="post-meta-item leancloud_visitors" data-flag-title="MySQL零基础教程导入导出" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="应用学习"></p>
+<h2 id="MySQL零基础教程导入导出"><a href="#MySQL零基础教程导入导出" class="headerlink" title="MySQL零基础教程导入导出"></a>MySQL零基础教程导入导出</h2><p>数据库的角色一般是用来做<code>数据持久化</code>的。既然我们把数据持久化到了磁盘中，那么当我们需要将数据迁移、转移、备份的时候，我们就需要将数据<code>导出</code>出来，并<code>导入</code>到其他的持久化地方。</p>
+<p>导入的可能是另一个MySQL数据库，也可能是其他的数据库。</p>
+<p>因此我们要学习如何对MySQL进行导入导出操作。</p>
+<h3 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h3><p>MySQL提供了多种数据导出方式，每种方式都有其优缺点和适用场景。以下是常见的MySQL数据导出方式及其示例：</p>
+<ol>
+<li>使用 mysqldump 工具</li>
+</ol>
+<p>优点：</p>
+<ul>
+<li>灵活性高：支持导出整个数据库、单个表或部分数据。</li>
+<li>格式支持：可以导出为SQL文件，便于备份和迁移。</li>
+<li>广泛使用：是MySQL官方提供的工具，支持多种选项和参数。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>速度较慢：对于大型数据库，导出速度可能较慢。</li>
+<li>资源消耗：导出过程中可能会占用较多的系统资源。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">导出整个数据库</span></span><br><span class="line">mysqldump -u username -p database_name &gt; backup.sql</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">导出单个表</span></span><br><span class="line">mysqldump -u username -p database_name table_name &gt; table_backup.sql</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">导出数据和结构</span></span><br><span class="line">mysqldump -u username -p --no-data database_name &gt; structure_backup.sql</span><br><span class="line">mysqldump -u username -p --no-create-info database_name &gt; data_backup.sql</span><br></pre></td></tr></table></figure>
+
+<p>使用场景：</p>
+<blockquote>
+<p>小李今天接到领导要求：我们要进行数据库版本升级，从5.7升级到8.0。现在需要将数据从老数据库迁移到新数据库。因此需要导出整个数据库的数据到一个SQL文件里面，并导入到新数据库中。</p>
+</blockquote>
+<blockquote>
+<p>小王接到领导要求：我们要进行数据库备份，每天备份一次，因此，需要导出数据库信息并留存。</p>
+</blockquote>
+<ol start="2">
+<li>使用 SQL 查询导出数据</li>
+</ol>
+<p>优点：</p>
+<ul>
+<li>简单直接：可以使用常规的SQL查询导出数据。</li>
+<li>灵活性：可以导出特定的数据集，支持复杂查询条件。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>格式有限：通常导出为文本格式，需后续处理。</li>
+<li>适用性：不适合导出整个数据库或复杂结构。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 导出到CSV文件</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">INTO</span> OUTFILE <span class="string">&#x27;/path/to/file.csv&#x27;</span></span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;,&#x27;</span> OPTIONALLY ENCLOSED <span class="keyword">BY</span> <span class="string">&#x27;&quot;&#x27;</span></span><br><span class="line">LINES TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\n&#x27;</span></span><br><span class="line"><span class="keyword">FROM</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p>使用场景：</p>
+<blockquote>
+<p>小靳今天接到了一个任务，有一个运营需要导出一批用户行为数据做观察，因此使用这个命令直接导出为CSV文件，并交给运营。</p>
+</blockquote>
+<ol start="3">
+<li>使用 MySQL Workbench 导出</li>
+</ol>
+<p>出来<code>MySQL Workbench</code>以外，还可以使用其他的图形化工具，比如<code>Navicat</code>等。</p>
+<p><code>MySQL workbench</code>是免费开源的，但是<code>Navicat</code>则需要花钱，因此我们使用<code>MySQL workbench</code>作为示例。</p>
+<p>优点：</p>
+<ul>
+<li>用户友好：图形化界面，易于操作。</li>
+<li>功能丰富：支持导出为SQL文件、CSV等多种格式。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>依赖图形界面：需要安装MySQL Workbench，适合小型数据集。</li>
+<li>灵活性较低：对于复杂需求，可能需要手动调整。</li>
+</ul>
+<p>示例<br>在MySQL Workbench中，选择数据库或表，右键点击选择“导出数据”。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-1.png" alt="mysql workbench导出"></p>
+<p>选择要导出的列，点击<code>Next</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-2.png" alt="mysql workbench导出"></p>
+<p>选择导出格式和路径，点击确认即可完成导出。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-3.png" alt="mysql workbench导出"></p>
+<h4 id="选择建议"><a href="#选择建议" class="headerlink" title="选择建议"></a>选择建议</h4><p>根据具体需求选择合适的导出方式：</p>
+<p>mysqldump：适合备份和迁移整个数据库或表。<br>SQL查询导出：适合导出特定数据集或简单数据。<br>MySQL Workbench：适合小型数据集的用户友好导出。<br>选择时需考虑数据规模、格式要求、系统资源和权限限制等因素。</p>
+<h3 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h3><p>MySQL提供了多种数据导入方式，跟上面的导出对应，也有几种方式，每种方式都有其优缺点和适用场景。以下是常见的MySQL数据导入方式及其示例：</p>
+<ol>
+<li>使用 <code>mysqlimport</code> 工具</li>
+</ol>
+<p>优点：</p>
+<ul>
+<li>简单易用：命令行工具，适合批量导入。</li>
+<li>格式支持：支持CSV、TSV等文本格式。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>权限要求：需要文件系统权限。</li>
+<li>依赖命令行：需要在服务器上运行命令行工具。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlimport --local -u username -p database_name /path/to/file.csv</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用 <code>LOAD DATA INFILE</code></li>
+</ol>
+<p>优点:</p>
+<ul>
+<li>速度快：可以批量导入大量数据，性能较高。</li>
+<li>灵活性：支持多种文件格式和字段选项。</li>
+</ul>
+<p>缺点:</p>
+<ul>
+<li>权限要求：需要文件系统权限和secure-file-priv设置。</li>
+<li>格式限制：主要适用于文本文件（如CSV）。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">&#x27;/path/to/file.csv&#x27;</span></span><br><span class="line"><span class="keyword">INTO</span> <span class="keyword">TABLE</span> table_name</span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;,&#x27;</span> OPTIONALLY ENCLOSED <span class="keyword">BY</span> <span class="string">&#x27;&quot;&#x27;</span></span><br><span class="line">LINES TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\n&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用 MySQL Workbench 导入</li>
+</ol>
+<p>优点</p>
+<ul>
+<li>用户友好：图形化界面，易于操作。</li>
+<li>功能丰富：支持导入CSV、SQL等多种格式。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>依赖图形界面：需要安装MySQL Workbench，适合小型数据集。</li>
+<li>灵活性较低：对于复杂需求，可能需要手动调整。</li>
+</ul>
+<p>在MySQL Workbench中，选择数据库或表，右键点击选择“导入数据”。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-4.png" alt="mysql workbench导入"></p>
+<p>选择要导入的文件，点击Next</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-5.png" alt="mysql workbench导入"></p>
+<p>选择现有的数据表，还是创建新的数据表</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-6.png" alt="mysql workbench导入"></p>
+<p>选择要导入的列信息</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-7.png" alt="mysql workbench导入"></p>
+<p>确认信息，点击Next即可执行导入</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql4-8.png" alt="mysql workbench导入"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本次讲解了MySQL的导入导出，讲解了几种方式，以及各自的优缺点、使用场景。并且通过<code>MySQL Workbench</code>做了示例。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/windos%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%9B%86%E7%BE%A4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/mysql/windos%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%9B%86%E7%BE%A4.html" class="post-title-link" itemprop="url">windos搭建mysql主从复制多实例集群</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-08-04 10:12:47" itemprop="dateCreated datePublished" datetime="2025-08-04T10:12:47+08:00">2025-08-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-13 10:07:51" itemprop="dateModified" datetime="2025-10-13T10:07:51+08:00">2025-10-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/windos%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%9B%86%E7%BE%A4.html" class="post-meta-item leancloud_visitors" data-flag-title="windos搭建mysql主从复制多实例集群" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/windos%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%9B%86%E7%BE%A4.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/windos%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%9B%86%E7%BE%A4.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="应用学习"></p>
+<h2 id="windos搭建mysql主从复制多实例集群"><a href="#windos搭建mysql主从复制多实例集群" class="headerlink" title="windos搭建mysql主从复制多实例集群"></a>windos搭建mysql主从复制多实例集群</h2><p>因为没有更多的机器来搭建多机器的集群环境，所以这里使用单机多实例监听多端口来实现mysql的集群环境。</p>
+<h3 id="为什么要使用mysql主从环境"><a href="#为什么要使用mysql主从环境" class="headerlink" title="为什么要使用mysql主从环境"></a>为什么要使用mysql主从环境</h3><p>一般来说读流量大于写流量，所以当流量过大时可以通过mysql主从来扩展从库，读取从库从而应对读流量的冲击。主从复制的实现原理和优缺点有兴趣的可以看我这个文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/Thepatterraining/article/details/105248917">mysql主从读写分离</a>。</p>
+<h3 id="搭建主从环境"><a href="#搭建主从环境" class="headerlink" title="搭建主从环境"></a>搭建主从环境</h3><p>这里假设你已经下载安装好mysql了。已经可以启动一个mysql 3306的实例了。</p>
+<p>现在我们复制一个配置文件。我原来的配置文件是<code>my.ini</code>，我直接复制粘贴改个名字，为了省事命名成<code>3307my.ini</code>。</p>
+<blockquote>
+<p>cp my.ini 3307my.ini</p>
+</blockquote>
+<p>接下来我们有了两个配置文件，一个<code>my.ini</code>，一个<code>3307my.ini</code>。</p>
+<p>我们修改<code>3307my.ini</code>的配置文件内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">port=3307  # 新实例的端口</span><br><span class="line">basedir=D:/MySQL5.7.26/3307  # 新实例的文件夹 我直接放在了原来mysql文件夹下面</span><br><span class="line">datadir=D:/MySQL5.7.26/3307/data/ # 新实例的数据存放路径</span><br><span class="line">character-set-server=utf8</span><br><span class="line">default-storage-engine=InnoDB</span><br><span class="line">max_connections=100</span><br><span class="line">collation-server=utf8_unicode_ci</span><br><span class="line">init_connect=&#x27;SET NAMES utf8&#x27;</span><br><span class="line">innodb_buffer_pool_size=64M</span><br><span class="line">innodb_flush_log_at_trx_commit=1</span><br><span class="line">innodb_lock_wait_timeout=120</span><br><span class="line">innodb_log_buffer_size=4M</span><br><span class="line">innodb_log_file_size=256M</span><br><span class="line">interactive_timeout=120</span><br><span class="line">join_buffer_size=2M</span><br><span class="line">key_buffer_size=32M</span><br><span class="line">log_error_verbosity=1</span><br><span class="line">max_allowed_packet=16M</span><br><span class="line">max_heap_table_size=64M</span><br><span class="line">myisam_max_sort_file_size=64G</span><br><span class="line">myisam_sort_buffer_size=32M</span><br><span class="line">read_buffer_size=512kb</span><br><span class="line">read_rnd_buffer_size=4M</span><br><span class="line">server_id=2  # server_id需要修改成和原来不一样的</span><br><span class="line">skip-external-locking=on</span><br><span class="line">sort_buffer_size=256kb</span><br><span class="line">table_open_cache=256</span><br><span class="line">thread_cache_size=16</span><br><span class="line">tmp_table_size=64M</span><br><span class="line">wait_timeout=120</span><br><span class="line"></span><br><span class="line">log-bin=D:/MySQL5.7.26/3307/mysql-bin  # 开启binlog binlog用于主从同步</span><br><span class="line"></span><br><span class="line">server-id=123455 # server-id同上</span><br><span class="line"></span><br><span class="line">log-error=D:/MySQL5.7.26/3307_err.log              #错误日志</span><br></pre></td></tr></table></figure>
+
+<p>修改完成接下来使用这个配置文件启动，你会发现启动失败，哈哈哈哈。</p>
+<p>因为新的数据库没有<code>mysql</code>的基本信息那些库和表还有插件，所以我们需要复制过去，我是采用了这种简单粗暴的方法，网上还有使用<code>mysql_install_db</code>的，不过我发现我的mysql没有这玩意。</p>
+<p>我们复制<code>data</code>和<code>share</code>两个文件夹复制到<code>3307</code>文件夹里面。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/37fb8b9c000993be9dd50e548a25ca61.png" alt="在这里插入图片描述"></p>
+<p>下面是<code>./3307/</code>文件夹下面的内容，复制过来以后这两个文件夹就过来了。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/28725bcf0f79dd845d2ae0cb1858d7a4.png" alt="在这里插入图片描述"><br>接下来你可以启动第二个<code>mysql</code>实例了。回到<code>3307</code>目录的上层目录，也就是你的mysql根目录。然后运行下面的命令。使用刚才的<code>3307my.ini</code>启动新实例。</p>
+<blockquote>
+<p>.&#x2F;bin&#x2F;mysqld.exe –defaults-file&#x3D;.&#x2F;3307my.ini</p>
+</blockquote>
+<p>启动成功后可以进行连接了。连接上去以后可以看到现在和<code>3306</code>库一样了。接下来开始配置<code>主从复制</code>。</p>
+<p>我们先进入<code>3306</code>主库客户端，查看一些数据。执行下面的命令。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> master status;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到下面的内容。下面的<code>file</code>参数和<code>position</code>参数要在从库配置中用到。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/9c1ce045d84ac27cc797a09cb3a3aac9.png" alt="在这里插入图片描述"></p>
+<p>接下里进入<code>3307</code>客户端执行下面的命令。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">change master <span class="keyword">to</span> </span><br><span class="line">master_host<span class="operator">=</span><span class="string">&#x27;127.0.0.1&#x27;</span>,  <span class="comment">--master地址</span></span><br><span class="line">master_port<span class="operator">=</span><span class="number">3306</span>,         <span class="comment">--master端口</span></span><br><span class="line">master_user<span class="operator">=</span><span class="string">&#x27;root&#x27;</span>,       <span class="comment">--master登录用户名</span></span><br><span class="line">master_password<span class="operator">=</span><span class="string">&#x27;pa88word&#x27;</span>, <span class="comment">--master登录密码</span></span><br><span class="line">master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000009&#x27;</span>,  <span class="comment">--要开始同步的binlog文件 上面的file参数</span></span><br><span class="line">master_log_pos<span class="operator">=</span><span class="number">154</span>;                  <span class="comment">--要开始同步的具体指针位置 上面的position参数</span></span><br></pre></td></tr></table></figure>
+
+<p>执行完这个命令，从库就知道主库在哪了，就知道谁是主库了，也知道该从哪里开始同步了。</p>
+<p>你以为接下来就完了？不不不，接下来还需要启动从库才行。</p>
+<blockquote>
+<p>start slave;</p>
+</blockquote>
+<p>这个命令是什么呢，主要是启动从库的更新线程，从库有两个更新线程，一个io线程负责把主库的<code>binlog</code>写入从库的<code>relay log</code>。一个sql线程负责把<code>relay log</code>中的信息写入从库。</p>
+<p>接下里看看从库的状态，执行下面的命令。</p>
+<blockquote>
+<p>show slave status;</p>
+</blockquote>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/ba74e8ee0b04c2ffc90a13a8fdfa286a.png" alt="在这里插入图片描述"></p>
+<p>这里面主要看<code>Slave_IO_Running</code>和<code>Slave_SQL_Running</code>也就是上面说的两个线程是否在运行，如果是<code>Yes</code>，那么就ok了。</p>
+<p>如果不是<code>Yes</code>可以退出重启一下mysql服务试试。</p>
+<p>如果已经可以了，那么可以在<code>3306</code>主库里面修改一些数据进行测试了。如果有问题你没搭建成功，欢迎你来找我。下一篇文章教你搭建 mysql 2主多从集群。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/ddd/DDD%E8%AE%B0%E8%B4%A6%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%88%98%E4%BA%8C.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2260,616 +2643,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" class="post-title-link" itemprop="url">什么是用户画像，抖音如何做到让你看你喜欢的</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-05-10 10:12:47" itemprop="dateCreated datePublished" datetime="2025-05-10T10:12:47+08:00">2025-05-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-15 10:05:45" itemprop="dateModified" datetime="2025-05-15T10:05:45+08:00">2025-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" class="post-meta-item leancloud_visitors" data-flag-title="什么是用户画像，抖音如何做到让你看你喜欢的" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/%E7%94%A8%E6%88%B7%E7%94%BB%E5%83%8F%E4%BB%8B%E7%BB%8D.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<h1 id="抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！"><a href="#抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！" class="headerlink" title="抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！"></a>抖音为啥总让你“上头”？揭秘它偷摸给你“画像”的全过程！</h1><p>“救命！这说的不就是我吗？”</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">“晚上11点，你躺在床上打开抖音，心想‘就刷10分钟’——结果一抬头，凌晨1点半了🙃。”</span><br><span class="line"></span><br><span class="line">“明明只想看个搞笑视频，却被推送了‘如何暴瘦20斤’，你吓得手机一抖：它怎么知道我最近胖了？！”</span><br><span class="line"></span><br><span class="line">“更离谱的是，你刚和朋友聊到想养猫，第二天抖音就塞给你100个猫片，仿佛在你家装了窃听器…”</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>“抖音人均‘熬夜冠军’：90%的用户每天刷视频超过1小时，60%的人会因‘再刷一条’熬夜到凌晨。”</li>
-<li>“但比熬夜更可怕的是——它总能猜中你心里那点小秘密：暗恋的人、想买的东西、甚至你妈都不知道的生活习惯！”</li>
-</ul>
-<p>你是否有以下疑问？</p>
-<blockquote>
-<p>“明明没填过年龄、职业、爱好，抖音为啥比亲妈还懂你？”<br>“真相是：它早就在你眼皮底下，偷偷画了一张‘数字分身’的像！”<br>“今天我们就来扒一扒，抖音是怎么‘算计’你的——看完你可能再也不敢乱点赞了…”</p>
-</blockquote>
-<p>“别慌！这不是科幻片，3分钟带你看懂背后的套路——从此刷抖音，你才是操控算法的人👊。”</p>
-<h2 id="什么是用户画像？——用“人话”解释专业概念"><a href="#什么是用户画像？——用“人话”解释专业概念" class="headerlink" title="什么是用户画像？——用“人话”解释专业概念"></a>什么是用户画像？——用“人话”解释专业概念</h2><ol>
-<li>先举个“栗子”，秒懂用户画像</li>
-</ol>
-<p>“你网购时的样子，就是用户画像的答案！”</p>
-<ul>
-<li><p>场景1：你经常买咖啡豆、搜“办公室提神神器” → 淘宝立马给你贴标签：“熬夜打工人，咖啡续命党”。</p>
-</li>
-<li><p>场景2：你总看母婴测评、收藏育儿干货 → 小红书默默标记你：“新手宝妈，爱囤货的细节控”。</p>
-</li>
-</ul>
-<p>一句话总结：</p>
-<p>用户画像 &#x3D; 平台用你的<code>行为数据</code>，“拼”出的一本<code>个人说明书</code>，上面写满了你的<code>喜好</code>、<code>习惯</code>，甚至小心思。</p>
-<ol start="2">
-<li>别怕！它画的不是你的脸，而是你的“影子”</li>
-</ol>
-<ul>
-<li>误区澄清：<ul>
-<li>“画像不是偷拍你的身份证，也不会知道你叫张三李四。”</li>
-<li>它只关心<code>你做了什么</code>，而不是<code>你是谁</code>。</li>
-</ul>
-</li>
-<li>举个反向例子🌰：<ul>
-<li>如果你用爸妈手机刷了一天广场舞视频 → 抖音可能误判机主是<code>退休阿姨</code>，第二天狂推<code>养生茶</code>和<code>丝巾</code>（爸妈：？？？）。</li>
-<li>结论：用户画像可能出错，但它会跟着你的行为“随时改作业”！</li>
-</ul>
-</li>
-</ul>
-<ol start="3">
-<li>你的“数字分身”是怎么被画出来的？</li>
-</ol>
-<ul>
-<li>第一步：暗中观察你的“蛛丝马迹”<ul>
-<li>明面操作：点赞、评论、关注 → 你主动告诉平台“我爱这个！”</li>
-<li>暗地追踪：<ul>
-<li>你在一只柯基视频上停留了20秒 → 系统：“这人喜欢狗，记下来！”</li>
-<li>你总在晚上11点后刷美食视频 → 系统：“夜宵爱好者，深夜放毒目标用户！”</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>第二步：给你贴满“隐形标签”<ul>
-<li>标签类型：<ul>
-<li>基础款：性别年龄（猜的）、地理位置（比如“北京通州打工人”）。</li>
-<li>进阶款：“社恐宅家党”“刘畊宏女孩”“甄嬛传十级学者”。</li>
-</ul>
-</li>
-<li>终极目标：用无数个标签把你“拆解”得明明白白。</li>
-</ul>
-</li>
-</ul>
-<ol start="4">
-<li>用户画像能有多离谱？网友亲身经历炸锅</li>
-</ol>
-<p>爆笑案例：</p>
-<ul>
-<li>网友A：搜过一次“痔疮膏”，从此抖音推荐全是“肛肠医院专家号”（本人：我只是手滑！）。</li>
-<li>网友B：借朋友手机看了一次挖掘机视频，结果算法认定他是“蓝翔潜在学员”（朋友：你害我！）。</li>
-</ul>
-<p>严肃提醒：</p>
-<p>用户画像不一定100%准确，但会像牛皮糖一样粘着你——你越刷，它越懂（或越瞎猜）。</p>
-<ol start="5">
-<li>为什么平台非要给你“画像”？真相扎心了</li>
-</ol>
-<p>对你：</p>
-<ul>
-<li>方便！不用手动搜索，喜欢的内容自动喂到嘴边。</li>
-</ul>
-<p>对平台：</p>
-<ul>
-<li>留住你：让你刷到停不下来 → 增加广告曝光 → 赚更多钱。</li>
-</ul>
-<p>说白了：</p>
-<blockquote>
-<p>你以为在刷视频，其实是你的“画像”在帮抖音“打工”！</p>
-</blockquote>
-<h2 id="抖音如何“偷摸”给你画像？——3步拆解"><a href="#抖音如何“偷摸”给你画像？——3步拆解" class="headerlink" title="抖音如何“偷摸”给你画像？——3步拆解"></a>抖音如何“偷摸”给你画像？——3步拆解</h2><h3 id="步骤1：暗中观察——你的“小动作”全被记在小本本上"><a href="#步骤1：暗中观察——你的“小动作”全被记在小本本上" class="headerlink" title="步骤1：暗中观察——你的“小动作”全被记在小本本上"></a>步骤1：暗中观察——你的“小动作”全被记在小本本上</h3><p>你以为你在玩手机？不，你在给抖音“交作业”！</p>
-<ul>
-<li>明面上的“送分题”：<ul>
-<li>点赞 → “这个视频我超爱！”</li>
-<li>收藏 → “好东西必须囤着！”</li>
-<li>关注 → “这博主是我亲爹&#x2F;妈！”</li>
-</ul>
-</li>
-<li>暗地里的“监控大法”：<ul>
-<li>停留时长：<ul>
-<li>看帅哥<code>美女</code>视频停留30秒 → 系统：“这人<code>好色</code>，记下来！”</li>
-<li>看科普视频3秒就划走 → 系统：“学渣，下次少推！”</li>
-</ul>
-</li>
-<li>重复观看：<ul>
-<li>同一条修狗视频看了5遍 → 系统：“狗党实锤，明天首页全变宠物乐园！”</li>
-</ul>
-</li>
-<li>搜索关键词：<ul>
-<li>搜过“脱发自救” → 第二天推荐生发液广告+秃头博主励志故事（扎心了💔）。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="步骤2：算法“算命”——找到你的“网络双胞胎”"><a href="#步骤2：算法“算命”——找到你的“网络双胞胎”" class="headerlink" title="步骤2：算法“算命”——找到你的“网络双胞胎”"></a>步骤2：算法“算命”——找到你的“网络双胞胎”</h3><p>套路1：协同过滤——拉群找“同类”</p>
-<ul>
-<li>“你爱看腹肌男，我也爱看→咱俩就是异父异母的亲兄弟！”<ul>
-<li>你点赞了“刘畊宏跳操” → 抖音找到100个同样爱健身的人 → 把她们喜欢的蛋白粉广告、瑜伽裤测评全塞给你。</li>
-</ul>
-</li>
-<li>副作用：<ul>
-<li>不小心点了一次广场舞视频 → 接下来一周都是“老年Disco”（年轻人：救救我😇）。</li>
-</ul>
-</li>
-</ul>
-<p>套路2：深度学习——系统比你更懂你</p>
-<ul>
-<li>“你连刷10条露营视频？懂了，你上辈子是棵树！”<ul>
-<li>系统发现你爱看“野外生存” → 自动关联推荐帐篷、烧烤架，甚至防狼喷雾（虽然你可能只是云露营）。</li>
-</ul>
-</li>
-<li>离谱案例：<ul>
-<li>网友@小陈：拍过一次穿<code>JK制服</code>的照片 → 抖音判定她是“二次元宅女”，狂推动漫混剪和手办福袋（实际是帮妹妹拍的）。</li>
-</ul>
-</li>
-</ul>
-<h3 id="步骤3：24小时“PUA”——越刷越上瘾的终极陷阱"><a href="#步骤3：24小时“PUA”——越刷越上瘾的终极陷阱" class="headerlink" title="步骤3：24小时“PUA”——越刷越上瘾的终极陷阱"></a>步骤3：24小时“PUA”——越刷越上瘾的终极陷阱</h3><p>实时更新画像：今天你是宝妈，明天变驴友</p>
-<ul>
-<li>周一刷美妆教程 → 画像：“精致都市丽人”。</li>
-<li>周二突然看育儿知识 → 画像秒变：“新手妈妈”（哪怕你单身🐶）。</li>
-<li>系统逻辑：宁可错杀一千，绝不放过一个！</li>
-</ul>
-<p>多维度“绑架”你的注意力：</p>
-<ul>
-<li>BGM操控：你常听周杰伦 → 同类音乐视频优先推送。</li>
-<li>时间陷阱：发现你每晚10点活跃 → 准时投放“助眠神器”广告（结果你越看越精神）。</li>
-<li>地域追踪：IP在北京 → 推荐“环球影城攻略”；切换到老家县城 → 立刻变成“相亲神曲合集”。</li>
-</ul>
-<h3 id="举个真实场景，让你脊背发凉"><a href="#举个真实场景，让你脊背发凉" class="headerlink" title="举个真实场景，让你脊背发凉"></a>举个真实场景，让你脊背发凉</h3><p>“一条视频引发的血案”：</p>
-<p>你偶然点开“考研英语”视频，看了15秒 → 系统标记“潜在考生”。</p>
-<p>第二天首页出现“考研逆袭故事” → 你忍不住看完。</p>
-<p>一周后，抖音开始推荐“考研辅导班”“防脱发洗发水”，甚至“二战考研租房攻略”……</p>
-<p>结果：你本来只想随便看看，现在满脑子都是“我是不是该考研了？”</p>
-<h3 id="总结：抖音的“画像公式”"><a href="#总结：抖音的“画像公式”" class="headerlink" title="总结：抖音的“画像公式”"></a>总结：抖音的“画像公式”</h3><p>你的行为数据 + 算法的“脑补” &#x3D; 一个比你妈还操心的“数字管家”</p>
-<ul>
-<li>温馨提示：</li>
-</ul>
-<p>如果不想被“画像”绑架，试试这招👇：</p>
-<p>长按视频 → 点击“不感兴趣” → 让算法怀疑人生！</p>
-<p>（但大概率你会继续刷，因为——真香！）</p>
-<h2 id="为什么我们心甘情愿被“操控”？——人性的弱点"><a href="#为什么我们心甘情愿被“操控”？——人性的弱点" class="headerlink" title="为什么我们心甘情愿被“操控”？——人性的弱点"></a>为什么我们心甘情愿被“操控”？——人性的弱点</h2><h3 id="多巴胺陷阱：下一个视频永远在“勾引”你"><a href="#多巴胺陷阱：下一个视频永远在“勾引”你" class="headerlink" title="多巴胺陷阱：下一个视频永远在“勾引”你"></a>多巴胺陷阱：下一个视频永远在“勾引”你</h3><p>“像赌博一样上瘾”：</p>
-<ul>
-<li>每次下滑都像“开盲盒”——可能是搞笑段子、萌宠暴击，或是心动帅哥，这种不确定的惊喜感让大脑疯狂分泌多巴胺。</li>
-</ul>
-<p>案例：</p>
-<blockquote>
-<p>网友@小鱼：“明明困得要死，但总感觉下一个视频会更精彩，结果刷到天亮……我像个赌徒！”</p>
-</blockquote>
-<p>生理真相：</p>
-<ul>
-<li>刷抖音时的大脑活跃区和吸毒时高度相似——你不是在玩手机，是在“嗑电子药”。</li>
-</ul>
-<h3 id="即时满足：快乐来得太容易，谁还愿意“吃苦”？"><a href="#即时满足：快乐来得太容易，谁还愿意“吃苦”？" class="headerlink" title="即时满足：快乐来得太容易，谁还愿意“吃苦”？"></a>即时满足：快乐来得太容易，谁还愿意“吃苦”？</h3><p>“3秒一个爽点，谁扛得住？”</p>
-<ul>
-<li>看书要专注1小时，追剧要等更新，但抖音的快乐“即刷即有”：</li>
-<li>想放松？10秒就能笑到喷饭。</li>
-<li>想学习？1分钟“速成”Excel技巧（虽然转头就忘）。</li>
-</ul>
-<p>对比伤害：</p>
-<p>现实中的努力需要坚持，但抖音的快乐“一键直达”——人天生偏爱“捷径”。</p>
-<h3 id="信息茧房：温柔地“杀死”你的好奇心"><a href="#信息茧房：温柔地“杀死”你的好奇心" class="headerlink" title="信息茧房：温柔地“杀死”你的好奇心"></a>信息茧房：温柔地“杀死”你的好奇心</h3><p>“你以为你在选内容？其实是算法给你造了个温室”：</p>
-<ul>
-<li>爱看美妆就推全妆教程，爱看游戏就塞电竞直播……你越满意，系统越不敢让你看别的。</li>
-</ul>
-<p>副作用：</p>
-<blockquote>
-<p>网友@阿凯：“刷了3个月抖音，我以为全世界都爱看钓鱼，直到发现我妈的首页全是婆媳伦理剧……”</p>
-</blockquote>
-<p>心理机制：</p>
-<ul>
-<li>人本能地抗拒“认知失调”——看到不同观点会难受，而抖音让你永远“舒适”。</li>
-</ul>
-<h3 id="社交货币：不刷抖音，你就“没朋友”"><a href="#社交货币：不刷抖音，你就“没朋友”" class="headerlink" title="社交货币：不刷抖音，你就“没朋友”"></a>社交货币：不刷抖音，你就“没朋友”</h3><p>“梗都不知道，还怎么混圈子？”：</p>
-<ul>
-<li>当全网都在跳“科目三”、玩“小土豆梗”时，你不刷抖音&#x3D;聊天插不上话&#x3D;被社交圈抛弃。</li>
-</ul>
-<p>案例：</p>
-<blockquote>
-<p>大学生@露露：“室友们讨论抖音热梗哈哈大笑，我只能假装听懂，默默打开手机开刷……”</p>
-</blockquote>
-<p>平台心机：</p>
-<ul>
-<li>抖音刻意制造“全民爆梗”，让你觉得：不参与&#x3D;落伍&#x3D;孤独。</li>
-</ul>
-<h3 id="虚拟认同：点赞和关注，成了“电子氧气”"><a href="#虚拟认同：点赞和关注，成了“电子氧气”" class="headerlink" title="虚拟认同：点赞和关注，成了“电子氧气”"></a>虚拟认同：点赞和关注，成了“电子氧气”</h3><p>“现实中当小透明，抖音里当赛博顶流”：</p>
-<ul>
-<li>发一条自拍视频，收到100个点赞 → 感觉自己被全世界喜爱（尽管陌生人根本不认识你）。</li>
-</ul>
-<p>心理补偿：</p>
-<ul>
-<li>工作被老板骂？感情不顺？抖音里发条视频，评论区总有人夸你“姐妹好美！”——这种即时认同让人欲罢不能。</li>
-</ul>
-<h3 id="偷走时间还不让你愧疚：碎片化的“正当理由”"><a href="#偷走时间还不让你愧疚：碎片化的“正当理由”" class="headerlink" title="偷走时间还不让你愧疚：碎片化的“正当理由”"></a>偷走时间还不让你愧疚：碎片化的“正当理由”</h3><p>“我就刷5分钟，放松一下怎么了？”：</p>
-<ul>
-<li>等公交、上厕所、吃饭……所有碎片时间都被抖音填满，你以为在“高效利用时间”，实际是被切割成无法专注的废片。</li>
-</ul>
-<p>真实伤害：</p>
-<ul>
-<li>研究显示：频繁切换注意力，会导致记忆力下降、焦虑加剧——但你根本停不下来，因为“5分钟”太容易骗过自己。</li>
-</ul>
-<h3 id="总结：我们不是输给抖音，是输给人性"><a href="#总结：我们不是输给抖音，是输给人性" class="headerlink" title="总结：我们不是输给抖音，是输给人性"></a>总结：我们不是输给抖音，是输给人性</h3><p>“抖音不可怕，可怕的是它比你还懂你”：</p>
-<ul>
-<li>它利用人性的懒惰、贪婪、虚荣、恐惧，织了一张温柔的网——你明知道是陷阱，却自愿跳进去。</li>
-</ul>
-<p>终极矛盾：</p>
-<ul>
-<li>我们既渴望抖音提供的快乐，又厌恶被控制的无力感，最后在“真香”和“戒断”之间反复横跳。</li>
-</ul>
-<h2 id="警惕！被“画像”背后的代价"><a href="#警惕！被“画像”背后的代价" class="headerlink" title="警惕！被“画像”背后的代价"></a>警惕！被“画像”背后的代价</h2><h3 id="你以为的“贴心”，可能是“掏空你”的陷阱"><a href="#你以为的“贴心”，可能是“掏空你”的陷阱" class="headerlink" title="你以为的“贴心”，可能是“掏空你”的陷阱"></a>你以为的“贴心”，可能是“掏空你”的陷阱</h3><p>代价1：隐私裸奔——你的生活成了“透明超市”</p>
-<p>案例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">和朋友微信聊“想买吸尘器”，第二天抖音就推荐10款 → “它怎么听到的？！”（其实是通过输入法、跨APP数据共享）。</span><br><span class="line"></span><br><span class="line">搜过“租房攻略”，立刻被中介广告轰炸 → 你的焦虑成了别人赚钱的工具。</span><br></pre></td></tr></table></figure>
-
-<p>扎心真相：</p>
-<ul>
-<li>免费刷视频的代价，可能是你的隐私被“标价售卖”——广告主花钱就能精准找到你。</li>
-</ul>
-<p>代价2：信息茧房——活成“数字井底之蛙”</p>
-<ul>
-<li>“你看到的世界，是算法想让你看到的”：<ul>
-<li>爱看正能量 → 首页全是人间美好 → 你以为社会一片和谐。</li>
-<li>爱看负面新闻 → 推送越来越极端 → 你变得焦虑、厌世。</li>
-</ul>
-</li>
-</ul>
-<p>网友自嘲：</p>
-<ul>
-<li>“在抖音待了3年，我以为全国女生都月入5万，只有我穷得真实😭”</li>
-</ul>
-<p>代价3：钱包被“绑架”——算法让你花钱更上头</p>
-<p>套路拆解：</p>
-<ul>
-<li>先给你推“普通人逆袭”故事（制造焦虑）。</li>
-<li>再塞给你“3天速成副业”课程（提供希望）。</li>
-<li>最后弹出“限时折扣”支付页面（逼你冲动下单）。</li>
-</ul>
-<p>血泪教训：</p>
-<blockquote>
-<p>网友@娜娜：“刷抖音学了‘配音赚钱’，花2998元买课，最后只赚了9块8……”</p>
-</blockquote>
-<h3 id="防坑指南——普通人如何“反杀”算法？"><a href="#防坑指南——普通人如何“反杀”算法？" class="headerlink" title="防坑指南——普通人如何“反杀”算法？"></a>防坑指南——普通人如何“反杀”算法？</h3><p>招式1：给算法“喂假饭”</p>
-<p>操作手册：</p>
-<ul>
-<li>偶尔故意乱刷：猛看完全不感兴趣的内容（比如广场舞、拖拉机维修）。</li>
-<li>随机点赞：给宠物视频点❤️，再给财经分析点❤️ → 让系统怀疑人生。</li>
-</ul>
-<p>效果：</p>
-<ul>
-<li>算法画像混乱 → 推荐内容“精神分裂”，你成功隐身！</li>
-</ul>
-<p>招式2：关闭“监控开关”（以抖音为例）</p>
-<p>步骤：</p>
-<ul>
-<li>点击“我”→右上角三条杠→【设置】。</li>
-<li>找到【隐私设置】→ 关闭【个性化内容推荐】。</li>
-<li>【广告偏好设置】→ 关闭【程序化广告展示】。</li>
-</ul>
-<p>副作用预警：</p>
-<blockquote>
-<p>首页会变成无聊大杂烩（但至少你的数据安全了）。</p>
-</blockquote>
-<p>招式3：定期“数据大扫除”</p>
-<ul>
-<li>清理缓存：设置→清理占用空间→勾选【临时文件】【资源文件】。</li>
-<li>重置广告ID（安卓&#x2F;苹果通用）：</li>
-<li>手机设置→隐私→广告→重置广告标识符 → 让平台重新“认识你”。</li>
-</ul>
-<h3 id="终极灵魂拷问：逃离算法，我们能赢吗？"><a href="#终极灵魂拷问：逃离算法，我们能赢吗？" class="headerlink" title="终极灵魂拷问：逃离算法，我们能赢吗？"></a>终极灵魂拷问：逃离算法，我们能赢吗？</h3><p>现实很骨感：</p>
-<ul>
-<li>你可以关掉抖音，但外卖APP、购物平台、甚至导航软件都在给你画像 → “全网皆牢笼”。</li>
-</ul>
-<p>清醒一点：</p>
-<ul>
-<li>完全抵制不现实，但可以“让算法为我所用”：</li>
-<li>想学习？主动搜索干货 → 让系统推荐知识类视频。</li>
-<li>想戒剁手？多刷差评揭露视频 → 算法帮你“拔草”。</li>
-</ul>
-<blockquote>
-<p>你的人生不该被“标签”定义</p>
-</blockquote>
-<ul>
-<li>“抖音里的你，是爱吃瓜的乐子人、是职场小白、是深夜emo怪……但那只是数据的‘碎片’。”</li>
-<li>“真实的你，远比算法想象的更丰富、更自由——别让屏幕里的‘画像’，框住你的人生。”</li>
-</ul>
-<blockquote>
-<p>“试过以上防坑招式的，评论区举手！没试过的……现在立刻去关掉个性化推荐，回来打卡！”</p>
-</blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>把选择权“抢”回自己手里.</p>
-<ul>
-<li>“刷抖音时，到底是你在找快乐，还是算法在‘投喂’快乐？”</li>
-<li>用算法看世界 → 世界越来越小，小到只剩你喜欢的“巴掌大”。</li>
-<li>自己探索世界 → 可能踩雷，但会发现更多意想不到的惊喜。</li>
-</ul>
-<blockquote>
-<p>“别让算法替你决定‘该看什么’——你的人生，不该活成数据的提线木偶。”</p>
-</blockquote>
-<p>“你是哪种抖音‘上头人’？对号入座👇<br>1️⃣ “永远在等下一个更香” 多巴胺赌徒<br>2️⃣ “不刷梗就社恐” 跟风焦虑党<br>3️⃣ “被算法PUA还夸它贴心” 清醒沉沦者<br>❤️ 评论区认领你的身份，找找同类！”</p>
-<p>“关不掉抖音？至少可以‘反操控’它！”</p>
-<ul>
-<li>神操作：长按视频 → 【不感兴趣】 → 连点10次，算法会哭着求你别走。</li>
-</ul>
-<blockquote>
-<p>“你在抖音的每一次滑动，都在为你的‘数字画像’描边——是时候告诉自己：我的人生，绝不止算法定义的这一个版本。”</p>
-</blockquote>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/MCP%E5%AE%9E%E6%88%98.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="Thepatter">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/MCP%E5%AE%9E%E6%88%98.html" class="post-title-link" itemprop="url">MCP实战</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-05-06 16:51:30" itemprop="dateCreated datePublished" datetime="2025-05-06T16:51:30+08:00">2025-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-20 18:39:44" itemprop="dateModified" datetime="2025-05-20T18:39:44+08:00">2025-05-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/MCP%E5%AE%9E%E6%88%98.html" class="post-meta-item leancloud_visitors" data-flag-title="MCP实战" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/MCP%E5%AE%9E%E6%88%98.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/MCP%E5%AE%9E%E6%88%98.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="MCP"><a href="#MCP" class="headerlink" title="MCP"></a>MCP</h1><p>在AI技术大火的当下，各个公司都在搞AI-Agent技术。对于Agent来说，其实还处于一个早期的阶段，没有所谓的<code>最佳实践</code>。更没有一些<code>标准规则</code>。可谓是一片蓝海。</p>
-<p>大厂们也都在做着自己的一些尝试。但是总有人在建设底层规则。</p>
-<p>MCP就是一个标准化的产物。它定义了一些<code>标准</code>。</p>
-<p>Model Context Protocol（MCP）是由Anthropic于2024年11月推出的开放标准，旨在为大型语言模型（LLM）应用提供统一的上下文交互接口，使其能够与外部数据源和工具进行无缝集成。​MCP采用客户端-主机-服务器架构，基于JSON-RPC 2.0协议，支持有状态连接和功能协商，允许AI模型访问文件、执行函数和处理上下文提示。</p>
-<p>截至2025年4月，MCP已被多个AI平台和开发工具采纳，包括OpenAI、Google DeepMind、Replit、Sourcegraph等。​其应用场景涵盖了软件开发、企业助手、自然语言数据访问等领域。</p>
-<h2 id="MCP服务器开发"><a href="#MCP服务器开发" class="headerlink" title="MCP服务器开发"></a>MCP服务器开发</h2><p>许多大模型目前没有能力获取预报和恶劣天气警报。让我们使用<code>MCP</code> 来解决这个问题！</p>
-<p>我们将构建一个公开两个工具的服务器：<code>get-alerts</code> 和 <code>get-forecast</code>。然后我们将服务器连接到 <code>MCP</code> 主机（在本例中，Claude for Desktop）：</p>
-<p>MCP本身提供了一些语言的SDK，包括：</p>
-<ul>
-<li>Python</li>
-<li>Node.js</li>
-<li>Java</li>
-<li>C#</li>
-<li>Kotlin</li>
-</ul>
-<p>以Java为例，要求如下：</p>
-<ul>
-<li>Java 17 或更高版本</li>
-<li>Spring Boot 3.3.x或更高版本</li>
-</ul>
-<p>使用SDK可以大大简化我们的开发过程，比如JAVA里面的，我们只需要一个注解<code>@Tool</code>就可以搞定了。</p>
-<p>需要添加Maven依赖：</p>
-<ul>
-<li>spring-web:web开发依赖</li>
-<li>spring-ai-starter-mcp-server：MCP服务器开发依赖<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.ai<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-ai-starter-mcp-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>我们增加一个<code>Service</code>类，该类有两个方法，这两个方法提供了我们上面说的两个工具的能力。</p>
-<ul>
-<li>getWeatherForecastByLocation: 提供给Agent或者大模型的工具，输入参数是精度和纬度，根据经纬度获取天气预报。</li>
-<li>getAlerts：提供给Agent或者大模型的工具，输入参数是地区，获取该地区的天气警报。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeatherService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestClient restClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">WeatherService</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.restClient = RestClient.builder()</span><br><span class="line">                .baseUrl(<span class="string">&quot;https://api.weather.gov&quot;</span>)</span><br><span class="line">                .defaultHeader(<span class="string">&quot;Accept&quot;</span>, <span class="string">&quot;application/geo+json&quot;</span>)</span><br><span class="line">                .defaultHeader(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;WeatherApiClient/1.0 (your@email.com)&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Points</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Props properties) &#123;</span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Props</span><span class="params">(@JsonProperty(&quot;forecast&quot;)</span> String forecast) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Forecast</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Props properties) &#123;</span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Props</span><span class="params">(@JsonProperty(&quot;periods&quot;)</span> List&lt;Period&gt; periods) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Period</span><span class="params">(@JsonProperty(&quot;number&quot;)</span> Integer number, <span class="meta">@JsonProperty(&quot;name&quot;)</span> String name,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;startTime&quot;)</span> String startTime, <span class="meta">@JsonProperty(&quot;endTime&quot;)</span> String endTime,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;isDaytime&quot;)</span> Boolean isDayTime, <span class="meta">@JsonProperty(&quot;temperature&quot;)</span> Integer temperature,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;temperatureUnit&quot;)</span> String temperatureUnit,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;temperatureTrend&quot;)</span> String temperatureTrend,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;probabilityOfPrecipitation&quot;)</span> Map probabilityOfPrecipitation,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;windSpeed&quot;)</span> String windSpeed, <span class="meta">@JsonProperty(&quot;windDirection&quot;)</span> String windDirection,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;icon&quot;)</span> String icon, <span class="meta">@JsonProperty(&quot;shortForecast&quot;)</span> String shortForecast,</span><br><span class="line">                             <span class="meta">@JsonProperty(&quot;detailedForecast&quot;)</span> String detailedForecast) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Alert</span><span class="params">(@JsonProperty(&quot;features&quot;)</span> List&lt;Feature&gt; features) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Feature</span><span class="params">(@JsonProperty(&quot;properties&quot;)</span> Properties properties) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnoreProperties(ignoreUnknown = true)</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">record</span> <span class="title class_">Properties</span><span class="params">(@JsonProperty(&quot;event&quot;)</span> String event, <span class="meta">@JsonProperty(&quot;areaDesc&quot;)</span> String areaDesc,</span><br><span class="line">                                 <span class="meta">@JsonProperty(&quot;severity&quot;)</span> String severity, <span class="meta">@JsonProperty(&quot;description&quot;)</span> String description,</span><br><span class="line">                                 <span class="meta">@JsonProperty(&quot;instruction&quot;)</span> String instruction) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get weather forecast for a specific latitude/longitude&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getWeatherForecastByLocation</span><span class="params">(</span></span><br><span class="line"><span class="params">            <span class="type">double</span> latitude,   // Latitude coordinate</span></span><br><span class="line"><span class="params">            <span class="type">double</span> longitude   // Longitude coordinate</span></span><br><span class="line"><span class="params">    )</span> &#123;</span><br><span class="line">        <span class="comment">// 使用 RestClient 发起 GET 请求，获取指定经纬度的点信息</span></span><br><span class="line">        <span class="type">var</span> <span class="variable">points</span> <span class="operator">=</span> restClient.get()</span><br><span class="line">                .uri(<span class="string">&quot;/points/&#123;latitude&#125;,&#123;longitude&#125;&quot;</span>, latitude, longitude) <span class="comment">// 构建请求 URI，替换占位符为具体的经纬度</span></span><br><span class="line">                .retrieve() <span class="comment">// 执行请求并获取响应</span></span><br><span class="line">                .body(Points.class); <span class="comment">// 将响应体解析为 Points 类型的对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用 RestClient 发起 GET 请求，获取点信息中的天气预报 URL 对应的天气预报数据</span></span><br><span class="line">        <span class="type">var</span> <span class="variable">forecast</span> <span class="operator">=</span> restClient.get()</span><br><span class="line">                .uri(points.properties().forecast()) <span class="comment">// 从点信息中提取天气预报 URL</span></span><br><span class="line">                .retrieve() <span class="comment">// 执行请求并获取响应</span></span><br><span class="line">                .body(Forecast.class); <span class="comment">// 将响应体解析为 Forecast 类型的对象</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历天气预报的各个时间段，生成格式化的天气预报文本</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">forecastText</span> <span class="operator">=</span> forecast.properties().periods().stream().map(p -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> String.format(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">					%s:</span></span><br><span class="line"><span class="string">					Temperature: %s %s</span></span><br><span class="line"><span class="string">					Wind: %s %s</span></span><br><span class="line"><span class="string">					Forecast: %s</span></span><br><span class="line"><span class="string">					&quot;&quot;&quot;</span>, </span><br><span class="line">                    p.name(), <span class="comment">// 时间段名称</span></span><br><span class="line">                    p.temperature(), <span class="comment">// 温度值</span></span><br><span class="line">                    p.temperatureUnit(), <span class="comment">// 温度单位</span></span><br><span class="line">                    p.windSpeed(), <span class="comment">// 风速</span></span><br><span class="line">                    p.windDirection(), <span class="comment">// 风向</span></span><br><span class="line">                    p.detailedForecast()); <span class="comment">// 详细天气预报</span></span><br><span class="line">        &#125;).collect(Collectors.joining()); <span class="comment">// 将所有时间段的天气预报文本拼接为一个字符串</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回生成的天气预报文本</span></span><br><span class="line">        <span class="keyword">return</span> forecastText;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get weather alerts for a US state&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getAlerts</span><span class="params">(</span></span><br><span class="line"><span class="params">            <span class="meta">@ToolParam(description =  &quot;Two-letter US state code (e.g. CA, NY&quot;) String state</span></span></span><br><span class="line"><span class="meta"><span class="params">    )</span> &#123;</span></span><br><span class="line"><span class="params">        // 使用 RestClient 发起 GET 请求，获取指定州的天气警报信息</span></span><br><span class="line"><span class="params">        Alert alert = restClient.get()</span>.uri(<span class="string">&quot;/alerts/active/area/&#123;state&#125;&quot;</span>, state).retrieve().body(Alert.class);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历警报信息的特性列表，将每个特性格式化为字符串并拼接为最终的警报信息文本</span></span><br><span class="line">        <span class="keyword">return</span> alert.features()</span><br><span class="line">                .stream()</span><br><span class="line">                .map(f -&gt; String.format(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">					Event: %s</span></span><br><span class="line"><span class="string">					Area: %s</span></span><br><span class="line"><span class="string">					Severity: %s</span></span><br><span class="line"><span class="string">					Description: %s</span></span><br><span class="line"><span class="string">					Instructions: %s</span></span><br><span class="line"><span class="string">					&quot;&quot;&quot;</span>,</span><br><span class="line">                    <span class="comment">// 获取警报事件名称</span></span><br><span class="line">                    f.properties().event(),</span><br><span class="line">                    <span class="comment">// 获取警报影响区域描述</span></span><br><span class="line">                    f.properties.areaDesc(),</span><br><span class="line">                    <span class="comment">// 获取警报严重程度</span></span><br><span class="line">                    f.properties.severity(),</span><br><span class="line">                    <span class="comment">// 获取警报详细描述</span></span><br><span class="line">                    f.properties.description(),</span><br><span class="line">                    <span class="comment">// 获取警报的操作指令</span></span><br><span class="line">                    f.properties.instruction()))</span><br><span class="line">                <span class="comment">// 将所有警报信息拼接为一个字符串，以换行符分隔</span></span><br><span class="line">                .collect(Collectors.joining(<span class="string">&quot;\n&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再通过MCP提供的MethodToolCallbackProvider 工具类来将 <code>@Tool</code> 标记的方法转换成统一的方法，对外部提供工具。</p>
-<p>这是因为MCP服务器规定要给外部提供<code>统一</code>的接口、返回值、参数。所以要转换成符合<code>MCP规范</code>的接口。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> ToolCallbackProvider <span class="title function_">weatherTools</span><span class="params">(WeatherService weatherService)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span>  MethodToolCallbackProvider.builder().toolObjects(weatherService).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来构建服务器，运行成功以后，会在target目录下生成一个jar包，运行该jar包应该能成功启动：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mvnw clean install</span><br></pre></td></tr></table></figure>
-
-<p>接下来我们无需启动这个<code>jar包</code>，直接使用<code>Claude 桌面版客户端</code>即可。</p>
-<p>可以在这里下载：<a target="_blank" rel="noopener" href="https://claude.ai/download">claude 桌面版下载</a></p>
-<p>下载以后，打开应用，登陆上去，选择 Claude -》 Settings</p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-1.png" alt="settings"></p>
-<p>选择Developer -〉<code>Edit Config</code>。会自动创建一个MCP的配置文件。如果已经存在了则不会创建。</p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-2.png" alt="Config"></p>
-<p>创建的配置文件名称如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude_desktop_config.json</span><br></pre></td></tr></table></figure>
-
-<p>修改这个配置文件，内容如下</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;spring-ai-mcp-weather&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="comment">// MCP服务器名称，可以随便输入</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;java&quot;</span><span class="punctuation">,</span> <span class="comment">// 使用java命令启动MCP服务器</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="comment">// java后面跟的参数</span></span><br><span class="line">          <span class="string">&quot;-Dspring.ai.mcp.server.stdio=true&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="string">&quot;-jar&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="string">&quot;/mcpServer/target/mcpServer-0.0.1-SNAPSHOT.jar&quot;</span> <span class="comment">//jar包的绝对路径地址</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>接下来重新启动Claude桌面版即可。在启动Claude的时候，Claude会根据上述配置文件来启动MCP服务器。启动命令类似：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Dspring.ai.mcp.server.stdio=<span class="literal">true</span> -jar /mcpServer/target/mcpServer-<span class="number">0.0</span><span class="number">.1</span>-SNAPSHOT.jar</span><br></pre></td></tr></table></figure>
-
-<p>如果通过jps命令，可以看到jar包启动成功。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jps -l</span><br></pre></td></tr></table></figure>
-
-<p>在Claude桌面版上可以看到我们刚刚配置的MCP服务器名称和提供的工具。</p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-3.png" alt="mcp server"></p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-4.png" alt="mcp server tool"></p>
-<p>可以自主启用和禁用工具。</p>
-<p>接下来我们和Claude大模型交流的时候，大模型会自己判断需不需要调用工具，调用哪个工具，如何调用。当调用的时候，会让你进行确认。</p>
-<p>来试试输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">纽约的天气怎么样？</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-5.png" alt="mcp server tool"></p>
-<p>可以看到大模型自己调用了我们的工具，并展示了输入输出。</p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-6.png" alt="mcp server tool"></p>
-<p>看到这里我们可以得出MCP+大模型的运行流程图。</p>
-<p><img src="https://thepatterraining.github.io/images/ai/mcp2-7.png" alt="mcp server tool"></p>
-<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><p>如果需要查看日志信息，可以到如下目录：<code>~/Library/Logs/Claude</code></p>
-<p>有多个文件：</p>
-<ul>
-<li>mcp.log : 包含了MCP所有的日志</li>
-<li>mcp-server-xxxxx.log: 一个MCP服务一个日志文件，记录了这个服务相关的所有日志</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们主要介绍了MCP的概念，MCP的通信协议、通信方式、生命周期。MCP到底是什么东西，实现了哪些内容，使用场景以及为什么要使用MCP。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2942,7 +2715,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">219</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
