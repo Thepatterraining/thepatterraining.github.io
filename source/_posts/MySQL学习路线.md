@@ -115,7 +115,7 @@ DCL：控制用户对数据的访问权限。
 
 这里给出基础篇的概念学习路线。大家可以根据这些去了解具体的概念。
 
-![概念学习](../images/mysql/mysql1-1.png)
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-1.png)
 
 这一个部分1-2小时就差不多了。
 
@@ -142,7 +142,7 @@ DCL：控制用户对数据的访问权限。
 
 还可以使用你熟悉的语言进行操作。Java的使用可以使用MyBatis Plus。
 
-![概念学习](../images/mysql/mysql1-2.png)
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-2.png)
 
 ## 深入学习原理
 
@@ -170,7 +170,7 @@ MySQL原理性的东西就比较多了。
 
 还需要学习mySQL的锁，表锁，行锁，乐观锁，悲观锁，意向锁，间隙锁等等。
 
-![概念学习](../images/mysql/mysql1-3.png)
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-3.png)
 
 ## 架构学习
 
@@ -184,7 +184,7 @@ MySQL原理性的东西就比较多了。
 
 CAP理论等等。
 
-![概念学习](../images/mysql/mysql1-4.png)
+![概念学习](https://thepatterraining.github.io/images/mysql/mysql1-4.png)
 
 ## 扩展学习
 
@@ -217,13 +217,13 @@ CAP理论等等。
 
 部分电子书如图所示。
 
-![概念学习](../images/bottom1.png)
+![](https://thepatterraining.github.io/images/bottom1.png)
 
-![概念学习](../images/bottom2.png)
+![](https://thepatterraining.github.io/images/bottom2.png)
 
-![概念学习](../images/bottom3.png)
+![](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](../images/bottom4.png)
+![](https://thepatterraining.github.io/images/bottom4.png)
 
 
 
