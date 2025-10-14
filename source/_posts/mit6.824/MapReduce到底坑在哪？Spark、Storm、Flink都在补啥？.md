@@ -1,9 +1,9 @@
 ---
-title: 分布式MapReduce系统设计与实现
+title: 为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂
 date: 2025-09-29 10:12:47
 tags: ['MapReduce','大数据']
 category: MIT6.824
-article: 分布式MapReduce系统设计与实现
+article: 为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂
 ---
 
 > 大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！
