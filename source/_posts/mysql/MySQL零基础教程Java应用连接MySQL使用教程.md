@@ -2605,8 +2605,6 @@ public class OrderService {
 └─ 理解高级特性和最佳实践
 ```
 
----
-
 ## 总结
 
 通过本教程的学习，你已经全面掌握了MySQL在Java应用中的三种主要使用方式。从底层的JDBC到灵活的MyBatis，再到高效的MyBatis Plus，每种技术都有其独特的优势和适用场景。
