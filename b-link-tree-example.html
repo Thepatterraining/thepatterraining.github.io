@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-link树结构示例图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .tree-container {
+            margin: 40px 0;
+            position: relative;
+            min-height: 700px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            margin: 80px 0;
+            position: relative;
+            gap: 40px;
+        }
+
+        /* B-link树节点样式 */
+        .blink-node {
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border: 3px solid #3498db;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.15);
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .blink-node:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(52, 152, 219, 0.25);
+        }
+
+        .blink-node.root {
+            border-color: #e74c3c;
+            background: linear-gradient(145deg, #fff5f5, #ffe6e6);
+        }
+
+        .blink-node.leaf {
+            border-color: #27ae60;
+            background: linear-gradient(145deg, #f8fff8, #e8ffe8);
+        }
+
+        /* 节点头部信息 */
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .node-label {
+            background: #34495e;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .high-key {
+            background: #f39c12;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        /* 节点内容区域 */
+        .node-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .key-slot {
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 45px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .key-slot.filled {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .separator {
+            width: 3px;
+            height: 35px;
+            background: #bdc3c7;
+            border-radius: 2px;
+        }
+
+        /* 右链接指针 */
+        .right-link {
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .right-link:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+        }
+
+        .right-link.null {
+            background: #95a5a6;
+            cursor: default;
+        }
+
+        .right-link.null:hover {
+            transform: translateY(-50%);
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        /* 右链接箭头 */
+        .right-arrow {
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 3px;
+            background: #9b59b6;
+            z-index: 5;
+        }
+
+        .right-arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #9b59b6;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        /* SVG连接线样式 */
+        .tree-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .vertical-connection {
+            stroke: #34495e;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0.7;
+            stroke-linecap: round;
+        }
+
+        .vertical-connection.highlighted {
+            stroke: #e74c3c;
+            stroke-width: 4;
+            opacity: 1;
+        }
+
+        /* 并发访问指示器 */
+        .concurrent-indicator {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        /* 说明文档样式 */
+        .documentation {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .doc-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .doc-card.concurrent {
+            border-left-color: #e74c3c;
+        }
+
+        .doc-card h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doc-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .doc-card li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .doc-card li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .highlight-box h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .tree-level {
+                gap: 20px;
+            }
+
+            .blink-node {
+                min-width: 160px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .documentation {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .tree-level {
+                flex-direction: column;
+                align-items: center;
+                gap: 40px;
+            }
+
+            .right-link, .right-arrow {
+                display: none;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>B-link树结构示例</h1>
+            <p>展示B-link树的右链接指针、高水位键和并发访问特性</p>
+        </div>
+
+        <div class="tree-container">
+            <!-- SVG连接线画布 -->
+            <svg class="tree-connections">
+                <!-- 连接线将通过JavaScript动态生成 -->
+            </svg>
+
+            <!-- 根节点层 -->
+            <div class="tree-level">
+                <div class="blink-node root">
+                    <div class="concurrent-indicator">并发读写</div>
+                    <div class="node-header">
+                        <div class="node-label">根节点</div>
+                        <div class="high-key">High: ∞</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">15</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">30</div>
+                    </div>
+                    <div class="right-link null">∅</div>
+                </div>
+            </div>
+
+            <!-- 内部节点层 -->
+            <div class="tree-level">
+                <div class="blink-node">
+                    <div class="node-header">
+                        <div class="node-label">内部节点1</div>
+                        <div class="high-key">High: 15</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">8</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">12</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node">
+                    <div class="concurrent-indicator">并发分裂</div>
+                    <div class="node-header">
+                        <div class="node-label">内部节点2</div>
+                        <div class="high-key">High: 30</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">20</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">25</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node">
+                    <div class="node-header">
+                        <div class="node-label">内部节点3</div>
+                        <div class="high-key">High: ∞</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">35</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">40</div>
+                    </div>
+                    <div class="right-link null">∅</div>
+                </div>
+            </div>
+
+            <!-- 叶子节点层 -->
+            <div class="tree-level">
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子1</div>
+                        <div class="high-key">High: 8</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">3</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">6</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子2</div>
+                        <div class="high-key">High: 12</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">9</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">11</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子3</div>
+                        <div class="high-key">High: 15</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">13</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">14</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="concurrent-indicator">无锁读取</div>
+                    <div class="node-header">
+                        <div class="node-label">叶子4</div>
+                        <div class="high-key">High: 20</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">17</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">19</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子5</div>
+                        <div class="high-key">High: 25</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">22</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">24</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子6</div>
+                        <div class="high-key">High: 30</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">27</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">29</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子7</div>
+                        <div class="high-key">High: 35</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">32</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">34</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子8</div>
+                        <div class="high-key">High: 40</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">37</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">39</div>
+                    </div>
+                    <div class="right-arrow"></div>
+                    <div class="right-link">→</div>
+                </div>
+
+                <div class="blink-node leaf">
+                    <div class="node-header">
+                        <div class="node-label">叶子9</div>
+                        <div class="high-key">High: ∞</div>
+                    </div>
+                    <div class="node-content">
+                        <div class="key-slot filled">42</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">45</div>
+                    </div>
+                    <div class="right-link null">∅</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>🔗 右链接指针 (Right-Link)</h3>
+            <p>每个节点都有指向右兄弟的指针，形成同层的有序链表，支持无锁的并发访问和安全的节点分裂操作</p>
+        </div>
+
+        <div class="documentation">
+            <div class="doc-card">
+                <h3>🏗️ B-link树核心特性</h3>
+                <ul>
+                    <li>每个节点包含Right-Link指针指向右兄弟</li>
+                    <li>每个节点维护High Key（最大键值）</li>
+                    <li>支持无锁的并发读取操作</li>
+                    <li>分裂操作采用原子性保证</li>
+                    <li>读写操作可以并发执行</li>
+                    <li>搜索时如果键值 > High Key则跳转到右兄弟</li>
+                </ul>
+            </div>
+
+            <div class="doc-card concurrent">
+                <h3>⚡ 并发控制机制</h3>
+                <ul>
+                    <li>读操作：完全无锁，可并发执行</li>
+                    <li>写操作：最小化锁的范围和时间</li>
+                    <li>分裂策略：先创建新节点，再原子更新链接</li>
+                    <li>一致性保证：通过High Key判断搜索路径</li>
+                    <li>冲突解决：右移机制处理并发分裂</li>
+                    <li>性能优势：支持高并发和低延迟</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="documentation">
+            <div class="doc-card">
+                <h3>🎯 关键优势</h3>
+                <ul>
+                    <li>无锁读取：查询操作无需任何锁定</li>
+                    <li>读写并发：读写操作互不阻塞</li>
+                    <li>低锁争用：写操作间冲突最小</li>
+                    <li>高吞吐量：并发性能显著提升</li>
+                    <li>一致性保证：结构不变性维护</li>
+                    <li>实时响应：减少阻塞等待时间</li>
+                </ul>
+            </div>
+
+            <div class="doc-card">
+                <h3>🔍 搜索算法</h3>
+                <ul>
+                    <li>从根节点开始向下搜索</li>
+                    <li>检查：target_key ≤ current.high_key</li>
+                    <li>如果大于High Key，跳转到右兄弟</li>
+                    <li>在叶子层可能需要继续右移</li>
+                    <li>利用Right-Link处理并发分裂</li>
+                    <li>保证搜索结果的正确性</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // B-link树可视化系统
+        class BLinkTreeRenderer {
+            constructor() {
+                this.svg = document.querySelector('.tree-connections');
+                this.container = document.querySelector('.tree-container');
+                this.nodes = document.querySelectorAll('.blink-node');
+                this.rightLinks = document.querySelectorAll('.right-link:not(.null)');
+            }
+
+            // 绘制父子连接线
+            drawVerticalConnections() {
+                const levels = document.querySelectorAll('.tree-level');
+
+                for (let i = 0; i < levels.length - 1; i++) {
+                    const parentLevel = levels[i];
+                    const childLevel = levels[i + 1];
+                    const parentNodes = parentLevel.querySelectorAll('.blink-node');
+                    const childNodes = childLevel.querySelectorAll('.blink-node');
+
+                    this.connectLevels(parentNodes, childNodes);
+                }
+            }
+
+            connectLevels(parentNodes, childNodes) {
+                const childrenPerParent = Math.ceil(childNodes.length / parentNodes.length);
+
+                parentNodes.forEach((parent, parentIndex) => {
+                    const parentRect = parent.getBoundingClientRect();
+                    const containerRect = this.container.getBoundingClientRect();
+
+                    const parentX = parentRect.left - containerRect.left + parentRect.width / 2;
+                    const parentY = parentRect.bottom - containerRect.top;
+
+                    const startChild = parentIndex * childrenPerParent;
+                    const endChild = Math.min(startChild + childrenPerParent, childNodes.length);
+
+                    for (let i = startChild; i < endChild; i++) {
+                        if (childNodes[i]) {
+                            const childRect = childNodes[i].getBoundingClientRect();
+                            const childX = childRect.left - containerRect.left + childRect.width / 2;
+                            const childY = childRect.top - containerRect.top;
+
+                            this.createVerticalLine(parentX, parentY, childX, childY);
+                        }
+                    }
+                });
+            }
+
+            createVerticalLine(x1, y1, x2, y2) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                const midY = y1 + (y2 - y1) * 0.6;
+                const pathData = `M ${x1} ${y1}
+                                 C ${x1} ${midY}
+                                   ${x2} ${midY}
+                                   ${x2} ${y2}`;
+
+                line.setAttribute('d', pathData);
+                line.setAttribute('class', 'vertical-connection');
+                this.svg.appendChild(line);
+            }
+
+            updateSVGSize() {
+                const rect = this.container.getBoundingClientRect();
+                this.svg.setAttribute('width', rect.width);
+                this.svg.setAttribute('height', rect.height);
+                this.svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+            }
+
+            init() {
+                this.updateSVGSize();
+                this.drawVerticalConnections();
+
+                window.addEventListener('resize', () => {
+                    setTimeout(() => {
+                        this.svg.innerHTML = '';
+                        this.updateSVGSize();
+                        this.drawVerticalConnections();
+                    }, 100);
+                });
+            }
+        }
+
+        // 节点交互效果
+        function initNodeInteractions() {
+            const nodes = document.querySelectorAll('.blink-node');
+            const rightLinks = document.querySelectorAll('.right-link:not(.null)');
+
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+
+                    // 高亮右链接指针
+                    const rightLink = this.querySelector('.right-link:not(.null)');
+                    if (rightLink) {
+                        rightLink.style.background = 'linear-gradient(45deg, #e74c3c, #c0392b)';
+                    }
+                });
+
+                node.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+
+                    const rightLink = this.querySelector('.right-link:not(.null)');
+                    if (rightLink) {
+                        rightLink.style.background = 'linear-gradient(45deg, #9b59b6, #8e44ad)';
+                    }
+                });
+            });
+
+            // Right-Link点击效果
+            rightLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = 'pulse 0.6s ease-in-out';
+                    }, 10);
+                });
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initNodeInteractions();
+
+            setTimeout(() => {
+                const renderer = new BLinkTreeRenderer();
+                renderer.init();
+            }, 200);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B*树结构示例图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .tree-container {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-height: 600px;
+        }
+
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            margin: 60px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        .tree-node {
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            margin: 0 20px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tree-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .tree-node.root {
+            border-color: #e74c3c;
+            background: linear-gradient(145deg, #fff5f5, #ffe6e6);
+        }
+
+        .tree-node.leaf {
+            border-color: #27ae60;
+            background: linear-gradient(145deg, #f8fff8, #e8ffe8);
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .key-slot {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .key-slot.filled {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .separator {
+            width: 2px;
+            height: 30px;
+            background: #bdc3c7;
+        }
+
+        .node-info {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #34495e;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .fill-rate {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.7em;
+        }
+
+        /* SVG连接线样式 */
+        .tree-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .connection-line {
+            stroke: #7f8c8d;
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.3s ease;
+        }
+
+        .connection-line.group-1 {
+            stroke: #e74c3c;
+            opacity: 0.7;
+        }
+
+        .connection-line.group-2 {
+            stroke: #3498db;
+            opacity: 0.7;
+        }
+
+        .connection-line.group-3 {
+            stroke: #27ae60;
+            opacity: 0.7;
+        }
+
+        .connection-line.highlighted {
+            stroke-width: 3.5;
+            opacity: 1;
+            filter: drop-shadow(0 0 4px rgba(52, 152, 219, 0.4));
+        }
+
+        /* 确保树节点在连接线上方 */
+        .tree-node {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 移除旧的连接线样式 */
+        .line-vertical, .line-horizontal {
+            display: none;
+        }
+
+        /* 说明文档样式 */
+        .documentation {
+            margin-top: 50px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .doc-section {
+            margin-bottom: 25px;
+        }
+
+        .doc-section h3 {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+
+        .doc-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .doc-section li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .doc-section li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        .highlight strong {
+            color: #856404;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .tree-node {
+                margin: 0 10px;
+                padding: 10px;
+            }
+
+            .node-content {
+                gap: 8px;
+            }
+
+            .key-slot {
+                padding: 6px 8px;
+                min-width: 30px;
+                font-size: 0.9em;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>B*树结构示例</h1>
+            <p>展示B*树的节点结构、填充率要求和层次关系</p>
+        </div>
+
+        <div class="tree-container">
+            <!-- SVG连接线画布 -->
+            <svg class="tree-connections">
+                <!-- 连接线将通过JavaScript动态生成 -->
+            </svg>
+
+            <!-- 根节点层 -->
+            <div class="tree-level" data-level="0">
+                <div class="tree-node root">
+                    <div class="node-info">根节点</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">15</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">25</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+            </div>
+
+            <!-- 内部节点层 -->
+            <div class="tree-level" data-level="1">
+                <div class="tree-node">
+                    <div class="node-info">内部节点1</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">10</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">12</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node">
+                    <div class="node-info">内部节点2</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">20</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">22</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node">
+                    <div class="node-info">内部节点3</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">30</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">35</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+            </div>
+
+            <!-- 叶子节点层 -->
+            <div class="tree-level" data-level="2">
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点1</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">5</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">8</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点2</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">11</div>
+                        <div class="separator"></div>
+                        <div class="key-slot "></div>
+                    </div>
+                    <div class="fill-rate">67%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点3</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">13</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">14</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点4</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">18</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">19</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点5</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">21</div>
+                        <div class="separator"></div>
+                        <div class="key-slot "></div>
+                    </div>
+                    <div class="fill-rate">67%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点6</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">23</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">24</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点7</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">28</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">29</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点8</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">32</div>
+                        <div class="separator"></div>
+                        <div class="key-slot "></div>
+                    </div>
+                    <div class="fill-rate">67%满</div>
+                </div>
+
+                <div class="tree-node leaf">
+                    <div class="node-info">叶子节点9</div>
+                    <div class="node-content">
+                        <div class="key-slot filled">38</div>
+                        <div class="separator"></div>
+                        <div class="key-slot filled">40</div>
+                    </div>
+                    <div class="fill-rate">100%满</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 连接线图例 -->
+        <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 30px 0; border: 1px solid #e9ecef;">
+            <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.2em;">🔗 连接线说明</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 30px; height: 3px; background: #e74c3c; border-radius: 2px;"></div>
+                    <span style="color: #2c3e50; font-size: 0.9em;">根节点 → 内部节点 / 内部节点1 → 叶子节点</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 30px; height: 3px; background: #3498db; border-radius: 2px;"></div>
+                    <span style="color: #2c3e50; font-size: 0.9em;">内部节点2 → 叶子节点</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 30px; height: 3px; background: #27ae60; border-radius: 2px;"></div>
+                    <span style="color: #2c3e50; font-size: 0.9em;">内部节点3 → 叶子节点</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="documentation">
+            <div class="doc-section">
+                <h3>B*树关键特性</h3>
+                <ul>
+                    <li>这是一个3阶B*树（每个节点最多包含2个关键字）</li>
+                    <li>除根节点外，所有节点至少2/3满（即至少包含⌈(2×3-1)/3⌉ = 2个关键字中的2个）</li>
+                    <li>所有叶子节点都在同一层</li>
+                    <li>内部节点只存储索引信息，实际数据存储在叶子节点</li>
+                    <li>节点分裂时优先向兄弟节点转移数据，减少分裂频率</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <strong>填充率说明：</strong> 图中显示的填充率展示了B*树相比传统B+树更高的空间利用率。大部分节点都达到了100%满，只有少数节点保持在67%的最低要求。
+            </div>
+
+            <div class="doc-section">
+                <h3>节点类型说明</h3>
+                <ul>
+                    <li><span style="color: #e74c3c;">红色边框</span>：根节点，树的顶层节点</li>
+                    <li><span style="color: #3498db;">蓝色边框</span>：内部节点，用于导航和索引</li>
+                    <li><span style="color: #27ae60;">绿色边框</span>：叶子节点，存储实际数据</li>
+                </ul>
+            </div>
+
+            <div class="doc-section">
+                <h3>B*树优势</h3>
+                <ul>
+                    <li>更高的空间利用率（至少2/3满 vs B+树的1/2满）</li>
+                    <li>减少树的高度，提高查询效率</li>
+                    <li>延迟分裂策略减少节点分裂次数</li>
+                    <li>更好的缓存性能和更少的磁盘I/O</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // B*树连接线绘制系统
+        class BTreeConnectionRenderer {
+            constructor() {
+                this.svg = document.querySelector('.tree-connections');
+                this.treeContainer = document.querySelector('.tree-container');
+                this.levels = document.querySelectorAll('.tree-level');
+                this.nodes = document.querySelectorAll('.tree-node');
+
+                // B*树的节点层级定义
+                this.nodeStructure = {
+                    root: [0],           // 根节点
+                    internal: [1, 2, 3], // 内部节点
+                    leaf: [4, 5, 6, 7, 8, 9, 10, 11, 12] // 叶子节点
+                };
+
+                // B*树的连接关系定义
+                this.connections = [
+                    // 根节点 -> 内部节点层
+                    { parent: 0, children: [1, 2, 3] }, // 根节点连接3个内部节点
+
+                    // 内部节点 -> 叶子节点层
+                    { parent: 1, children: [4, 5, 6] }, // 内部节点1连接前3个叶子节点
+                    { parent: 2, children: [7, 8, 9] }, // 内部节点2连接中间3个叶子节点
+                    { parent: 3, children: [10, 11, 12] }  // 内部节点3连接后3个叶子节点
+                ];
+            }
+
+            // 获取节点的中心位置
+            getNodeCenter(node) {
+                const rect = node.getBoundingClientRect();
+                const containerRect = this.treeContainer.getBoundingClientRect();
+
+                return {
+                    x: rect.left - containerRect.left + rect.width / 2,
+                    y: rect.top - containerRect.top + rect.height / 2
+                };
+            }
+
+            // 创建SVG连接线 - 改进版本
+            createConnection(parentPos, childPos, groupClass = '') {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                // 计算连接点位置
+                const startY = parentPos.y + 25; // 从节点底部开始
+                const endY = childPos.y - 25;    // 到子节点顶部结束
+
+                // 创建更优雅的弯曲路径
+                const controlPointY = startY + (endY - startY) * 0.6;
+                const horizontalOffset = Math.abs(childPos.x - parentPos.x) * 0.3;
+
+                // 使用贝塞尔曲线创建平滑的连接线
+                const pathData = `M ${parentPos.x} ${startY}
+                                 C ${parentPos.x} ${controlPointY - horizontalOffset * 0.5}
+                                   ${childPos.x} ${controlPointY + horizontalOffset * 0.5}
+                                   ${childPos.x} ${endY}`;
+
+                line.setAttribute('d', pathData);
+                line.setAttribute('class', `connection-line ${groupClass}`);
+
+                return line;
+            }
+
+            // 绘制所有连接线
+            drawConnections() {
+                // 清空现有连接线
+                this.svg.innerHTML = '';
+
+                // 获取所有节点
+                const allNodes = Array.from(this.nodes);
+
+                this.connections.forEach((connection, groupIndex) => {
+                    const parentNode = allNodes[connection.parent];
+                    if (!parentNode) return;
+
+                    const parentPos = this.getNodeCenter(parentNode);
+
+                    // 为不同的连接组分配不同的颜色类
+                    let groupClass = '';
+                    if (groupIndex === 0) groupClass = 'group-1'; // 根节点到内部节点 - 红色
+                    else if (groupIndex === 1) groupClass = 'group-1'; // 内部节点1到叶子 - 红色
+                    else if (groupIndex === 2) groupClass = 'group-2'; // 内部节点2到叶子 - 蓝色
+                    else if (groupIndex === 3) groupClass = 'group-3'; // 内部节点3到叶子 - 绿色
+
+                    connection.children.forEach((childIndex, childOrder) => {
+                        const childNode = allNodes[childIndex];
+                        if (childNode) {
+                            const childPos = this.getNodeCenter(childNode);
+
+                            // 为每个连接线创建独特的路径，避免重叠
+                            const connectionLine = this.createConnectionWithOffset(
+                                parentPos,
+                                childPos,
+                                groupClass,
+                                childOrder,
+                                connection.children.length
+                            );
+                            this.svg.appendChild(connectionLine);
+                        }
+                    });
+                });
+            }
+
+            // 创建带偏移的连接线，避免重叠
+            createConnectionWithOffset(parentPos, childPos, groupClass, childOrder, totalChildren) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                // 计算起始和结束位置
+                const startY = parentPos.y + 25;
+                const endY = childPos.y - 25;
+
+                // 为多个子节点创建分散的路径
+                const middleY = startY + (endY - startY) * 0.5;
+
+                // 根据子节点顺序计算水平偏移
+                const maxOffset = 50; // 最大水平偏移
+                const offsetStep = totalChildren > 1 ? (maxOffset * 2) / (totalChildren - 1) : 0;
+                const horizontalOffset = totalChildren > 1 ?
+                    -maxOffset + (childOrder * offsetStep) : 0;
+
+                // 创建带有中间控制点的平滑曲线
+                const controlX = parentPos.x + horizontalOffset;
+                const controlY1 = startY + (middleY - startY) * 0.7;
+                const controlY2 = middleY + (endY - middleY) * 0.3;
+
+                const pathData = `M ${parentPos.x} ${startY}
+                                 Q ${controlX} ${controlY1}
+                                   ${controlX} ${middleY}
+                                 Q ${controlX} ${controlY2}
+                                   ${childPos.x} ${endY}`;
+
+                line.setAttribute('d', pathData);
+                line.setAttribute('class', `connection-line ${groupClass}`);
+                line.setAttribute('data-parent', parentPos.x);
+                line.setAttribute('data-child', childPos.x);
+
+                return line;
+            }
+
+            // 更新SVG尺寸
+            updateSVGSize() {
+                const containerRect = this.treeContainer.getBoundingClientRect();
+                this.svg.setAttribute('width', containerRect.width);
+                this.svg.setAttribute('height', containerRect.height);
+                this.svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
+            }
+
+            // 初始化和重绘
+            init() {
+                this.updateSVGSize();
+                this.drawConnections();
+
+                // 监听窗口大小变化
+                window.addEventListener('resize', () => {
+                    setTimeout(() => {
+                        this.updateSVGSize();
+                        this.drawConnections();
+                    }, 100);
+                });
+            }
+        }
+
+        // 节点交互效果
+        function initNodeInteractions() {
+            const nodes = document.querySelectorAll('.tree-node');
+
+            nodes.forEach((node, index) => {
+                node.addEventListener('mouseenter', function() {
+                    const info = this.querySelector('.node-info');
+                    if (info) {
+                        info.style.transform = 'translateX(-50%) scale(1.1)';
+                        info.style.background = '#2c3e50';
+                    }
+
+                    // 高亮相关的连接线
+                    highlightNodeConnections(index, true);
+                });
+
+                node.addEventListener('mouseleave', function() {
+                    const info = this.querySelector('.node-info');
+                    if (info) {
+                        info.style.transform = 'translateX(-50%) scale(1)';
+                        info.style.background = '#34495e';
+                    }
+
+                    // 移除连接线高亮
+                    highlightNodeConnections(index, false);
+                });
+            });
+        }
+
+        // 高亮节点相关的连接线
+        function highlightNodeConnections(nodeIndex, highlight) {
+            const connections = document.querySelectorAll('.connection-line');
+            const nodes = document.querySelectorAll('.tree-node');
+            const currentNode = nodes[nodeIndex];
+
+            if (!currentNode) return;
+
+            const nodeRect = currentNode.getBoundingClientRect();
+            const containerRect = document.querySelector('.tree-container').getBoundingClientRect();
+            const nodeX = nodeRect.left - containerRect.left + nodeRect.width / 2;
+
+            connections.forEach(line => {
+                const parentX = parseFloat(line.getAttribute('data-parent'));
+                const childX = parseFloat(line.getAttribute('data-child'));
+
+                // 检查当前节点是否与这条连接线相关
+                const isRelated = Math.abs(nodeX - parentX) < 5 || Math.abs(nodeX - childX) < 5;
+
+                if (highlight && isRelated) {
+                    line.classList.add('highlighted');
+                    // 同时为相关节点添加高亮效果
+                    nodes.forEach((node, idx) => {
+                        const rect = node.getBoundingClientRect();
+                        const x = rect.left - containerRect.left + rect.width / 2;
+                        if (Math.abs(x - parentX) < 5 || Math.abs(x - childX) < 5) {
+                            node.style.transform = 'scale(1.05)';
+                            node.style.zIndex = '10';
+                        }
+                    });
+                } else if (!highlight) {
+                    line.classList.remove('highlighted');
+                    // 重置所有节点样式
+                    nodes.forEach(node => {
+                        node.style.transform = '';
+                        node.style.zIndex = '';
+                    });
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initNodeInteractions();
+
+            // 延迟初始化连接线，确保页面布局完成
+            setTimeout(() => {
+                const renderer = new BTreeConnectionRenderer();
+                renderer.init();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

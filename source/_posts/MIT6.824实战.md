@@ -1659,7 +1659,7 @@ Raft论文在论文的5.3结尾处，对一种方法有一些模糊的描述。�
 
 场景1:S1服务器是Follower，没有任期6的Log，只有任期4、5的Log。
 
-[tu11]
+[tu11](../images/6824/2-11.png)
 
 S1服务器会返回XTerm=5，XIndex=2。S2服务器发现自己没有任期5的日志，它会将自己本地记录的，S1的nextIndex设置到XIndex，也就是S1中，任期5的第一条Log对应的槽位号。所以，如果Leader完全没有XTerm的任何Log，那么它应该回退到XIndex对应的位置（这样，Leader发出的下一条AppendEntries就可以一次覆盖S1中所有XTerm对应的Log）。
 
