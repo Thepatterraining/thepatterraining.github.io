@@ -1665,13 +1665,13 @@ S1服务器会返回XTerm=5，XIndex=2。S2服务器发现自己没有任期5的
 
 场景2：S1收到了任期4的旧Leader的多条Log，但是作为新Leader，S2只收到了一条任期4的Log。所以这里，我们需要覆盖S1中有关旧Leader的一些Log。
 
-[tu12]
+[tu12](../images/6824/2-12.png)
 
 S1服务器会返回XTerm=4，XIndex=1。S2服务器发现自己其实有任期4的日志，它会将自己本地记录的S1的nextIndex设置到本地在XTerm位置的Log条目后面，也就是槽位2。下一次Leader发出下一条AppendEntries时，就可以一次覆盖S1中槽位2和槽位3对应的Log
 
 场景3: S1与S2的Log不冲突，但是S1缺失了部分S2中的Log。
 
-[tu13]
+[tu13](../images/6824/2-13.png)
 
 S1服务器会返回XTerm=-1，XLen=2。这表示S1中日志太短了，以至于在冲突的位置没有Log条目，Leader应该回退到Follower最后一条Log条目的下一条，也就是槽位2，并从这开始发送AppendEntries消息。槽位2可以从XLen中的数值计算得到。
 
