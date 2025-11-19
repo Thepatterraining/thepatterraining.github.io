@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零基础MySQL教程原理篇之B+树索引">
+<meta property="og:url" content="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-4.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-5.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-6.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-7.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-8.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-9.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-10.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-11.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-12.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-13.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-14.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-15.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-16.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-17.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-18.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-19.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql5-20.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-10-26T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-10-27T11:33:51.030Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>零基础MySQL教程原理篇之B+树索引 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          零基础MySQL教程原理篇之B+树索引
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-10-26 10:12:47" itemprop="dateCreated datePublished" datetime="2025-10-26T10:12:47+08:00">2025-10-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-27 19:33:51" itemprop="dateModified" datetime="2025-10-27T19:33:51+08:00">2025-10-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html" class="post-meta-item leancloud_visitors" data-flag-title="零基础MySQL教程原理篇之B+树索引" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之B-树索引"><a href="#零基础MySQL教程原理篇之B-树索引" class="headerlink" title="零基础MySQL教程原理篇之B+树索引"></a>零基础MySQL教程原理篇之B+树索引</h2><p>在MySQL数据库中，<code>索引</code>是提升查询效率的核心工具。没有索引的查询，就像是在浩瀚的书海中翻书，效率低下。而良好的索引设计，则能帮助我们高效地找到我们需要的信息，避免无谓的资源浪费。因此，理解索引的原理、种类以及如何设计索引是每个开发者必须掌握的基础技能。</p>
+<h3 id="索引是什么？"><a href="#索引是什么？" class="headerlink" title="索引是什么？"></a>索引是什么？</h3><p><code>索引</code>是一种数据结构，它通过特定的方式排列数据，以便于快速查询。可以把索引想象成一本书的目录，通过目录可以快速找到你想要的章节，而不用从头到尾翻书。</p>
+<p>在MySQL中，索引通常是通过B树或B+树等数据结构实现的，数据库查询引擎可以利用这些结构快速查找数据。</p>
+<h3 id="B-树索引（B-Tree-Index）"><a href="#B-树索引（B-Tree-Index）" class="headerlink" title="B+树索引（B+ Tree Index）"></a>B+树索引（B+ Tree Index）</h3><p>这里先搞清楚一些概念，什么是<code>b树</code>,<code>b+树</code>，<code>b*树</code>还有<code>b link树</code>。</p>
+<ul>
+<li>b tree(1971)：B-Tree (Balanced Tree) 是一种自平衡的多路搜索树，由 Rudolf Bayer 和 Edward M. McCreight 在 1971 年提出。</li>
+<li>b+ tree (1973):B-Tree(Balanced Tree) 的变种，由 <code>Rudolf Bayer</code> 在 1973 年提出，主要改进了数据存储方式，因此大多数的数据库都使用这个作为索引。</li>
+<li>b* tree (1977): 对 B+Tree 的进一步优化，主要的优化思路是提高空间利用率，同样的数据，可以使用更小的空间存储。</li>
+<li>b link tree (1981): 由 <code>Lehman</code> 和 <code>Yao</code> 在 1981 年提出，在b+树的基础上，主要解决了并发控制问题。数据库中的b+树也做了一些优化，参考了b link tree的一些优点。</li>
+</ul>
+<h4 id="b-tree"><a href="#b-tree" class="headerlink" title="b tree"></a>b tree</h4><p>首先来看一下b树，这个是B+树的鼻祖了。</p>
+<ul>
+<li>多路结构：每个节点可以有多个子节点（不像二叉树最多2个）</li>
+<li>平衡性：所有叶子节点都在同一层</li>
+<li>动态调整：插入删除时自动保持平衡</li>
+</ul>
+<p>规则：</p>
+<ul>
+<li>每个节点最多有 m 个子节点（m 阶）</li>
+<li>除根节点外，每个节点至少有 ⌈m&#x2F;2⌉ 个子节点</li>
+<li>所有叶子节点在同一层</li>
+<li>节点中的键值有序排列</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>减少 I&#x2F;O 操作（宽而浅的结构）</li>
+<li>适合磁盘存储</li>
+<li>查询、插入、删除都是 O(log n)</li>
+</ul>
+<p>示例图如下：<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-1.png" alt="b树"></p>
+<h4 id="b-tree-1"><a href="#b-tree-1" class="headerlink" title="b* tree"></a>b* tree</h4><ul>
+<li>B*树是一种m阶的平衡多路搜索树</li>
+<li>除根节点外，所有节点的关键字个数至少为⌈(2m-1)&#x2F;3⌉</li>
+<li>所有叶子节点都在同一层</li>
+<li>非叶子节点只存储索引信息，不存储实际数据</li>
+<li>所有数据都存储在叶子节点中</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>B树</th>
+<th>B+树</th>
+<th>B*树</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据存储</td>
+<td>内部节点和叶子节点都存数据</td>
+<td>只有叶子节点存数据</td>
+<td>只有叶子节点存数据</td>
+</tr>
+<tr>
+<td>节点利用率</td>
+<td>至少50%</td>
+<td>至少50%</td>
+<td>至少66.7%</td>
+</tr>
+<tr>
+<td>叶子节点连接</td>
+<td>无</td>
+<td>有链表连接</td>
+<td>有链表连接</td>
+</tr>
+<tr>
+<td>空间效率</td>
+<td>一般</td>
+<td>较好</td>
+<td>最好</td>
+</tr>
+<tr>
+<td>范围查询</td>
+<td>需要中序遍历</td>
+<td>效率高</td>
+<td>效率高</td>
+</tr>
+</tbody></table>
+<p>关键特性</p>
+<ol>
+<li>高节点利用率</li>
+</ol>
+<ul>
+<li>每个节点至少2&#x2F;3满（除根节点外）</li>
+<li>相比B+树的1&#x2F;2要求，空间利用率提高33%</li>
+</ul>
+<ol start="2">
+<li>延迟分裂策略</li>
+</ol>
+<ul>
+<li>节点满时优先向兄弟节点转移关键字</li>
+<li>只有兄弟节点也满时才进行分裂操作</li>
+<li>减少了分裂操作的频率</li>
+</ul>
+<ol start="3">
+<li>更好的缓存性能</li>
+</ol>
+<ul>
+<li>更高的节点利用率意味着更少的节点数量</li>
+<li>减少了磁盘I&#x2F;O操作</li>
+<li>提高了缓存命中率</li>
+</ul>
+<p>主要优势</p>
+<ol>
+<li>空间效率：相同数据量下，B*树的高度更低</li>
+<li>查询性能：更少的磁盘访问次数</li>
+<li>插入性能：延迟分裂减少了树结构的调整</li>
+<li>存储成本：更高的空间利用率降低存储需求</li>
+</ol>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-2.png" alt="b*树"></p>
+<h4 id="b-link-tree"><a href="#b-link-tree" class="headerlink" title="b link tree"></a>b link tree</h4><p>B-link树（B-link tree）是B+树的一种变形，由Lehman和Yao在1981年提出。它是专门为支持高并发访问而设计的B+树变种。</p>
+<p>基本定义：</p>
+<ul>
+<li>B-link树是一种支持并发操作的平衡多路搜索树</li>
+<li>在传统B+树的基础上增加了链接指针（link pointer）</li>
+<li>每个内部节点都有一个右链接指针，指向其右兄弟节点</li>
+<li>支持无锁或低锁的并发读写操作</li>
+</ul>
+<p>并发安全的设计理念<br>B-link树的核心设计思想是通过右链接指针和高水位标记来实现并发安全：</p>
+<ol>
+<li>Right-Link指针</li>
+</ol>
+<ul>
+<li>每个节点都有指向右兄弟的指针</li>
+<li>形成同一层级的有序链表</li>
+<li>允许在节点分裂过程中继续安全访问</li>
+</ul>
+<ol start="2">
+<li>High Key（高水位键）</li>
+</ol>
+<ul>
+<li>每个节点维护一个最大键值</li>
+<li>用于判断搜索是否需要跳转到右兄弟</li>
+<li>解决并发分裂时的一致性问题</li>
+</ul>
+<p>关键设计原则</p>
+<p>设计原则：</p>
+<ol>
+<li>结构不变性：树的基本结构在并发操作中保持稳定</li>
+<li>单向链接：只需要右链接，简化了维护复杂度</li>
+<li>原子操作：关键操作通过原子性保证一致性</li>
+<li>乐观并发：减少锁的使用，提高并发性能</li>
+</ol>
+<p>并发控制策略</p>
+<ul>
+<li>读操作：几乎无锁，可以并发执行</li>
+<li>写操作：最小化锁的范围和时间</li>
+<li>分裂操作：通过两阶段提交保证一致性</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>传统B+树</th>
+<th>B-link树</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>节点结构</td>
+<td>[K1</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>并发控制</td>
+<td>需要复杂的锁机制</td>
+<td>最小化锁使用</td>
+</tr>
+<tr>
+<td>读操作</td>
+<td>可能需要读锁</td>
+<td>几乎无锁</td>
+</tr>
+<tr>
+<td>写操作</td>
+<td>需要写锁，可能阻塞读</td>
+<td>短时间锁，不阻塞读</td>
+</tr>
+<tr>
+<td>分裂操作</td>
+<td>需要锁定多个节点</td>
+<td>原子操作，影响最小</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>较小</td>
+<td>每个节点额外一个指针</td>
+</tr>
+<tr>
+<td>实现复杂度</td>
+<td>相对简单</td>
+<td>较复杂</td>
+</tr>
+</tbody></table>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-3.png" alt="blink树"></p>
+<blockquote>
+<p>关于b link tree可以阅读论文：<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/319628.319663">https://dl.acm.org/doi/pdf/10.1145/319628.319663</a></p>
+</blockquote>
+<h4 id="b-树"><a href="#b-树" class="headerlink" title="b+树"></a>b+树</h4><p>关于b+树的b，到底是什么意思，其实作者并没有一个明确的定义，有的人觉得是<code>balance (平衡)</code>，有的人觉得是<code>Bushy（茂密）</code>。</p>
+<p>不过大多数人都更认同<code>balance</code>这个解释。</p>
+<blockquote>
+<p>推荐一个paper：the ubiquitous B-tree</p>
+</blockquote>
+<p>MySQL中的B+树其实和传统的还是有一点区别，比如它借鉴了<code>b-link tree</code>的兄弟节点的概念。</p>
+<blockquote>
+<p>b+ tree 删除和插入的复杂度都是<code>O(log n)</code>。</p>
+</blockquote>
+<p>叶子节点的内容，通常key和value是分开存储的，因为搜索的时候并不需要加载value数据</p>
+<ul>
+<li>元数据<ul>
+<li>isleaf 是否是叶子节点</li>
+<li>slots 有多少空闲的slot</li>
+<li>prev 前一个叶子节点的指针</li>
+<li>next 后一个叶子节点的指针</li>
+</ul>
+</li>
+<li>key数据</li>
+<li>value数据</li>
+</ul>
+<p>结构：</p>
+<ul>
+<li>B+树是一种多路自平衡的树结构，所有的叶子节点都在同一层，并且叶子节点通过链表连接。</li>
+<li>它是MySQL中最常用的索引类型，支持范围查询、精确查找等操作。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>高效的范围查询：由于B+树是顺序存储的，支持范围查询，查询某个区间的数据时非常高效。</li>
+<li>高效的精确查询：B+树通过逐层查找，可以快速定位到数据行。</li>
+<li>支持排序：由于叶子节点按顺序排列，B+树非常适合用于<code>ORDER BY</code>、<code>GROUP BY</code>等操作。</li>
+<li>空间利用高：每个非叶子节点仅包含键，而不包含数据，可以节省存储空间。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>性能受页大小影响：B+树的性能与页的大小（每页存储的记录数）密切相关，过小的页会导致频繁的I&#x2F;O操作，过大的页则会浪费内存。</li>
+<li>写入性能较低：对于频繁插入、删除操作的场景，B+树索引的维护成本较高，可能导致性能下降。</li>
+</ul>
+<p>应用场景：</p>
+<ul>
+<li>最常用于主键索引、普通索引和唯一索引。尤其适用于需要进行范围查询、排序的场景。</li>
+</ul>
+<p>特点：</p>
+<ul>
+<li><code>b+ tree</code>,保证每个节点都必须是半满的，对于存放在节点中的key数量来说，key数量至少为<code>M/2 - 1</code>个，M为树的高度，key的数量必须小于 <code>M - 1</code>,如果当删除数据以后导致key数量小于M&#x2F;2 - 1个，就会进行平衡，使他满足M&#x2F;2 - 1个。<blockquote>
+<p>M&#x2F;2 - 1 ≤ key数量 ≤ M - 1</p>
+</blockquote>
+</li>
+<li>如果一个中间节点有k个key,那你就会有k+1个非空孩子节点，也就是k+1个指向下方节点的指针。每个节点的内容是一个<code>指针</code>和一个<code>key</code></li>
+<li>叶子节点之间有连接叶子节点的兄弟指针，这个想法来源于<code>b link tree</code>。每个节点的内容是一个<code>数据</code>和一个<code>key</code>，数据可以是一个<code>record id</code> 也可以是一个 <code>tuple</code></li>
+<li>b+ tree 标准填充容量大概是67% - 69%，对于一个大小是8kb的page来说，如果高度为4，大约能记录<code>30 0000</code>个键值对。</li>
+<li>b+ tree的节点大小，机械硬盘的大小最好在1M,ssd的大小在10KB</li>
+</ul>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-4.png" alt="b+"></p>
+<p>B+树的叶子节点就是一个page，关于page的具体内容我们之前已经讲过了，不再赘述。我们将节点放大大概是这样的。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-4.png" alt="b+树叶子节点"></p>
+<p>b tree 和 b+ tree 的区别</p>
+<ul>
+<li>b tree的中间节点也可以存数据，所以key是不重复的</li>
+<li>b+ tree的中间节点没有数据，所有数据都在叶子节点，所以key有可能既存在中间节点也存在叶子节点。会重复</li>
+<li>b tree的性能在并行处理上更差，因为修改以后需要向上传播也需要向下传播修改，这个时候两边都要增加锁</li>
+<li>b+ tree的性能更好，因为只修改叶子节点，所以只需要向上传播，只需要增加一个锁</li>
+</ul>
+<h5 id="b-tree的查找"><a href="#b-tree的查找" class="headerlink" title="b+ tree的查找"></a>b+ tree的查找</h5><ul>
+<li>对于&lt;a,b,c&gt;,查找a&#x3D;5 and b&#x3D;3也是可以走索引的，但是hash索引就不行，有些数据库还支持b&#x3D;3的搜索走索引，比如oracle和sql server</li>
+</ul>
+<p>b+ tree还有一个方便的地方在于支持<code>联合索引</code>，我们可以设置A、B、C三个key的联合索引并支持查找。</p>
+<p>假设我们查找<code>A，B</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-5.png"></p>
+<p>假设我们查找<code>A,*</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-6.png"></p>
+<p>假设我们查找<code>*,A</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-7.png"></p>
+<p>可以看到，对于b+树索引来说，这些查找都可以满足，这也是数据库支持联合索引的重点。</p>
+<h5 id="b-tree-插入"><a href="#b-tree-插入" class="headerlink" title="b+ tree 插入"></a>b+ tree 插入</h5><ol>
+<li>向下扫描，找到对应的叶子节点</li>
+<li>如果可以插入就直接插入</li>
+<li>如果不可以插入，那么从中间分开，变成两个叶子节点，并将中间的key传递给父节点，插入父节点。</li>
+<li>如果父节点可以插入就直接插入并分出一个指针指向新的叶子节点</li>
+<li>如果父节点不可以插入重复上述操作3</li>
+</ol>
+<p>我们来看一个实例：依次插入<code>1,2,3,4,5,6,7</code>，假设我们的度是3，也就是一个节点最多能容纳3个数据。</p>
+<p>插入1<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-8.png"></p>
+<p>插入2，这个时候2个节点是在一起的<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-9.png"></p>
+<p>插入3，这个时候不可以插入了，因为插入就满了，因此要从中间分开，变成两个叶子节点。并将中间的key传递给父节点，插入父节点。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-10.png"></p>
+<p>插入4，因为4插入到2，3节点中，导致再次分裂，分裂后，如下图所示<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-11.png"></p>
+<p>插入5，同样再次分裂，但是，父级也到达了3个数据，因此父节点同样分裂。最后结果如下<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-12.png"></p>
+<p>插入6<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-13.png"></p>
+<p>插入7<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-14.png"></p>
+<h5 id="b-tree-删除"><a href="#b-tree-删除" class="headerlink" title="b+ tree 删除"></a>b+ tree 删除</h5><ol>
+<li>向下扫描，找到对应的叶子节点，这个时候就会增加<code>latch</code>，因为不知道需不需要合并，操作以后才会释放</li>
+<li>如果可以删除就直接删除</li>
+<li>如果删除后导致key数量 &lt; <code>M/2 - 1</code>,那么就会出发合并，因为不满足key数量啦</li>
+<li>进行合并的时候删除这个key，然后先查看左右的兄弟节点，是否能直接把数据插入过来，如果可以的话就掠夺一个key过来，然后向上传播</li>
+<li>如果不能掠夺，那么就合并到兄弟节点，然后向上传播。</li>
+</ol>
+<p>我们接着上面的实例：依次删除<code>1,2,3,4,5,6,7</code></p>
+<p>删除1，因为删除后 key数量 &lt; <code>M/2 - 1</code>，因此触发了合并逻辑。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-15.png"></p>
+<p>删除2，同样进行合并。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-16.png"></p>
+<p>删除3<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-17.png"></p>
+<p>删除4<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-18.png"></p>
+<p>删除5<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-19.png"></p>
+<p>删除6<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-20.png"></p>
+<p>删除7以后，树就没了。</p>
+<blockquote>
+<p>推荐书籍 Modern B-Tree Techniques</p>
+</blockquote>
+<p>对于非唯一索引</p>
+<ul>
+<li>重复存储，需要注意两个相同的key存储在不同的page中</li>
+<li>value list,key只存储一个，然后所有的value存储成value list</li>
+</ul>
+<p>节点内部的搜索</p>
+<ul>
+<li>线性搜索</li>
+<li>二分搜索</li>
+<li>interpolation<ul>
+<li>通过数学计算出线性搜索的起点，提升搜索速度</li>
+</ul>
+</li>
+</ul>
+<p>优化方法</p>
+<ul>
+<li>前缀压缩<ul>
+<li>比后缀截断用的更多</li>
+<li>存储在page中的key,如果前缀一样的可以提取出来存储一次，然后剩余的数据在存储在key里面</li>
+</ul>
+</li>
+<li>后缀截断<ul>
+<li>存储在中间节点的，用来寻路的key，可以只存储前面的部分，如果后面的不需要可以截断</li>
+<li>更新的时候需要进行维护</li>
+</ul>
+</li>
+<li>批量插入<ul>
+<li>如果已经有数据了再建立索引，这个时候不需要从头开始一个个建立，只需要先排序</li>
+<li>然后建立所有的叶子节点</li>
+<li>在一层层向上建立中间节点</li>
+<li>非常普遍的方法，主流数据库都支持</li>
+</ul>
+</li>
+<li>point willizeing<ul>
+<li>将节点固定在内存中</li>
+<li>对于page来说，直接存储page指针而不是page id，就不需要请求buffer pool了</li>
+</ul>
+</li>
+</ul>
+<p>b+ tree的重复key，通常使用增加<code>record id</code>的方式，这种方式影响更小。</p>
+<ul>
+<li>增加<code>record id</code>,<code>record id</code>是<code>page id</code> + <code>offset</code>用来确定tuple的位置。</li>
+<li>垂直扩展叶子节点，将数据存在里面</li>
+</ul>
+<p>部分索引</p>
+<ul>
+<li>在创建索引的时候添加where条件，只有符合条件的才会进入索引。</li>
+<li>查询的时候只有符合条件的才会走索引</li>
+</ul>
+<p>覆盖索引</p>
+<ul>
+<li>在创建索引的时候添加联合索引</li>
+<li>查询的时候所需数据都在索引中，就不需要在找对应的tuple信息了。</li>
+</ul>
+<p>函数索引</p>
+<ul>
+<li>创建索引的时候添加函数信息，比如 MONTH(date), 只对月份创建索引</li>
+<li>查询的时候 MONTH(date) 就会走索引了，而date就不会走索引了</li>
+<li>如果创建的时候只创建 date 索引，那么查询的时候 MONTH(date) 就不会走索引</li>
+</ul>
+<p>trie index(前缀树)</p>
+<ul>
+<li>把每个单词建立成树，一层放一个字母</li>
+</ul>
+<p>radix tree</p>
+<ul>
+<li>trie index的升级版</li>
+<li>对于trie index进行了横向的压缩和纵向的压缩</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本文通过两个简单的实例，详细讲解了如何进行b+树的插入和删除操作，对于b+树了解以后，也知道是如何支持联合索引查询的了。</p>
+<p>同时，还对比了其他几种数据结构。并提出了一些优化策略。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8Bhash%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86.html" rel="prev" title="零基础MySQL教程原理篇之hash索引原理">
+      <i class="fa fa-chevron-left"></i> 零基础MySQL教程原理篇之hash索引原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/AI/ChatGPT%E6%AD%A3%E5%BC%8F%E5%BC%80%E6%94%BE%E6%88%90%E4%BA%BA%E6%A8%A1%E5%BC%8F.html" rel="next" title="ChatGPT正式开放成人模式">
+      ChatGPT正式开放成人模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB-%E6%A0%91%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.</span> <span class="nav-text">零基础MySQL教程原理篇之B+树索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">索引是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%B4%A2%E5%BC%95%EF%BC%88B-Tree-Index%EF%BC%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">B+树索引（B+ Tree Index）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#b-tree"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">b tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-tree-1"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">b* tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-link-tree"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">b link tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-%E6%A0%91"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">b+树</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#b-tree%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-number">1.1.2.4.1.</span> <span class="nav-text">b+ tree的查找</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#b-tree-%E6%8F%92%E5%85%A5"><span class="nav-number">1.1.2.4.2.</span> <span class="nav-text">b+ tree 插入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#b-tree-%E5%88%A0%E9%99%A4"><span class="nav-number">1.1.2.4.3.</span> <span class="nav-text">b+ tree 删除</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">227</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

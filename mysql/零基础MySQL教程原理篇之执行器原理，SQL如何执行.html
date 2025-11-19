@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零基础MySQL教程原理篇之执行器原理，SQL如何执行">
+<meta property="og:url" content="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql6-1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql6-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql6-2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445039.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-11-19T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-11-19T08:28:44.685Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>零基础MySQL教程原理篇之执行器原理，SQL如何执行 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          零基础MySQL教程原理篇之执行器原理，SQL如何执行
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-11-19 10:12:47 / 修改时间：16:28:44" itemprop="dateCreated datePublished" datetime="2025-11-19T10:12:47+08:00">2025-11-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html" class="post-meta-item leancloud_visitors" data-flag-title="零基础MySQL教程原理篇之执行器原理，SQL如何执行" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之执行器原理，SQL如何执行"><a href="#零基础MySQL教程原理篇之执行器原理，SQL如何执行" class="headerlink" title="零基础MySQL教程原理篇之执行器原理，SQL如何执行"></a>零基础MySQL教程原理篇之执行器原理，SQL如何执行</h2><blockquote>
+<p>一天，小美突然肚子疼，原来是亲戚来了，小美只能躺在床上耍手机了。小美发了一个朋友圈。<br>张三看到了小美的朋友圈，立马自告奋勇过来照顾小美，要给小美做一个红糖姜茶。<br>张三到了小美的家里，张三找到了家里的红糖还有姜<br>第一步，倒出适量红糖，将姜洗净切丝<br>第二步，锅中放入水，开火，将水烧开<br>最后，将红糖和姜倒入锅中，等待片刻即可。<br>小美喝完以后发现浑身舒畅，当即对张三表示很满意。</p>
+</blockquote>
+<h3 id="执行器是什么？"><a href="#执行器是什么？" class="headerlink" title="执行器是什么？"></a>执行器是什么？</h3><p><code>执行器</code>是数据库架构中的核心组件之一，负责具体的执行操作，就如何故事中的张三一样，负责具体<code>煮红糖姜茶</code>。</p>
+<p>大部分的八股文都会告诉你，当SQL进入到数据库中，要经历解析器、优化器、执行器等等，但是他们不会告诉你的是，执行器到底怎么执行的呢？</p>
+<p>面试官：说一下数据库吧，你对数据库了解的如何？这是一个开放式的问题。<br>候选人A：按照八股文背了一遍<br>候选人B：详细的解释了数据库中每一步的执行流程，优化手段，MySQL和其他数据库的一些对比</p>
+<p>看到这里，相信你也明白候选人B获得Offer的机会更大吧。</p>
+<p>执行器就是一个苦力，真正负责干活的人，他会接受到一份<code>执行计划</code>。相当于厨师拿到了菜谱，只需要照着做就行了。</p>
+<h3 id="执行器模型"><a href="#执行器模型" class="headerlink" title="执行器模型"></a>执行器模型</h3><p>执行器模型大致可以分成下面三种：</p>
+<ul>
+<li>Iterator Model: 大多数数据库使用的，也是MySQL数据库使用的一个模型，也叫 <code>Volcano / pull-based</code></li>
+<li>Materialization Model：<code>Iterator Model</code>的一个特定版本，用在内存型数据库</li>
+<li>Vectorized&#x2F;Batch Model：<code>Iterator Model</code>差不多，要传入一大堆东西， 分析型数据库用的多</li>
+</ul>
+<h4 id="Iterator-Model"><a href="#Iterator-Model" class="headerlink" title="Iterator Model"></a>Iterator Model</h4><p>MySQL使用的这种执行模型来完成SQL的执行流程。这种模型像java的<code>stream</code>， 用流的方式执行。如果是做Java的同学应该很熟悉。</p>
+<p>核心思想：通过每个<code>执行节点</code>暴露一个 <code>Next()（或 getNext()）</code>接口，调用者从下游不断向上游拉取一条一条的行（tuple）。<code>执行节点</code>按需产生单行数据并返回，形成管道式逐行处理。</p>
+<p>优点</p>
+<ul>
+<li>管道化，低内存（不必把中间结果全部物化）。</li>
+<li>支持早停（例如 LIMIT、EXISTS），能在满足条件后立即结束。</li>
+<li>实现简单、易于组合与优化（迭代器链）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>每行的函数调用&#x2F;控制开销比较高（上下文切换、分支预测负担）。</li>
+<li>对现代 CPU 的向量化 &#x2F; 缓存利用不友好（逐行处理导致大量分散访问）。</li>
+</ul>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>首先，根据执行计划，我们会生成一些执行节点</p>
+<ul>
+<li>节点1:负责扫描R表数据</li>
+<li>节点2：负责扫描S表数据</li>
+<li>节点3: 负责执行<code>WHERE S.value &gt; 100</code>，也就是对节点2的输出做过滤</li>
+<li>节点4: 负责执行<code>R JOIN S</code>，也就是执行JOIN算法，是对节点1和节点3的输出做JOIN</li>
+<li>节点5: 负责执行<code>SELECT R.id,S.cdate</code>也就是对节点4的输出做过滤，只取其中的R.id和S.date字段。</li>
+</ul>
+<p>这样，我们还可以将这5个节点化成一个树的形式，如下图</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-1.png" alt="Iterator Model"></p>
+<p>每个节点会暴露一个<code>Next()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Next接口获取数据</li>
+<li>节点4会通过节点1的Next接口和节点3的Next接口获取数据</li>
+<li>节点1会扫描R表，获取到一条数据然后返回</li>
+<li>节点3会通过节点2的Next接口获取数据</li>
+<li>节点2会扫描S表，获取到一条数据然后返回</li>
+<li>节点3拿到节点2的返回值，执行过滤，如果过滤以后有数据，就返回，没有数据，继续第4步</li>
+<li>节点4获取到节点1和节点3的返回值，执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到数据以后执行SELECT操作，并重复第1步，直到没有数据为止。</li>
+</ol>
+<p>执行流程图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    N5[节点5: 投影 SELECT R.id, S.cdate]</span><br><span class="line">    N4[节点4: JOIN R.id = S.id]</span><br><span class="line">    N1[节点1: 扫描 R 表]</span><br><span class="line">    N3[节点3: 过滤 S.value &gt; 100]</span><br><span class="line">    N2[节点2: 扫描 S 表]</span><br><span class="line"></span><br><span class="line">    N5 --&gt;|Next| N4</span><br><span class="line">    N4 --&gt;|Next_R| N1</span><br><span class="line">    N4 --&gt;|Next_S| N3</span><br><span class="line">    N3 --&gt;|Next| N2</span><br><span class="line"></span><br><span class="line">    N1 -.-&gt;|读取R表每行| N1</span><br><span class="line">    N2 -.-&gt;|读取S表每行| N2</span><br></pre></td></tr></table></figure>
+
+<p>时序图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br&gt;SELECT 投影</span><br><span class="line">    participant J as 节点4&lt;br&gt;JOIN</span><br><span class="line">    participant R as 节点1&lt;br&gt;扫描R</span><br><span class="line">    participant F as 节点3&lt;br&gt;过滤S.value&gt;100</span><br><span class="line">    participant S as 节点2&lt;br&gt;扫描S</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next()</span><br><span class="line">    J-&gt;&gt;R: Next_R()</span><br><span class="line">    R--&gt;&gt;J: 返回一行R记录</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Next_S()</span><br><span class="line">    F-&gt;&gt;S: Next()</span><br><span class="line">    S--&gt;&gt;F: 返回一行S记录</span><br><span class="line">    F--&gt;&gt;J: 若 S.value &gt; 100 则返回，否则继续Next()</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: 返回JOIN配对结果</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 投影 R.id, S.cdate 后输出一行</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next()（重复流程直到结束）</span><br></pre></td></tr></table></figure>
+
+<p>生活故事：<br>想象一个传统小饭馆：服务员（下游）每来一个客人就去厨房（上游）拿一份菜。厨房现做现给，一份一份端出来。优点是不用提前占用很多桌子空间，也能马上停单；缺点是每次去拿都要来回跑，效率受人力往返影响。</p>
+<h4 id="Materalization-Model"><a href="#Materalization-Model" class="headerlink" title="Materalization Model"></a>Materalization Model</h4><p><code>Iterator Model</code>的特点是每次返回一行数据，而<code>Materalization Model</code>则是每次返回所有数据。因此，这种模型取消了<code>Next</code>方法，而是使用<code>Output</code>方法。</p>
+<p>核心思想：某些<code>执行节点</code>将其输出完整“物化”为中间结构（数组、临时表、磁盘文件），下游<code>执行节点</code>再一次性读取&#x2F;随机访问这个中间结果。常见于需要多次访问、排序、哈希构建等场景。</p>
+<p>优点</p>
+<ul>
+<li>便于随机访问、多次读取（例如 hash join 的 build 阶段、聚合后多次扫描）。</li>
+<li>可以把中间数据放到磁盘&#x2F;临时表以突破内存限制。</li>
+<li>有利于用批量算法对中间结果做集中优化（比如一次性排序、一次性写盘）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>需要额外内存或 I&#x2F;O（内存不足时会溢写到磁盘，开销大）。</li>
+<li>增加了延迟（必须等物化完成，下游才能消费）。</li>
+</ul>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>节点还是上面那些，不再说明。</p>
+<p>每个节点会暴露一个<code>Output()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Output接口获取所有数据</li>
+<li>节点4会通过节点1的Output接口和节点3的Output接口获取所有数据</li>
+<li>节点1会循环扫描R表，获取到R表的所有数据一次行返回</li>
+<li>节点3会通过节点2的Output接口获取所有数据</li>
+<li>节点2会循环扫描S表，获取到S表的所有数据一次行返回</li>
+<li>节点3拿到节点2的返回值，循环执行过滤，如果循环过滤以后有数据，就返回所有过滤后的数据，没有数据，返回空。</li>
+<li>节点4获取到节点1和节点3的返回值，循环执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到数据以后循环执行SELECT操作，并将结果返回。</li>
+</ol>
+<p>这个模型的流程图如下，注意其中的区别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line"></span><br><span class="line">    P[节点5: 投影 SELECT&lt;br/&gt;Output → 返回所有结果] --&gt; J</span><br><span class="line">    J[节点4: JOIN&lt;br/&gt;Output → JOIN所有数据] --&gt; P</span><br><span class="line"></span><br><span class="line">    J --&gt; R</span><br><span class="line">    J --&gt; F</span><br><span class="line"></span><br><span class="line">    R[节点1: 扫描R表&lt;br/&gt;Output → 返回R表所有行] --&gt; J</span><br><span class="line"></span><br><span class="line">    F[节点3: 过滤 S.value &gt; 100&lt;br/&gt;Output → 返回过滤后的全部S行] --&gt; J</span><br><span class="line">    F --&gt; S</span><br><span class="line"></span><br><span class="line">    S[节点2: 扫描S表&lt;br/&gt;Output → 返回S表所有行] --&gt; F</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>时序图如下 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br/&gt;SELECT 投影 (Output)</span><br><span class="line">    participant J as 节点4&lt;br/&gt;JOIN (Output)</span><br><span class="line">    participant R as 节点1&lt;br/&gt;扫描R表 (Output)</span><br><span class="line">    participant F as 节点3&lt;br/&gt;过滤S (Output)</span><br><span class="line">    participant S as 节点2&lt;br/&gt;扫描S表 (Output)</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Output()</span><br><span class="line">    Note right of J: 需要 R 全量数据&lt;br/&gt;需要 S 过滤后全量数据</span><br><span class="line">    </span><br><span class="line">    J-&gt;&gt;R: Output()</span><br><span class="line">    R--&gt;&gt;J: 返回 R 全表数据列表</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Output()</span><br><span class="line">    F-&gt;&gt;S: Output()</span><br><span class="line">    S--&gt;&gt;F: 返回 S 全表数据列表</span><br><span class="line"></span><br><span class="line">    F--&gt;&gt;J: 返回 过滤后的 S 列表</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: 返回 JOIN(R, S_filtered) 的全部结果</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 投影 SELECT R.id, S.cdate&lt;br/&gt;返回最终结果集</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>生活故事：<br>把它想成自助餐（buffet）准备：厨房先把所有菜都做好、摆到台子上（物化）。顾客来时可以随意取，便于多个人同时取、重复取同一道菜。缺点是需要大的台面和提前准备时间，浪费食材或占地方。</p>
+<h4 id="Vectorized-Model"><a href="#Vectorized-Model" class="headerlink" title="Vectorized Model"></a>Vectorized Model</h4><p>这个模型同样进行了一些修改，不再是一行一行的获取数据，但是也不是一下获取所有数据，类似于中间的一个模型，一下子获取部分数据，同样使用<code>Next</code>方法，但是一次性返回一堆 <code>tuples</code>, 数量取决于 <code>Buffer pool</code> 大小</p>
+<p>OLAP数据库基本上使用的是这个处理模型。</p>
+<p>核心思想：<code>执行节点</code>按“批”（batch）或“向量”（columnar vectors）处理多行数据一次性做操作，而不是每次一行。批里通常是连续的列或行，能更好利用 CPU 缓存、分支预测、SIMD 指令、以及减少函数调用开销。</p>
+<p>优点</p>
+<ul>
+<li>高吞吐：每批次 amortize 函数调用与调度开销。</li>
+<li>极佳的 CPU &amp; 缓存利用（尤其是列式存储配合向量化运算）。</li>
+<li>更容易实现并行&#x2F;向量化优化（SIMD、流水线）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>批量带来一定的延迟（小查询或需要低延迟的 OLTP 不友好）。</li>
+<li>对非均匀数据&#x2F;分支较多的操作优化有限（每批中仍需处理空值&#x2F;分支）。</li>
+<li>较复杂的实现（需要设计批接口、内存布局）。</li>
+</ul>
+<p>节点还是上面那些，不再说明。</p>
+<p>每个节点会暴露一个<code>Next()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Next接口获取<code>N行</code>数据</li>
+<li>节点4会通过节点1的Next接口和节点3的Next接口获取<code>N行</code>数据</li>
+<li>节点1会循环扫描R表，获取到R表的<code>N行</code>数据返回</li>
+<li>节点3会通过节点2的Next接口获取<code>N行</code>数据</li>
+<li>节点2会循环扫描S表，获取到S表的<code>N行</code>数据返回</li>
+<li>节点3拿到节点2的<code>N行</code>返回值，循环执行过滤，如果循环过滤以后有数据，就返回所有过滤后的数据，没有数据，就继续重复第4步。</li>
+<li>节点4获取到节点1和节点3的<code>N行</code>返回值，循环执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到<code>N行</code>数据以后循环执行SELECT操作，并重复第1步，最后数据处理完成，将结果返回。</li>
+</ol>
+<p>执行流程图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A5[Node5 Projection SELECT&lt;br/&gt;NextN → 请求 N 行] --&gt; A4</span><br><span class="line">    A4[Node4 JOIN&lt;br/&gt;NextN → 请求 N 行] --&gt; A1</span><br><span class="line">    A4 --&gt; A3</span><br><span class="line"></span><br><span class="line">    A1[Node1 Scan R&lt;br/&gt;一次返回 N 行] --&gt; A4</span><br><span class="line"></span><br><span class="line">    A3[Node3 Filter value gt 100&lt;br/&gt;NextN → 请求 N 行] --&gt; A2</span><br><span class="line"></span><br><span class="line">    A2[Node2 Scan S&lt;br/&gt;一次返回 N 行] --&gt; A3</span><br><span class="line"></span><br><span class="line">    A3 --&gt; A4</span><br><span class="line">    A4 --&gt; A5</span><br></pre></td></tr></table></figure>
+
+<p>时序图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br/&gt;SELECT 投影&lt;br/&gt;Next(N)</span><br><span class="line">    participant J as 节点4&lt;br/&gt;JOIN&lt;br/&gt;Next(N)</span><br><span class="line">    participant R as 节点1&lt;br/&gt;扫描R表&lt;br/&gt;Next(N)</span><br><span class="line">    participant F as 节点3&lt;br/&gt;过滤 S&lt;br/&gt;Next(N)</span><br><span class="line">    participant S as 节点2&lt;br/&gt;扫描S表&lt;br/&gt;Next(N)</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next(N)</span><br><span class="line">    Note right of J: 需要 R_batch 和 S_filtered_batch</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;R: Next(N)</span><br><span class="line">    R--&gt;&gt;J: 返回 R 的 N 行批次</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Next(N)</span><br><span class="line">    F-&gt;&gt;S: Next(N)</span><br><span class="line">    S--&gt;&gt;F: 返回 S 的 N 行批次</span><br><span class="line"></span><br><span class="line">    F--&gt;&gt;J: 对 S_batch 过滤后返回&lt;br/&gt;S_filtered_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: JOIN(R_batch, S_filtered_batch)&lt;br/&gt;返回 Join_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 对 Join_batch 执行投影&lt;br/&gt;输出 SELECT_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next(N)（继续获取下一批…）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生活故事：<br>想象快餐连锁的生产线：厨房把同一种汉堡按批次一起做（比如一次做 20 个），装箱后一起送到窗口分发。这样每个环节都能流水作业，效率高，但如果只来一个客人，需要等一小批做完才拿到（稍有延迟）。</p>
+<p>执行器模型的对比表格，一目了然，可以参照一下。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th align="right">Iterator（逐行&#x2F;拉）</th>
+<th align="right">Materialization（物化）</th>
+<th align="right">Vectorized&#x2F;Batch（向量&#x2F;批）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>典型接口</td>
+<td align="right"><code>Next()</code> 每次一行</td>
+<td align="right">完整生成中间结果（array&#x2F;temp table）</td>
+<td align="right"><code>NextBatch()</code> &#x2F; 批量数组</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td align="right">低（流式）</td>
+<td align="right">高（可能很大）</td>
+<td align="right">中等（批次大小决定）</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td align="right">低（单行）</td>
+<td align="right">高（等待物化）</td>
+<td align="right">中等 — 批大小影响延迟</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td align="right">中</td>
+<td align="right">中高（取决于IO）</td>
+<td align="right">高（最好）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td align="right">OLTP、早停、复合操作</td>
+<td align="right">需要随机访问&#x2F;多次复用&#x2F;排序、外部Join</td>
+<td align="right">OLAP、大表扫描、列式引擎</td>
+</tr>
+<tr>
+<td>优化方向</td>
+<td align="right">减少函数开销、内联</td>
+<td align="right">减少 I&#x2F;O、压缩</td>
+<td align="right">SIMD、缓存局部性、批处理</td>
+</tr>
+</tbody></table>
+<h3 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h3><p>从上面可以发现，我们会按照节点去进行执行，那么每个节点其实都负责一个具体的任务。这也是软件设计原则中的<code>单一职责</code>。</p>
+<p>比如上面的示例中，有：</p>
+<ul>
+<li>select节点</li>
+<li>where节点</li>
+<li>join节点</li>
+<li>扫描表节点</li>
+</ul>
+<p>其实，SQL中的每一个操作都是一个不同的节点类型，除了上面那些，还有：</p>
+<ul>
+<li>limit节点</li>
+<li>order by节点</li>
+<li>group by节点</li>
+<li>sort 节点</li>
+<li>其他操作节点</li>
+</ul>
+<p>当然了，每个节点其实都可以有不同的实现，每种实现可能会导致不同的执行速度。</p>
+<p>在后续的文章中，我们会详细讲解每种节点的具体代码实现。本篇文章的重点还是聚焦在执行器上面。</p>
+<h3 id="进程线程模型"><a href="#进程线程模型" class="headerlink" title="进程线程模型"></a>进程线程模型</h3><p>上面介绍了执行模型，那执行模型具体如何处理呢？单进程？单线程？多线程？多进程？</p>
+<p>这里介绍一下<code>进程线程模型</code>，分为下面几种：</p>
+<ul>
+<li>Process per DBMS Worker：每个 <code>Worker</code> 一个进程，相当于一个节点一个进程来执行。可以说是多进程 + 共享内存的方式执行。</li>
+<li>Process Model：和上面那个差不多，但是增加了 <code>worker pool</code>，有多个worker进行调度处理。</li>
+<li>Thread per DBMS Worker：每个 <code>Worker</code> 一个线程，相当于一个节点一个线程来执行。由数据库自己控制线程。</li>
+<li>Embedded DBMS：嵌入式数据库，与应用在同一进程内</li>
+</ul>
+<h4 id="Process-per-DBMS-Worker"><a href="#Process-per-DBMS-Worker" class="headerlink" title="Process per DBMS Worker"></a>Process per DBMS Worker</h4><p>每个进程是一个worker,负责执行任务。通过<code>共享内存</code>进行buffer pool的通信，要不然每个进程都会有一个buffer pool。老得数据库大部分使用的这个，因为当时没有统一的线程API,像DB2,oracle,postgraSQL等。</p>
+<p>特点：</p>
+<ul>
+<li>稳定，功能隔离（进程级别隔离，不会相互崩）</li>
+<li>上下文切换昂贵</li>
+<li>增加连接数时压力大</li>
+</ul>
+<h4 id="Process-Model"><a href="#Process-Model" class="headerlink" title="Process Model"></a>Process Model</h4><p>和 <code>Process per DBMS Worker</code>一样.但是增加了 <code>worker pool</code>，有多个<code>worker</code>,有一个主进程进行调度处理。像DB2,postgraSQL（2015）使用的是这种方式。相当于上面那种方式的一个优化版本吧，可以看到PostgraSQL一开始用上面的模型，后来切换到这个模型了。</p>
+<h4 id="Thread-per-DBMS-Worker"><a href="#Thread-per-DBMS-Worker" class="headerlink" title="Thread per DBMS Worker"></a>Thread per DBMS Worker</h4><p>一个进程，多个线程执行，由数据库自己控制线程。现在的数据库几乎都使用这种，像DB2, MSSQL, MySQL, Oracle(2014)。</p>
+<p>线程的开销比进程小的多，因此，当线程出现以后，现代数据库基本都使用了这种方式。</p>
+<p>特点：</p>
+<ul>
+<li>线程切换便宜（上下文切换轻量）</li>
+<li>所有线程共享进程内存</li>
+<li>一个线程崩掉可能拖垮整个 DBMS → 可靠性较低</li>
+<li>吞吐能力强，适合高并发</li>
+</ul>
+<h4 id="Embedded-DBMS"><a href="#Embedded-DBMS" class="headerlink" title="Embedded DBMS"></a>Embedded DBMS</h4><p>数据库不是独立的<code>服务器进程</code>，而是嵌入到应用程序内部，比如一个链接库<code>（.so / .dll）</code>。应用程序与数据库运行在同一个进程中，没有网络开销。一些小型的嵌入式数据库就是这种的，比如著名的SQLite。</p>
+<p>特点：</p>
+<ul>
+<li>极快（没有 IPC 或网络交互）</li>
+<li>轻量（没有独立服务器）</li>
+<li>通常不支持高并发连接（适合单用户&#x2F;轻量多线程）</li>
+<li>适用于本地系统、移动端、嵌入式设备</li>
+</ul>
+<p>进程线程模型的对比表格，可以参考一下</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>单位</th>
+<th>性能</th>
+<th>稳定性</th>
+<th>内存共享</th>
+<th>典型数据库</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Process per Worker</td>
+<td>每连接一个进程</td>
+<td>较慢（进程切换重）</td>
+<td>很高</td>
+<td>需要共享内存</td>
+<td>PostgreSQL</td>
+<td>每客一个包间</td>
+</tr>
+<tr>
+<td>Process Model</td>
+<td>多进程协作</td>
+<td>中等</td>
+<td>高</td>
+<td>有限共享</td>
+<td>PostgreSQL&#x2F;Oracle</td>
+<td>多炒菜间+共享大冰箱</td>
+</tr>
+<tr>
+<td>Thread per Worker</td>
+<td>每连接一个线程</td>
+<td>高</td>
+<td>较低（线程崩会影响全局）</td>
+<td>完全共享</td>
+<td>MySQL &#x2F; SQL Server</td>
+<td>一个大厨房所有人共用</td>
+</tr>
+<tr>
+<td>Embedded DBMS</td>
+<td>与应用同一进程</td>
+<td>极高</td>
+<td>中等</td>
+<td>全共享</td>
+<td>SQLite &#x2F; DuckDB</td>
+<td>家里的咖啡机</td>
+</tr>
+</tbody></table>
+<h3 id="并行化查询"><a href="#并行化查询" class="headerlink" title="并行化查询"></a>并行化查询</h3><p>并行化查询可以加速执行器的执行速度，并行化也是现代很多程序使用的一个方式。对于数据库而言，通常有下面三种并行化方式：</p>
+<ul>
+<li>Intra operator(水平)</li>
+<li>Inter operator(垂直)</li>
+<li>Bushy(上面两种的组合)</li>
+</ul>
+<h4 id="Intra-operator"><a href="#Intra-operator" class="headerlink" title="Intra operator"></a>Intra operator</h4><p>通过水平拆分数据，由多个线程执行，比如3个线程，一个线程处理一个page，以此类推。处理完成以后通过<code>exchange operator</code>来进行合并，拆分也是通过它。</p>
+<p>通过水平拆分来将一个任务分成多个子任务，每个子任务单独在一个CPU上执行，这样可以利用多核CPU来加速处理。</p>
+<p>比如一个表有6个Page，将一个扫描表的任务分成3个子任务，CPU1扫描表的前面2个Page，CPU2扫描表的中间2个Page，CPU3扫描表的最后2个Page。</p>
+<p>这里要注意的一点是，并行化是执行器级别的并行，而不是节点级别的，也就意味着3个子任务，是整个执行器的3个子任务。</p>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>我们在上面已经给出了执行图了，接下来会将整个执行图水平拆分成3个子任务。</p>
+<p>如下图</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-2.png" alt="Intra operator"></p>
+<p>Exchange operator</p>
+<ul>
+<li>Gather:从多个线程的结果合并成一个输出流，PostgreSQL用这个</li>
+<li>Repartition: 重新组织多个输入流到多个输出流的数据，像group by，BigQuery用这个</li>
+<li>Distribute: 拆分一个输入流到多个输出流</li>
+</ul>
+<p>很多数据库都使用了<code>Exchange Operator</code>的概念，其实不光数据库，很多数据处理中也使用了，如果你使用过其他数据库或者一些大数据处理经验的话，应该会感觉到熟悉。</p>
+<p>这种水平拆分是非常常用的场景，很多数据库都是使用这个方式，比如PostgreSQL、Oracle、Snowflake、DuckDB 等。</p>
+<h4 id="Inter-operator"><a href="#Inter-operator" class="headerlink" title="Inter operator"></a>Inter operator</h4><p>这是一种<code>垂直拆分</code>的并行方式，通常在 流水线执行模型（pipelining） 内使用。重叠的操作从一个阶段到下一个阶段的pipeline数据，没有具体化。workers同时执行多个operators从一个查询计划的不同部分。也需要用到exchange operator。像Spark,Kafka常用这个方式。</p>
+<p>这个就是多个节点并行的，比如扫描表的节点在CPU1执行，Where节点在CPU2执行，JOIN节点在CPU3执行，如此并行。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-2.png" alt="Inter operator"></p>
+<h4 id="Bushy-Parallelism"><a href="#Bushy-Parallelism" class="headerlink" title="Bushy Parallelism"></a>Bushy Parallelism</h4><p>这种并行方式是结合了水平和垂直的方式，是并行度最高的一种，但也是复杂度最高的一种。</p>
+<p>既可以水平拆分到多个CPU中，也将部分内容垂直拆分到多个CPU中。</p>
+<p>假设我们有SQL</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> A <span class="keyword">JOIN</span> B <span class="keyword">JOIN</span> C <span class="keyword">JOIN</span> D</span><br></pre></td></tr></table></figure>
+
+<p>我们将<code>A JOIN B</code>拆分到CPU1中，<code>C JOIN D</code>拆分到CPU2中，这是水平拆分。</p>
+<p>然后将JOIN操作进行垂直拆分。如图所示</p>
+<p><img src="https://thepatterraining.github.io/images/15445039.png" alt="039"></p>
+<p>许多数据库（Snowflake、Presto、Greenplum、Redshift）支持 bushy这种方式。</p>
+<p>关于三种方式的对比可以参考下表</p>
+<table>
+<thead>
+<tr>
+<th>并行类型</th>
+<th>含义</th>
+<th>并行维度</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Intra-operator（水平）</td>
+<td>单个算子内部并行</td>
+<td>横向拆分数据</td>
+<td>多人一起切西瓜</td>
+</tr>
+<tr>
+<td>Inter-operator（垂直）</td>
+<td>pipeline 中的算子串行但并行执行</td>
+<td>上下游算子同时工作</td>
+<td>工厂流水线</td>
+</tr>
+<tr>
+<td>Bushy</td>
+<td>多分支、多算子、多层并行</td>
+<td>多 pipeline + 多算子 + 多任务</td>
+<td>多厨房同时做不同菜系</td>
+</tr>
+</tbody></table>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次分享了MySQL中重要的组件之一执行器，理解了执行器是如何进行工作的，它的执行模型以及一些节点的类型。最后还提到了并行化查询，通过并行化可以使用现代的多核CPU性能来加速数据处理。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/AI/ChatGPT%E6%AD%A3%E5%BC%8F%E5%BC%80%E6%94%BE%E6%88%90%E4%BA%BA%E6%A8%A1%E5%BC%8F.html" rel="prev" title="ChatGPT正式开放成人模式">
+      <i class="fa fa-chevron-left"></i> ChatGPT正式开放成人模式
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C"><span class="nav-number">1.1.</span> <span class="nav-text">零基础MySQL教程原理篇之执行器原理，SQL如何执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">执行器是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">执行器模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Iterator-Model"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Iterator Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Materalization-Model"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">Materalization Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vectorized-Model"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">Vectorized Model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">节点类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.4.</span> <span class="nav-text">进程线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-per-DBMS-Worker"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">Process per DBMS Worker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-Model"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">Process Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Thread-per-DBMS-Worker"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">Thread per DBMS Worker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Embedded-DBMS"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">Embedded DBMS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.5.</span> <span class="nav-text">并行化查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Intra-operator"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">Intra operator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Inter-operator"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">Inter operator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bushy-Parallelism"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">Bushy Parallelism</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">227</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

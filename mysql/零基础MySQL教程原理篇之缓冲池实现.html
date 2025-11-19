@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零基础MySQL教程原理篇之Buffer Pool">
+<meta property="og:url" content="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-10-14T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-10-27T02:58:57.145Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>零基础MySQL教程原理篇之Buffer Pool | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          零基础MySQL教程原理篇之Buffer Pool
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-10-14 10:12:47" itemprop="dateCreated datePublished" datetime="2025-10-14T10:12:47+08:00">2025-10-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-10-27 10:58:57" itemprop="dateModified" datetime="2025-10-27T10:58:57+08:00">2025-10-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html" class="post-meta-item leancloud_visitors" data-flag-title="零基础MySQL教程原理篇之Buffer Pool" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之缓冲池实现"><a href="#零基础MySQL教程原理篇之缓冲池实现" class="headerlink" title="零基础MySQL教程原理篇之缓冲池实现"></a>零基础MySQL教程原理篇之缓冲池实现</h2><p>MySQL中的<code>buffer pool(缓冲池)</code>是<code>InnoDB存储引擎</code>的重要组件，它负责在内存中管理数据库中的数据和索引的缓存。</p>
+<p>它加速了数据库的运行速度，是数据库和磁盘之间的一个中间层。如果没有缓冲池，那么所有的数据库操作都需要进行磁盘IO，有了缓冲池，就不需要频繁的IO操作了。</p>
+<p>本次我们的目标是使用<code>C++</code>实现一个缓冲池，这也是<code>CMU15445</code>这门课的<code>Project1</code>。</p>
+<p>基于<code>BusTub</code>学术数据库管理系统构建一个面向磁盘的存储管理器。在这样的存储管理器中，数据库的主要存储位置在磁盘。</p>
+<p>缓冲池负责在主内存和磁盘之间来回移动物理页面。它允许数据库管理系统支持比系统可用内存量更大的数据库。缓冲池的操作对系统其他部分是透明的。</p>
+<p>例如，系统使用其唯一标识符 <code>（ page_id_t ）</code>向缓冲池请求一个页面，它不知道这个页面是否已经在内存中，或者系统是否需要从磁盘中检索它。</p>
+<p>实现需要是线程安全的。多个线程将并发访问内部数据结构，并且必须确保它们的临界区受到<code>latches</code>的保护（在操作系统中这些被称为“锁”）。</p>
+<p>实现总共分为三个部分：</p>
+<ol>
+<li>实现LRU-K淘汰策略</li>
+<li>实现磁盘调度程序</li>
+<li>实现缓冲池管理器</li>
+</ol>
+<h3 id="实现LRU-K淘汰策略"><a href="#实现LRU-K淘汰策略" class="headerlink" title="实现LRU-K淘汰策略"></a>实现LRU-K淘汰策略</h3><p>关于LRU-K淘汰策略的一些信息可以看上一篇文章<a href="">零基础MySQL教程原理篇之缓冲池原理及实现</a></p>
+<p>本次实现主要都在这两个文件中：</p>
+<ul>
+<li>头文件<code>src/include/buffer/lru_k_replacer.h</code></li>
+<li>实现文件<code>src/buffer/lru_k_replacer.cpp</code></li>
+</ul>
+<blockquote>
+<p>LRU-K 算法会淘汰替换器中反向 k 距离最大的页帧。反向 k 距离是指当前时间戳与第 k 次先前访问的时间戳之间的时间差。少于 k 次历史访问的页帧其反向 k 距离被赋予+inf。当多个页帧具有+inf 反向 k 距离时，替换器会淘汰具有最早整体时间戳的页帧（即记录访问最久远的页帧，在所有页帧中整体上最不常被访问的页帧）。</p>
+</blockquote>
+<p><code>LRUKReplacer</code> 的最大大小与缓冲池的大小相同，因为它包含了 <code>BufferPoolManager</code> 中所有页帧的占位符。然而，在任意时刻，替换器中的所有页帧并非都被视为可被淘汰。 <code>LRUKReplacer</code> 的大小由可被淘汰页帧的数量表示。 <code>LRUKReplacer</code> 被初始化为空。只有当页帧被标记为可被淘汰时，替换器的大小才会增加。</p>
+<p>总共要实现以下方法：</p>
+<ul>
+<li>Evict(frame_id_t* frame_id):将与所有其他被跟踪的可淘汰帧相比具有最大向后k距离的帧驱逐。将<code>帧id</code>存储在输出参数中并返回 True 。如果没有可淘汰帧，则返回 False 。</li>
+<li>RecordAccess(frame_id_t frame_id)：记录给定帧 id 在当前时间戳被访问。此方法应在页面被固定在 <code>BufferPoolManager</code> 后调用。</li>
+<li>Remove(frame_id_t frame_id)：清除与帧关联的所有访问历史。此方法仅在页面被删除在 <code>BufferPoolManager</code> 时调用。</li>
+<li>SetEvictable(frame_id_t frame_id, bool set_evictable): 此方法控制帧是否可被淘汰。它还控制 <code>LRUKReplacer</code> 的大小。当您实现 <code>BufferPoolManager</code> 时，您将知道何时调用此函数。具体来说，当页面的固定计数达到 0 时，其对应的帧被标记为可淘汰，并且替换器的大小增加。</li>
+<li>Size()：该方法返回当前在 <code>LRUKReplacer</code> 中的可淘汰帧数。</li>
+</ul>
+<p>你可以假设不会内存耗尽，但你必须确保你的实现是线程安全的。</p>
+<p>以上是<code>实现要求</code>.</p>
+<p>接下来讨论一下实现的思路。关于LRU-K在数据库中的实现有一篇论文可以参考一下<a target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/170036.170081">LRU-K</a></p>
+<p>先来看<code>RecordAccess</code>方法吧，这个方法算是比较简单的了，也是整个LRU-K算法的入口方法，因为每次访问一个page，都需要调用该方法。</p>
+<p>首先，我们可以看到在头文件中有<code>LRUKNode</code>的一个类型定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LRUKNode</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">LRUKNode</span><span class="params">(<span class="type">frame_id_t</span> fid)</span> : fid_(fid)&#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line">  ~<span class="built_in">LRUKNode</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">Record</span><span class="params">(<span class="type">size_t</span> timestamp)</span> -&gt; <span class="type">size_t</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">SetEvictable</span><span class="params">(<span class="type">bool</span> evictable)</span> -&gt; <span class="type">bool</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetId</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">frame_id_t</span> </span>&#123; <span class="keyword">return</span> fid_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetK</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">size_t</span> </span>&#123; <span class="keyword">return</span> k_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetKDistance</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">size_t</span> </span>&#123; <span class="keyword">return</span> k_distance_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">IsEvict</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">bool</span> </span>&#123; <span class="keyword">return</span> is_evictable_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 定义比较操作符</span></span><br><span class="line">  <span class="keyword">auto</span> <span class="keyword">operator</span>==(<span class="type">const</span> LRUKNode &amp;other) <span class="type">const</span> -&gt; <span class="type">bool</span> &#123; <span class="keyword">return</span> fid_ == other.fid_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">Print</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="comment">/** History of last seen K timestamps of this page. Least recent timestamp stored in front. */</span></span><br><span class="line">  <span class="comment">// Remove maybe_unused if you start using them. Feel free to change the member variables as you want.</span></span><br><span class="line"></span><br><span class="line">  std::list&lt;<span class="type">size_t</span>&gt; history_;  <span class="comment">//记录访问历史</span></span><br><span class="line">  <span class="type">size_t</span> k_distance_;          <span class="comment">//当前frame k distance</span></span><br><span class="line">  <span class="type">size_t</span> k_&#123;<span class="number">0</span>&#125;;</span><br><span class="line">  <span class="type">const</span> <span class="type">frame_id_t</span> fid_;      <span class="comment">// frame id</span></span><br><span class="line">  <span class="type">bool</span> is_evictable_&#123;<span class="literal">false</span>&#125;;  <span class="comment">// 是否可淘汰</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这里我们有一个List类型的<code>history_</code>用来记录这个Node的访问历史。<code>k_distance_</code>用来计算k距离。<code>fid_</code>表示这个Node的帧id，也就是<code>frame id</code>，<code>is_evictable_</code>代表是否可以被淘汰掉。</p>
+<p>因此，在我们的LRUK算法中，需要有一个地方存储这些Node，这里第一个想到的是用一个List来存储，但是，这样每次查找Node都不方便，因此，可以使用一个<code>HashMap</code>来存储，定义一个<code>node_store_</code>来进行存储,这个map的key是<code>frame id</code>，value是一个LRUKNode。我们还需要记录两个大小，一个是LRU淘汰器里面可淘汰的大小，一个是最大的大小。还有最关键的两个数据结构，我们采用两个<code>queue</code>来实现真个LRUK算法，一个<code>lru_node_queue_</code>来存储没有到达K次的节点，一个<code>lru_k_queue_</code>来存储已经到达K次的节点。</p>
+<p>因此，在<code>RecordAccess</code>方法中，我们的实现思路就是：</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果是第一次访问，继续往下。如果不是，跳到8处</li>
+<li>首先，我们需要为这个帧创建一个<code>LRUKNode</code></li>
+<li>将这个节点插入node_store_中</li>
+<li>记录本次对于这个新创建LRUKNode的访问历史</li>
+<li>根据访问次数决定放入的队列，如果小于K次，放入lru_node_queue_，否则放入lru_k_queue_</li>
+<li>如果node_store_中有这个帧，代表曾经访问过，不需要创建LRUKNode了</li>
+<li>从node_store_中取出这个LRUKNode，并记录访问历史</li>
+<li>根据访问次数决定放入的队列，如果小于K次，放入lru_node_queue_，否则放入lru_k_queue_</li>
+</ol>
+<p>这里面有一个公共的点在于，6、7步骤和9、10步骤，因此可以把这两个步骤抽取出来一个公共方法，我们暂时命名为<code>RecordHelper</code>方法。</p>
+<p>接下来看<code>SetEvictable</code>这个方法，这个方法比较简单，因为只是简单的设置一个LRUKNode的状态为<code>可以被淘汰</code>。</p>
+<p>同样的，给定一个<code>frame id</code>，我们需要先从<code>node_store_</code>中进行查询。</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果没有查询到，说明不在淘汰器中，因此直接返回错误或者不处理即可。</li>
+<li>如果查询到一个LRUKNode，从 node_store_ 中取出这个节点</li>
+<li>修改这个LRUKNode的状态</li>
+<li>更新可淘汰数量</li>
+</ol>
+<p>对于<code>Size</code>方法是最简单的，直接返回<code>可淘汰数量</code>即可。</p>
+<p>对于<code>Remove</code>方法，是要将一个节点从淘汰器中删除。</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果没有查询到，说明不在淘汰器中，因此直接返回错误或者不处理即可。</li>
+<li>如果查询到一个LRUKNode，从 node_store_ 中取出这个节点</li>
+<li>从 node_store_ 中删除这个节点</li>
+<li>因为我们维护了两个队列，因此这里要判断一下节点的K次，来决定从哪个队列中删除这个节点。</li>
+</ol>
+<p>最重要的实现就是<code>Evict</code>方法了，这个是整个算法的核心实现。实现思路如下：</p>
+<ol>
+<li>优先从 lru_node_queue_ 中淘汰</li>
+<li>如果在 lru_node_queue_ 中，则将该节点从 lru_node_queue_ 中删除，并从 node_store_ 中删除</li>
+<li>如果 lru_node_queue_ 中没有符合条件的，再从 lru_k_queue_ 中寻找</li>
+<li>如果在 lru_k_queue_ 中，则将该节点从 lru_k_queue_ 中删除，并从 node_store_ 中删除。</li>
+<li>如果两个队列中都没有可淘汰的页面，则返回 false</li>
+</ol>
+<h3 id="实现磁盘调度程序"><a href="#实现磁盘调度程序" class="headerlink" title="实现磁盘调度程序"></a>实现磁盘调度程序</h3><p><code>磁盘调度程序</code>负责读写磁盘IO，我们需要实现下面两个文件：</p>
+<ul>
+<li>src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.h</li>
+<li>src&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.cpp</li>
+</ul>
+<p>磁盘调度器可以被其他组件（在此情况下，任务#3 中的 <code>缓冲池管理器</code> ）用来排队磁盘请求，这些请求由 <code>DiskRequest</code> 结构体表示（已在 src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.h 中定义）。磁盘调度器将维护一个后台工作线程，负责处理已排队的请求。</p>
+<blockquote>
+<p>磁盘调度器将使用一个共享队列来调度和处理 DiskRequests。一个线程会将请求添加到队列中，而磁盘调度器的工作线程会处理队列中的请求。我们在 src&#x2F;include&#x2F;common&#x2F;channel.h 中提供了一个 Channel 类来促进线程间数据的安全共享，但如果你认为有必要，也可以使用自己的实现。</p>
+</blockquote>
+<p>DiskScheduler 的构造函数和析构函数已经实现，它们负责创建和加入后台工作线程。你只需要实现以下方法:</p>
+<ul>
+<li>Schedule(DiskRequest r) : 安排 <code>DiskManager</code> 执行请求。 <code>DiskRequest</code> 结构体指定请求是读&#x2F;写操作，数据应写入&#x2F;读取的位置，以及操作的<code>page ID</code>。 <code>DiskRequest</code> 还包括一个 <code>std::promise</code> ，其值应在请求处理完成后设置为 true。</li>
+<li>StartWorkerThread() : 启动后台工作线程的方法，该方法处理计划中的请求。工作线程在 <code>DiskScheduler</code> 构造函数中创建，并调用此方法。此方法负责获取排队中的请求并将它们分派到 <code>DiskManager</code> 。记得在 <code>DiskRequest</code> 的回调中设置值，以通知请求发起人请求已完成。此方法不应在 <code>DiskScheduler</code> 的析构函数被调用之前返回。</li>
+</ul>
+<p>最后， <code>DiskRequest</code> 中的一个字段是一个 <code>std::promise</code> 。如果你不熟悉 C++ 的 <code>promise</code> 和 <code>future</code>，可以查看它们的文档。在这个项目中，它们基本上为线程提供了一个回调机制，以便线程知道它们的计划请求何时完成。要查看它们可能的使用示例，可以查看 <code>disk_scheduler_test.cpp</code> 。</p>
+<p>磁盘管理器类（ src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_manager.h ）负责从磁盘读取和写入页面数据。当磁盘调度器处理读或写请求时，会使用 DiskManager::ReadPage() 和 DiskManager::WritePage() 。</p>
+<p>在头文件中，已经给我们定义了一个<code>request_queue_</code>属性，这个队列是一个<code>Channel</code>类型的，是一个并发安全的类型，可以简单理解为go中的<code>Channel</code>或者是一个并发安全的队列。</p>
+<p>因此，对于<code>Schedule(DiskRequest r)</code>方法，最简单的一个做法就是我们接收到请求以后直接放入这个<code>Channel</code>中。</p>
+<ol>
+<li>直接放入<code>request_queue_</code>中</li>
+</ol>
+<p>主要的处理逻辑全部放在<code>StartWorkerThread</code>这个方法里面。这里我们首先定一个变量<code>stop_pool_</code>来表示磁盘调度程序是否可以结束，如果不结束，我们就一直循环处理即可。</p>
+<ol>
+<li>判断stop_pool_是否结束</li>
+<li>不结束，我们从request_queue_中获取一个要处理的请求。</li>
+<li>判断该请求是否有效</li>
+<li>判断请求是写请求还是读请求</li>
+<li>如果是写请求，调用<code>disk manager</code>进行写入</li>
+<li>如果是读请求，调用<code>disk manager</code>进行读取</li>
+<li>设置返回值true</li>
+</ol>
+<h3 id="实现缓冲池管理器"><a href="#实现缓冲池管理器" class="headerlink" title="实现缓冲池管理器"></a>实现缓冲池管理器</h3><p>这是最核心的一个功能了，那就是<code>缓冲池</code>的实现。</p>
+<p>缓冲池会调用<code>磁盘调度程序</code>来完成磁盘读写请求。当被明确指示执行或需要淘汰Page以腾出空间给新Page时， <code>缓冲池</code> 还可以安排脏页写入磁盘。</p>
+<p>系统中的所有内存页都由 Page 对象表示。 BufferPoolManager 不需要理解这些页面的内容。</p>
+<p>但对于作为系统开发者的你来说，重要的是要理解 Page 对象只是缓冲池中内存的容器，因此它们并不特定于某个唯一页面。也就是说，每个 Page 对象包含一个内存块， DiskManager 将使用这个内存块作为位置来复制它从磁盘读取的物理页面的内容。当 BufferPoolManager 在磁盘之间来回移动时，它会重用同一个 Page 对象来存储数据。这意味着在系统的整个生命周期中，同一个 Page 对象可能包含不同的物理页面。 Page 对象的标识符（ page_id ）会跟踪它包含的物理页面；如果 Page 对象不包含物理页面，那么它的 page_id 必须设置为 INVALID_PAGE_ID 。</p>
+<p>每个 Page 对象还维护一个计数器，用于记录有多少线程“固定”了该页。你的 BufferPoolManager 不允许释放被固定的 Page 。每个 Page 对象还跟踪它是否已变脏。在页被取消固定之前，你的工作是要记录该页是否已被修改。你的 BufferPoolManager 必须在对象被重用之前，将脏 Page 的内容写回磁盘。</p>
+<p>你的 BufferPoolManager 实现将使用在本次作业前几步中创建的 LRUKReplacer 和 DiskScheduler 类。 LRUKReplacer 将跟踪 Page 对象何时被访问，以便在必须释放一个帧以从磁盘复制新的物理页时决定要驱逐哪一个。在 BufferPoolManager 中将 page_id 映射到 frame_id 时，再次警告：STL 容器不是线程安全的。 DiskScheduler 将在 DiskManager 上调度对磁盘的读写。</p>
+<p>该实现涉及到两个文件：</p>
+<ul>
+<li>src&#x2F;include&#x2F;buffer&#x2F;buffer_pool_manager.h</li>
+<li>src&#x2F;buffer&#x2F;buffer_pool_manager.cpp</li>
+</ul>
+<p>我们需要实现下面的几个方法：</p>
+<ul>
+<li>FetchPage(page_id_t page_id)：如果没有空闲页且所有其他页都被固定，应返回 nullptr。 FlushPage 应无条件刷新页面，无论其固定状态如何。</li>
+<li>UnpinPage(page_id_t page_id, bool is_dirty)： is_dirty 参数用于跟踪页面在固定期间是否被修改。</li>
+<li>FlushPage(page_id_t page_id)</li>
+<li>NewPage(page_id_t* page_id)</li>
+<li>DeletePage(page_id_t page_id)</li>
+<li>FlushAllPages()</li>
+</ul>
+<blockquote>
+<p>这些方法的实现依赖上面的方法，建议上面的方法首先通过测试，再继续这几个方法的实现</p>
+</blockquote>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>在之前讲过了，我们缓冲池的查找是根据<code>page table</code>来查找的，因此，我们的缓冲池管理器中，需要定义一个<code>page table</code>变量，类型是一个<code>map</code>,key是一个<code>page id</code>，value是一个<code>frame id</code>，这样，我们就可以通过<code>page id</code>来找到对应的帧信息。</p>
+<p>同样的，在缓冲池管理中，我们还需要定义一个<code>page list</code>来存放所有内存中的page信息，在c++中，这通常是一个指针类型，代码中已经给出了这个变量<code>Page *pages_</code>。</p>
+<p>我们还需要使用一个list来告诉我们有哪些空闲空间。我们使用变量<code>free_list</code>来表示。</p>
+<p>在初始化的时候，假设我们有5个page的内存可以进行缓冲。那么<code>free_list</code>里面有5个大小，代表有5个page的空间，pages为空，代表这些空间没有page，page table为空。</p>
+<h4 id="FetchPage"><a href="#FetchPage" class="headerlink" title="FetchPage"></a>FetchPage</h4><p>这个方法的入参是一个<code>page id</code>，因此，我们的第一步就是通过<code>page id</code>来找到<code>frame id</code>。</p>
+<p>如果找到了，代表这个page已经在我们内存中，不需要进行磁盘IO，直接返回即可。这里如何取到Page呢，通过Pages这个数组就可以拿到了，下标是我们<code>frame id</code>。即<code>pages_[frame id]</code>就可以获取到内存中的page信息了。</p>
+<p>注意：在Page信息中，有一个<code>Pin</code>的概念，pin住也就是固定住的意思是，当前这个page有一个上层的应用在使用，也就意味着我们不能将这个page页面淘汰出内存。</p>
+<p>因此，在返回page之前，我们需要pin住这个page，可以通过Page里面的<code>pin_count</code>来完成。</p>
+<p>在<code>pin</code>住这个page以后，需要调用第一个LRU-K淘汰策略，这里需要调用两个方法<code>SetEvictable</code>告诉淘汰器我们pin住了这个页面，你不能淘汰它了。<code>RecordAccess</code>告诉淘汰器，我们使用了这个页面，请你更新它的淘汰距离。</p>
+<p>如果没有从<code>page table</code>中查找到对应的信息，说明这个page还在磁盘中，我们需要将它从磁盘中，读取到内存。</p>
+<p>首先，我们需要知道现在内存中，是否还有空间来存放page，如果没有空间了，就需要淘汰出一个空间。<br>通过<code>free_list</code>可以看到是否有空间，如果不为空，代表还有空闲的空间。那么就好办了。我们取出free list中第一个空闲空间来进行存放，取出来是一个<code>frame id</code></p>
+<p>如果没有空闲的空间了，首先，要通过<code>page table</code>来检查，是否所有的页面都pin住了，如果是，那么则只能返回<code>nullptr</code>，代表没有空间可以使用了，相当于内存耗尽。</p>
+<p>如果有页面没有被pin住，那么我们可以淘汰出一个页面，通过LRU-K算法的<code>Evict</code>方法，会告诉我们有哪个页面可以被淘汰，如果没有可以淘汰的，同样返回nullptr。</p>
+<p>接下来，我们已经拿到了一个可以使用的<code>frame id</code>，不管是从空闲空间，还是淘汰出来的。</p>
+<p>我们通过<code>pages_[frame id]</code>拿到对应的page页面，这个页面可能是一个空的，也可能是一个淘汰出来的有信息的页面。</p>
+<p>我们首先，重置page table，因为所有的信息都需要经过page table获取，我们要告诉page table，当前这个page id对应的frame id已经改变了。</p>
+<p>接下来，pin住这个页面，因为上层会使用，然后判断这个page是否有被更新，如果有，那么需要写入磁盘。</p>
+<p>接下来，更新内存中page的一些元信息，比如清空数据，设置page id，并从磁盘读取新的数据放到这个page中。</p>
+<p>最后，返回page信息。</p>
+<p>总结一下：</p>
+<ol>
+<li>通过page table使用<code>page id</code>来找到<code>frame id</code></li>
+</ol>
+<ul>
+<li>找到以后pin住，返回。</li>
+</ul>
+<ol start="2">
+<li>通过free list找到空闲的空间，如果有，转到5</li>
+<li>没有，检查是否所有页面都pin住，如果是，那么返回nullptr</li>
+<li>通过LRU-K算法淘汰出一个page以使用。</li>
+<li>修改page table</li>
+<li>pin住页面</li>
+<li>是否脏page，是的话写入磁盘</li>
+<li>更新元数据并从磁盘读取新的数据放入page</li>
+<li>返回page</li>
+</ol>
+<h4 id="NewPage"><a href="#NewPage" class="headerlink" title="NewPage"></a>NewPage</h4><p>这个方法和上面的方法几乎一样，不同之出在于这个方法是创建一个page空间供使用，因此不需要从磁盘加载数据，也不需要查看page table，因为page table一定没有。</p>
+<p>因此步骤如下：</p>
+<ol>
+<li>通过free list找到空闲的空间，如果有，转到5</li>
+<li>没有，检查是否所有页面都pin住，如果是，那么返回nullptr</li>
+<li>通过LRU-K算法淘汰出一个page以使用。</li>
+<li>修改page table</li>
+<li>pin住页面</li>
+<li>是否脏page，是的话写入磁盘</li>
+<li>更新元数据</li>
+<li>返回page</li>
+</ol>
+<h4 id="UnpinPage"><a href="#UnpinPage" class="headerlink" title="UnpinPage"></a>UnpinPage</h4><p>这个方法主要是为了<code>解除固定</code>，告诉缓冲池，这个页面上层不再使用了。以后你可以淘汰它了。</p>
+<p>这个方法的入参是一个<code>page id</code>，因此，我们的第一步就是通过<code>page id</code>来找到<code>frame id</code>。</p>
+<p>和上面不同的在于，如果没有找到，那么直接返回false就可以了，毕竟这个页面不在内存中，没有必要继续了。</p>
+<p>如果找到了，通过<code>pages</code>来获取具体的page信息，然后检查，是否pin住，如果没有被pin住，也没有必要继续了。</p>
+<p>接下来，对page的<code>pin_count</code>减1，如果只有1个上层使用它，那么减1后会变成0，代表可以淘汰，通知LRU-K算法可以淘汰它。</p>
+<p>如果有更新的话，修改page的<code>is_dirty</code>，这样的话，淘汰的时候就会写入磁盘了。</p>
+<p>总结步骤如下：</p>
+<ol>
+<li>通过page table查询，如果没有，返回false</li>
+<li>获取page具体信息</li>
+<li>查看page是否pin住，如果没有，返回false</li>
+<li>pin_count–</li>
+<li>如果pin count是0代表没有上层应用使用，通知LRU-K算法可以淘汰</li>
+<li>如果有更新，更新page的is_dirty</li>
+</ol>
+<h4 id="FlushPage"><a href="#FlushPage" class="headerlink" title="FlushPage"></a>FlushPage</h4><p><code>FlushPage</code>方法的主要作用在于将当前内存中的数据，强制输入磁盘，和淘汰的时候写入磁盘不同，这个是强制写入磁盘。或者说主动写入磁盘。</p>
+<p>同样的，如果在page table中没有查到，说明不存在内存中，直接返回false。</p>
+<p>如果查到了，那么加载page信息，调用磁盘调度来写入磁盘</p>
+<h4 id="FlushAllPages"><a href="#FlushAllPages" class="headerlink" title="FlushAllPages"></a>FlushAllPages</h4><p>这个方法不多说了，很简单，批量写入磁盘，你想的没错，你太聪明了，就是批量调用<code>FlushPage</code>即可。</p>
+<h4 id="DeletePage"><a href="#DeletePage" class="headerlink" title="DeletePage"></a>DeletePage</h4><p><code>DeletePage</code>方法的主要作用在于删除这个内存中的页面。</p>
+<p>首先，同样是查找page table，如果不在内存，返回false</p>
+<p>找到了以后，需要加载page信息，查看是否pin住，如果有程序在使用这个page，那么不能删除。</p>
+<p>如果没有pin住，那么可以进行删除了。</p>
+<p>删除分成几步：</p>
+<ul>
+<li>从page table删除</li>
+<li>放入free list</li>
+<li>从LRU-K淘汰器删除</li>
+<li>重置page内存信息</li>
+<li>释放内存空间</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次我们完成了<code>CMU15445</code>课程的Lab1，实现了一个数据库的缓冲管理器，其实这个管理器真正实现起来非常难，我这里没有说详细的锁信息，如何防止并发，如何细粒度的加锁，可以给出一些我的锁参考。</p>
+<p>最简单的当然是一个大锁锁天下，但是这样会影响性能。</p>
+<p>我划分了下面几个锁：</p>
+<ul>
+<li>PageTableLock 用来锁住page table的所有操作</li>
+<li>FreeLock 用来锁住free list的所有操作</li>
+<li>PageLock 用来锁住所有page内存的操作</li>
+</ul>
+<p>这三个锁之间是有一些嵌套关系的，整体通过<code>两阶段锁协议</code>来实现，来保证锁的安全性。以防止死锁发生。</p>
+<p>使用细粒度的锁进行性能优化以后，我在这个项目的排行榜中获得了53的名次。</p>
+<p>因为教授说过不要看别人的代码，因此我这里给出的是比较详细的实现思路。如果有同学在实现，有一些问题的话可以留言或者私信我一起讨论哦~</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/AI/%E4%BB%80%E4%B9%88%EF%BC%8C%E4%BD%A0%E8%AF%B4%E5%BE%AE%E7%A7%AF%E5%88%86%E4%B9%8B%E7%B1%BB%E7%9A%84%E5%A4%AA%E9%9A%BE%EF%BC%9F%E9%82%A3%E6%98%AF%E4%BD%A0%E4%B8%8D%E4%BC%9A%E7%94%A8chatGPT%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%BC%8F%EF%BC%81.html" rel="prev" title="什么，你说微积分之类的太难？那是你不会用chatGPT学习模式！">
+      <i class="fa fa-chevron-left"></i> 什么，你说微积分之类的太难？那是你不会用chatGPT学习模式！
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0.html" rel="next" title="零基础MySQL教程原理篇之Buffer Pool">
+      零基础MySQL教程原理篇之Buffer Pool <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">零基础MySQL教程原理篇之缓冲池实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0LRU-K%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.1.</span> <span class="nav-text">实现LRU-K淘汰策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%A3%81%E7%9B%98%E8%B0%83%E5%BA%A6%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">实现磁盘调度程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%86%B2%E6%B1%A0%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">实现缓冲池管理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.1.4.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FetchPage"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">FetchPage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NewPage"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">NewPage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UnpinPage"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">UnpinPage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlushPage"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">FlushPage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlushAllPages"><span class="nav-number">1.1.4.5.</span> <span class="nav-text">FlushAllPages</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DeletePage"><span class="nav-number">1.1.4.6.</span> <span class="nav-text">DeletePage</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">227</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,6 +1,1540 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>零基础MySQL教程原理篇之执行器原理，SQL如何执行</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E6%89%A7%E8%A1%8C%E5%99%A8%E5%8E%9F%E7%90%86%EF%BC%8CSQL%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之执行器原理，SQL如何执行"><a href="#零基础MySQL教程原理篇之执行器原理，SQL如何执行" class="headerlink" title="零基础MySQL教程原理篇之执行器原理，SQL如何执行"></a>零基础MySQL教程原理篇之执行器原理，SQL如何执行</h2><blockquote>
+<p>一天，小美突然肚子疼，原来是亲戚来了，小美只能躺在床上耍手机了。小美发了一个朋友圈。<br>张三看到了小美的朋友圈，立马自告奋勇过来照顾小美，要给小美做一个红糖姜茶。<br>张三到了小美的家里，张三找到了家里的红糖还有姜<br>第一步，倒出适量红糖，将姜洗净切丝<br>第二步，锅中放入水，开火，将水烧开<br>最后，将红糖和姜倒入锅中，等待片刻即可。<br>小美喝完以后发现浑身舒畅，当即对张三表示很满意。</p>
+</blockquote>
+<h3 id="执行器是什么？"><a href="#执行器是什么？" class="headerlink" title="执行器是什么？"></a>执行器是什么？</h3><p><code>执行器</code>是数据库架构中的核心组件之一，负责具体的执行操作，就如何故事中的张三一样，负责具体<code>煮红糖姜茶</code>。</p>
+<p>大部分的八股文都会告诉你，当SQL进入到数据库中，要经历解析器、优化器、执行器等等，但是他们不会告诉你的是，执行器到底怎么执行的呢？</p>
+<p>面试官：说一下数据库吧，你对数据库了解的如何？这是一个开放式的问题。<br>候选人A：按照八股文背了一遍<br>候选人B：详细的解释了数据库中每一步的执行流程，优化手段，MySQL和其他数据库的一些对比</p>
+<p>看到这里，相信你也明白候选人B获得Offer的机会更大吧。</p>
+<p>执行器就是一个苦力，真正负责干活的人，他会接受到一份<code>执行计划</code>。相当于厨师拿到了菜谱，只需要照着做就行了。</p>
+<h3 id="执行器模型"><a href="#执行器模型" class="headerlink" title="执行器模型"></a>执行器模型</h3><p>执行器模型大致可以分成下面三种：</p>
+<ul>
+<li>Iterator Model: 大多数数据库使用的，也是MySQL数据库使用的一个模型，也叫 <code>Volcano / pull-based</code></li>
+<li>Materialization Model：<code>Iterator Model</code>的一个特定版本，用在内存型数据库</li>
+<li>Vectorized&#x2F;Batch Model：<code>Iterator Model</code>差不多，要传入一大堆东西， 分析型数据库用的多</li>
+</ul>
+<h4 id="Iterator-Model"><a href="#Iterator-Model" class="headerlink" title="Iterator Model"></a>Iterator Model</h4><p>MySQL使用的这种执行模型来完成SQL的执行流程。这种模型像java的<code>stream</code>， 用流的方式执行。如果是做Java的同学应该很熟悉。</p>
+<p>核心思想：通过每个<code>执行节点</code>暴露一个 <code>Next()（或 getNext()）</code>接口，调用者从下游不断向上游拉取一条一条的行（tuple）。<code>执行节点</code>按需产生单行数据并返回，形成管道式逐行处理。</p>
+<p>优点</p>
+<ul>
+<li>管道化，低内存（不必把中间结果全部物化）。</li>
+<li>支持早停（例如 LIMIT、EXISTS），能在满足条件后立即结束。</li>
+<li>实现简单、易于组合与优化（迭代器链）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>每行的函数调用&#x2F;控制开销比较高（上下文切换、分支预测负担）。</li>
+<li>对现代 CPU 的向量化 &#x2F; 缓存利用不友好（逐行处理导致大量分散访问）。</li>
+</ul>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>首先，根据执行计划，我们会生成一些执行节点</p>
+<ul>
+<li>节点1:负责扫描R表数据</li>
+<li>节点2：负责扫描S表数据</li>
+<li>节点3: 负责执行<code>WHERE S.value &gt; 100</code>，也就是对节点2的输出做过滤</li>
+<li>节点4: 负责执行<code>R JOIN S</code>，也就是执行JOIN算法，是对节点1和节点3的输出做JOIN</li>
+<li>节点5: 负责执行<code>SELECT R.id,S.cdate</code>也就是对节点4的输出做过滤，只取其中的R.id和S.date字段。</li>
+</ul>
+<p>这样，我们还可以将这5个节点化成一个树的形式，如下图</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-1.png" alt="Iterator Model"></p>
+<p>每个节点会暴露一个<code>Next()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Next接口获取数据</li>
+<li>节点4会通过节点1的Next接口和节点3的Next接口获取数据</li>
+<li>节点1会扫描R表，获取到一条数据然后返回</li>
+<li>节点3会通过节点2的Next接口获取数据</li>
+<li>节点2会扫描S表，获取到一条数据然后返回</li>
+<li>节点3拿到节点2的返回值，执行过滤，如果过滤以后有数据，就返回，没有数据，继续第4步</li>
+<li>节点4获取到节点1和节点3的返回值，执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到数据以后执行SELECT操作，并重复第1步，直到没有数据为止。</li>
+</ol>
+<p>执行流程图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    N5[节点5: 投影 SELECT R.id, S.cdate]</span><br><span class="line">    N4[节点4: JOIN R.id = S.id]</span><br><span class="line">    N1[节点1: 扫描 R 表]</span><br><span class="line">    N3[节点3: 过滤 S.value &gt; 100]</span><br><span class="line">    N2[节点2: 扫描 S 表]</span><br><span class="line"></span><br><span class="line">    N5 --&gt;|Next| N4</span><br><span class="line">    N4 --&gt;|Next_R| N1</span><br><span class="line">    N4 --&gt;|Next_S| N3</span><br><span class="line">    N3 --&gt;|Next| N2</span><br><span class="line"></span><br><span class="line">    N1 -.-&gt;|读取R表每行| N1</span><br><span class="line">    N2 -.-&gt;|读取S表每行| N2</span><br></pre></td></tr></table></figure>
+
+<p>时序图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br&gt;SELECT 投影</span><br><span class="line">    participant J as 节点4&lt;br&gt;JOIN</span><br><span class="line">    participant R as 节点1&lt;br&gt;扫描R</span><br><span class="line">    participant F as 节点3&lt;br&gt;过滤S.value&gt;100</span><br><span class="line">    participant S as 节点2&lt;br&gt;扫描S</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next()</span><br><span class="line">    J-&gt;&gt;R: Next_R()</span><br><span class="line">    R--&gt;&gt;J: 返回一行R记录</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Next_S()</span><br><span class="line">    F-&gt;&gt;S: Next()</span><br><span class="line">    S--&gt;&gt;F: 返回一行S记录</span><br><span class="line">    F--&gt;&gt;J: 若 S.value &gt; 100 则返回，否则继续Next()</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: 返回JOIN配对结果</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 投影 R.id, S.cdate 后输出一行</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next()（重复流程直到结束）</span><br></pre></td></tr></table></figure>
+
+<p>生活故事：<br>想象一个传统小饭馆：服务员（下游）每来一个客人就去厨房（上游）拿一份菜。厨房现做现给，一份一份端出来。优点是不用提前占用很多桌子空间，也能马上停单；缺点是每次去拿都要来回跑，效率受人力往返影响。</p>
+<h4 id="Materalization-Model"><a href="#Materalization-Model" class="headerlink" title="Materalization Model"></a>Materalization Model</h4><p><code>Iterator Model</code>的特点是每次返回一行数据，而<code>Materalization Model</code>则是每次返回所有数据。因此，这种模型取消了<code>Next</code>方法，而是使用<code>Output</code>方法。</p>
+<p>核心思想：某些<code>执行节点</code>将其输出完整“物化”为中间结构（数组、临时表、磁盘文件），下游<code>执行节点</code>再一次性读取&#x2F;随机访问这个中间结果。常见于需要多次访问、排序、哈希构建等场景。</p>
+<p>优点</p>
+<ul>
+<li>便于随机访问、多次读取（例如 hash join 的 build 阶段、聚合后多次扫描）。</li>
+<li>可以把中间数据放到磁盘&#x2F;临时表以突破内存限制。</li>
+<li>有利于用批量算法对中间结果做集中优化（比如一次性排序、一次性写盘）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>需要额外内存或 I&#x2F;O（内存不足时会溢写到磁盘，开销大）。</li>
+<li>增加了延迟（必须等物化完成，下游才能消费）。</li>
+</ul>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>节点还是上面那些，不再说明。</p>
+<p>每个节点会暴露一个<code>Output()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Output接口获取所有数据</li>
+<li>节点4会通过节点1的Output接口和节点3的Output接口获取所有数据</li>
+<li>节点1会循环扫描R表，获取到R表的所有数据一次行返回</li>
+<li>节点3会通过节点2的Output接口获取所有数据</li>
+<li>节点2会循环扫描S表，获取到S表的所有数据一次行返回</li>
+<li>节点3拿到节点2的返回值，循环执行过滤，如果循环过滤以后有数据，就返回所有过滤后的数据，没有数据，返回空。</li>
+<li>节点4获取到节点1和节点3的返回值，循环执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到数据以后循环执行SELECT操作，并将结果返回。</li>
+</ol>
+<p>这个模型的流程图如下，注意其中的区别：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line"></span><br><span class="line">    P[节点5: 投影 SELECT&lt;br/&gt;Output → 返回所有结果] --&gt; J</span><br><span class="line">    J[节点4: JOIN&lt;br/&gt;Output → JOIN所有数据] --&gt; P</span><br><span class="line"></span><br><span class="line">    J --&gt; R</span><br><span class="line">    J --&gt; F</span><br><span class="line"></span><br><span class="line">    R[节点1: 扫描R表&lt;br/&gt;Output → 返回R表所有行] --&gt; J</span><br><span class="line"></span><br><span class="line">    F[节点3: 过滤 S.value &gt; 100&lt;br/&gt;Output → 返回过滤后的全部S行] --&gt; J</span><br><span class="line">    F --&gt; S</span><br><span class="line"></span><br><span class="line">    S[节点2: 扫描S表&lt;br/&gt;Output → 返回S表所有行] --&gt; F</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>时序图如下 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br/&gt;SELECT 投影 (Output)</span><br><span class="line">    participant J as 节点4&lt;br/&gt;JOIN (Output)</span><br><span class="line">    participant R as 节点1&lt;br/&gt;扫描R表 (Output)</span><br><span class="line">    participant F as 节点3&lt;br/&gt;过滤S (Output)</span><br><span class="line">    participant S as 节点2&lt;br/&gt;扫描S表 (Output)</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Output()</span><br><span class="line">    Note right of J: 需要 R 全量数据&lt;br/&gt;需要 S 过滤后全量数据</span><br><span class="line">    </span><br><span class="line">    J-&gt;&gt;R: Output()</span><br><span class="line">    R--&gt;&gt;J: 返回 R 全表数据列表</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Output()</span><br><span class="line">    F-&gt;&gt;S: Output()</span><br><span class="line">    S--&gt;&gt;F: 返回 S 全表数据列表</span><br><span class="line"></span><br><span class="line">    F--&gt;&gt;J: 返回 过滤后的 S 列表</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: 返回 JOIN(R, S_filtered) 的全部结果</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 投影 SELECT R.id, S.cdate&lt;br/&gt;返回最终结果集</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>生活故事：<br>把它想成自助餐（buffet）准备：厨房先把所有菜都做好、摆到台子上（物化）。顾客来时可以随意取，便于多个人同时取、重复取同一道菜。缺点是需要大的台面和提前准备时间，浪费食材或占地方。</p>
+<h4 id="Vectorized-Model"><a href="#Vectorized-Model" class="headerlink" title="Vectorized Model"></a>Vectorized Model</h4><p>这个模型同样进行了一些修改，不再是一行一行的获取数据，但是也不是一下获取所有数据，类似于中间的一个模型，一下子获取部分数据，同样使用<code>Next</code>方法，但是一次性返回一堆 <code>tuples</code>, 数量取决于 <code>Buffer pool</code> 大小</p>
+<p>OLAP数据库基本上使用的是这个处理模型。</p>
+<p>核心思想：<code>执行节点</code>按“批”（batch）或“向量”（columnar vectors）处理多行数据一次性做操作，而不是每次一行。批里通常是连续的列或行，能更好利用 CPU 缓存、分支预测、SIMD 指令、以及减少函数调用开销。</p>
+<p>优点</p>
+<ul>
+<li>高吞吐：每批次 amortize 函数调用与调度开销。</li>
+<li>极佳的 CPU &amp; 缓存利用（尤其是列式存储配合向量化运算）。</li>
+<li>更容易实现并行&#x2F;向量化优化（SIMD、流水线）。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>批量带来一定的延迟（小查询或需要低延迟的 OLTP 不友好）。</li>
+<li>对非均匀数据&#x2F;分支较多的操作优化有限（每批中仍需处理空值&#x2F;分支）。</li>
+<li>较复杂的实现（需要设计批接口、内存布局）。</li>
+</ul>
+<p>节点还是上面那些，不再说明。</p>
+<p>每个节点会暴露一个<code>Next()</code>接口，执行流程如下：</p>
+<ol>
+<li>节点5会通过节点4的Next接口获取<code>N行</code>数据</li>
+<li>节点4会通过节点1的Next接口和节点3的Next接口获取<code>N行</code>数据</li>
+<li>节点1会循环扫描R表，获取到R表的<code>N行</code>数据返回</li>
+<li>节点3会通过节点2的Next接口获取<code>N行</code>数据</li>
+<li>节点2会循环扫描S表，获取到S表的<code>N行</code>数据返回</li>
+<li>节点3拿到节点2的<code>N行</code>返回值，循环执行过滤，如果循环过滤以后有数据，就返回所有过滤后的数据，没有数据，就继续重复第4步。</li>
+<li>节点4获取到节点1和节点3的<code>N行</code>返回值，循环执行JOIN操作，并将结果返回给节点5</li>
+<li>节点5拿到<code>N行</code>数据以后循环执行SELECT操作，并重复第1步，最后数据处理完成，将结果返回。</li>
+</ol>
+<p>执行流程图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A5[Node5 Projection SELECT&lt;br/&gt;NextN → 请求 N 行] --&gt; A4</span><br><span class="line">    A4[Node4 JOIN&lt;br/&gt;NextN → 请求 N 行] --&gt; A1</span><br><span class="line">    A4 --&gt; A3</span><br><span class="line"></span><br><span class="line">    A1[Node1 Scan R&lt;br/&gt;一次返回 N 行] --&gt; A4</span><br><span class="line"></span><br><span class="line">    A3[Node3 Filter value gt 100&lt;br/&gt;NextN → 请求 N 行] --&gt; A2</span><br><span class="line"></span><br><span class="line">    A2[Node2 Scan S&lt;br/&gt;一次返回 N 行] --&gt; A3</span><br><span class="line"></span><br><span class="line">    A3 --&gt; A4</span><br><span class="line">    A4 --&gt; A5</span><br></pre></td></tr></table></figure>
+
+<p>时序图如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant P as 节点5&lt;br/&gt;SELECT 投影&lt;br/&gt;Next(N)</span><br><span class="line">    participant J as 节点4&lt;br/&gt;JOIN&lt;br/&gt;Next(N)</span><br><span class="line">    participant R as 节点1&lt;br/&gt;扫描R表&lt;br/&gt;Next(N)</span><br><span class="line">    participant F as 节点3&lt;br/&gt;过滤 S&lt;br/&gt;Next(N)</span><br><span class="line">    participant S as 节点2&lt;br/&gt;扫描S表&lt;br/&gt;Next(N)</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next(N)</span><br><span class="line">    Note right of J: 需要 R_batch 和 S_filtered_batch</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;R: Next(N)</span><br><span class="line">    R--&gt;&gt;J: 返回 R 的 N 行批次</span><br><span class="line"></span><br><span class="line">    J-&gt;&gt;F: Next(N)</span><br><span class="line">    F-&gt;&gt;S: Next(N)</span><br><span class="line">    S--&gt;&gt;F: 返回 S 的 N 行批次</span><br><span class="line"></span><br><span class="line">    F--&gt;&gt;J: 对 S_batch 过滤后返回&lt;br/&gt;S_filtered_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    J--&gt;&gt;P: JOIN(R_batch, S_filtered_batch)&lt;br/&gt;返回 Join_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    P--&gt;&gt;P: 对 Join_batch 执行投影&lt;br/&gt;输出 SELECT_batch（≤N 行）</span><br><span class="line"></span><br><span class="line">    P-&gt;&gt;J: Next(N)（继续获取下一批…）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生活故事：<br>想象快餐连锁的生产线：厨房把同一种汉堡按批次一起做（比如一次做 20 个），装箱后一起送到窗口分发。这样每个环节都能流水作业，效率高，但如果只来一个客人，需要等一小批做完才拿到（稍有延迟）。</p>
+<p>执行器模型的对比表格，一目了然，可以参照一下。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th align="right">Iterator（逐行&#x2F;拉）</th>
+<th align="right">Materialization（物化）</th>
+<th align="right">Vectorized&#x2F;Batch（向量&#x2F;批）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>典型接口</td>
+<td align="right"><code>Next()</code> 每次一行</td>
+<td align="right">完整生成中间结果（array&#x2F;temp table）</td>
+<td align="right"><code>NextBatch()</code> &#x2F; 批量数组</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td align="right">低（流式）</td>
+<td align="right">高（可能很大）</td>
+<td align="right">中等（批次大小决定）</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td align="right">低（单行）</td>
+<td align="right">高（等待物化）</td>
+<td align="right">中等 — 批大小影响延迟</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td align="right">中</td>
+<td align="right">中高（取决于IO）</td>
+<td align="right">高（最好）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td align="right">OLTP、早停、复合操作</td>
+<td align="right">需要随机访问&#x2F;多次复用&#x2F;排序、外部Join</td>
+<td align="right">OLAP、大表扫描、列式引擎</td>
+</tr>
+<tr>
+<td>优化方向</td>
+<td align="right">减少函数开销、内联</td>
+<td align="right">减少 I&#x2F;O、压缩</td>
+<td align="right">SIMD、缓存局部性、批处理</td>
+</tr>
+</tbody></table>
+<h3 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h3><p>从上面可以发现，我们会按照节点去进行执行，那么每个节点其实都负责一个具体的任务。这也是软件设计原则中的<code>单一职责</code>。</p>
+<p>比如上面的示例中，有：</p>
+<ul>
+<li>select节点</li>
+<li>where节点</li>
+<li>join节点</li>
+<li>扫描表节点</li>
+</ul>
+<p>其实，SQL中的每一个操作都是一个不同的节点类型，除了上面那些，还有：</p>
+<ul>
+<li>limit节点</li>
+<li>order by节点</li>
+<li>group by节点</li>
+<li>sort 节点</li>
+<li>其他操作节点</li>
+</ul>
+<p>当然了，每个节点其实都可以有不同的实现，每种实现可能会导致不同的执行速度。</p>
+<p>在后续的文章中，我们会详细讲解每种节点的具体代码实现。本篇文章的重点还是聚焦在执行器上面。</p>
+<h3 id="进程线程模型"><a href="#进程线程模型" class="headerlink" title="进程线程模型"></a>进程线程模型</h3><p>上面介绍了执行模型，那执行模型具体如何处理呢？单进程？单线程？多线程？多进程？</p>
+<p>这里介绍一下<code>进程线程模型</code>，分为下面几种：</p>
+<ul>
+<li>Process per DBMS Worker：每个 <code>Worker</code> 一个进程，相当于一个节点一个进程来执行。可以说是多进程 + 共享内存的方式执行。</li>
+<li>Process Model：和上面那个差不多，但是增加了 <code>worker pool</code>，有多个worker进行调度处理。</li>
+<li>Thread per DBMS Worker：每个 <code>Worker</code> 一个线程，相当于一个节点一个线程来执行。由数据库自己控制线程。</li>
+<li>Embedded DBMS：嵌入式数据库，与应用在同一进程内</li>
+</ul>
+<h4 id="Process-per-DBMS-Worker"><a href="#Process-per-DBMS-Worker" class="headerlink" title="Process per DBMS Worker"></a>Process per DBMS Worker</h4><p>每个进程是一个worker,负责执行任务。通过<code>共享内存</code>进行buffer pool的通信，要不然每个进程都会有一个buffer pool。老得数据库大部分使用的这个，因为当时没有统一的线程API,像DB2,oracle,postgraSQL等。</p>
+<p>特点：</p>
+<ul>
+<li>稳定，功能隔离（进程级别隔离，不会相互崩）</li>
+<li>上下文切换昂贵</li>
+<li>增加连接数时压力大</li>
+</ul>
+<h4 id="Process-Model"><a href="#Process-Model" class="headerlink" title="Process Model"></a>Process Model</h4><p>和 <code>Process per DBMS Worker</code>一样.但是增加了 <code>worker pool</code>，有多个<code>worker</code>,有一个主进程进行调度处理。像DB2,postgraSQL（2015）使用的是这种方式。相当于上面那种方式的一个优化版本吧，可以看到PostgraSQL一开始用上面的模型，后来切换到这个模型了。</p>
+<h4 id="Thread-per-DBMS-Worker"><a href="#Thread-per-DBMS-Worker" class="headerlink" title="Thread per DBMS Worker"></a>Thread per DBMS Worker</h4><p>一个进程，多个线程执行，由数据库自己控制线程。现在的数据库几乎都使用这种，像DB2, MSSQL, MySQL, Oracle(2014)。</p>
+<p>线程的开销比进程小的多，因此，当线程出现以后，现代数据库基本都使用了这种方式。</p>
+<p>特点：</p>
+<ul>
+<li>线程切换便宜（上下文切换轻量）</li>
+<li>所有线程共享进程内存</li>
+<li>一个线程崩掉可能拖垮整个 DBMS → 可靠性较低</li>
+<li>吞吐能力强，适合高并发</li>
+</ul>
+<h4 id="Embedded-DBMS"><a href="#Embedded-DBMS" class="headerlink" title="Embedded DBMS"></a>Embedded DBMS</h4><p>数据库不是独立的<code>服务器进程</code>，而是嵌入到应用程序内部，比如一个链接库<code>（.so / .dll）</code>。应用程序与数据库运行在同一个进程中，没有网络开销。一些小型的嵌入式数据库就是这种的，比如著名的SQLite。</p>
+<p>特点：</p>
+<ul>
+<li>极快（没有 IPC 或网络交互）</li>
+<li>轻量（没有独立服务器）</li>
+<li>通常不支持高并发连接（适合单用户&#x2F;轻量多线程）</li>
+<li>适用于本地系统、移动端、嵌入式设备</li>
+</ul>
+<p>进程线程模型的对比表格，可以参考一下</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>单位</th>
+<th>性能</th>
+<th>稳定性</th>
+<th>内存共享</th>
+<th>典型数据库</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Process per Worker</td>
+<td>每连接一个进程</td>
+<td>较慢（进程切换重）</td>
+<td>很高</td>
+<td>需要共享内存</td>
+<td>PostgreSQL</td>
+<td>每客一个包间</td>
+</tr>
+<tr>
+<td>Process Model</td>
+<td>多进程协作</td>
+<td>中等</td>
+<td>高</td>
+<td>有限共享</td>
+<td>PostgreSQL&#x2F;Oracle</td>
+<td>多炒菜间+共享大冰箱</td>
+</tr>
+<tr>
+<td>Thread per Worker</td>
+<td>每连接一个线程</td>
+<td>高</td>
+<td>较低（线程崩会影响全局）</td>
+<td>完全共享</td>
+<td>MySQL &#x2F; SQL Server</td>
+<td>一个大厨房所有人共用</td>
+</tr>
+<tr>
+<td>Embedded DBMS</td>
+<td>与应用同一进程</td>
+<td>极高</td>
+<td>中等</td>
+<td>全共享</td>
+<td>SQLite &#x2F; DuckDB</td>
+<td>家里的咖啡机</td>
+</tr>
+</tbody></table>
+<h3 id="并行化查询"><a href="#并行化查询" class="headerlink" title="并行化查询"></a>并行化查询</h3><p>并行化查询可以加速执行器的执行速度，并行化也是现代很多程序使用的一个方式。对于数据库而言，通常有下面三种并行化方式：</p>
+<ul>
+<li>Intra operator(水平)</li>
+<li>Inter operator(垂直)</li>
+<li>Bushy(上面两种的组合)</li>
+</ul>
+<h4 id="Intra-operator"><a href="#Intra-operator" class="headerlink" title="Intra operator"></a>Intra operator</h4><p>通过水平拆分数据，由多个线程执行，比如3个线程，一个线程处理一个page，以此类推。处理完成以后通过<code>exchange operator</code>来进行合并，拆分也是通过它。</p>
+<p>通过水平拆分来将一个任务分成多个子任务，每个子任务单独在一个CPU上执行，这样可以利用多核CPU来加速处理。</p>
+<p>比如一个表有6个Page，将一个扫描表的任务分成3个子任务，CPU1扫描表的前面2个Page，CPU2扫描表的中间2个Page，CPU3扫描表的最后2个Page。</p>
+<p>这里要注意的一点是，并行化是执行器级别的并行，而不是节点级别的，也就意味着3个子任务，是整个执行器的3个子任务。</p>
+<p>通过一个示例进行讲解，假设执行如下SQL语句</p>
+<blockquote>
+<p>SELECT R.id,S.cdate FROM R JOIN S ON R.id &#x3D; S.id WHERE S.value &gt; 100</p>
+</blockquote>
+<p>我们在上面已经给出了执行图了，接下来会将整个执行图水平拆分成3个子任务。</p>
+<p>如下图</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-2.png" alt="Intra operator"></p>
+<p>Exchange operator</p>
+<ul>
+<li>Gather:从多个线程的结果合并成一个输出流，PostgreSQL用这个</li>
+<li>Repartition: 重新组织多个输入流到多个输出流的数据，像group by，BigQuery用这个</li>
+<li>Distribute: 拆分一个输入流到多个输出流</li>
+</ul>
+<p>很多数据库都使用了<code>Exchange Operator</code>的概念，其实不光数据库，很多数据处理中也使用了，如果你使用过其他数据库或者一些大数据处理经验的话，应该会感觉到熟悉。</p>
+<p>这种水平拆分是非常常用的场景，很多数据库都是使用这个方式，比如PostgreSQL、Oracle、Snowflake、DuckDB 等。</p>
+<h4 id="Inter-operator"><a href="#Inter-operator" class="headerlink" title="Inter operator"></a>Inter operator</h4><p>这是一种<code>垂直拆分</code>的并行方式，通常在 流水线执行模型（pipelining） 内使用。重叠的操作从一个阶段到下一个阶段的pipeline数据，没有具体化。workers同时执行多个operators从一个查询计划的不同部分。也需要用到exchange operator。像Spark,Kafka常用这个方式。</p>
+<p>这个就是多个节点并行的，比如扫描表的节点在CPU1执行，Where节点在CPU2执行，JOIN节点在CPU3执行，如此并行。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql6-2.png" alt="Inter operator"></p>
+<h4 id="Bushy-Parallelism"><a href="#Bushy-Parallelism" class="headerlink" title="Bushy Parallelism"></a>Bushy Parallelism</h4><p>这种并行方式是结合了水平和垂直的方式，是并行度最高的一种，但也是复杂度最高的一种。</p>
+<p>既可以水平拆分到多个CPU中，也将部分内容垂直拆分到多个CPU中。</p>
+<p>假设我们有SQL</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> A <span class="keyword">JOIN</span> B <span class="keyword">JOIN</span> C <span class="keyword">JOIN</span> D</span><br></pre></td></tr></table></figure>
+
+<p>我们将<code>A JOIN B</code>拆分到CPU1中，<code>C JOIN D</code>拆分到CPU2中，这是水平拆分。</p>
+<p>然后将JOIN操作进行垂直拆分。如图所示</p>
+<p><img src="https://thepatterraining.github.io/images/15445039.png" alt="039"></p>
+<p>许多数据库（Snowflake、Presto、Greenplum、Redshift）支持 bushy这种方式。</p>
+<p>关于三种方式的对比可以参考下表</p>
+<table>
+<thead>
+<tr>
+<th>并行类型</th>
+<th>含义</th>
+<th>并行维度</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Intra-operator（水平）</td>
+<td>单个算子内部并行</td>
+<td>横向拆分数据</td>
+<td>多人一起切西瓜</td>
+</tr>
+<tr>
+<td>Inter-operator（垂直）</td>
+<td>pipeline 中的算子串行但并行执行</td>
+<td>上下游算子同时工作</td>
+<td>工厂流水线</td>
+</tr>
+<tr>
+<td>Bushy</td>
+<td>多分支、多算子、多层并行</td>
+<td>多 pipeline + 多算子 + 多任务</td>
+<td>多厨房同时做不同菜系</td>
+</tr>
+</tbody></table>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次分享了MySQL中重要的组件之一执行器，理解了执行器是如何进行工作的，它的执行模型以及一些节点的类型。最后还提到了并行化查询，通过并行化可以使用现代的多核CPU性能来加速数据处理。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ChatGPT正式开放成人模式</title>
+    <url>/AI/ChatGPT%E6%AD%A3%E5%BC%8F%E5%BC%80%E6%94%BE%E6%88%90%E4%BA%BA%E6%A8%A1%E5%BC%8F.html</url>
+    <content><![CDATA[<h1 id="ChatGPT正式开放成人模式"><a href="#ChatGPT正式开放成人模式" class="headerlink" title="ChatGPT正式开放成人模式"></a>ChatGPT正式开放成人模式</h1><p>近日，OpenAI宣布正式推出ChatGPT的成人模式，这一消息在科技界和普通用户中引起了广泛关注和热议。作为全球最受欢迎的对话式AI助手，ChatGPT的这一新功能标志着人工智能在内容处理能力上的又一次重大突破。</p>
+<h2 id="什么是成人模式"><a href="#什么是成人模式" class="headerlink" title="什么是成人模式"></a>什么是成人模式</h2><p>ChatGPT成人模式是一种专门针对成年用户的增强功能模式，它允许AI处理和讨论更加成熟、复杂的话题。与标准模式相比，成人模式具有以下特点：</p>
+<h3 id="更高的内容理解深度"><a href="#更高的内容理解深度" class="headerlink" title="更高的内容理解深度"></a>更高的内容理解深度</h3><p>成人模式能够理解和讨论涉及成人生活的各种话题，包括职场挑战、人际关系、心理健康等更为复杂的现实问题。</p>
+<h3 id="增强的语境处理能力"><a href="#增强的语境处理能力" class="headerlink" title="增强的语境处理能力"></a>增强的语境处理能力</h3><p>在成人模式下，ChatGPT能够更好地理解隐含意思、讽刺幽默等复杂的语言表达，提供更加精准和贴切的回复。</p>
+<h3 id="更个性化的交互体验"><a href="#更个性化的交互体验" class="headerlink" title="更个性化的交互体验"></a>更个性化的交互体验</h3><p>系统会根据用户的使用习惯和偏好，调整对话风格和内容深度，提供更加个性化的服务。</p>
+<h2 id="技术实现背后的秘密"><a href="#技术实现背后的秘密" class="headerlink" title="技术实现背后的秘密"></a>技术实现背后的秘密</h2><h3 id="先进的内容过滤系统"><a href="#先进的内容过滤系统" class="headerlink" title="先进的内容过滤系统"></a>先进的内容过滤系统</h3><p>成人模式的核心技术在于其精密的内容过滤系统。OpenAI采用了多层次的过滤机制：</p>
+<ol>
+<li><p><strong>预训练阶段的筛选</strong>：在模型训练过程中，通过精心设计的数据集确保模型学到的是健康、有益的知识。</p>
+</li>
+<li><p><strong>实时内容监控</strong>：对话过程中，系统会实时分析生成内容的适当性，确保不会产生有害或不当信息。</p>
+</li>
+<li><p><strong>用户身份验证</strong>：通过年龄验证机制，确保只有成年用户才能访问成人模式功能。</p>
+</li>
+</ol>
+<h3 id="安全机制的升级"><a href="#安全机制的升级" class="headerlink" title="安全机制的升级"></a>安全机制的升级</h3><p>为了确保用户安全，OpenAI在成人模式中实施了多重保护措施：</p>
+<ul>
+<li><strong>智能边界检测</strong>：AI能够自动识别并拒绝回答可能造成伤害的问题</li>
+<li><strong>敏感话题预警</strong>：对于可能引起不适的话题，系统会提前提醒用户</li>
+<li><strong>紧急支持连接</strong>：当检测到用户可能需要专业帮助时，系统会建议寻求专业支持</li>
+</ul>
+<h2 id="应用场景分析"><a href="#应用场景分析" class="headerlink" title="应用场景分析"></a>应用场景分析</h2><h3 id="职场发展咨询"><a href="#职场发展咨询" class="headerlink" title="职场发展咨询"></a>职场发展咨询</h3><p>成人模式下的ChatGPT能够为用户提供更加深入的职场建议，包括：</p>
+<ul>
+<li>职业规划指导</li>
+<li>人际关系处理</li>
+<li>领导力发展</li>
+<li>工作生活平衡</li>
+</ul>
+<h3 id="心理健康支持"><a href="#心理健康支持" class="headerlink" title="心理健康支持"></a>心理健康支持</h3><p>在成人模式下，AI可以更好地理解成年人的心理压力来源，提供更加针对性的建议和支持。</p>
+<h3 id="教育进阶辅导"><a href="#教育进阶辅导" class="headerlink" title="教育进阶辅导"></a>教育进阶辅导</h3><p>对于终身学习者来说，成人模式能够提供更加专业和深入的知识解答，满足成人教育的特殊需求。</p>
+<h2 id="争议与社会讨论"><a href="#争议与社会讨论" class="headerlink" title="争议与社会讨论"></a>争议与社会讨论</h2><h3 id="支持声音"><a href="#支持声音" class="headerlink" title="支持声音"></a>支持声音</h3><p>支持者认为，成人模式是AI发展的必然趋势：</p>
+<ul>
+<li><strong>满足用户真实需求</strong>：成年人确实有处理复杂问题的需求</li>
+<li><strong>提升AI实用性</strong>：扩大了AI的应用范围和实用价值</li>
+<li><strong>技术进步的体现</strong>：展示了AI技术在理解和处理复杂内容方面的进步</li>
+</ul>
+<h3 id="担忧声音"><a href="#担忧声音" class="headerlink" title="担忧声音"></a>担忧声音</h3><p>然而，也有不少专家和家长表示担忧：</p>
+<ul>
+<li><strong>内容管控风险</strong>：如何确保不当内容不会泄露给未成年人</li>
+<li><strong>道德边界模糊</strong>：AI参与成人话题讨论的伦理界限</li>
+<li><strong>隐私安全问题</strong>：成人话题往往涉及更多个人隐私信息</li>
+</ul>
+<h3 id="行业监管呼吁"><a href="#行业监管呼吁" class="headerlink" title="行业监管呼吁"></a>行业监管呼吁</h3><p>面对这一新功能，多个国家的监管机构表示将密切关注其发展，并考虑制定相应的监管政策。</p>
+<h2 id="对AI行业的影响"><a href="#对AI行业的影响" class="headerlink" title="对AI行业的影响"></a>对AI行业的影响</h2><h3 id="技术标准提升"><a href="#技术标准提升" class="headerlink" title="技术标准提升"></a>技术标准提升</h3><p>ChatGPT成人模式的推出，实际上为整个AI行业设定了新的技术标准，特别是在内容安全处理方面。</p>
+<h3 id="产品设计趋势"><a href="#产品设计趋势" class="headerlink" title="产品设计趋势"></a>产品设计趋势</h3><p>预计其他AI公司也会跟进推出类似的分级功能，这将成为AI产品的一个新趋势。</p>
+<h3 id="用户体验重新定义"><a href="#用户体验重新定义" class="headerlink" title="用户体验重新定义"></a>用户体验重新定义</h3><p>成人模式的出现，可能会重新定义用户对AI助手的期望和使用习惯。</p>
+<h2 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a>未来展望</h2><h3 id="技术发展方向"><a href="#技术发展方向" class="headerlink" title="技术发展方向"></a>技术发展方向</h3><ol>
+<li><strong>更精准的年龄识别</strong>：通过生物识别等技术提高年龄验证的准确性</li>
+<li><strong>个性化程度提升</strong>：基于用户画像提供更加定制化的服务</li>
+<li><strong>多模态交互</strong>：结合语音、图像等多种交互方式</li>
+</ol>
+<h3 id="应用领域扩展"><a href="#应用领域扩展" class="headerlink" title="应用领域扩展"></a>应用领域扩展</h3><p>未来，成人模式可能会扩展到更多专业领域：</p>
+<ul>
+<li><strong>专业咨询服务</strong>：法律、医疗等专业领域的初步咨询</li>
+<li><strong>教育培训</strong>：成人职业教育和技能提升</li>
+<li><strong>创意合作</strong>：在创意工作中扮演更加重要的角色</li>
+</ul>
+<h3 id="社会影响预期"><a href="#社会影响预期" class="headerlink" title="社会影响预期"></a>社会影响预期</h3><p>随着技术的成熟和社会的适应，成人模式有望：</p>
+<ul>
+<li>提高AI在成年人生活中的实用性</li>
+<li>促进人机交互关系的深入发展</li>
+<li>为AI伦理和治理提供实践经验</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>ChatGPT成人模式的正式开放，无疑是人工智能发展史上的一个重要里程碑。它不仅展示了AI技术在内容理解和处理方面的巨大进步，也为我们思考人机关系的未来提供了新的视角。</p>
+<p>然而，技术的进步总是伴随着责任的增加。如何在发挥技术优势的同时确保安全和伦理，将是OpenAI和整个AI行业需要持续面对的挑战。</p>
+<p>作为用户，我们也需要以理性和负责任的态度来对待这一新功能，合理利用其优势，同时保持必要的警惕和判断。</p>
+<p>在未来，我们期待看到更多类似的技术创新，也希望这些创新能够真正为人类社会带来积极的影响和价值。</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>ChatGPT</tag>
+        <tag>人工智能</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之B+树索引</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BB+%E6%A0%91%E7%B4%A2%E5%BC%95.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之B-树索引"><a href="#零基础MySQL教程原理篇之B-树索引" class="headerlink" title="零基础MySQL教程原理篇之B+树索引"></a>零基础MySQL教程原理篇之B+树索引</h2><p>在MySQL数据库中，<code>索引</code>是提升查询效率的核心工具。没有索引的查询，就像是在浩瀚的书海中翻书，效率低下。而良好的索引设计，则能帮助我们高效地找到我们需要的信息，避免无谓的资源浪费。因此，理解索引的原理、种类以及如何设计索引是每个开发者必须掌握的基础技能。</p>
+<h3 id="索引是什么？"><a href="#索引是什么？" class="headerlink" title="索引是什么？"></a>索引是什么？</h3><p><code>索引</code>是一种数据结构，它通过特定的方式排列数据，以便于快速查询。可以把索引想象成一本书的目录，通过目录可以快速找到你想要的章节，而不用从头到尾翻书。</p>
+<p>在MySQL中，索引通常是通过B树或B+树等数据结构实现的，数据库查询引擎可以利用这些结构快速查找数据。</p>
+<h3 id="B-树索引（B-Tree-Index）"><a href="#B-树索引（B-Tree-Index）" class="headerlink" title="B+树索引（B+ Tree Index）"></a>B+树索引（B+ Tree Index）</h3><p>这里先搞清楚一些概念，什么是<code>b树</code>,<code>b+树</code>，<code>b*树</code>还有<code>b link树</code>。</p>
+<ul>
+<li>b tree(1971)：B-Tree (Balanced Tree) 是一种自平衡的多路搜索树，由 Rudolf Bayer 和 Edward M. McCreight 在 1971 年提出。</li>
+<li>b+ tree (1973):B-Tree(Balanced Tree) 的变种，由 <code>Rudolf Bayer</code> 在 1973 年提出，主要改进了数据存储方式，因此大多数的数据库都使用这个作为索引。</li>
+<li>b* tree (1977): 对 B+Tree 的进一步优化，主要的优化思路是提高空间利用率，同样的数据，可以使用更小的空间存储。</li>
+<li>b link tree (1981): 由 <code>Lehman</code> 和 <code>Yao</code> 在 1981 年提出，在b+树的基础上，主要解决了并发控制问题。数据库中的b+树也做了一些优化，参考了b link tree的一些优点。</li>
+</ul>
+<h4 id="b-tree"><a href="#b-tree" class="headerlink" title="b tree"></a>b tree</h4><p>首先来看一下b树，这个是B+树的鼻祖了。</p>
+<ul>
+<li>多路结构：每个节点可以有多个子节点（不像二叉树最多2个）</li>
+<li>平衡性：所有叶子节点都在同一层</li>
+<li>动态调整：插入删除时自动保持平衡</li>
+</ul>
+<p>规则：</p>
+<ul>
+<li>每个节点最多有 m 个子节点（m 阶）</li>
+<li>除根节点外，每个节点至少有 ⌈m&#x2F;2⌉ 个子节点</li>
+<li>所有叶子节点在同一层</li>
+<li>节点中的键值有序排列</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>减少 I&#x2F;O 操作（宽而浅的结构）</li>
+<li>适合磁盘存储</li>
+<li>查询、插入、删除都是 O(log n)</li>
+</ul>
+<p>示例图如下：<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-1.png" alt="b树"></p>
+<h4 id="b-tree-1"><a href="#b-tree-1" class="headerlink" title="b* tree"></a>b* tree</h4><ul>
+<li>B*树是一种m阶的平衡多路搜索树</li>
+<li>除根节点外，所有节点的关键字个数至少为⌈(2m-1)&#x2F;3⌉</li>
+<li>所有叶子节点都在同一层</li>
+<li>非叶子节点只存储索引信息，不存储实际数据</li>
+<li>所有数据都存储在叶子节点中</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>B树</th>
+<th>B+树</th>
+<th>B*树</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据存储</td>
+<td>内部节点和叶子节点都存数据</td>
+<td>只有叶子节点存数据</td>
+<td>只有叶子节点存数据</td>
+</tr>
+<tr>
+<td>节点利用率</td>
+<td>至少50%</td>
+<td>至少50%</td>
+<td>至少66.7%</td>
+</tr>
+<tr>
+<td>叶子节点连接</td>
+<td>无</td>
+<td>有链表连接</td>
+<td>有链表连接</td>
+</tr>
+<tr>
+<td>空间效率</td>
+<td>一般</td>
+<td>较好</td>
+<td>最好</td>
+</tr>
+<tr>
+<td>范围查询</td>
+<td>需要中序遍历</td>
+<td>效率高</td>
+<td>效率高</td>
+</tr>
+</tbody></table>
+<p>关键特性</p>
+<ol>
+<li>高节点利用率</li>
+</ol>
+<ul>
+<li>每个节点至少2&#x2F;3满（除根节点外）</li>
+<li>相比B+树的1&#x2F;2要求，空间利用率提高33%</li>
+</ul>
+<ol start="2">
+<li>延迟分裂策略</li>
+</ol>
+<ul>
+<li>节点满时优先向兄弟节点转移关键字</li>
+<li>只有兄弟节点也满时才进行分裂操作</li>
+<li>减少了分裂操作的频率</li>
+</ul>
+<ol start="3">
+<li>更好的缓存性能</li>
+</ol>
+<ul>
+<li>更高的节点利用率意味着更少的节点数量</li>
+<li>减少了磁盘I&#x2F;O操作</li>
+<li>提高了缓存命中率</li>
+</ul>
+<p>主要优势</p>
+<ol>
+<li>空间效率：相同数据量下，B*树的高度更低</li>
+<li>查询性能：更少的磁盘访问次数</li>
+<li>插入性能：延迟分裂减少了树结构的调整</li>
+<li>存储成本：更高的空间利用率降低存储需求</li>
+</ol>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-2.png" alt="b*树"></p>
+<h4 id="b-link-tree"><a href="#b-link-tree" class="headerlink" title="b link tree"></a>b link tree</h4><p>B-link树（B-link tree）是B+树的一种变形，由Lehman和Yao在1981年提出。它是专门为支持高并发访问而设计的B+树变种。</p>
+<p>基本定义：</p>
+<ul>
+<li>B-link树是一种支持并发操作的平衡多路搜索树</li>
+<li>在传统B+树的基础上增加了链接指针（link pointer）</li>
+<li>每个内部节点都有一个右链接指针，指向其右兄弟节点</li>
+<li>支持无锁或低锁的并发读写操作</li>
+</ul>
+<p>并发安全的设计理念<br>B-link树的核心设计思想是通过右链接指针和高水位标记来实现并发安全：</p>
+<ol>
+<li>Right-Link指针</li>
+</ol>
+<ul>
+<li>每个节点都有指向右兄弟的指针</li>
+<li>形成同一层级的有序链表</li>
+<li>允许在节点分裂过程中继续安全访问</li>
+</ul>
+<ol start="2">
+<li>High Key（高水位键）</li>
+</ol>
+<ul>
+<li>每个节点维护一个最大键值</li>
+<li>用于判断搜索是否需要跳转到右兄弟</li>
+<li>解决并发分裂时的一致性问题</li>
+</ul>
+<p>关键设计原则</p>
+<p>设计原则：</p>
+<ol>
+<li>结构不变性：树的基本结构在并发操作中保持稳定</li>
+<li>单向链接：只需要右链接，简化了维护复杂度</li>
+<li>原子操作：关键操作通过原子性保证一致性</li>
+<li>乐观并发：减少锁的使用，提高并发性能</li>
+</ol>
+<p>并发控制策略</p>
+<ul>
+<li>读操作：几乎无锁，可以并发执行</li>
+<li>写操作：最小化锁的范围和时间</li>
+<li>分裂操作：通过两阶段提交保证一致性</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>传统B+树</th>
+<th>B-link树</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>节点结构</td>
+<td>[K1</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>并发控制</td>
+<td>需要复杂的锁机制</td>
+<td>最小化锁使用</td>
+</tr>
+<tr>
+<td>读操作</td>
+<td>可能需要读锁</td>
+<td>几乎无锁</td>
+</tr>
+<tr>
+<td>写操作</td>
+<td>需要写锁，可能阻塞读</td>
+<td>短时间锁，不阻塞读</td>
+</tr>
+<tr>
+<td>分裂操作</td>
+<td>需要锁定多个节点</td>
+<td>原子操作，影响最小</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>较小</td>
+<td>每个节点额外一个指针</td>
+</tr>
+<tr>
+<td>实现复杂度</td>
+<td>相对简单</td>
+<td>较复杂</td>
+</tr>
+</tbody></table>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-3.png" alt="blink树"></p>
+<blockquote>
+<p>关于b link tree可以阅读论文：<a href="https://dl.acm.org/doi/pdf/10.1145/319628.319663">https://dl.acm.org/doi/pdf/10.1145/319628.319663</a></p>
+</blockquote>
+<h4 id="b-树"><a href="#b-树" class="headerlink" title="b+树"></a>b+树</h4><p>关于b+树的b，到底是什么意思，其实作者并没有一个明确的定义，有的人觉得是<code>balance (平衡)</code>，有的人觉得是<code>Bushy（茂密）</code>。</p>
+<p>不过大多数人都更认同<code>balance</code>这个解释。</p>
+<blockquote>
+<p>推荐一个paper：the ubiquitous B-tree</p>
+</blockquote>
+<p>MySQL中的B+树其实和传统的还是有一点区别，比如它借鉴了<code>b-link tree</code>的兄弟节点的概念。</p>
+<blockquote>
+<p>b+ tree 删除和插入的复杂度都是<code>O(log n)</code>。</p>
+</blockquote>
+<p>叶子节点的内容，通常key和value是分开存储的，因为搜索的时候并不需要加载value数据</p>
+<ul>
+<li>元数据<ul>
+<li>isleaf 是否是叶子节点</li>
+<li>slots 有多少空闲的slot</li>
+<li>prev 前一个叶子节点的指针</li>
+<li>next 后一个叶子节点的指针</li>
+</ul>
+</li>
+<li>key数据</li>
+<li>value数据</li>
+</ul>
+<p>结构：</p>
+<ul>
+<li>B+树是一种多路自平衡的树结构，所有的叶子节点都在同一层，并且叶子节点通过链表连接。</li>
+<li>它是MySQL中最常用的索引类型，支持范围查询、精确查找等操作。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>高效的范围查询：由于B+树是顺序存储的，支持范围查询，查询某个区间的数据时非常高效。</li>
+<li>高效的精确查询：B+树通过逐层查找，可以快速定位到数据行。</li>
+<li>支持排序：由于叶子节点按顺序排列，B+树非常适合用于<code>ORDER BY</code>、<code>GROUP BY</code>等操作。</li>
+<li>空间利用高：每个非叶子节点仅包含键，而不包含数据，可以节省存储空间。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>性能受页大小影响：B+树的性能与页的大小（每页存储的记录数）密切相关，过小的页会导致频繁的I&#x2F;O操作，过大的页则会浪费内存。</li>
+<li>写入性能较低：对于频繁插入、删除操作的场景，B+树索引的维护成本较高，可能导致性能下降。</li>
+</ul>
+<p>应用场景：</p>
+<ul>
+<li>最常用于主键索引、普通索引和唯一索引。尤其适用于需要进行范围查询、排序的场景。</li>
+</ul>
+<p>特点：</p>
+<ul>
+<li><code>b+ tree</code>,保证每个节点都必须是半满的，对于存放在节点中的key数量来说，key数量至少为<code>M/2 - 1</code>个，M为树的高度，key的数量必须小于 <code>M - 1</code>,如果当删除数据以后导致key数量小于M&#x2F;2 - 1个，就会进行平衡，使他满足M&#x2F;2 - 1个。<blockquote>
+<p>M&#x2F;2 - 1 ≤ key数量 ≤ M - 1</p>
+</blockquote>
+</li>
+<li>如果一个中间节点有k个key,那你就会有k+1个非空孩子节点，也就是k+1个指向下方节点的指针。每个节点的内容是一个<code>指针</code>和一个<code>key</code></li>
+<li>叶子节点之间有连接叶子节点的兄弟指针，这个想法来源于<code>b link tree</code>。每个节点的内容是一个<code>数据</code>和一个<code>key</code>，数据可以是一个<code>record id</code> 也可以是一个 <code>tuple</code></li>
+<li>b+ tree 标准填充容量大概是67% - 69%，对于一个大小是8kb的page来说，如果高度为4，大约能记录<code>30 0000</code>个键值对。</li>
+<li>b+ tree的节点大小，机械硬盘的大小最好在1M,ssd的大小在10KB</li>
+</ul>
+<p>示例图<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-4.png" alt="b+"></p>
+<p>B+树的叶子节点就是一个page，关于page的具体内容我们之前已经讲过了，不再赘述。我们将节点放大大概是这样的。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-4.png" alt="b+树叶子节点"></p>
+<p>b tree 和 b+ tree 的区别</p>
+<ul>
+<li>b tree的中间节点也可以存数据，所以key是不重复的</li>
+<li>b+ tree的中间节点没有数据，所有数据都在叶子节点，所以key有可能既存在中间节点也存在叶子节点。会重复</li>
+<li>b tree的性能在并行处理上更差，因为修改以后需要向上传播也需要向下传播修改，这个时候两边都要增加锁</li>
+<li>b+ tree的性能更好，因为只修改叶子节点，所以只需要向上传播，只需要增加一个锁</li>
+</ul>
+<h5 id="b-tree的查找"><a href="#b-tree的查找" class="headerlink" title="b+ tree的查找"></a>b+ tree的查找</h5><ul>
+<li>对于&lt;a,b,c&gt;,查找a&#x3D;5 and b&#x3D;3也是可以走索引的，但是hash索引就不行，有些数据库还支持b&#x3D;3的搜索走索引，比如oracle和sql server</li>
+</ul>
+<p>b+ tree还有一个方便的地方在于支持<code>联合索引</code>，我们可以设置A、B、C三个key的联合索引并支持查找。</p>
+<p>假设我们查找<code>A，B</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-5.png"></p>
+<p>假设我们查找<code>A,*</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-6.png"></p>
+<p>假设我们查找<code>*,A</code></p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql5-7.png"></p>
+<p>可以看到，对于b+树索引来说，这些查找都可以满足，这也是数据库支持联合索引的重点。</p>
+<h5 id="b-tree-插入"><a href="#b-tree-插入" class="headerlink" title="b+ tree 插入"></a>b+ tree 插入</h5><ol>
+<li>向下扫描，找到对应的叶子节点</li>
+<li>如果可以插入就直接插入</li>
+<li>如果不可以插入，那么从中间分开，变成两个叶子节点，并将中间的key传递给父节点，插入父节点。</li>
+<li>如果父节点可以插入就直接插入并分出一个指针指向新的叶子节点</li>
+<li>如果父节点不可以插入重复上述操作3</li>
+</ol>
+<p>我们来看一个实例：依次插入<code>1,2,3,4,5,6,7</code>，假设我们的度是3，也就是一个节点最多能容纳3个数据。</p>
+<p>插入1<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-8.png"></p>
+<p>插入2，这个时候2个节点是在一起的<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-9.png"></p>
+<p>插入3，这个时候不可以插入了，因为插入就满了，因此要从中间分开，变成两个叶子节点。并将中间的key传递给父节点，插入父节点。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-10.png"></p>
+<p>插入4，因为4插入到2，3节点中，导致再次分裂，分裂后，如下图所示<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-11.png"></p>
+<p>插入5，同样再次分裂，但是，父级也到达了3个数据，因此父节点同样分裂。最后结果如下<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-12.png"></p>
+<p>插入6<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-13.png"></p>
+<p>插入7<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-14.png"></p>
+<h5 id="b-tree-删除"><a href="#b-tree-删除" class="headerlink" title="b+ tree 删除"></a>b+ tree 删除</h5><ol>
+<li>向下扫描，找到对应的叶子节点，这个时候就会增加<code>latch</code>，因为不知道需不需要合并，操作以后才会释放</li>
+<li>如果可以删除就直接删除</li>
+<li>如果删除后导致key数量 &lt; <code>M/2 - 1</code>,那么就会出发合并，因为不满足key数量啦</li>
+<li>进行合并的时候删除这个key，然后先查看左右的兄弟节点，是否能直接把数据插入过来，如果可以的话就掠夺一个key过来，然后向上传播</li>
+<li>如果不能掠夺，那么就合并到兄弟节点，然后向上传播。</li>
+</ol>
+<p>我们接着上面的实例：依次删除<code>1,2,3,4,5,6,7</code></p>
+<p>删除1，因为删除后 key数量 &lt; <code>M/2 - 1</code>，因此触发了合并逻辑。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-15.png"></p>
+<p>删除2，同样进行合并。<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-16.png"></p>
+<p>删除3<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-17.png"></p>
+<p>删除4<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-18.png"></p>
+<p>删除5<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-19.png"></p>
+<p>删除6<br><img src="https://thepatterraining.github.io/images/mysql/mysql5-20.png"></p>
+<p>删除7以后，树就没了。</p>
+<blockquote>
+<p>推荐书籍 Modern B-Tree Techniques</p>
+</blockquote>
+<p>对于非唯一索引</p>
+<ul>
+<li>重复存储，需要注意两个相同的key存储在不同的page中</li>
+<li>value list,key只存储一个，然后所有的value存储成value list</li>
+</ul>
+<p>节点内部的搜索</p>
+<ul>
+<li>线性搜索</li>
+<li>二分搜索</li>
+<li>interpolation<ul>
+<li>通过数学计算出线性搜索的起点，提升搜索速度</li>
+</ul>
+</li>
+</ul>
+<p>优化方法</p>
+<ul>
+<li>前缀压缩<ul>
+<li>比后缀截断用的更多</li>
+<li>存储在page中的key,如果前缀一样的可以提取出来存储一次，然后剩余的数据在存储在key里面</li>
+</ul>
+</li>
+<li>后缀截断<ul>
+<li>存储在中间节点的，用来寻路的key，可以只存储前面的部分，如果后面的不需要可以截断</li>
+<li>更新的时候需要进行维护</li>
+</ul>
+</li>
+<li>批量插入<ul>
+<li>如果已经有数据了再建立索引，这个时候不需要从头开始一个个建立，只需要先排序</li>
+<li>然后建立所有的叶子节点</li>
+<li>在一层层向上建立中间节点</li>
+<li>非常普遍的方法，主流数据库都支持</li>
+</ul>
+</li>
+<li>point willizeing<ul>
+<li>将节点固定在内存中</li>
+<li>对于page来说，直接存储page指针而不是page id，就不需要请求buffer pool了</li>
+</ul>
+</li>
+</ul>
+<p>b+ tree的重复key，通常使用增加<code>record id</code>的方式，这种方式影响更小。</p>
+<ul>
+<li>增加<code>record id</code>,<code>record id</code>是<code>page id</code> + <code>offset</code>用来确定tuple的位置。</li>
+<li>垂直扩展叶子节点，将数据存在里面</li>
+</ul>
+<p>部分索引</p>
+<ul>
+<li>在创建索引的时候添加where条件，只有符合条件的才会进入索引。</li>
+<li>查询的时候只有符合条件的才会走索引</li>
+</ul>
+<p>覆盖索引</p>
+<ul>
+<li>在创建索引的时候添加联合索引</li>
+<li>查询的时候所需数据都在索引中，就不需要在找对应的tuple信息了。</li>
+</ul>
+<p>函数索引</p>
+<ul>
+<li>创建索引的时候添加函数信息，比如 MONTH(date), 只对月份创建索引</li>
+<li>查询的时候 MONTH(date) 就会走索引了，而date就不会走索引了</li>
+<li>如果创建的时候只创建 date 索引，那么查询的时候 MONTH(date) 就不会走索引</li>
+</ul>
+<p>trie index(前缀树)</p>
+<ul>
+<li>把每个单词建立成树，一层放一个字母</li>
+</ul>
+<p>radix tree</p>
+<ul>
+<li>trie index的升级版</li>
+<li>对于trie index进行了横向的压缩和纵向的压缩</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本文通过两个简单的实例，详细讲解了如何进行b+树的插入和删除操作，对于b+树了解以后，也知道是如何支持联合索引查询的了。</p>
+<p>同时，还对比了其他几种数据结构。并提出了一些优化策略。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之hash索引原理</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8Bhash%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之hash索引原理"><a href="#零基础MySQL教程原理篇之hash索引原理" class="headerlink" title="零基础MySQL教程原理篇之hash索引原理"></a>零基础MySQL教程原理篇之hash索引原理</h2><p>MySQL中的<code>索引</code>是一个非常重要的组件，面试中最常问的一个问题就是<code>你是如何优化索引的？</code></p>
+<blockquote>
+<p>一天，小美遇到了张三，小美说她老公嫌弃她们家衣柜衣服多又乱，早上出门找衣服要找半天！小美问张三有没有好男人介绍一下，哭诉生活太难了<br>张三当即表示我张三就是个好男人啊，能文能武，还会收拾衣柜！<br>张三告诉小美，要想保持衣柜整洁，一定要记得以下三点。。。</p>
+</blockquote>
+<p>我们本次要讲解就是<code>hash索引</code>。</p>
+<h3 id="索引是什么？"><a href="#索引是什么？" class="headerlink" title="索引是什么？"></a>索引是什么？</h3><p><code>索引</code>是一种数据结构，它通过特定的方式排列数据，以便于快速查询。可以把索引想象成一本书的目录，通过目录可以快速找到你想要的章节，而不用从头到尾翻书。</p>
+<p>在MySQL中，索引通常是通过B树或B+树等数据结构实现的，数据库查询引擎可以利用这些结构快速查找数据。</p>
+<p>我们先看一下索引都有哪些类型，最常用的当然是b+树索引啦</p>
+<ul>
+<li>B+树索引：B+树是一种多路自平衡的树结构，所有的叶子节点都在同一层，并且叶子节点通过链表连接。它是MySQL中最常用的索引类型，支持范围查询、精确查找等操作。</li>
+<li>哈希索引：哈希索引基于哈希表的原理，通过哈希函数对索引列进行计算，得到一个哈希值，哈希值对应的桶中存储数据的指针。</li>
+<li>全文索引：全文索引是专门用于文本检索的索引结构，通常用于<code>TEXT</code>类型的数据。MySQL会将文本字段中的每个单词进行索引，创建倒排索引，以提高文本搜索的效率。</li>
+<li>空间索引: 空间索引是用于地理空间数据类型（如<code>POINT</code>、<code>LINESTRING</code>、<code>POLYGON</code>）的索引结构，通常使用R树（或改进版的R+树）来存储和查询空间数据。</li>
+<li>倒排索引：倒排索引主要用于文本搜索。它将文档中每个词的出现位置存储在一个列表中，从而支持高效的文本检索。</li>
+<li>位图索引：位图索引使用位图（bitmap）来表示数据列中各个值的存在情况。例如，假设某一列有3个不同的值，可以用3个位来表示每个值的出现情况。</li>
+</ul>
+<h3 id="hash索引"><a href="#hash索引" class="headerlink" title="hash索引"></a>hash索引</h3><p><code>what</code>什么是hash索引呢？</p>
+<ul>
+<li>hash索引就是通过<code>hash函数</code>将数据库中存储的值a映射成一个值b，然后通过该值a进行搜索的时候，可以快速找出这条记录</li>
+</ul>
+<p><code>why</code>为什么要使用hash索引呢？</p>
+<ul>
+<li>很多人都知道b+树索引，那么为什么还要有hash索引呢？</li>
+<li>其实，hash索引的性能是要高于b+树索引的，但是hash索引的使用范围要小一些，这也是现在很多人使用b+树索引的原因</li>
+<li>hash索引通过hash表来进行查找，时间复杂度为O（1），性能相当可以。</li>
+</ul>
+<p><code>When</code>什么时候使用hash索引呢？</p>
+<ul>
+<li>一些内存存储引擎会使用hash索引</li>
+<li>InnoDB的自适应系统检测热点</li>
+<li>执行精确相等查询</li>
+</ul>
+<p>注意，只有<code>精确相等查询</code>才适合使用hash索引，并且性能要比b+索引更好。</p>
+<p>比如根据手机号、用户名、邮箱精确的查询用户信息。<br>下面列出一些使用场景：</p>
+<ol>
+<li>幂等查询，有些操作是要求幂等的，因此会存储一些幂等键。</li>
+<li>session id进行会话管理。session id可以使用hash 索引。</li>
+<li>配置信息获取，配置信息通常使用唯一的配置key获取，可以使用hash索引。</li>
+<li>验证码存储及获取，验证码的校验一般都是精确查询，也可以使用hash索引。</li>
+</ol>
+<blockquote>
+<p>大家还知道哪些场景适合hash索引呢？</p>
+</blockquote>
+<p>性能对比示例<br>假设有100万条用户会话记录</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 使用哈希索引的MEMORY表</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_sessions <span class="keyword">WHERE</span> session_id <span class="operator">=</span> <span class="string">&#x27;target_session&#x27;</span>;</span><br><span class="line"><span class="comment">-- 响应时间: ~0.001秒</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 如果使用B+树索引的InnoDB表</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> user_sessions_innodb <span class="keyword">WHERE</span> session_id <span class="operator">=</span> <span class="string">&#x27;target_session&#x27;</span>;</span><br><span class="line"><span class="comment">-- 响应时间: ~0.01秒</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么这些场景适合哈希索引？</p>
+<ol>
+<li>都是精确匹配查询 (&#x3D; 操作符)</li>
+<li>数据量适中 (适合内存存储)</li>
+<li>访问频率极高 (性能要求苛刻)</li>
+<li>数据生命周期短 (临时性数据)</li>
+<li>不需要范围查询 (没有 BETWEEN, &gt;, &lt; 操作)</li>
+<li>不需要排序 (没有 ORDER BY 操作)</li>
+</ol>
+<p>这些场景的共同点是：快速、精确、临时、高频 - 这正是哈希索引的优势所在！</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><p>首先，需要通过一个hash函数来进行映射，因此，选择合适的hash函数也是比较重要的。</p>
+<blockquote>
+<p>最快的hash函数应该是facebook的xxhash</p>
+</blockquote>
+<p>常见的一些hash函数如下：</p>
+<ol>
+<li><p>简单的hash函数<br>这应该是最简单的了，直接取模就可以了</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 简单取模</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">simple_hash</span><span class="params">(<span class="type">int</span> key)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> key % TABLE_SIZE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加法哈希</span></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">add_hash</span><span class="params">(<span class="type">char</span> *str)</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> hash = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (*str) &#123;</span><br><span class="line">        hash += *str++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>经典的一些hash函数</p>
+</li>
+</ol>
+<ul>
+<li>DJB2 Hash</li>
+<li>MurmurHash</li>
+<li>Google开发的CityHash</li>
+</ul>
+<h5 id="MurmurHash"><a href="#MurmurHash" class="headerlink" title="MurmurHash"></a>MurmurHash</h5><p>MurmurHash 是一种<code>非加密型哈希函数</code>，适用于一般的哈希检索操作。由<code>Austin Appleby</code>在2008年发明，并出现了多个变种，都已经发布到了公有领域(public domain)。与其它流行的哈希函数相比，对于规律性较强的key，MurmurHash的随机分布特征表现更良好.</p>
+<p>当前的版本是<code>MurmurHash3</code>，能够产生出32-bit或128-bit哈希值。</p>
+<p>较早的<code>MurmurHash2</code>能产生32-bit或64-bit哈希值。对于大端存储和强制对齐的硬件环境有一个较慢的MurmurHash2可以用。<code>MurmurHash2A</code> 变种增加了<code>Merkle–Damgård</code> 构造，所以能够以增量方式调用。 有两个变种产生64-bit哈希值：MurmurHash64A，为64位处理器做了优化；MurmurHash64B，为32位处理器做了优化。MurmurHash2-160用于产生160-bit 哈希值，而MurmurHash1已经不再使用。</p>
+<p>最初的实现是基于C++的，不过现在主流的语言都支持了，包括Java、Python、Golang、Php、JS、Ruby等。</p>
+<p>算法伪代码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">Murmur3_32(key, len, seed)</span><br><span class="line">    c1 </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 0xcc9e2d51</span><br><span class="line">    c2 </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 0x1b873593</span><br><span class="line">    r1 </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 15</span><br><span class="line">    r2 </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 13</span><br><span class="line">    m </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 5</span><br><span class="line">    n </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; 0xe6546b64</span><br><span class="line"> </span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; seed</span><br><span class="line"></span><br><span class="line">    for each fourByteChunk of key</span><br><span class="line">        k </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; fourByteChunk</span><br><span class="line"></span><br><span class="line">        k </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; k * c1</span><br><span class="line">        k </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; (k &lt;&lt; r1) OR (k &gt;&gt; (32-r1))</span><br><span class="line">        k </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; k * c2</span><br><span class="line"></span><br><span class="line">        hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR k</span><br><span class="line">        hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; (hash &lt;&lt; r2) OR (hash &gt;&gt; (32-r2))</span><br><span class="line">        hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash * m + n</span><br><span class="line"></span><br><span class="line">    with any remainingBytesInKey</span><br><span class="line">        remainingBytes </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; SwapEndianOrderOf(remainingBytesInKey)</span><br><span class="line">        remainingBytes </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; remainingBytes * c1</span><br><span class="line">        remainingBytes </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; (remainingBytes &lt;&lt; r1) OR (remainingBytes &gt;&gt; (32 - r1))</span><br><span class="line">        remainingBytes </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; remainingBytes * c2</span><br><span class="line"></span><br><span class="line">        hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR remainingBytes</span><br><span class="line"> </span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR len</span><br><span class="line"></span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR (hash &gt;&gt; 16)</span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash * 0x85ebca6b</span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR (hash &gt;&gt; 13)</span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash * 0xc2b2ae35</span><br><span class="line">    hash </span><br><span class="line">←</span><br><span class="line">&#123;\displaystyle \gets &#125; hash XOR (hash &gt;&gt; 16)</span><br></pre></td></tr></table></figure>
+
+<h5 id="City-Hash"><a href="#City-Hash" class="headerlink" title="City Hash"></a>City Hash</h5><p>简而言之，这是一种非加密哈希算法，比 <code>MurmurHash</code> 更快，但更复杂。可以参考<a href="https://opensource.googleblog.com/2011/04/introducing-cityhash.html">Google的City Hash</a></p>
+<p>Google发布了两个函数，<code>CityHash64</code> 和 <code>CityHash128</code>。它们分别将字符串哈希为 <code>64</code> 位和 <code>128</code> 位的哈希码。这些函数不适合用于密码学，但根据google目前的经验，它们非常适合用于哈希表。</p>
+<p>Google试图针对谷歌数据中心中常见的 CPU 进行优化，但结果表明大多数台式机和笔记本电脑也具备相关特性。其中重要的是 64 位寄存器、指令级并行和快速非对齐内存访问。</p>
+<p>City Hash方法的关键优势在于大多数步骤都包含至少两个独立的数学运算。现代 CPU 通常在这种类型的代码上表现最佳。不利之处在于代码比大多数流行替代方案更复杂。</p>
+<p>总的来说，Google认为 <code>CityHash64</code> 和 <code>CityHash128</code> 是解决经典问题的新颖方法。在真实条件下，预计 <code>CityHash64</code> 的速度将至少比以往工作快 <code>30%</code>，甚至可能快一倍。此外，据我们所知，这些函数的统计特性是可靠的。请大胆尝试这个快速的新代码！</p>
+<p>City Hash的Github仓库地址：<a href="https://github.com/google/cityhash">City Hash</a></p>
+<blockquote>
+<p>像Click House就使用了City Hash，并在这个基础上做了一些改变</p>
+</blockquote>
+<h5 id="xxhash"><a href="#xxhash" class="headerlink" title="xxhash"></a>xxhash</h5><p>xxHash 是一种极其快速的非加密哈希算法，运行在内存速度极限。它有四种变体（XXH32、XXH64、XXH3_64bits 和 XXH3_128bits）。最新的变体 XXH3 在各方面都提供了性能提升，特别是在处理小数据时。</p>
+<p>详细的可以查看<a href="https://xxhash.com/">xxhash</a></p>
+<h4 id="hash-schema"><a href="#hash-schema" class="headerlink" title="hash schema"></a>hash schema</h4><p>静态Hash table</p>
+<ul>
+<li>liner probe hashing<ul>
+<li>如果要插入的位置有值了，就往下扫描，扫描到空的位置插入</li>
+<li>删除的时候可以增加一个<code>墓碑</code>标记，这样就知道这里是有数据的不是空，查找的时候就会继续往下扫描而不会是没找到</li>
+<li>删除的时候还可以把后面的数据往前移动，但是这样有的数据就不再原来的位置了，就找不到了。因为只会往下扫描不会往上扫描</li>
+</ul>
+</li>
+<li>robin hood hashing<ul>
+<li>记录<code>距离数</code>，表示插入的位置和应该插入的位置的距离。从0开始。</li>
+<li>插入的时候判断距离数，进行<code>劫富济贫</code>，如果你向下扫描到距离数为3的地方插入，而在距离数为2的地方的数据x，x的距离数比你小，比如是0，1.那么你就占据这里，你插入距离数为2的地方，而将x插入你下面，x的距离数会+1.</li>
+<li>从整体来看，这个方法牺牲了插入的效率，将数据的距离数变得更加平均</li>
+</ul>
+</li>
+<li>cuckoo hashing<ul>
+<li>该方法使用两个或多个<code>hash table</code>来记录数据，对A进行两次hash，得出两个hash table中的插入位置，随机选择一个进行插入</li>
+<li>如果选择的插入位置已经有数据了，就选择另一个插入</li>
+<li>如果两个都有数据了，就占据一个，然后对这个位置上之前的数据B再次hash选择其余位置。</li>
+</ul>
+</li>
+</ul>
+<p>动态hash table</p>
+<ul>
+<li>chained hashing<ul>
+<li>把所有相同hash的组成一个bucket链表，然后一直往后面增加</li>
+<li>java的hash table默认就是这样的</li>
+</ul>
+</li>
+<li>extendible hashing<ul>
+<li>对 chained hashing 的扩展</li>
+<li>有一个slot array，在slot array上有一个 counter, 如果counter &#x3D; 2，代表看hash以后的数字的前两个bit,slot array就有4个位置，分别是00,01,10,11</li>
+<li>每个slot指向一个bucket</li>
+<li>hash以后找到前两位对应的slot指向的bucket，将数据放进去，如果满了，放不下了就进行拆分</li>
+<li>将slot array的counter扩容为3，看前3个bit，slot array变成了8个位置</li>
+<li>只将这个满了的bucket拆分成2个，其余的不变，重新进行slot的映射</li>
+<li>再次hash这个值，看前3个bit找到对应的slot,在找到对应的bucket，然后插入进去</li>
+</ul>
+</li>
+<li>linear hashing<ul>
+<li>对 extendible hashing 的扩展</li>
+<li>去掉了 conter，因为他每次加1，都会扩容一倍</li>
+<li>增加了<code>split point</code>，一开始指向0，然后每次<code>overflow</code>需要拆分的时候就拆分split point指向的那个bucket，然后slot array只扩容一个，这个时候出现第二个hash函数并将split point+1</li>
+<li>查询的时候如果slot array的位置小于split point，就使用第二个hash函数，因为被拆分了</li>
+<li>如果大于等于split point，就使用第一个hash函数</li>
+</ul>
+</li>
+</ul>
+<h3 id="hash索引的一些优化手段"><a href="#hash索引的一些优化手段" class="headerlink" title="hash索引的一些优化手段"></a>hash索引的一些优化手段</h3><p><code>hash索引</code>仅用于使用<code>=或&lt;=&gt;</code>运算符的相等比较（但非常快）。它们不用于查找值范围的比较运算符，如<code>&lt;</code>。依赖于这种单值查找的系统被称为“键值存储”;要将MySQL用于此类应用程序，请尽可能使用散列索引。</p>
+<p>优化器不能使用哈希索引来加速<code>ORDER BY</code>操作。</p>
+<p>MySQL无法确定两个值之间大约有多少行（这是由范围优化器用来决定使用哪个索引）。如果您将MyISAM或InnoDB表更改为哈希索引的MEMORY表，这可能会影响某些查询。</p>
+<p>只能使用整个键来搜索行。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次分享了MySQL中重要的概念Hash索引，接下来会出一个Hash索引具体实现的文章。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之Buffer Pool</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之缓冲池原理及实现"><a href="#零基础MySQL教程原理篇之缓冲池原理及实现" class="headerlink" title="零基础MySQL教程原理篇之缓冲池原理及实现"></a>零基础MySQL教程原理篇之缓冲池原理及实现</h2><p>MySQL中的<code>buffer pool(缓冲池)</code>是<code>InnoDB存储引擎</code>的重要组件，它负责在内存中管理数据库中的数据和索引的缓存。</p>
+<p>它加速了数据库的运行速度，是数据库和磁盘之间的一个中间层。如果没有缓冲池，那么所有的数据库操作都需要进行磁盘IO，有了缓冲池，就不需要频繁的IO操作了。</p>
+<p>缓冲池重点在于两个部分</p>
+<ul>
+<li>时间管理</li>
+<li>空间管理</li>
+</ul>
+<p>时间管理</p>
+<ul>
+<li>将数据写入磁盘的何处</li>
+<li>目标是经常被一起使用的pages放在磁盘中也是一起的地方。</li>
+</ul>
+<p>空间管理</p>
+<ul>
+<li>何时将pages读入内存，何时将pages写入磁盘</li>
+<li>目标是最小化的解决必须从磁盘读取数据这个事</li>
+</ul>
+<p>同样的一个<code>内存块</code>在不同的地方，就有不同的叫法，比如在磁盘中，存储数据库中的数据，我们叫做<code>page(页)</code>，而放在缓冲池中，就叫<code>frame(帧)</code>。</p>
+<p>一个frame其实就是一页数据。只不过这个数据是在<code>缓冲池</code>中的.</p>
+<p>到这里有个问题了，那就是缓冲池里面都是一堆数据，可是MySQL怎么知道缓冲池的哪个frame里面有数据，哪个没有呢？frame里面的数据对应的是具体哪个page的数据呢？</p>
+<p>因此，就需要另外一个组件了，叫做<code>page table</code>，本质上就是一个<code>hash map</code>。这个page table记录了<code>页数据</code>在当前<code>缓冲池</code>中的位置,通过<code>page table</code> 和 <code>page id</code>可以知道在哪个<code>frame</code>中。</p>
+<p><img src="https://thepatterraining.github.io/images/15445022.png" alt="page table"></p>
+<p>我们还需要记录一些元数据，这些数据也有着重要的作用：</p>
+<ul>
+<li>dirty flag: 记录是否被修改过，也就是常说的”脏数据标记”</li>
+<li>引用计数器： 记录有多少线程在使用这个数据</li>
+<li>访问追踪信息</li>
+</ul>
+<h3 id="缓冲池和mmap"><a href="#缓冲池和mmap" class="headerlink" title="缓冲池和mmap"></a>缓冲池和mmap</h3><p>如果你学过<code>操作系统</code>这个课，那么你看到这里，是不是觉得缓冲池很像一个东西？</p>
+<p>没错，就是<code>mmap</code>。那为什么MySQL要使用自己实现的缓冲池呢？这是因为相比于mmap来说，自定义的缓冲池可以更加完美的控制，达到自己想要的效果。这也是很多大厂会自研很多组件的原因，更加适配自己的生态系统，并可以进行一些性能优化。</p>
+<p>从下面几个点来看：</p>
+<ul>
+<li>事务安全：如果使用mmap，操作系统完全控制page的写入，刷新，有可能在一个事务没有完成的时候有些数据就已经写入磁盘了。</li>
+<li>IO停顿：MySQL不知道哪些page在内存中，当读取不在内存中的时候触发<code>page fault</code>，操作系统才会从磁盘获取。</li>
+<li>错误处理：任何访问都可能触发操作系统的中断信号<code>SIGBUS</code>，而整个MySQL都需要处理它。</li>
+<li>性能问题: 没有办法实现独特的性能优化。</li>
+</ul>
+<p>性能优化有两种考虑策略，分别是<code>全局策略</code>和<code>局部策略</code>。</p>
+<p>全局策略</p>
+<ul>
+<li>针对所有的查询或者事务的策略</li>
+</ul>
+<p>局部策略</p>
+<ul>
+<li>针对单个查询或者事务的策略</li>
+<li>可以对单个优化，虽然对全局可能不好</li>
+</ul>
+<h3 id="淘汰策略"><a href="#淘汰策略" class="headerlink" title="淘汰策略"></a>淘汰策略</h3><p>既然MySQL自己实现了一个缓冲池作为磁盘数据的<code>缓存</code>，那么就像我们日常使用Redis作为缓存一样，也是需要有一个淘汰策略的，毕竟，缓冲池满了怎么办？总不能MySQL不工作了吧。</p>
+<p>淘汰策略有几种算法</p>
+<ul>
+<li>LRU：著名的LRU算法，这里不过多介绍了。</li>
+<li>Clock：Linux使用的，把所有的page放成一个圈，每个page有一个标志位，如果为0表示没有被使用过，1被使用过，淘汰的时候淘汰0的，再把1改成0.</li>
+<li>LRU-K：记录使用的次数k，达到次数才放到缓存里面，淘汰的时候比对两次的时间间隔，间隔长的认为是最近最少使用。这个基本上是MySQL使用的一个淘汰算法。属于LRU算法的变种。</li>
+<li>PRIORITY HINTS（优先级提示）：优先级提示是一种淘汰策略，用于根据缓存项的优先级或重要性做出更智能的决策。</li>
+</ul>
+<h4 id="LRU-K"><a href="#LRU-K" class="headerlink" title="LRU-K"></a>LRU-K</h4><p><code>LRU-K</code>是标准<code>LRU（最近最少使用）</code>算法的变种，它的效果比传统的LRU算法更好，缓存的命中率更高，它考虑K个最近的访问，而不仅仅是最近的一次访问。</p>
+<p>核心理念:</p>
+<ul>
+<li>跟踪每个缓存项的最近K次访问次数</li>
+<li>使用最近的第k个访问时间进行驱逐决策</li>
+<li>K&#x3D;1降为标准LRU</li>
+</ul>
+<p>可以这么理解，LRU就是LRU-1算法。</p>
+<p>LRU-K算法的实现比LRU更加复杂，不能单纯考虑最近一次，而是要考虑最近K次。</p>
+<p>与LRU相比的优点：</p>
+<ol>
+<li>更好的频率检测：</li>
+</ol>
+<ul>
+<li>区分“流行”和“暂时流行”的物品</li>
+<li>减少顺序扫描造成的缓存污染</li>
+</ul>
+<ol start="2">
+<li>自适应行为:</li>
+</ol>
+<ul>
+<li>不同的K值优化不同的访问模式</li>
+<li>K&#x3D;2通常提供良好的平衡</li>
+</ul>
+<ol start="3">
+<li>扫描阻力:</li>
+</ol>
+<ul>
+<li>大规模的连续扫描不会永久地删除流行的项目</li>
+<li>项目需要多次访问才能确定其重要性</li>
+</ul>
+<p>LRU-K在频繁随机访问和偶尔顺序扫描的环境中特别有效。</p>
+<p>在LRU-K中，首先需要定义一个LRUK的节点，这个节点存储了frame的访问次数，是否可以淘汰等信息，还需要存储所有LRUK节点的一个map，map的key是frame id，这样可以快速获取这个frame的LRUK节点信息。而不需要循环查找。</p>
+<p>接下来可以通过两个队列来实现算法，第一个队列存储的是<code>未满足K次的</code>的frame信息，第二个队列存储的是<code>满足K次</code>的frame信息。</p>
+<p>记录访问的大致代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 访问次数决定队列分配</span></span><br><span class="line"><span class="keyword">if</span> (record_size == <span class="number">1</span>) &#123;</span><br><span class="line">    lru_node_queue_.<span class="built_in">push_back</span>(node.<span class="built_in">GetId</span>());  <span class="comment">// 首次访问 -&gt; LRU队列</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (record_size == k_) &#123;</span><br><span class="line">    lru_node_queue_.<span class="built_in">remove</span>(node.<span class="built_in">GetId</span>());     <span class="comment">// 达到k次 -&gt; 移到LRU-K队列</span></span><br><span class="line">    lru_k_queue_.<span class="built_in">push_back</span>(node.<span class="built_in">GetId</span>());</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (record_size &gt; k_) &#123;</span><br><span class="line">    lru_k_queue_.<span class="built_in">remove</span>(node.<span class="built_in">GetId</span>());        <span class="comment">// k次后 -&gt; 更新LRU-K队列位置</span></span><br><span class="line">    lru_k_queue_.<span class="built_in">push_back</span>(node.<span class="built_in">GetId</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当缓冲池满了以后，我们需要淘汰一个page，给另外一个page让出空间。</p>
+<p>这里会优先淘汰未满足K次的这些page，因此，直接从第一个LRU队列中进行LRU淘汰即可。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> lru_it = std::<span class="built_in">find_if</span>(lru_node_queue_.<span class="built_in">begin</span>(), lru_node_queue_.<span class="built_in">end</span>(),</span><br><span class="line">                             [<span class="keyword">this</span>](<span class="type">const</span> <span class="keyword">auto</span> &amp;queue_frame_id) &#123;</span><br><span class="line">                                 <span class="keyword">return</span> node_store_.<span class="built_in">at</span>(queue_frame_id).<span class="built_in">IsEvict</span>();</span><br><span class="line">                             &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>如果大家都满足K次，就淘汰这些访问次数达到K次的page</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> lru_k_it = std::<span class="built_in">find_if</span>(lru_k_queue_.<span class="built_in">begin</span>(), lru_k_queue_.<span class="built_in">end</span>(),</span><br><span class="line">                               [<span class="keyword">this</span>](<span class="type">const</span> <span class="keyword">auto</span> &amp;queue_frame_id) &#123;</span><br><span class="line">                                   <span class="keyword">return</span> node_store_.<span class="built_in">at</span>(queue_frame_id).<span class="built_in">IsEvict</span>();</span><br><span class="line">                               &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>如果当有page更新的话，那么要记录这个page有更新，当淘汰的时候，需要将这个page写入磁盘中。</p>
+<h4 id="mysql-近似-LRU-k"><a href="#mysql-近似-LRU-k" class="headerlink" title="mysql 近似 LRU-k"></a>mysql 近似 LRU-k</h4><p>MySQL使用的淘汰算法是一个<code>近似LRU-K</code>的算法。</p>
+<p>相当于K&#x3D;2。有一个LRU List，但是有两个指针，分别表示<code>old list</code>和<code>young list</code>。当数据第一次被访问的时候放到<code>old list</code>中，再次被访问的时候放到<code>young list</code>中。</p>
+<p><img src="https://thepatterraining.github.io/images/15445023.png" alt="近似LRU-K"></p>
+<p>当访问 page1 的时候，需要淘汰掉<code>old list</code>中的page8，其实也是整个LRU中的最后一个元素。然后将page1插入<code>old list</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/15445024.png"></p>
+<p>当再次访问 page1 的时候，将page1 插入<code>young list</code>。这个时候<code>young list</code>最后的元素也就进入了<code>old list</code>.</p>
+<p><img src="https://thepatterraining.github.io/images/15445025.png"></p>
+<h4 id="PRIORITY-HINTS（优先级提示）"><a href="#PRIORITY-HINTS（优先级提示）" class="headerlink" title="PRIORITY HINTS（优先级提示）"></a>PRIORITY HINTS（优先级提示）</h4><p>比如B+树的根节点具有最高的优先级，所以一直放在内存中。</p>
+<p><img src="https://thepatterraining.github.io/images/15445026.png" alt="B+树"></p>
+<p>核心概念:</p>
+<ul>
+<li>不像简单的LRU只考虑访问的近因性</li>
+<li>优先级提示包含关于项目重要性的额外元数据</li>
+<li>允许更复杂的驱逐策略</li>
+</ul>
+<p>常见的实现方法：</p>
+<ol>
+<li>基于优先级的LRU:</li>
+</ol>
+<ul>
+<li>物品有优先级（高，中，低）</li>
+<li>在每个优先级中，使用LRU</li>
+<li>从最低优先级优先驱逐</li>
+</ul>
+<ol start="2">
+<li>加权LRU:</li>
+</ol>
+<ul>
+<li>每个项目都有优先级权重</li>
+<li>将最近性与优先级分数结合起来</li>
+<li>驱逐最低综合分数的项目</li>
+</ul>
+<ol start="3">
+<li>多队列系统:</li>
+</ol>
+<ul>
+<li>为不同的优先级分隔队列</li>
+<li>后台进程管理每个队列的回收</li>
+<li>高优先级的项目留存时间更长</li>
+</ul>
+<h3 id="对于缓冲池的一些优化"><a href="#对于缓冲池的一些优化" class="headerlink" title="对于缓冲池的一些优化"></a>对于缓冲池的一些优化</h3><h4 id="多缓冲池"><a href="#多缓冲池" class="headerlink" title="多缓冲池"></a>多缓冲池</h4><ul>
+<li>通过使用多个缓冲池可以根据不同的table放入不同的缓冲池进行不同的优化。也可以通过其他的策略使用多个缓冲池</li>
+<li>由于有多个缓冲池,减少了锁争抢和锁等待的时间。</li>
+<li>mysql中通过hash确定数据是否在缓冲池，然后通过取余确定在哪个缓冲池</li>
+</ul>
+<h4 id="预取数据"><a href="#预取数据" class="headerlink" title="预取数据"></a>预取数据</h4><ul>
+<li>顺序扫描的时候预先把后面的page取到缓冲池中。这一步mmap也可以实现</li>
+<li>索引扫描的时候预先把索引中需要用到的后面的page取到缓冲池中。这一步mmap实现不了，这也是数据库自己实现缓冲池的优势。</li>
+</ul>
+<h4 id="扫描共享"><a href="#扫描共享" class="headerlink" title="扫描共享"></a>扫描共享</h4><p>这个优化MySQL并没有实现。</p>
+<ul>
+<li>共享扫描到的page内容</li>
+<li>如果查询1需要扫描page1,page2,page3,page4的内容并且已经扫描到了page3,这个时候page1已经扫描完了被从缓冲池中丢弃了</li>
+<li>这时候有一个查询2也需要扫描所有的pages，如果从page1开始扫描，就会把page1再次读入缓冲池，但是这样是低效率的，所以可以先共享查询1的page数据，先扫描page3,然后page4，这时候查询1执行完毕，在回头扫描page1,page2。</li>
+</ul>
+<h4 id="buffer-pool-bypass"><a href="#buffer-pool-bypass" class="headerlink" title="buffer pool bypass"></a>buffer pool bypass</h4><ul>
+<li>单独开辟一个本地内存区域来用，而不是使用buffer pool</li>
+<li>可以避免操作page table带来的开销（latch锁住的开销）</li>
+<li>可以避免污染buffer pool</li>
+<li>适合数据量不大的情况</li>
+<li>mysql5.7不支持</li>
+</ul>
+<h4 id="os-page-cache"><a href="#os-page-cache" class="headerlink" title="os page cache"></a>os page cache</h4><ul>
+<li>操作系统的文件缓存，当使用fopen,fread,fwrite的时候会先从操作系统缓存中读取文件内容。</li>
+<li>只有postgresql使用了这个。</li>
+<li>通过 direct IO可以不使用这个</li>
+<li>使用它会导致有两个缓存，buffer pool 和 os page cache。不好控制。</li>
+<li>fsync如果失败以后再次调用也不会生效，因为它会将dirty设置为false</li>
+</ul>
+<h4 id="写入磁盘策略"><a href="#写入磁盘策略" class="headerlink" title="写入磁盘策略"></a>写入磁盘策略</h4><p>两种写出方案需要做权衡，取舍</p>
+<ul>
+<li>如果写出dirty flag的数据然后读取新数据，就会产生2次IO。通常会有一个定时任务线程去将dirty flag的数据写入磁盘，写入之前必须要先将操作日志写入磁盘。</li>
+<li>如果直接读取新数据就只有1次IO，但是这样有可能把下次会用到的数据丢弃。</li>
+</ul>
+<h3 id="MySQL性能优化"><a href="#MySQL性能优化" class="headerlink" title="MySQL性能优化"></a>MySQL性能优化</h3><h4 id="buffer-pool"><a href="#buffer-pool" class="headerlink" title="buffer pool"></a>buffer pool</h4><blockquote>
+<p>建议设置内存的50%以上给buffer pool，设置的越多，就越像内存数据库</p>
+</blockquote>
+<p>淘汰算法类似<code>LRU-K</code>，缓冲池分为Old和young两段，一开始插入old的头，如果再次访问则插入young。缓冲池的3&#x2F;8专用于旧的子列表。</p>
+<p>默认情况下，查询读取的页面会立即移动到新的子列表中，这意味着它们在缓冲池中停留的时间更长。例如，为mysqldump操作或不带WHERE子句的SELECT语句执行的表扫描可以将大量数据带入缓冲池并驱逐等量的旧数据，即使新数据永远不会再次使用。</p>
+<p>类似地，由预读后台线程加载且仅访问过一次的页将被移动到新列表的头部。这些情况可能会将经常使用的页面推到旧的子列表中，在那里它们会被驱逐。</p>
+<p>在具有足够内存的64位系统上，可以将缓冲池拆分为多个部分，以最小化并发操作之间对内存结构的争用。</p>
+<p>您可以控制如何以及何时执行预读请求，以便在预期即将需要页时将页异步预取到缓冲池中。</p>
+<p>您可以控制何时发生后台刷新，以及是否根据工作负载动态调整刷新速率。</p>
+<p>您可以配置InnoDB如何保留当前缓冲池状态，以避免服务器重启后的漫长预热期。</p>
+<p>可以使用<code>SHOW ENGINE INNODB STATUS </code>来查看缓冲池状态</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">----------------------</span><br><span class="line">BUFFER POOL AND MEMORY</span><br><span class="line">----------------------</span><br><span class="line">Total large memory allocated 2198863872</span><br><span class="line">Dictionary memory allocated 776332</span><br><span class="line">Buffer pool size   131072</span><br><span class="line">Free buffers       124908</span><br><span class="line">Database pages     5720</span><br><span class="line">Old database pages 2071</span><br><span class="line">Modified db pages  910</span><br><span class="line">Pending reads 0</span><br><span class="line">Pending writes: LRU 0, flush list 0, single page 0</span><br><span class="line">Pages made young 4, not young 0</span><br><span class="line">0.10 youngs/s, 0.00 non-youngs/s</span><br><span class="line">Pages read 197, created 5523, written 5060</span><br><span class="line">0.00 reads/s, 190.89 creates/s, 244.94 writes/s</span><br><span class="line">Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not</span><br><span class="line">0 / 1000</span><br><span class="line">Pages read ahead 0.00/s, evicted without access 0.00/s, Random read</span><br><span class="line">ahead 0.00/s</span><br><span class="line">LRU len: 5720, unzip_LRU len: 0</span><br><span class="line">I/O sum[0]:cur[0], unzip sum[0]:cur[0]</span><br></pre></td></tr></table></figure>
+
+<h4 id="change-buffer"><a href="#change-buffer" class="headerlink" title="change buffer"></a>change buffer</h4><p><code>change buffer</code> 是一种特殊的数据结构，当辅助索引页不在缓冲池中时，它会缓存这些页的更改。缓冲的更改（可能是由DELETE、UPDATE或DML操作引起的）在以后通过其他读取操作将页加载到缓冲池时合并。</p>
+<p>与聚集索引不同，辅助索引通常是非唯一的，插入辅助索引的顺序相对随机。同样，删除和更新可能会影响索引树中不相邻的二级索引页。当其他操作将受影响的页读入缓冲池时，在以后合并缓存的更改可以避免将辅助索引页从磁盘读入缓冲池所需的大量随机访问I&#x2F;O。</p>
+<p>在系统大部分空闲时或缓慢关机期间运行的清除操作会定期将更新的索引页写入磁盘。与立即将每个值写入磁盘相比，清除操作可以更高效地写入一系列索引值的磁盘块。</p>
+<p>当有许多受影响的行和许多要更新的辅助索引时，更改缓冲区合并可能需要几个小时。在此期间，磁盘I&#x2F;O会增加，这可能会导致磁盘绑定查询的速度显著降低。更改缓冲区合并也可能在事务提交后继续发生，甚至在服务器关闭并重新启动后也会发生</p>
+<p>在内存中，更改缓冲区占用缓冲池的一部分。在磁盘上，更改缓冲区是系统缓存的一部分，当数据库服务器关闭时，索引更改将在其中进行缓冲。</p>
+<p>如果索引包含降序索引列，或者如果主键包含降序索引列，则不支持辅助索引的更改缓冲。</p>
+<p>当对表执行INSERT, UPDATE和DELETE操作时，索引列的值（特别是辅助键的值）通常是无序的，需要大量的I&#x2F;O来更新辅助索引。当相关页不在缓冲池中时，更改缓冲区将缓存对辅助索引条目的更改，从而避免了昂贵的I&#x2F;O操作，因为它不会立即从磁盘阅读页。当页加载到缓冲池中时，将合并缓冲的更改，更新后的页稍后将刷新到磁盘。InnoDB主线程在服务器接近空闲时和缓慢关闭期间合并缓冲的更改。</p>
+<p>由于更改缓冲可以减少磁盘读取和写入，因此它对于I&#x2F;O受限的工作负载最有价值;例如，具有大量DML操作（如批量插入）的应用程序将受益于更改缓冲。</p>
+<p>但是，更改缓冲区占用了缓冲池的一部分，从而减少了可用于缓存数据页的内存。如果工作集几乎适合缓冲池，或者表的辅助索引相对较少，则禁用更改缓冲可能很有用。如果工作数据集完全适合缓冲池，则更改缓冲不会产生额外的开销，因为它只应用于不在缓冲池中的页。</p>
+<p><code>innodb_change_buffering</code>变量控制InnoDB执行更改缓冲的程度。您可以为插入、删除操作（当索引记录最初标记为删除时）和清除操作（当索引记录被物理删除时）启用或禁用缓冲。更新操作是插入和删除的组合。默认的<code>innodb_change_buffering</code>值是none</p>
+<p><code>innodb_change_buffer_max_size</code>变量允许将更改缓冲区的最大大小配置为缓冲池总大小的百分比。默认情况下，innodb_change_buffer_max_size设置为25。最大设置为50。</p>
+<p>考虑在具有大量插入、更新和删除活动的MySQL服务器上增加<code>innodb_change_buffer_max_size</code>，其中更改缓冲区合并无法跟上新的更改缓冲区条目，导致更改缓冲区达到其最大大小限制。</p>
+<p>如果MySQL服务器上的静态数据用于报告，或者如果更改缓冲区占用了太多与缓冲池共享的内存空间，导致页面比预期更快地老化，请考虑减少<code>innodb_change_buffer_max_size</code>。</p>
+<p>使用具有代表性的工作负载测试不同的设置以确定最佳配置。innodb_change_buffer_max_size变量是动态的，允许在不重启服务器的情况下修改设置。</p>
+<p>要查看监视器数据，请发出<code>SHOW ENGINE INNODB STATUS</code>语句。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">-------------------------------------</span><br><span class="line">INSERT BUFFER AND ADAPTIVE HASH INDEX</span><br><span class="line">-------------------------------------</span><br><span class="line">Ibuf: size 1, free list len 0, seg size 2, 0 merges</span><br><span class="line">merged operations:</span><br><span class="line"> insert 0, delete mark 0, delete 0</span><br><span class="line">discarded operations:</span><br><span class="line"> insert 0, delete mark 0, delete 0</span><br><span class="line">Hash table size 4425293, used cells 32, node heap has 1 buffer(s)</span><br><span class="line">13577.57 hash searches/s, 202.47 non-hash searches/s</span><br></pre></td></tr></table></figure>
+
+<h4 id="双写缓冲区"><a href="#双写缓冲区" class="headerlink" title="双写缓冲区"></a>双写缓冲区</h4><p><code>双写缓冲区</code>是一个存储区域，InnoDB在将页面写入InnoDB数据文件中的适当位置之前，将从缓冲池刷新的页面写入其中。如果在页面写入过程中出现操作系统、存储子系统或意外的mysqld进程退出，<code>InnoDB</code>可以在崩溃恢复期间从<code>doublewrite缓冲区</code>中找到页面的良好副本。</p>
+<p>虽然数据被写入两次，但双写缓冲区不需要两倍的I&#x2F;O开销或两倍的I&#x2F;O操作。数据以一个大的<code>顺序块</code>的形式写入双写缓冲区，并对操作系统进行单个<code>fsync（）</code>调用（除非innodb_flush_method设置为O_DIRECT_NO_FSYNC）。</p>
+<p>双写缓冲存储区位于双写文件中。</p>
+<p>为双写缓冲区配置提供了以下变量：</p>
+<ul>
+<li><code>innodb_doublewrite</code>变量控制是否启用双写缓冲区。它在大多数情况下默认启用。要禁用双写缓冲区，请将innodb_doublewrite设置为OFF。如果您更关心的是性能而不是数据完整性，那么可以考虑禁用双写缓冲区，例如，在执行基准测试时可能就是这种情况。</li>
+<li><code>innodb_doublewrite</code>支持DETECT_AND_RECOVER和DETECT_ONLY设置。<ul>
+<li>DETECT_AND_RECOVER设置与ON设置相同。通过此设置，双写缓冲区将完全启用，数据库页内容将写入双写缓冲区，在恢复期间将访问该缓冲区以修复不完整的页写入。</li>
+<li>使用DETECT_ONLY设置时，仅将元数据写入双写缓冲区。数据库页内容不写入双写缓冲区，恢复不使用双写缓冲区来修复不完整的页写入。此轻量级设置仅用于检测不完整的页写入。</li>
+</ul>
+</li>
+<li><code>innodb_doublewrite_dir</code>变量定义了InnoDB创建doublewrite文件的目录。如果未指定目录，则在innodb_data_home_dir目录中创建双写文件，如果未指定，则默认为data目录。</li>
+<li><code>innodb_doublewrite_files</code>变量定义了双写文件的数量，默认值为2。默认情况下，为每个缓冲池实例创建两个双写文件：刷新列表双写文件和LRU列表双写文件。刷新列表双写文件用于从缓冲池刷新列表中刷新的页面。刷新列表双写文件的默认大小是InnoDB页面大小 * 双写页面字节。innodb_doublewrite_files变量用于高级性能调优。默认设置应该适合大多数用户。</li>
+<li><code>innodb_doublewrite_pages</code>变量控制每个线程的最大双写页面数。此变量用于高级性能调整。默认值应该适合大多数用户。</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次分享了MySQL中重要的组件<code>buffer pool</code>的概念，以及设计理念，具体实现方案，采用的淘汰策略。</p>
+<p>并根据这些内容提出了一些性能优化方案。明白了缓冲池的原理及作用以后，根据这些优化方案可以更好的进行数据库的性能优化。</p>
+<p>但是，buffer pool也不是越大越好，根据需要来调整，调整以后可以进行一些测试，以测试出最适合自己业务的大小。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之Buffer Pool</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AE%9E%E7%8E%B0.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之缓冲池实现"><a href="#零基础MySQL教程原理篇之缓冲池实现" class="headerlink" title="零基础MySQL教程原理篇之缓冲池实现"></a>零基础MySQL教程原理篇之缓冲池实现</h2><p>MySQL中的<code>buffer pool(缓冲池)</code>是<code>InnoDB存储引擎</code>的重要组件，它负责在内存中管理数据库中的数据和索引的缓存。</p>
+<p>它加速了数据库的运行速度，是数据库和磁盘之间的一个中间层。如果没有缓冲池，那么所有的数据库操作都需要进行磁盘IO，有了缓冲池，就不需要频繁的IO操作了。</p>
+<p>本次我们的目标是使用<code>C++</code>实现一个缓冲池，这也是<code>CMU15445</code>这门课的<code>Project1</code>。</p>
+<p>基于<code>BusTub</code>学术数据库管理系统构建一个面向磁盘的存储管理器。在这样的存储管理器中，数据库的主要存储位置在磁盘。</p>
+<p>缓冲池负责在主内存和磁盘之间来回移动物理页面。它允许数据库管理系统支持比系统可用内存量更大的数据库。缓冲池的操作对系统其他部分是透明的。</p>
+<p>例如，系统使用其唯一标识符 <code>（ page_id_t ）</code>向缓冲池请求一个页面，它不知道这个页面是否已经在内存中，或者系统是否需要从磁盘中检索它。</p>
+<p>实现需要是线程安全的。多个线程将并发访问内部数据结构，并且必须确保它们的临界区受到<code>latches</code>的保护（在操作系统中这些被称为“锁”）。</p>
+<p>实现总共分为三个部分：</p>
+<ol>
+<li>实现LRU-K淘汰策略</li>
+<li>实现磁盘调度程序</li>
+<li>实现缓冲池管理器</li>
+</ol>
+<h3 id="实现LRU-K淘汰策略"><a href="#实现LRU-K淘汰策略" class="headerlink" title="实现LRU-K淘汰策略"></a>实现LRU-K淘汰策略</h3><p>关于LRU-K淘汰策略的一些信息可以看上一篇文章<a href="">零基础MySQL教程原理篇之缓冲池原理及实现</a></p>
+<p>本次实现主要都在这两个文件中：</p>
+<ul>
+<li>头文件<code>src/include/buffer/lru_k_replacer.h</code></li>
+<li>实现文件<code>src/buffer/lru_k_replacer.cpp</code></li>
+</ul>
+<blockquote>
+<p>LRU-K 算法会淘汰替换器中反向 k 距离最大的页帧。反向 k 距离是指当前时间戳与第 k 次先前访问的时间戳之间的时间差。少于 k 次历史访问的页帧其反向 k 距离被赋予+inf。当多个页帧具有+inf 反向 k 距离时，替换器会淘汰具有最早整体时间戳的页帧（即记录访问最久远的页帧，在所有页帧中整体上最不常被访问的页帧）。</p>
+</blockquote>
+<p><code>LRUKReplacer</code> 的最大大小与缓冲池的大小相同，因为它包含了 <code>BufferPoolManager</code> 中所有页帧的占位符。然而，在任意时刻，替换器中的所有页帧并非都被视为可被淘汰。 <code>LRUKReplacer</code> 的大小由可被淘汰页帧的数量表示。 <code>LRUKReplacer</code> 被初始化为空。只有当页帧被标记为可被淘汰时，替换器的大小才会增加。</p>
+<p>总共要实现以下方法：</p>
+<ul>
+<li>Evict(frame_id_t* frame_id):将与所有其他被跟踪的可淘汰帧相比具有最大向后k距离的帧驱逐。将<code>帧id</code>存储在输出参数中并返回 True 。如果没有可淘汰帧，则返回 False 。</li>
+<li>RecordAccess(frame_id_t frame_id)：记录给定帧 id 在当前时间戳被访问。此方法应在页面被固定在 <code>BufferPoolManager</code> 后调用。</li>
+<li>Remove(frame_id_t frame_id)：清除与帧关联的所有访问历史。此方法仅在页面被删除在 <code>BufferPoolManager</code> 时调用。</li>
+<li>SetEvictable(frame_id_t frame_id, bool set_evictable): 此方法控制帧是否可被淘汰。它还控制 <code>LRUKReplacer</code> 的大小。当您实现 <code>BufferPoolManager</code> 时，您将知道何时调用此函数。具体来说，当页面的固定计数达到 0 时，其对应的帧被标记为可淘汰，并且替换器的大小增加。</li>
+<li>Size()：该方法返回当前在 <code>LRUKReplacer</code> 中的可淘汰帧数。</li>
+</ul>
+<p>你可以假设不会内存耗尽，但你必须确保你的实现是线程安全的。</p>
+<p>以上是<code>实现要求</code>.</p>
+<p>接下来讨论一下实现的思路。关于LRU-K在数据库中的实现有一篇论文可以参考一下<a href="https://dl.acm.org/doi/pdf/10.1145/170036.170081">LRU-K</a></p>
+<p>先来看<code>RecordAccess</code>方法吧，这个方法算是比较简单的了，也是整个LRU-K算法的入口方法，因为每次访问一个page，都需要调用该方法。</p>
+<p>首先，我们可以看到在头文件中有<code>LRUKNode</code>的一个类型定义：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LRUKNode</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">LRUKNode</span><span class="params">(<span class="type">frame_id_t</span> fid)</span> : fid_(fid)&#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line">  ~<span class="built_in">LRUKNode</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">Record</span><span class="params">(<span class="type">size_t</span> timestamp)</span> -&gt; <span class="type">size_t</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">SetEvictable</span><span class="params">(<span class="type">bool</span> evictable)</span> -&gt; <span class="type">bool</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetId</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">frame_id_t</span> </span>&#123; <span class="keyword">return</span> fid_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetK</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">size_t</span> </span>&#123; <span class="keyword">return</span> k_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">GetKDistance</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">size_t</span> </span>&#123; <span class="keyword">return</span> k_distance_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">auto</span> <span class="title">IsEvict</span><span class="params">()</span> <span class="type">const</span> -&gt; <span class="type">bool</span> </span>&#123; <span class="keyword">return</span> is_evictable_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 定义比较操作符</span></span><br><span class="line">  <span class="keyword">auto</span> <span class="keyword">operator</span>==(<span class="type">const</span> LRUKNode &amp;other) <span class="type">const</span> -&gt; <span class="type">bool</span> &#123; <span class="keyword">return</span> fid_ == other.fid_; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">Print</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="comment">/** History of last seen K timestamps of this page. Least recent timestamp stored in front. */</span></span><br><span class="line">  <span class="comment">// Remove maybe_unused if you start using them. Feel free to change the member variables as you want.</span></span><br><span class="line"></span><br><span class="line">  std::list&lt;<span class="type">size_t</span>&gt; history_;  <span class="comment">//记录访问历史</span></span><br><span class="line">  <span class="type">size_t</span> k_distance_;          <span class="comment">//当前frame k distance</span></span><br><span class="line">  <span class="type">size_t</span> k_&#123;<span class="number">0</span>&#125;;</span><br><span class="line">  <span class="type">const</span> <span class="type">frame_id_t</span> fid_;      <span class="comment">// frame id</span></span><br><span class="line">  <span class="type">bool</span> is_evictable_&#123;<span class="literal">false</span>&#125;;  <span class="comment">// 是否可淘汰</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这里我们有一个List类型的<code>history_</code>用来记录这个Node的访问历史。<code>k_distance_</code>用来计算k距离。<code>fid_</code>表示这个Node的帧id，也就是<code>frame id</code>，<code>is_evictable_</code>代表是否可以被淘汰掉。</p>
+<p>因此，在我们的LRUK算法中，需要有一个地方存储这些Node，这里第一个想到的是用一个List来存储，但是，这样每次查找Node都不方便，因此，可以使用一个<code>HashMap</code>来存储，定义一个<code>node_store_</code>来进行存储,这个map的key是<code>frame id</code>，value是一个LRUKNode。我们还需要记录两个大小，一个是LRU淘汰器里面可淘汰的大小，一个是最大的大小。还有最关键的两个数据结构，我们采用两个<code>queue</code>来实现真个LRUK算法，一个<code>lru_node_queue_</code>来存储没有到达K次的节点，一个<code>lru_k_queue_</code>来存储已经到达K次的节点。</p>
+<p>因此，在<code>RecordAccess</code>方法中，我们的实现思路就是：</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果是第一次访问，继续往下。如果不是，跳到8处</li>
+<li>首先，我们需要为这个帧创建一个<code>LRUKNode</code></li>
+<li>将这个节点插入node_store_中</li>
+<li>记录本次对于这个新创建LRUKNode的访问历史</li>
+<li>根据访问次数决定放入的队列，如果小于K次，放入lru_node_queue_，否则放入lru_k_queue_</li>
+<li>如果node_store_中有这个帧，代表曾经访问过，不需要创建LRUKNode了</li>
+<li>从node_store_中取出这个LRUKNode，并记录访问历史</li>
+<li>根据访问次数决定放入的队列，如果小于K次，放入lru_node_queue_，否则放入lru_k_queue_</li>
+</ol>
+<p>这里面有一个公共的点在于，6、7步骤和9、10步骤，因此可以把这两个步骤抽取出来一个公共方法，我们暂时命名为<code>RecordHelper</code>方法。</p>
+<p>接下来看<code>SetEvictable</code>这个方法，这个方法比较简单，因为只是简单的设置一个LRUKNode的状态为<code>可以被淘汰</code>。</p>
+<p>同样的，给定一个<code>frame id</code>，我们需要先从<code>node_store_</code>中进行查询。</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果没有查询到，说明不在淘汰器中，因此直接返回错误或者不处理即可。</li>
+<li>如果查询到一个LRUKNode，从 node_store_ 中取出这个节点</li>
+<li>修改这个LRUKNode的状态</li>
+<li>更新可淘汰数量</li>
+</ol>
+<p>对于<code>Size</code>方法是最简单的，直接返回<code>可淘汰数量</code>即可。</p>
+<p>对于<code>Remove</code>方法，是要将一个节点从淘汰器中删除。</p>
+<ol>
+<li>给定一个frame id</li>
+<li>从node_store_中获取这个frame id对应的节点信息</li>
+<li>如果没有查询到，说明不在淘汰器中，因此直接返回错误或者不处理即可。</li>
+<li>如果查询到一个LRUKNode，从 node_store_ 中取出这个节点</li>
+<li>从 node_store_ 中删除这个节点</li>
+<li>因为我们维护了两个队列，因此这里要判断一下节点的K次，来决定从哪个队列中删除这个节点。</li>
+</ol>
+<p>最重要的实现就是<code>Evict</code>方法了，这个是整个算法的核心实现。实现思路如下：</p>
+<ol>
+<li>优先从 lru_node_queue_ 中淘汰</li>
+<li>如果在 lru_node_queue_ 中，则将该节点从 lru_node_queue_ 中删除，并从 node_store_ 中删除</li>
+<li>如果 lru_node_queue_ 中没有符合条件的，再从 lru_k_queue_ 中寻找</li>
+<li>如果在 lru_k_queue_ 中，则将该节点从 lru_k_queue_ 中删除，并从 node_store_ 中删除。</li>
+<li>如果两个队列中都没有可淘汰的页面，则返回 false</li>
+</ol>
+<h3 id="实现磁盘调度程序"><a href="#实现磁盘调度程序" class="headerlink" title="实现磁盘调度程序"></a>实现磁盘调度程序</h3><p><code>磁盘调度程序</code>负责读写磁盘IO，我们需要实现下面两个文件：</p>
+<ul>
+<li>src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.h</li>
+<li>src&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.cpp</li>
+</ul>
+<p>磁盘调度器可以被其他组件（在此情况下，任务#3 中的 <code>缓冲池管理器</code> ）用来排队磁盘请求，这些请求由 <code>DiskRequest</code> 结构体表示（已在 src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_scheduler.h 中定义）。磁盘调度器将维护一个后台工作线程，负责处理已排队的请求。</p>
+<blockquote>
+<p>磁盘调度器将使用一个共享队列来调度和处理 DiskRequests。一个线程会将请求添加到队列中，而磁盘调度器的工作线程会处理队列中的请求。我们在 src&#x2F;include&#x2F;common&#x2F;channel.h 中提供了一个 Channel 类来促进线程间数据的安全共享，但如果你认为有必要，也可以使用自己的实现。</p>
+</blockquote>
+<p>DiskScheduler 的构造函数和析构函数已经实现，它们负责创建和加入后台工作线程。你只需要实现以下方法:</p>
+<ul>
+<li>Schedule(DiskRequest r) : 安排 <code>DiskManager</code> 执行请求。 <code>DiskRequest</code> 结构体指定请求是读&#x2F;写操作，数据应写入&#x2F;读取的位置，以及操作的<code>page ID</code>。 <code>DiskRequest</code> 还包括一个 <code>std::promise</code> ，其值应在请求处理完成后设置为 true。</li>
+<li>StartWorkerThread() : 启动后台工作线程的方法，该方法处理计划中的请求。工作线程在 <code>DiskScheduler</code> 构造函数中创建，并调用此方法。此方法负责获取排队中的请求并将它们分派到 <code>DiskManager</code> 。记得在 <code>DiskRequest</code> 的回调中设置值，以通知请求发起人请求已完成。此方法不应在 <code>DiskScheduler</code> 的析构函数被调用之前返回。</li>
+</ul>
+<p>最后， <code>DiskRequest</code> 中的一个字段是一个 <code>std::promise</code> 。如果你不熟悉 C++ 的 <code>promise</code> 和 <code>future</code>，可以查看它们的文档。在这个项目中，它们基本上为线程提供了一个回调机制，以便线程知道它们的计划请求何时完成。要查看它们可能的使用示例，可以查看 <code>disk_scheduler_test.cpp</code> 。</p>
+<p>磁盘管理器类（ src&#x2F;include&#x2F;storage&#x2F;disk&#x2F;disk_manager.h ）负责从磁盘读取和写入页面数据。当磁盘调度器处理读或写请求时，会使用 DiskManager::ReadPage() 和 DiskManager::WritePage() 。</p>
+<p>在头文件中，已经给我们定义了一个<code>request_queue_</code>属性，这个队列是一个<code>Channel</code>类型的，是一个并发安全的类型，可以简单理解为go中的<code>Channel</code>或者是一个并发安全的队列。</p>
+<p>因此，对于<code>Schedule(DiskRequest r)</code>方法，最简单的一个做法就是我们接收到请求以后直接放入这个<code>Channel</code>中。</p>
+<ol>
+<li>直接放入<code>request_queue_</code>中</li>
+</ol>
+<p>主要的处理逻辑全部放在<code>StartWorkerThread</code>这个方法里面。这里我们首先定一个变量<code>stop_pool_</code>来表示磁盘调度程序是否可以结束，如果不结束，我们就一直循环处理即可。</p>
+<ol>
+<li>判断stop_pool_是否结束</li>
+<li>不结束，我们从request_queue_中获取一个要处理的请求。</li>
+<li>判断该请求是否有效</li>
+<li>判断请求是写请求还是读请求</li>
+<li>如果是写请求，调用<code>disk manager</code>进行写入</li>
+<li>如果是读请求，调用<code>disk manager</code>进行读取</li>
+<li>设置返回值true</li>
+</ol>
+<h3 id="实现缓冲池管理器"><a href="#实现缓冲池管理器" class="headerlink" title="实现缓冲池管理器"></a>实现缓冲池管理器</h3><p>这是最核心的一个功能了，那就是<code>缓冲池</code>的实现。</p>
+<p>缓冲池会调用<code>磁盘调度程序</code>来完成磁盘读写请求。当被明确指示执行或需要淘汰Page以腾出空间给新Page时， <code>缓冲池</code> 还可以安排脏页写入磁盘。</p>
+<p>系统中的所有内存页都由 Page 对象表示。 BufferPoolManager 不需要理解这些页面的内容。</p>
+<p>但对于作为系统开发者的你来说，重要的是要理解 Page 对象只是缓冲池中内存的容器，因此它们并不特定于某个唯一页面。也就是说，每个 Page 对象包含一个内存块， DiskManager 将使用这个内存块作为位置来复制它从磁盘读取的物理页面的内容。当 BufferPoolManager 在磁盘之间来回移动时，它会重用同一个 Page 对象来存储数据。这意味着在系统的整个生命周期中，同一个 Page 对象可能包含不同的物理页面。 Page 对象的标识符（ page_id ）会跟踪它包含的物理页面；如果 Page 对象不包含物理页面，那么它的 page_id 必须设置为 INVALID_PAGE_ID 。</p>
+<p>每个 Page 对象还维护一个计数器，用于记录有多少线程“固定”了该页。你的 BufferPoolManager 不允许释放被固定的 Page 。每个 Page 对象还跟踪它是否已变脏。在页被取消固定之前，你的工作是要记录该页是否已被修改。你的 BufferPoolManager 必须在对象被重用之前，将脏 Page 的内容写回磁盘。</p>
+<p>你的 BufferPoolManager 实现将使用在本次作业前几步中创建的 LRUKReplacer 和 DiskScheduler 类。 LRUKReplacer 将跟踪 Page 对象何时被访问，以便在必须释放一个帧以从磁盘复制新的物理页时决定要驱逐哪一个。在 BufferPoolManager 中将 page_id 映射到 frame_id 时，再次警告：STL 容器不是线程安全的。 DiskScheduler 将在 DiskManager 上调度对磁盘的读写。</p>
+<p>该实现涉及到两个文件：</p>
+<ul>
+<li>src&#x2F;include&#x2F;buffer&#x2F;buffer_pool_manager.h</li>
+<li>src&#x2F;buffer&#x2F;buffer_pool_manager.cpp</li>
+</ul>
+<p>我们需要实现下面的几个方法：</p>
+<ul>
+<li>FetchPage(page_id_t page_id)：如果没有空闲页且所有其他页都被固定，应返回 nullptr。 FlushPage 应无条件刷新页面，无论其固定状态如何。</li>
+<li>UnpinPage(page_id_t page_id, bool is_dirty)： is_dirty 参数用于跟踪页面在固定期间是否被修改。</li>
+<li>FlushPage(page_id_t page_id)</li>
+<li>NewPage(page_id_t* page_id)</li>
+<li>DeletePage(page_id_t page_id)</li>
+<li>FlushAllPages()</li>
+</ul>
+<blockquote>
+<p>这些方法的实现依赖上面的方法，建议上面的方法首先通过测试，再继续这几个方法的实现</p>
+</blockquote>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>在之前讲过了，我们缓冲池的查找是根据<code>page table</code>来查找的，因此，我们的缓冲池管理器中，需要定义一个<code>page table</code>变量，类型是一个<code>map</code>,key是一个<code>page id</code>，value是一个<code>frame id</code>，这样，我们就可以通过<code>page id</code>来找到对应的帧信息。</p>
+<p>同样的，在缓冲池管理中，我们还需要定义一个<code>page list</code>来存放所有内存中的page信息，在c++中，这通常是一个指针类型，代码中已经给出了这个变量<code>Page *pages_</code>。</p>
+<p>我们还需要使用一个list来告诉我们有哪些空闲空间。我们使用变量<code>free_list</code>来表示。</p>
+<p>在初始化的时候，假设我们有5个page的内存可以进行缓冲。那么<code>free_list</code>里面有5个大小，代表有5个page的空间，pages为空，代表这些空间没有page，page table为空。</p>
+<h4 id="FetchPage"><a href="#FetchPage" class="headerlink" title="FetchPage"></a>FetchPage</h4><p>这个方法的入参是一个<code>page id</code>，因此，我们的第一步就是通过<code>page id</code>来找到<code>frame id</code>。</p>
+<p>如果找到了，代表这个page已经在我们内存中，不需要进行磁盘IO，直接返回即可。这里如何取到Page呢，通过Pages这个数组就可以拿到了，下标是我们<code>frame id</code>。即<code>pages_[frame id]</code>就可以获取到内存中的page信息了。</p>
+<p>注意：在Page信息中，有一个<code>Pin</code>的概念，pin住也就是固定住的意思是，当前这个page有一个上层的应用在使用，也就意味着我们不能将这个page页面淘汰出内存。</p>
+<p>因此，在返回page之前，我们需要pin住这个page，可以通过Page里面的<code>pin_count</code>来完成。</p>
+<p>在<code>pin</code>住这个page以后，需要调用第一个LRU-K淘汰策略，这里需要调用两个方法<code>SetEvictable</code>告诉淘汰器我们pin住了这个页面，你不能淘汰它了。<code>RecordAccess</code>告诉淘汰器，我们使用了这个页面，请你更新它的淘汰距离。</p>
+<p>如果没有从<code>page table</code>中查找到对应的信息，说明这个page还在磁盘中，我们需要将它从磁盘中，读取到内存。</p>
+<p>首先，我们需要知道现在内存中，是否还有空间来存放page，如果没有空间了，就需要淘汰出一个空间。<br>通过<code>free_list</code>可以看到是否有空间，如果不为空，代表还有空闲的空间。那么就好办了。我们取出free list中第一个空闲空间来进行存放，取出来是一个<code>frame id</code></p>
+<p>如果没有空闲的空间了，首先，要通过<code>page table</code>来检查，是否所有的页面都pin住了，如果是，那么则只能返回<code>nullptr</code>，代表没有空间可以使用了，相当于内存耗尽。</p>
+<p>如果有页面没有被pin住，那么我们可以淘汰出一个页面，通过LRU-K算法的<code>Evict</code>方法，会告诉我们有哪个页面可以被淘汰，如果没有可以淘汰的，同样返回nullptr。</p>
+<p>接下来，我们已经拿到了一个可以使用的<code>frame id</code>，不管是从空闲空间，还是淘汰出来的。</p>
+<p>我们通过<code>pages_[frame id]</code>拿到对应的page页面，这个页面可能是一个空的，也可能是一个淘汰出来的有信息的页面。</p>
+<p>我们首先，重置page table，因为所有的信息都需要经过page table获取，我们要告诉page table，当前这个page id对应的frame id已经改变了。</p>
+<p>接下来，pin住这个页面，因为上层会使用，然后判断这个page是否有被更新，如果有，那么需要写入磁盘。</p>
+<p>接下来，更新内存中page的一些元信息，比如清空数据，设置page id，并从磁盘读取新的数据放到这个page中。</p>
+<p>最后，返回page信息。</p>
+<p>总结一下：</p>
+<ol>
+<li>通过page table使用<code>page id</code>来找到<code>frame id</code></li>
+</ol>
+<ul>
+<li>找到以后pin住，返回。</li>
+</ul>
+<ol start="2">
+<li>通过free list找到空闲的空间，如果有，转到5</li>
+<li>没有，检查是否所有页面都pin住，如果是，那么返回nullptr</li>
+<li>通过LRU-K算法淘汰出一个page以使用。</li>
+<li>修改page table</li>
+<li>pin住页面</li>
+<li>是否脏page，是的话写入磁盘</li>
+<li>更新元数据并从磁盘读取新的数据放入page</li>
+<li>返回page</li>
+</ol>
+<h4 id="NewPage"><a href="#NewPage" class="headerlink" title="NewPage"></a>NewPage</h4><p>这个方法和上面的方法几乎一样，不同之出在于这个方法是创建一个page空间供使用，因此不需要从磁盘加载数据，也不需要查看page table，因为page table一定没有。</p>
+<p>因此步骤如下：</p>
+<ol>
+<li>通过free list找到空闲的空间，如果有，转到5</li>
+<li>没有，检查是否所有页面都pin住，如果是，那么返回nullptr</li>
+<li>通过LRU-K算法淘汰出一个page以使用。</li>
+<li>修改page table</li>
+<li>pin住页面</li>
+<li>是否脏page，是的话写入磁盘</li>
+<li>更新元数据</li>
+<li>返回page</li>
+</ol>
+<h4 id="UnpinPage"><a href="#UnpinPage" class="headerlink" title="UnpinPage"></a>UnpinPage</h4><p>这个方法主要是为了<code>解除固定</code>，告诉缓冲池，这个页面上层不再使用了。以后你可以淘汰它了。</p>
+<p>这个方法的入参是一个<code>page id</code>，因此，我们的第一步就是通过<code>page id</code>来找到<code>frame id</code>。</p>
+<p>和上面不同的在于，如果没有找到，那么直接返回false就可以了，毕竟这个页面不在内存中，没有必要继续了。</p>
+<p>如果找到了，通过<code>pages</code>来获取具体的page信息，然后检查，是否pin住，如果没有被pin住，也没有必要继续了。</p>
+<p>接下来，对page的<code>pin_count</code>减1，如果只有1个上层使用它，那么减1后会变成0，代表可以淘汰，通知LRU-K算法可以淘汰它。</p>
+<p>如果有更新的话，修改page的<code>is_dirty</code>，这样的话，淘汰的时候就会写入磁盘了。</p>
+<p>总结步骤如下：</p>
+<ol>
+<li>通过page table查询，如果没有，返回false</li>
+<li>获取page具体信息</li>
+<li>查看page是否pin住，如果没有，返回false</li>
+<li>pin_count–</li>
+<li>如果pin count是0代表没有上层应用使用，通知LRU-K算法可以淘汰</li>
+<li>如果有更新，更新page的is_dirty</li>
+</ol>
+<h4 id="FlushPage"><a href="#FlushPage" class="headerlink" title="FlushPage"></a>FlushPage</h4><p><code>FlushPage</code>方法的主要作用在于将当前内存中的数据，强制输入磁盘，和淘汰的时候写入磁盘不同，这个是强制写入磁盘。或者说主动写入磁盘。</p>
+<p>同样的，如果在page table中没有查到，说明不存在内存中，直接返回false。</p>
+<p>如果查到了，那么加载page信息，调用磁盘调度来写入磁盘</p>
+<h4 id="FlushAllPages"><a href="#FlushAllPages" class="headerlink" title="FlushAllPages"></a>FlushAllPages</h4><p>这个方法不多说了，很简单，批量写入磁盘，你想的没错，你太聪明了，就是批量调用<code>FlushPage</code>即可。</p>
+<h4 id="DeletePage"><a href="#DeletePage" class="headerlink" title="DeletePage"></a>DeletePage</h4><p><code>DeletePage</code>方法的主要作用在于删除这个内存中的页面。</p>
+<p>首先，同样是查找page table，如果不在内存，返回false</p>
+<p>找到了以后，需要加载page信息，查看是否pin住，如果有程序在使用这个page，那么不能删除。</p>
+<p>如果没有pin住，那么可以进行删除了。</p>
+<p>删除分成几步：</p>
+<ul>
+<li>从page table删除</li>
+<li>放入free list</li>
+<li>从LRU-K淘汰器删除</li>
+<li>重置page内存信息</li>
+<li>释放内存空间</li>
+</ul>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次我们完成了<code>CMU15445</code>课程的Lab1，实现了一个数据库的缓冲管理器，其实这个管理器真正实现起来非常难，我这里没有说详细的锁信息，如何防止并发，如何细粒度的加锁，可以给出一些我的锁参考。</p>
+<p>最简单的当然是一个大锁锁天下，但是这样会影响性能。</p>
+<p>我划分了下面几个锁：</p>
+<ul>
+<li>PageTableLock 用来锁住page table的所有操作</li>
+<li>FreeLock 用来锁住free list的所有操作</li>
+<li>PageLock 用来锁住所有page内存的操作</li>
+</ul>
+<p>这三个锁之间是有一些嵌套关系的，整体通过<code>两阶段锁协议</code>来实现，来保证锁的安全性。以防止死锁发生。</p>
+<p>使用细粒度的锁进行性能优化以后，我在这个项目的排行榜中获得了53的名次。</p>
+<p>因为教授说过不要看别人的代码，因此我这里给出的是比较详细的实现思路。如果有同学在实现，有一些问题的话可以留言或者私信我一起讨论哦~</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>什么，你说微积分之类的太难？那是你不会用chatGPT学习模式！</title>
     <url>/AI/%E4%BB%80%E4%B9%88%EF%BC%8C%E4%BD%A0%E8%AF%B4%E5%BE%AE%E7%A7%AF%E5%88%86%E4%B9%8B%E7%B1%BB%E7%9A%84%E5%A4%AA%E9%9A%BE%EF%BC%9F%E9%82%A3%E6%98%AF%E4%BD%A0%E4%B8%8D%E4%BC%9A%E7%94%A8chatGPT%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%BC%8F%EF%BC%81.html</url>
     <content><![CDATA[<blockquote>
@@ -92,6 +1626,297 @@
       </categories>
       <tags>
         <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之SQL数据存储</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之SQL数据存储"><a href="#零基础MySQL教程原理篇之SQL数据存储" class="headerlink" title="零基础MySQL教程原理篇之SQL数据存储"></a>零基础MySQL教程原理篇之SQL数据存储</h2><p>我们知道数据库只是管理数据的，数据最终存储在磁盘上还是一些文件，那么这些文件是如何存储的呢？文件内容是什么？加载到内存以后，内存布局是什么样的？老说page,page是什么？</p>
+<h3 id="page-页"><a href="#page-页" class="headerlink" title="page(页)"></a>page(页)</h3><p>页的三个概念</p>
+<ol>
+<li>硬件上的页面(通常是4KB)</li>
+<li>操作系统上的页面(4KB,x64 2MB&#x2F;1GB)</li>
+<li>数据库页面(512B-32KB)</li>
+</ol>
+<p>磁盘和内存通信是一页一页的，如果数据都在一页里，后续的访问请求就可以走内存了，要不然还的从磁盘获取。内存中可以获取bit数据。</p>
+<p>这样做的好处就是加快获取速度，对于MySQL中的一张表来说，相邻的10行数据通常都在一页里，因此我们只产生一次IO，就可以获取到10行数据。</p>
+<p>流程：</p>
+<ul>
+<li>查询执行器：向内存中的<code>buffer pool</code>请求查询内容。</li>
+<li>buffer pool: 如果数据所在的页已经在buffer pool中，就直接返回。如果数据所在的页不在buffer pool中，就向磁盘中的<code>database file</code>请求。</li>
+<li>database file: 有页目录，还有具体的页，数据存在页中，查询页目录找到对应的页返回给<code>buffer pool</code>。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445006.png" alt="数据存储"></p>
+<p>上面的步骤操作系统本身就可以实现，比如使用<code>mmap</code>，但是操作系统是统一的动作，遇到一些问题不知道该如何处理，而<code>DBMS</code>则可以根据不同的情况做不同的处理，进行优化。像主流的<code>mysql</code>,<code>SqlServer</code>,<code>Oracle</code>都没有用<code>mmap</code>。<code>mongoDB</code>早期使用的<code>mmap</code>，后面也是用<code>WiredTiger</code>替换掉了<code>mmap</code>。</p>
+<p>MySQL自己实现的话，主要关心的两个问题:</p>
+<ol>
+<li>如何表示磁盘上文件的数据</li>
+<li>如何管理内存以及在硬盘间移动数据</li>
+</ol>
+<h4 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h4><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。或者换一个名字，大家就知道了，就是<code>存储引擎</code>。例如<code>InnoDB</code>或者<code>Myisam</code>。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe（表中的一行数据）</code>, <code>metadata（表的元数据）</code>, <code>indexes（索引）</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql</code>的<code>InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>我们这里主要介绍<code>堆存储</code></p>
+<p>堆存储</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445010.png" alt="堆存储"></p>
+<p>page header(页的元数据)</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<h4 id="页布局"><a href="#页布局" class="headerlink" title="页布局"></a>页布局</h4><h5 id="面向元组的存储"><a href="#面向元组的存储" class="headerlink" title="面向元组的存储"></a>面向元组的存储</h5><p>一般想法，直接存储，并在后面追加，比如存储张三的用户信息，然后紧跟着后面存储李四的用户信息，这就像我们平时写<code>txt</code>文件一样，不断追加。但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="页布局"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是<code>slotted pages(插槽布局)</code></p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的tuple</li>
+<li>支持可变长度的<code>tuple</code></li>
+<li>但是会产生一些碎片空间，因为太小，tuple放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p>slotted pages的样式如下，通过这样的改造，我们就可以支持可变长度的管理了。</p>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="slotted pages"></p>
+<p><code>record ID</code>表示一个tuple的物理位置,不同的DBMS有不同的名称，来表示数据的唯一位置，比如<code>postgresql</code>的<code>ctid</code>,<code>oracle</code>的<code>rowid</code>。<code>ctid</code>由<code>page id</code>和<code>slot number</code>组成。</p>
+<p><img src="https://thepatterraining.github.io/images/15445009.png" alt="009"></p>
+<p>这里要注意一点，<code>record ID</code>并不是我们表里的主键ID，主键ID代表一行数据的唯一标识，而<code>record ID</code>表示的是这一行数据存储的物理位置，这是两个东西。在MySQL中，<code>record ID</code>是不可见的。</p>
+<p>接下来，看一下<code>增删改查</code>的操作。</p>
+<p>插入新的tuple的时候，也就是执行insert语句的时候。</p>
+<ol>
+<li>检查<code>page direactory</code>,找到一个page里面有空的可用的<code>slot(插槽位置)</code></li>
+<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存，这需要一次读IO</li>
+<li>在page里面检查slot array，找到一个空的空间，将tuple插入</li>
+</ol>
+<p>更新tuple的时候</p>
+<ol>
+<li>检查page direactory,找到tuple对应的page</li>
+<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存</li>
+<li>在page里面通过<code>slot array</code>获取tuple的偏移量</li>
+<li>如果数据空间合适，那么直接覆盖该tuple，否则，将原来的tuple标记为<code>已删除</code>，并将新tuple插入其他page。</li>
+</ol>
+<p>因此更新的时候有一些问题</p>
+<ul>
+<li>page会产生碎片空间，如果有一个空闲空间是1KB的，但是每次插入的数据都放不下，那么这1KB空间就一直都没办法使用了。</li>
+<li>更新的时候需要从磁盘获取整个page,也就是说，哪怕你就更新一行数据，他也会读取一页数据出来。</li>
+<li>更新多条数据的时候，可能多个tuple在多个page中，产生随机IO，如果你更新的数据不在一起，就会产生多次IO加载多个page。</li>
+</ul>
+<p>所以有些DBMS不能更新数据，只能增加数据，比如<code>HDFS</code>等</p>
+<p>MySQL使用的就是<code>面向元组的存储</code>，除了这个，其实还有<code>日志结构化存储</code>和<code>面向索引的存储</code>。</p>
+<h4 id="行布局"><a href="#行布局" class="headerlink" title="行布局"></a>行布局</h4><p><code>tuple</code>就是一行数据，也就是一堆<code>bit</code>，<code>DBMS</code>解释他们的作用。里面包含</p>
+<ul>
+<li>header</li>
+<li>data</li>
+</ul>
+<p>首先看看行数据是怎么表示的</p>
+<h5 id="数据布局"><a href="#数据布局" class="headerlink" title="数据布局"></a>数据布局</h5><p>假设我们有一个数据表<code>foo</code>，有id和value字段如下：</p>
+<ul>
+<li>id int类型 primary key</li>
+<li>value bigint类型</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445011.png" alt="数据布局"></p>
+<p>我们每一行的数据和上面的图一样，最前面是这一行的<code>header</code>，然后就是一些字段了，比如id、value，然后后面在跟着下一行数据的<code>header</code>，以此类推。</p>
+<h5 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h5><p>现代CPU是64位对齐，创建表以后，<code>DBMS</code>会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><code>数据对齐</code>是可以直接对MySQL起到优化作用的，尤其是数据量大的时候，但是很多人都忽视了这一点，比如同样一行数据，如果有4个字段，分别是32位的id，64位的cdate，16位的color和32位的zipcode</p>
+<p>那么占用空间如下：</p>
+<ul>
+<li>id: 32位，但是会占用64位，因为下一个是64位，所以会插入一个32位的空白进行64位对齐</li>
+<li>cdate: 64位</li>
+<li>zipcode：32位，但是会占用64位因为要64位对齐</li>
+</ul>
+<p>上面的实际占用空间达到了 64 + 64 + 64 &#x3D; 192位空间</p>
+<p>而如果我们稍微改变一下顺序呢？</p>
+<ul>
+<li>id: 32位</li>
+<li>zipcode：32位</li>
+<li>cdate：64位</li>
+</ul>
+<p>这样以来，我们就只占用了 64 + 64 &#x3D; 128位空间，节省了64位空间，在数据量大的情况下，就意味着一页可以放更多的行数据，因此查询的IO次数就会减少。</p>
+<h5 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h5><p>可变长度的数据<code>varchar</code>,<code>varbinary</code>,<code>text</code>,<code>blob</code>,他们的长度存在header里面。</p>
+<p>日期时间类型存储的是时间戳。</p>
+<p>float&#x2F;real&#x2F;double: 是浮点数，cpu支持浮点数运算，优点是速度快，但是会精度缺失<br>decimal: 是定点数，运算速度慢，但是精度高。</p>
+<p>对于一些很大的数据，比如text,blob，应该避免使用这种类型，有可能一行就占用了一半的page空间，因此，不会在page里直接存储这些数据，而是采用了<code>overflow page</code>的方式。</p>
+<ul>
+<li>tuple中存储另外一个page页的指针，将具体数据存放到另外一个page页中。</li>
+<li>postgresql中叫<code>toast</code>，如果数据大于2KB，就会放到toast中，tuple中只存储指针。</li>
+<li>mysql中叫<code>overflow page</code>，如果数据大于1&#x2F;2的page大小，就会放进去，tuple中只存储指针。</li>
+</ul>
+<p>我们应该避免使用这些类型，因为维护<code>overflow page</code>很麻烦。</p>
+<p>外部存储</p>
+<ul>
+<li>tuple中存储指向外部文件的指针或者文件地址。</li>
+</ul>
+<p>NULL存储</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<blockquote>
+<p>所以大家知道为什么 NULL !&#x3D; NULL 了吗？</p>
+</blockquote>
+<p><code>catalogs</code> 用来存储数据库元信息，大多数数据库将这些信息存到一张表里面,下面的都是元数据。</p>
+<ul>
+<li>表，字段，索引，视图等</li>
+<li>用户，权限，安全等</li>
+<li>内部数据统计等</li>
+<li><code>infomation schemal api</code> 通过这个来获取catalogs信息<ul>
+<li>mysql<ul>
+<li>show tables 获取所有的表</li>
+<li>describe table_name 获取表的信息</li>
+</ul>
+</li>
+<li>postgresql<ul>
+<li>\d or \d+ 获取所有的表</li>
+<li>\d table_name 获取表信息</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="数据库压缩"><a href="#数据库压缩" class="headerlink" title="数据库压缩"></a>数据库压缩</h3><p>目标1：必须产生固定长度的值<br>目标2：在查询期间尽可能推迟解压缩，你不希望先解压缩在查询，这样很占空间且影响速度<br>目标3：必须是无损方案</p>
+<p>压缩粒度</p>
+<ul>
+<li>Block-level: 压缩同一张表的tuple</li>
+<li>Tuple-level: 压缩整个tuple的内容（仅限行存储）</li>
+<li>Attribute-level：压缩同一个tuple的多个属性或单个属性</li>
+<li>Column-level：压缩存储于多个tuple中的一个或多个属性的多个值（仅限列存储）</li>
+</ul>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="mysql innodb 压缩"></p>
+<h4 id="Column-level-压缩算法"><a href="#Column-level-压缩算法" class="headerlink" title="Column-level 压缩算法"></a>Column-level 压缩算法</h4><h5 id="run-length-encoding"><a href="#run-length-encoding" class="headerlink" title="run length encoding"></a>run length encoding</h5><p>将单个column中的相同值压缩成三元组，需要对列进行智能排序，以最大限度地提高压缩机会。</p>
+<ul>
+<li>属性的值</li>
+<li>column segment的起始位置</li>
+<li>值的数量</li>
+</ul>
+<p>比如下面的数据，将压缩成右边的数据，(Y,0,3)，代表值是Y，起始位置0,值的数量有3个。后面的压缩数据是一样的。这种压缩方法可以快速计算count的数量等。</p>
+<p>如果你的值类型很少，且有序，那么将大大减少空间占用。</p>
+<p><img src="https://thepatterraining.github.io/images/15445017.png" alt="run length encoding"></p>
+<h5 id="bit-packing"><a href="#bit-packing" class="headerlink" title="bit packing"></a>bit packing</h5><p>如果字段里面的值都比较小，但是column type很大，可以忽略掉不需要的bit，比如int是32 bit，但是里面的值都很小，用不了这么多，就可以忽略他们。</p>
+<p><img src="https://thepatterraining.github.io/images/15445018.png" alt="bit packing"></p>
+<h5 id="bit-map-encoding"><a href="#bit-map-encoding" class="headerlink" title="bit map encoding"></a>bit map encoding</h5><p>使用bit map来标识数据值，仅仅适用于值的类型比较少的。</p>
+<p><img src="https://thepatterraining.github.io/images/15445019.png" alt="bit map encoding"></p>
+<h5 id="delta-encoding"><a href="#delta-encoding" class="headerlink" title="delta encoding"></a>delta encoding</h5><p>找到一个基本的数据，以它为基础，进行压缩，+1，-1这种。再将其按照<code>run length encoding</code>的方式压缩，可以再次节省空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445020.png" alt="delta encoding"></p>
+<h5 id="DICTIONARY-COMPRESSION"><a href="#DICTIONARY-COMPRESSION" class="headerlink" title="DICTIONARY COMPRESSION"></a>DICTIONARY COMPRESSION</h5><p>按照字典将数据进行映射，并存储，这样可以节省空间，如果在字典映射的时候还能先排序，那么还可以完成将<code>where like &#39;and%&#39;</code>转成<code>where between 10 and 20</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/15445021.png" alt="DICTIONARY COMPRESSION"></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次讲解了数据库是如何存储数据的，数据布局是什么样子的，更是讲解了一些优化方法，比如<code>数据压缩</code>、<code>数据对齐</code>。如果你不理解原理的话，面试的时候你就只能背八股答出来网上千篇一律的回答了。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>零基础MySQL教程原理篇之优化器原理解析</title>
+    <url>/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E4%BC%98%E5%8C%96%E5%99%A8%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。</p>
+<p>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之优化器原理解析"><a href="#零基础MySQL教程原理篇之优化器原理解析" class="headerlink" title="零基础MySQL教程原理篇之优化器原理解析"></a>零基础MySQL教程原理篇之优化器原理解析</h2><p><code>MySQL</code>优化应该是一个<code>面试</code>必考的问题了，也是一个老生常谈的问题。</p>
+<p>10个面试里面至少有9个面试会问你，你怎么优化SQL性能？</p>
+<p>本文将从MySQL原理层面出发，告诉你如何优化，为何要这么做。</p>
+<h2 id="查询计划"><a href="#查询计划" class="headerlink" title="查询计划"></a>查询计划</h2><p>假设有以下sql，其中<code>Emp</code>表有<code>10000</code>个records, <code>1000</code>个pages, <code>Dept</code>表有<code>500</code>个records, <code>50</code>个pages</p>
+<ul>
+<li>对于Emp表来说，代表一个page里面有10行记录</li>
+<li>对于Dept表来说，也同样一个page里面有10行记录</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> ename <span class="keyword">from</span> Emp E <span class="keyword">join</span> Dept D <span class="keyword">on</span> E.did <span class="operator">=</span> D.did <span class="keyword">where</span> D.dname <span class="operator">=</span> <span class="string">&#x27;Toy&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个SQL的功能相信都知道，就是一个简单的连表查询，那么想要优化，我们首先要知道，这个SQL会怎么执行呢？</p>
+<p>数据库实际上会构建出一个<code>执行树</code>，按照这个执行树来执行。他还有另一个名字，也就是<code>查询计划</code>。</p>
+<p>查询计划实际上就是会输出这个执行树。</p>
+<p><img src="https://thepatterraining.github.io/images/15445040.png" alt="执行树"></p>
+<p>每个DBMS的输出都不太一样，比如MySQL的查询计划其实和树很难联系起来。</p>
+<p>但是如果你使用<code>PostgreSQL</code>的话，就能明显看出来了。</p>
+<p>如果按照上述的执行树来执行，步骤如下：</p>
+<ol>
+<li>先关联Emp表和Dept表进行查询，这一步对于两个表都是全表扫描，大约产生（50 + 50000）个读IO和<code>1000000</code>个写IO</li>
+<li>执行<code>on E.did = D.did</code>，这一步会筛选出符合这个条件的数据，大约产生<code>1000000</code>个读IO和2000个写入IO</li>
+<li>执行<code>where D.dname = &#39;Toy&#39;</code>，这一步会筛选出Dept表中dname字段是Toy的数据，大约产生2000个读IO和4个写入IO</li>
+<li>最后执行<code>select distinct ename</code>，取出每一行中的ename字段并且去重，产生4个读IO和1个写入IO</li>
+</ol>
+<p>好了，到这里，MySQL就执行结束了，这时候就会输出最终结果了。</p>
+<p>可以看到，IO次数非常多，大家都知道，磁盘IO是一个非常慢的操作，这么多次IO，这个SQL怎么会快呢？</p>
+<p>上面使用的<code>JOIN</code>方式比较简单粗暴，因此，我们可以将这个替换成另外一个执行方式.</p>
+<p>上面是<code>笛卡尔积</code>的执行方式，我们可以换成JOIN代数的方式。</p>
+<p>对于我们的SQL来说，是没有变化的，但是对于MySQL的执行方式来说，是不一样的。</p>
+<p>为什么JOIN代数比笛卡尔积快呢？因为JOIN是把第1-2两步合并到一起执行了，因此执行速度要快的多。</p>
+<p><img src="https://thepatterraining.github.io/images/15445044.png" alt="JOIN代数执行"></p>
+<p>对于JOIN来说，其实是有不同的<code>执行算法</code>在里面的，具体的执行算法，在原理篇中也会讲到。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>掌握MySQL崩溃恢复不仅能提高您的数据库管理技能，还能为您的职业发展提供坚实的基础。希望这篇文章能帮助您在面对数据库崩溃时保持冷静，并迅速恢复数据。记住，数据安全是数据库管理的核心，定期备份和监控是确保数据安全的重要手段。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -475,7 +2300,7 @@
       </tags>
   </entry>
   <entry>
-    <title>分布式MapReduce系统设计与实现</title>
+    <title>为什么分布式计算框架都逃不出MapReduce的“影子”？3个进化方向你必须看懂</title>
     <url>/mit6.824/MapReduce%E5%88%B0%E5%BA%95%E5%9D%91%E5%9C%A8%E5%93%AA%EF%BC%9FSpark%E3%80%81Storm%E3%80%81Flink%E9%83%BD%E5%9C%A8%E8%A1%A5%E5%95%A5%EF%BC%9F.html</url>
     <content><![CDATA[<blockquote>
 <p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
@@ -999,7 +2824,6 @@
 
 <h4 id="2-渐进式技术升级路径"><a href="#2-渐进式技术升级路径" class="headerlink" title="2. 渐进式技术升级路径"></a>2. 渐进式技术升级路径</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">第一阶段：JDBC基础</span><br><span class="line">├─ 掌握数据库连接管理</span><br><span class="line">├─ 理解SQL执行过程</span><br><span class="line">└─ 学会异常处理和资源管理</span><br><span class="line"></span><br><span class="line">第二阶段：MyBatis进阶</span><br><span class="line">├─ 掌握XML映射配置</span><br><span class="line">├─ 理解动态SQL构建</span><br><span class="line">└─ 学会结果集映射</span><br><span class="line"></span><br><span class="line">第三阶段：MyBatis Plus高效</span><br><span class="line">├─ 掌握注解和条件构造器</span><br><span class="line">├─ 学会代码生成和插件使用</span><br><span class="line">└─ 理解高级特性和最佳实践</span><br></pre></td></tr></table></figure>
 
-<hr>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过本教程的学习，你已经全面掌握了MySQL在Java应用中的三种主要使用方式。从底层的JDBC到灵活的MyBatis，再到高效的MyBatis Plus，每种技术都有其独特的优势和适用场景。</p>
 <h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
@@ -2987,7 +4811,7 @@
   </entry>
   <entry>
     <title>MySQL零基础教程高阶应用实战</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E9%AB%98%E9%98%B6%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98.html</url>
     <content><![CDATA[<blockquote>
 <p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
 </blockquote>
@@ -3280,7 +5104,7 @@
   </entry>
   <entry>
     <title>MySQL零基础教程增删改查实战</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5.html</url>
     <content><![CDATA[<blockquote>
 <p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
 </blockquote>
@@ -3430,7 +5254,7 @@
   </entry>
   <entry>
     <title>MySQL零基础教程索引设计实战</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
     <content><![CDATA[<blockquote>
 <p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
 </blockquote>
@@ -4601,7 +6425,7 @@
   </entry>
   <entry>
     <title>chatGPT可以生成图片啦</title>
-    <url>/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html</url>
+    <url>/AI/chatGPT%E5%8F%AF%E4%BB%A5%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E5%95%A6.html</url>
     <content><![CDATA[<h1 id="OpenAI发布新文生图模型，免费、逼真到难以分辨"><a href="#OpenAI发布新文生图模型，免费、逼真到难以分辨" class="headerlink" title="OpenAI发布新文生图模型，免费、逼真到难以分辨"></a>OpenAI发布新文生图模型，免费、逼真到难以分辨</h1><p>25年3月底，OpenAI进行了技术直播，对GPT-4o和Sora进行了重大更新，提供了全新文生图（Text-to-Image）模型。</p>
 <p>除了文生图之外，该模型还支持自定义操作、连续发问、风格转换、图像PPT等超实用功能，例如，更改图片的宽高比、图像物体中的角度，用十六进制代码指定精确颜色等。</p>
 <p>尤其是生成图像的逼真度，肉眼几乎看不出任何破绽，在精细度、细节和文本遵循方面非常出色，可以媲美甚至在某些功能超过该领域的头部平台Midjourney。</p>
@@ -4663,178 +6487,6 @@
       <tags>
         <tag>AI</tag>
         <tag>ChatGPT</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL零基础教程表设计实战</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
-    <content><![CDATA[<blockquote>
-<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
-</blockquote>
-<blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
-</blockquote>
-<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
-<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
-<h2 id="表设计"><a href="#表设计" class="headerlink" title="表设计"></a>表设计</h2><p>表设计可以聊的点其实是比较多的，这个也比较看具体的业务、流量等。</p>
-<p>比如，某一个字段是否应该放在这张表里？一张表里应该有哪些字段？如何设计字段类型？</p>
-<p>甚至于，如何设计字段的顺序？</p>
-<p>这里很多人不知道的一个点在于，字段的顺序也会影响性能，至于为什么，这个就偏低层一些了，下面会讲到。</p>
-<p>想要做表设计，那你首先需要知道<code>表</code>是什么，所以我们先来看看表到底是什么东西。</p>
-<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
-<p>还有的人说，表就是一行一行数据组成的。</p>
-<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
-<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
-<p>接下来进行揭秘吧！</p>
-<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
-<p>比如MySQL数据库的存储引擎，常用的就是<code>InnoDB</code>存储引擎了，他就是负责干这个事情的。</p>
-<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
-<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
-<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
-<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
-<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
-<ul>
-<li>堆存储</li>
-<li>树存储</li>
-<li>有序文件存储（ISAM）</li>
-<li>hashing文件存储</li>
-</ul>
-<p>像MySQL数据库使用的就是堆存储的方式了，所以我们主要看一下什么是堆存储。</p>
-<p>堆存储具有以下特点：</p>
-<ul>
-<li>无序的，保存的顺序和存储的顺序无关。</li>
-<li>需要读写page</li>
-<li>遍历所有的page</li>
-<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
-<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
-</ul>
-<p>page directory：说白了就是目录，记录了一些映射关系，在代码里面其实就是个Map。</p>
-<ul>
-<li>存储page ID和所在位置的关系</li>
-<li>存储page的空闲空间信息</li>
-</ul>
-<p>大体结构如图所示：<br><img src="https://thepatterraining.github.io/images/15445010.png" alt="010"></p>
-<p>page header：每个page里面都有一段空间用来存储这个page的一些相关信息，这段空间就叫做page header。</p>
-<ul>
-<li>page 大小</li>
-<li>checksum 校验和</li>
-<li>DBMS版本信息</li>
-<li>事务可见性</li>
-<li>压缩信息</li>
-</ul>
-<p>看到这里，其实你就明白了，我们在聊索引的时候，很多时候会说索引的叶子节点是一个page。不知道大家当时有没有疑问，这个page到底是什么？</p>
-<p>在这里我就给你讲明白，这个page到底是个什么东西。</p>
-<p>每个page里面除了包含<code>page header</code>以外，就是<code>page data</code>了。</p>
-<p>这些page里面的数据就是我们能看到的一行行的数据。</p>
-<p>我们通常称这样按照一行行数据来存储的数据库叫做<code>行式数据库</code>。比如MySQL就是。</p>
-<p>除此之外还有一些按照一列列数据存储的<code>列式数据库</code>。</p>
-<h3 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h3><p>我们在做表设计的时候还会考虑到字段的类型，那么如何选择类型呢？</p>
-<p>这些类型的底层存储有什么区别？</p>
-<p>上面我们已经知道了一个page里面存储了一行行的数据。那么一行数据是多长呢？</p>
-<p>这个一行数据的长度自然就是这一行数据所有字段长度的总和了。</p>
-<p>字段的长度分为两种类型</p>
-<ul>
-<li>固定长度的字段</li>
-<li>可变长度的字段</li>
-</ul>
-<p>固定长度的字段有下面这些：</p>
-<ul>
-<li>Int：整型，当然了这里也包括<code>TinyInt</code>、<code>SmallInt</code>、<code>BigInt</code>等。不同长度的Int类型只是所占的字节数不一样而已。</li>
-<li>Char：字符型，Char类型就是个字符串，你创建的时候给了多长，就是一个多长的字符串。</li>
-<li>Decimal：定点小数，也是最常用的小数类型。虽然运算速度慢一些，但是精度高。Flout和Double虽然也是小数，运算速度快但是会有精度丢失的问题。</li>
-<li>Date：时间类型，包括<code>DateTime</code>、<code>Time</code>等。固定长度用来存储时间。TimeStamp类型已经快要达到上限了，不要再使用了。</li>
-</ul>
-<p>可变长度的字段有下面这些，他们的长度会存储在header里面：</p>
-<ul>
-<li>Varchar: 可变的字符串类型，存储时只占用实际需要的字节数，对比Char类型而言，更加节省空间。</li>
-<li>VarBinary: 可变长度的二进制字符串类型，类似于 VARCHAR，但存储的是二进制数据。</li>
-<li>Text：可变长度的长文本类型，存储时占用的字节数取决于实际内容。</li>
-<li>BLOB：可变长度的二进制数据类型，存储时占用的字节数取决于实际内容。</li>
-</ul>
-<p>表设计中尤其要注意的几点：</p>
-<blockquote>
-<p>不要去使用TimeStamp类型了，使用DateTime或者Bigint来存储时间。<br>其次，避免去使用Flout和Double类型，而是使用Decimal来存储小数，或者使用Int类型来存储。<br>避免使用大值存储，比如Text和blob类型，而是使用Varchar来代替。</p>
-</blockquote>
-<p>通常说的<code>大值(large values)</code>也就是里面存储的内容过多。</p>
-<p>比如我们有一个字段是Text类型，这个字段的数据非常大，占据了Page的一半，再加上其他的数据，那么我们一个Page里面只能存储一行数据了，Page里面剩下的空间就会浪费掉了。</p>
-<p>对于这种情况，数据库的设计者也考虑到了，所以他们实际存储的是一个指针，这个指针指向另外一个Page页面。将这个字段的内容存储到另外一个单独的Page里面。这个单独的Page页面叫做<code>Overflow Page</code>。</p>
-<p>虽然这样解决了上面的问题，但是也引入了新的复杂度，比如对于这个额外的Page页面的维护管理。</p>
-<p>NULL存储，表设计中还有重要的一点处理就是NULL值，因此我们通常把字段设置为NOT NULL类型来避免NULL值。因为NULL值有如下问题：</p>
-<ul>
-<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
-<li>列数据库通常使用占位符来标识NULL</li>
-<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
-<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
-</ul>
-<h4 id="page是什么样子的"><a href="#page是什么样子的" class="headerlink" title="page是什么样子的"></a>page是什么样子的</h4><p>上面我们讲完了一行数据是什么样子的，那么一个Page里面又是什么样子的呢？</p>
-<p>一般想法，就是一行贴着一行直接存储，新的行数据直接在后面追加，但是对于可变数据长度很难管理。</p>
-<ul>
-<li>记录page数，也就是page内部可插入的偏移量</li>
-<li>一个一个tupe按照顺序存储</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="007"></p>
-<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
-<ul>
-<li>slotted pages<ul>
-<li>slot array 存储插槽信息的偏移量，通过他找到对应的行数据</li>
-<li>支持可变长度的行数据</li>
-<li>但是会产生一些碎片空间，因为太小，一行数据放不下。</li>
-<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="008"></p>
-<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
-<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="016"></p>
-<h4 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h4><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
-<p><img src="https://thepatterraining.github.io/images/15445012.png" alt="012"></p>
-<p>还记得我们上面说过的吗，字段的顺序也是会影响性能的，如果你的字段顺序能满足数据对齐的要求，那么就可以避免空间的浪费，同一个page里面就可以存储更多的行数据，也就意味着我们每次获取一个page的时候，能从磁盘拿到更多的数据，因此我们获取大量数据的时候，IO次数就会减少，从而起到提升性能的效果。</p>
-<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>表设计要考虑的其实是比较多的，相信你看完上面的内容，对于如何设计表，应该有了一些自己的方法论。</p>
-<p>这里再讲一下实战中需要注意的事情吧。</p>
-<p>再开始设计表之前，我们肯定要先分析需求，然后才能知道我们需要存储哪些数据。</p>
-<p>比如，我们要做一个招聘网站，那么我们需要存储发布的职位信息。</p>
-<p>职位信息都放到一个表里面吗？</p>
-<p>职位信息其实还挺多的，不光是常见的职位名称、职位JD。还会涉及到比如职级信息、工资信息、面试轮次，是否支持视频面试、学历要求、学校要求、工作经历要求大厂等。</p>
-<p>这里面有一个冷热数据的概念。</p>
-<p>比如说，有一部分信息是经常要查询的，比如职位名称、学历要求、工作年限要求、工资、公司信息、招聘人头像、名称、标签等。</p>
-<p>首先、这些数据肯定放在多个表里面的，比如招聘人头像、名称是用户表的数据、标签信息是标签表的数据、公司信息是公司表的数据。但是其中职位名称、学历要求、工作年限、工资是属于职位的基本信息。而且是在职位列表、IM聊天中的职位卡片、职位详情、职位浏览、职位收藏等多个维度高曝光的职位信息。</p>
-<p>那么就代表这些职位信息属于热数据，会被经常一起查询。因此他们放到一个表里面是没有问题的。</p>
-<p>剩下的职位信息我们可以分成两类。</p>
-<ol>
-<li>在职位详情页面首屏展示的内容或者一些强依赖的内容，这些数据也可以和上面的放在一个表里面。</li>
-<li>一些其他不经常查询的数据，这些数据可以放在另外一个表里面。</li>
-</ol>
-<p>这样的话，每次查询热数据的时候从第一张职位信息表获取，查询到的page里面都是包含的有用的信息，就可以减少IO次数。</p>
-<p>因此，我们可以设计两个表来存储职位信息。</p>
-<ul>
-<li>职位信息表：存储职位的主要数据、热数据、提升查询速度。</li>
-<li>职位扩展信息表：存储职位的次要数据、冷数据、只在需要的时候进行查询。</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>授人以鱼不如授人以渔</code>，相信经过上面的学习，你已经具备了一定的表设计的能力了。</p>
-<p>这里讲的主要是表的设计，而不是整个数据的设计。因为还缺少了一些，比如索引该如何设计？</p>
-<p>如何保证大量数据的查询？</p>
-<p>其实对于MySQL来说上索引以后就可以查询百万级的数据了，但是对于非常要求速度和更高量级的数据而言。还可以使用一些其他的方法，比如使用列式数据库来进行查询。</p>
-<p>这样的话可能还会涉及数据同步、数据清洗等等。</p>
-<p>相信你学完我的整个系列以后、对于更高量级的数据设计也会有一定的经验的。</p>
-<p>如果在面试中遇到类似的问题，你也可以游刃有余的回答面试官。</p>
-<p>在学习的过程中，我们也要做到<code>知其然也知其所以然</code>。</p>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
-</blockquote>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
-]]></content>
-      <categories>
-        <category>mysql</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据库原理</tag>
-        <tag>sql</tag>
-        <tag>mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -6041,13 +7693,13 @@
 <li>XLen：如果Follower在对应位置没有Log，那么XTerm会返回-1，XLen表示空白的Log下标。</li>
 </ul>
 <p>场景1:S1服务器是Follower，没有任期6的Log，只有任期4、5的Log。</p>
-<p>[tu11]</p>
+<p><a href="../images/6824/2-11.png">tu11</a></p>
 <p>S1服务器会返回XTerm&#x3D;5，XIndex&#x3D;2。S2服务器发现自己没有任期5的日志，它会将自己本地记录的，S1的nextIndex设置到XIndex，也就是S1中，任期5的第一条Log对应的槽位号。所以，如果Leader完全没有XTerm的任何Log，那么它应该回退到XIndex对应的位置（这样，Leader发出的下一条AppendEntries就可以一次覆盖S1中所有XTerm对应的Log）。</p>
 <p>场景2：S1收到了任期4的旧Leader的多条Log，但是作为新Leader，S2只收到了一条任期4的Log。所以这里，我们需要覆盖S1中有关旧Leader的一些Log。</p>
-<p>[tu12]</p>
+<p><a href="../images/6824/2-12.png">tu12</a></p>
 <p>S1服务器会返回XTerm&#x3D;4，XIndex&#x3D;1。S2服务器发现自己其实有任期4的日志，它会将自己本地记录的S1的nextIndex设置到本地在XTerm位置的Log条目后面，也就是槽位2。下一次Leader发出下一条AppendEntries时，就可以一次覆盖S1中槽位2和槽位3对应的Log</p>
 <p>场景3: S1与S2的Log不冲突，但是S1缺失了部分S2中的Log。</p>
-<p>[tu13]</p>
+<p><a href="../images/6824/2-13.png">tu13</a></p>
 <p>S1服务器会返回XTerm&#x3D;-1，XLen&#x3D;2。这表示S1中日志太短了，以至于在冲突的位置没有Log条目，Leader应该回退到Follower最后一条Log条目的下一条，也就是槽位2，并从这开始发送AppendEntries消息。槽位2可以从XLen中的数值计算得到。</p>
 <p>提问：这里是线性查找，可以使用类似二分查找的方法进一步加速吗？</p>
 <blockquote>
@@ -6133,8 +7785,180 @@
       </tags>
   </entry>
   <entry>
+    <title>MySQL零基础教程表设计实战</title>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%AE%9E%E6%88%98.html</url>
+    <content><![CDATA[<blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习，有基础的可以跳到后面的原理篇学习。<br>基础概念和SQL已经更新完成。</p>
+<p>接下来是应用篇，应用篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="表设计"><a href="#表设计" class="headerlink" title="表设计"></a>表设计</h2><p>表设计可以聊的点其实是比较多的，这个也比较看具体的业务、流量等。</p>
+<p>比如，某一个字段是否应该放在这张表里？一张表里应该有哪些字段？如何设计字段类型？</p>
+<p>甚至于，如何设计字段的顺序？</p>
+<p>这里很多人不知道的一个点在于，字段的顺序也会影响性能，至于为什么，这个就偏低层一些了，下面会讲到。</p>
+<p>想要做表设计，那你首先需要知道<code>表</code>是什么，所以我们先来看看表到底是什么东西。</p>
+<h3 id="表是什么？"><a href="#表是什么？" class="headerlink" title="表是什么？"></a>表是什么？</h3><p>有的人会说，表就是Navicat上看到的一张表呗，还能是什么啊？</p>
+<p>还有的人说，表就是一行一行数据组成的。</p>
+<p>其实说的都对，但是这是<code>逻辑</code>上的表，也就是mysql给我们展现出来的表。</p>
+<p>大家有没有想过，表的物理形式是什么，msyql如何将它转化成逻辑上的表方便我们查看呢？</p>
+<p>接下来进行揭秘吧！</p>
+<h3 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h3><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。</p>
+<p>比如MySQL数据库的存储引擎，常用的就是<code>InnoDB</code>存储引擎了，他就是负责干这个事情的。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe</code>, <code>metadata</code>, <code>indexes</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql的InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>像MySQL数据库使用的就是堆存储的方式了，所以我们主要看一下什么是堆存储。</p>
+<p>堆存储具有以下特点：</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory：说白了就是目录，记录了一些映射关系，在代码里面其实就是个Map。</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p>大体结构如图所示：<br><img src="https://thepatterraining.github.io/images/15445010.png" alt="010"></p>
+<p>page header：每个page里面都有一段空间用来存储这个page的一些相关信息，这段空间就叫做page header。</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<p>看到这里，其实你就明白了，我们在聊索引的时候，很多时候会说索引的叶子节点是一个page。不知道大家当时有没有疑问，这个page到底是什么？</p>
+<p>在这里我就给你讲明白，这个page到底是个什么东西。</p>
+<p>每个page里面除了包含<code>page header</code>以外，就是<code>page data</code>了。</p>
+<p>这些page里面的数据就是我们能看到的一行行的数据。</p>
+<p>我们通常称这样按照一行行数据来存储的数据库叫做<code>行式数据库</code>。比如MySQL就是。</p>
+<p>除此之外还有一些按照一列列数据存储的<code>列式数据库</code>。</p>
+<h3 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h3><p>我们在做表设计的时候还会考虑到字段的类型，那么如何选择类型呢？</p>
+<p>这些类型的底层存储有什么区别？</p>
+<p>上面我们已经知道了一个page里面存储了一行行的数据。那么一行数据是多长呢？</p>
+<p>这个一行数据的长度自然就是这一行数据所有字段长度的总和了。</p>
+<p>字段的长度分为两种类型</p>
+<ul>
+<li>固定长度的字段</li>
+<li>可变长度的字段</li>
+</ul>
+<p>固定长度的字段有下面这些：</p>
+<ul>
+<li>Int：整型，当然了这里也包括<code>TinyInt</code>、<code>SmallInt</code>、<code>BigInt</code>等。不同长度的Int类型只是所占的字节数不一样而已。</li>
+<li>Char：字符型，Char类型就是个字符串，你创建的时候给了多长，就是一个多长的字符串。</li>
+<li>Decimal：定点小数，也是最常用的小数类型。虽然运算速度慢一些，但是精度高。Flout和Double虽然也是小数，运算速度快但是会有精度丢失的问题。</li>
+<li>Date：时间类型，包括<code>DateTime</code>、<code>Time</code>等。固定长度用来存储时间。TimeStamp类型已经快要达到上限了，不要再使用了。</li>
+</ul>
+<p>可变长度的字段有下面这些，他们的长度会存储在header里面：</p>
+<ul>
+<li>Varchar: 可变的字符串类型，存储时只占用实际需要的字节数，对比Char类型而言，更加节省空间。</li>
+<li>VarBinary: 可变长度的二进制字符串类型，类似于 VARCHAR，但存储的是二进制数据。</li>
+<li>Text：可变长度的长文本类型，存储时占用的字节数取决于实际内容。</li>
+<li>BLOB：可变长度的二进制数据类型，存储时占用的字节数取决于实际内容。</li>
+</ul>
+<p>表设计中尤其要注意的几点：</p>
+<blockquote>
+<p>不要去使用TimeStamp类型了，使用DateTime或者Bigint来存储时间。<br>其次，避免去使用Flout和Double类型，而是使用Decimal来存储小数，或者使用Int类型来存储。<br>避免使用大值存储，比如Text和blob类型，而是使用Varchar来代替。</p>
+</blockquote>
+<p>通常说的<code>大值(large values)</code>也就是里面存储的内容过多。</p>
+<p>比如我们有一个字段是Text类型，这个字段的数据非常大，占据了Page的一半，再加上其他的数据，那么我们一个Page里面只能存储一行数据了，Page里面剩下的空间就会浪费掉了。</p>
+<p>对于这种情况，数据库的设计者也考虑到了，所以他们实际存储的是一个指针，这个指针指向另外一个Page页面。将这个字段的内容存储到另外一个单独的Page里面。这个单独的Page页面叫做<code>Overflow Page</code>。</p>
+<p>虽然这样解决了上面的问题，但是也引入了新的复杂度，比如对于这个额外的Page页面的维护管理。</p>
+<p>NULL存储，表设计中还有重要的一点处理就是NULL值，因此我们通常把字段设置为NOT NULL类型来避免NULL值。因为NULL值有如下问题：</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<h4 id="page是什么样子的"><a href="#page是什么样子的" class="headerlink" title="page是什么样子的"></a>page是什么样子的</h4><p>上面我们讲完了一行数据是什么样子的，那么一个Page里面又是什么样子的呢？</p>
+<p>一般想法，就是一行贴着一行直接存储，新的行数据直接在后面追加，但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="007"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是slotted pages</p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的行数据</li>
+<li>支持可变长度的行数据</li>
+<li>但是会产生一些碎片空间，因为太小，一行数据放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="008"></p>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="016"></p>
+<h4 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h4><p>现代CPU是64位对齐，创建表以后，DBMS会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445012.png" alt="012"></p>
+<p>还记得我们上面说过的吗，字段的顺序也是会影响性能的，如果你的字段顺序能满足数据对齐的要求，那么就可以避免空间的浪费，同一个page里面就可以存储更多的行数据，也就意味着我们每次获取一个page的时候，能从磁盘拿到更多的数据，因此我们获取大量数据的时候，IO次数就会减少，从而起到提升性能的效果。</p>
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><p>表设计要考虑的其实是比较多的，相信你看完上面的内容，对于如何设计表，应该有了一些自己的方法论。</p>
+<p>这里再讲一下实战中需要注意的事情吧。</p>
+<p>再开始设计表之前，我们肯定要先分析需求，然后才能知道我们需要存储哪些数据。</p>
+<p>比如，我们要做一个招聘网站，那么我们需要存储发布的职位信息。</p>
+<p>职位信息都放到一个表里面吗？</p>
+<p>职位信息其实还挺多的，不光是常见的职位名称、职位JD。还会涉及到比如职级信息、工资信息、面试轮次，是否支持视频面试、学历要求、学校要求、工作经历要求大厂等。</p>
+<p>这里面有一个冷热数据的概念。</p>
+<p>比如说，有一部分信息是经常要查询的，比如职位名称、学历要求、工作年限要求、工资、公司信息、招聘人头像、名称、标签等。</p>
+<p>首先、这些数据肯定放在多个表里面的，比如招聘人头像、名称是用户表的数据、标签信息是标签表的数据、公司信息是公司表的数据。但是其中职位名称、学历要求、工作年限、工资是属于职位的基本信息。而且是在职位列表、IM聊天中的职位卡片、职位详情、职位浏览、职位收藏等多个维度高曝光的职位信息。</p>
+<p>那么就代表这些职位信息属于热数据，会被经常一起查询。因此他们放到一个表里面是没有问题的。</p>
+<p>剩下的职位信息我们可以分成两类。</p>
+<ol>
+<li>在职位详情页面首屏展示的内容或者一些强依赖的内容，这些数据也可以和上面的放在一个表里面。</li>
+<li>一些其他不经常查询的数据，这些数据可以放在另外一个表里面。</li>
+</ol>
+<p>这样的话，每次查询热数据的时候从第一张职位信息表获取，查询到的page里面都是包含的有用的信息，就可以减少IO次数。</p>
+<p>因此，我们可以设计两个表来存储职位信息。</p>
+<ul>
+<li>职位信息表：存储职位的主要数据、热数据、提升查询速度。</li>
+<li>职位扩展信息表：存储职位的次要数据、冷数据、只在需要的时候进行查询。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>授人以鱼不如授人以渔</code>，相信经过上面的学习，你已经具备了一定的表设计的能力了。</p>
+<p>这里讲的主要是表的设计，而不是整个数据的设计。因为还缺少了一些，比如索引该如何设计？</p>
+<p>如何保证大量数据的查询？</p>
+<p>其实对于MySQL来说上索引以后就可以查询百万级的数据了，但是对于非常要求速度和更高量级的数据而言。还可以使用一些其他的方法，比如使用列式数据库来进行查询。</p>
+<p>这样的话可能还会涉及数据同步、数据清洗等等。</p>
+<p>相信你学完我的整个系列以后、对于更高量级的数据设计也会有一定的经验的。</p>
+<p>如果在面试中遇到类似的问题，你也可以游刃有余的回答面试官。</p>
+<p>在学习的过程中，我们也要做到<code>知其然也知其所以然</code>。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png" alt="概念学习"></p>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL零基础教程ER图</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BER%E5%9B%BE.html</url>
     <content><![CDATA[<blockquote>
 <p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
 </blockquote>
@@ -13501,11 +15325,11 @@
 <p>按照这个关系代数的树来执行的话，总共需要 2M的IO</p>
 <p><img src="/../images/15445041.png" alt="041"></p>
 <p>接下来将笛卡尔积的代数换成join的代数，就算使用Nested Loop Join，也能获得54K的IO</p>
-<p><img src="/../images/15445042.png" alt="042"></p>
+<p><img src="/../images/15445044.png" alt="044"></p>
 <p>如果将Join算法替换成<code>Sort-Merge Join</code>，则可以将IO降低到<code>7159</code></p>
 <p><img src="/../images/15445043.png" alt="043"></p>
 <p>这个算法是基于<code>Materialization Model</code>的，所以每次还要写入文件，再读取。如果优化成<code>Veectorization Model</code>，减少重复的写入和读取，可以达到3151的IO</p>
-<p><img src="/../images/15445044.png" alt="044"></p>
+<p><img src="/../images/15445042.png" alt="042"></p>
 <p>wraning:</p>
 <ul>
 <li>这非常难！</li>
@@ -14301,128 +16125,6 @@
   </entry>
   <entry>
     <title>MySQL学习路线</title>
-    <url>/MySQL%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF.html</url>
-    <content><![CDATA[<h1 id="MySQL学习路线"><a href="#MySQL学习路线" class="headerlink" title="MySQL学习路线"></a>MySQL学习路线</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
-<p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
-<p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
-<p>其他的技能可能会变，比如业务开发、算法开发、基础设施开发，也不管你是用Java、php、golang、C++等等。你都会用到数据库，因此，学好数据库对于我们来说就至关重要了。</p>
-<p>接下来大头将分享自己学习数据库的路线以及心得。</p>
-<p>后续也会根据这个路线分享所有的学习方法以及实操案例。关注我一起学习！文末有惊喜哦！</p>
-<h2 id="如何学好数据库"><a href="#如何学好数据库" class="headerlink" title="如何学好数据库"></a>如何学好数据库</h2><p>如何学好数据库？我相信这是一个老生常谈的问题了，如何学好XXX，这里我觉得最重要的是<code>实践</code>。</p>
-<p>相信大家都知道这句话。<code>实践是检验真理的唯一标准</code>。因此，当分享结束以后，大头还会分享完整的实操应用，完全免费分享，放在外面至少价值大几百的实操应用训练营。</p>
-<p>在现在这个AI发展迅速的时代，你不用点AI好像就被社会淘汰了一样。所以，我们来看一下AI给出的回答。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">学好数据库需要系统的学习方法和实践相结合，以下是一些建议：</span><br><span class="line">1. 基础知识积累</span><br><span class="line">理解数据库概念：首先明确数据库的定义，它是存储、管理和检索数据的系统。了解其基本功能，如数据存储、查询、更新和删除等。</span><br><span class="line">学习数据库类型：常见的数据库有关系型数据库（如MySQL、Oracle、SQL Server）和非关系型数据库（如MongoDB、Redis）。了解它们的特点和适用场景。</span><br><span class="line">掌握数据库模型：重点学习关系型数据库的表结构、字段类型、主键、外键等概念，以及非关系型数据库的键值存储、文档存储、列存储等模型。</span><br><span class="line">2. 理论学习</span><br><span class="line">学习SQL语言：SQL是数据库的核心语言，用于操作关系型数据库。学习SQL的基本语法，包括数据定义语言（DDL）、数据操纵语言（DML）和数据控制语言（DCL）。</span><br><span class="line">DDL：创建、修改和删除数据库对象（如表、索引）。</span><br><span class="line">DML：插入、更新、删除和查询数据。</span><br><span class="line">DCL：控制用户对数据的访问权限。</span><br><span class="line">理解数据库设计原则：学习如何设计合理的数据库结构，包括范式理论（如第一范式、第二范式、第三范式），以减少数据冗余和提高数据一致性。</span><br><span class="line">学习事务管理：了解事务的ACID特性（原子性、一致性、隔离性、持久性），以及事务的提交和回滚机制。</span><br><span class="line">掌握索引和优化：学习索引的原理和类型（如B树索引、哈希索引），以及如何通过索引优化查询性能。</span><br><span class="line">3. 实践操作</span><br><span class="line">安装和配置数据库：选择一种主流的数据库（如MySQL、SQLite），在本地安装并进行配置。熟悉数据库的启动、停止和基本管理操作。</span><br><span class="line">动手操作SQL：通过实际操作来巩固SQL语言的学习。可以使用在线数据库平台（如SQLFiddle）或本地数据库进行练习，编写和执行SQL语句，完成数据的增删改查操作。</span><br><span class="line">进行数据库设计：尝试设计一个小型的数据库项目，如学生管理系统或图书管理系统。从需求分析开始，设计表结构，确定字段类型和关系，然后实现数据库的创建和数据的插入。</span><br><span class="line">参与项目实践：如果有机会，参与实际的数据库项目开发，或者在开源项目中学习和实践。通过实际项目，了解数据库在真实场景中的应用和优化方法。</span><br><span class="line">4. 进阶学习</span><br><span class="line">学习高级SQL技术：如子查询、连接查询（内连接、外连接）、分组查询、窗口函数等。</span><br><span class="line">了解数据库架构设计：学习如何设计高可用、高性能的数据库架构，包括主从复制、读写分离、分库分表等技术。</span><br><span class="line">掌握数据库安全：学习如何保护数据库的安全，包括用户认证、授权、数据加密、备份和恢复等。</span><br><span class="line">学习数据库性能优化：了解如何分析和优化数据库性能，包括查询优化、存储优化、硬件优化等。</span><br><span class="line">5. 持续学习和拓展</span><br><span class="line">关注新技术：数据库领域不断发展，新的技术和工具不断涌现。关注NoSQL数据库、分布式数据库（如Cassandra、HBase）、云数据库（如AWS RDS、阿里云数据库）等新技术的发展。</span><br><span class="line">阅读经典书籍和文档：推荐一些经典书籍，如《数据库系统概念》《SQL必知必会》《高性能MySQL》等。同时，阅读数据库官方文档，深入了解其特性和最佳实践。</span><br><span class="line">参加培训和认证：如果条件允许，可以参加数据库相关的培训课程或考取相关认证（如Oracle认证、MySQL认证），提升自己的专业水平。</span><br><span class="line">加入技术社区：加入数据库相关的技术社区（如Stack Overflow、CSDN、知乎等），与其他开发者交流经验和问题，拓宽视野。</span><br><span class="line">总之，学好数据库需要理论学习和实践操作相结合，通过不断的学习和实践，逐步提升自己的数据库技能。</span><br></pre></td></tr></table></figure>
-
-<p>可以看到AI给出的回答相当不错了。看起来也是那么回事。</p>
-<p>对于学习一种新事物来说，我觉得要分为几个阶段吧，对于所有新事物都适用。</p>
-<ol>
-<li>新概念学习：逐步了解这个东西的概念，是什么？能做什么？什么时候用？如何使用？</li>
-<li>基础学习：学习这个东西的一些基础使用，并实践应用。</li>
-<li>实战应用：当了解概念和基础以后，可以自己开始实践了，最好能完整的实践每一个功能。一般来说到这一步就可以说熟练使用这个东西了。</li>
-<li>深入学习原理：开始深入学习相关的原理性知识，了解这个东西是如何实现的，它当时为什么要这么做？有没有其他替代的方案呢？我们可以尝试自己去实现这个东西。一般来说这一步完成就可以说精通了。</li>
-<li>扩展学习：扩展学习其他同类的产品，了解使用场景，优劣等。</li>
-</ol>
-<p>那么回到我们的话题上，如何学好数据库？</p>
-<ol>
-<li>概念学习：数据库是什么？能做什么？什么时候用？如何使用？</li>
-<li>基础学习：数据库的基础操作，增删改查，DDL、DCL、DML语言。</li>
-<li>实战应用：自己去使用数据库的各个功能，包括增删改查、函数、触发器、存储过程、视图等。</li>
-<li>学习原理：深入学习数据库的原理，包括事务的实现、锁的实现、增删改查的实现、索引的实现等。</li>
-<li>扩展学习：学习不同类型的数据库，如列式数据库、内存数据库、文档数据库等。</li>
-</ol>
-<p>那么再详细一些呢？如何学好MySQL数据库？</p>
-<ol>
-<li>概念学习：MySQL数据库是什么？能做什么？什么时候用？如何使用？</li>
-<li>基础学习：MySQL数据库的基础操作，增删改查，DDL、DCL、DML语言。</li>
-<li>实战应用：自己去使用MySQL数据库的各个功能，包括增删改查、函数、触发器、存储过程、视图等。</li>
-<li>学习原理：深入学习MySQL数据库的原理，包括事务的实现、锁的实现、增删改查的实现、索引的实现等。</li>
-<li>扩展学习：学习一些其他的数据库，如PostgreSQL、ES、ClickHouse、MongoDB等。</li>
-</ol>
-<h2 id="概念学习"><a href="#概念学习" class="headerlink" title="概念学习"></a>概念学习</h2><p>首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据库管理系统。</p>
-<p>数据库的英文是<code>DataBase</code>。它的概念是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据库是一个长期存储在计算机内的、有组织的、可共享的数据集合，它具有以下特点</span><br><span class="line">1. 数据的集合性</span><br><span class="line">2. 数据的共享性</span><br><span class="line">3. 数据的冗余度低</span><br><span class="line">4. 数据的独立性</span><br><span class="line">5. 数据的安全性</span><br><span class="line">6. 数据的完整性</span><br><span class="line">7. 数据的可维护性</span><br></pre></td></tr></table></figure>
-
-<p>而数据库管理系统的英文是<code>DataBase Management System</code>。它的概念是：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据库管理软件（Database Management System，简称DBMS）是用于创建、管理、维护和操作数据库的软件系统。它在用户和数据库之间提供了一个接口，使得用户能够方便地存储、检索、更新和管理数据。</span><br></pre></td></tr></table></figure>
-
-<p>因此，我们要明白，<code>MySQL</code>是一个数据库管理系统，而不是一个数据库。</p>
-<p>虽然我们老说<code>MySQL数据库</code>，但这个是因为大家已经习惯了，大家都明白MySQL是什么，因此省略了一些。</p>
-<p><code>MySQL</code>是用来管理数据库的一个系统。</p>
-<p>那么问题来了，<code>SQL</code>又是什么呢？</p>
-<p>这里给出基础篇的概念学习路线。大家可以根据这些去了解具体的概念。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-1.png" alt="概念学习"></p>
-<p>这一个部分1-2小时就差不多了。</p>
-<h2 id="实战应用"><a href="#实战应用" class="headerlink" title="实战应用"></a>实战应用</h2><p>学会了概念以后，我们就要应用，进行实践。只有这样才能将知识转化成我们自己的。</p>
-<p>对于实战来说，首先肯定要进行MySQL的安装，可以直接到官网进行安装，这里给出连接。</p>
-<blockquote>
-<p><a href="https://www.mysql.com/">https://www.mysql.com/</a></p>
-</blockquote>
-<p>安装完成以后，根据上面学习的概念，首先执行一遍DCL、DML、DDL。</p>
-<p>接下来需要学习<code>ER图</code>。如何学习ER图呢？同意的，先了解一下概念，在进行实战应用。自己画一画ER图。</p>
-<p>画ER图的工具，这里推荐几个</p>
-<ul>
-<li>visio，可以自己去网上买一些key，不贵，要注意买key，而不是破解机。</li>
-<li><a href="https://www.processon.com/">processOn</a>，强烈推荐，网页版，使用方便，免费的一般也够用了。</li>
-<li><a href="https://app.diagrams.net/">drwa.io</a>，强烈推荐，同样有网页版，使用方便，免费。</li>
-<li><a href="https://dbdiagram.io/">dbdiagram</a>，不同于自己画图，这个网站可以进行数据库建模，支持导入导出。缺点是需要使用<code>DBML</code>进行建模，需要学习一下。</li>
-</ul>
-<p>接下来进行一些高级的应用、包括CTE、窗口函数、存储过程、视图、触发器等等。</p>
-<p>还可以进行导入导出。</p>
-<p>还可以使用你熟悉的语言进行操作。Java的使用可以使用MyBatis Plus。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
-<h2 id="深入学习原理"><a href="#深入学习原理" class="headerlink" title="深入学习原理"></a>深入学习原理</h2><p>MySQL原理性的东西就比较多了。</p>
-<p>自顶向下来看，首先有连接器、分析器、优化器、执行器。</p>
-<p>连接器可以不用管。</p>
-<p>分析器的原理，如何进行语法分析的，这里需要学一下<code>关系代数</code>。数据库是将SQL转化成关系代数，然后在生成执行树的。</p>
-<p>优化器的原理，如何选择索引的，成本模型是什么？直方图是什么？MySQL本身实现了哪些优化？谓词下推，索引下推，Index Merge等等。</p>
-<p>接下来会生成具体的执行计划，如何查看执行计划的各个字段，如何根据执行计划来优化SQL。</p>
-<p>还需要学习MySQL事务，事务的隔离级别，ACID特性，MVCC实现，undo log等等。</p>
-<p>还要学习SQL语句如何执行的，Select是怎么查询出数据的，where条件怎么筛选数据，join是怎么进行连表查询的，update是怎么更新的，delete怎么删除的，group by,order by怎么实现的。</p>
-<p>接下来最重要的索引部分，学习b+树索引，hash索引，倒排索引等等的实现。</p>
-<p>数据存储部分的原理，我们知道数据库只是管理数据的，数据最终存储在磁盘上还是一些文件，那么这些文件是如何存储的呢？文件内容是什么？加载到内存以后，内存布局是什么样的？老说page,page是什么？</p>
-<p>还有数据库崩溃恢复怎么实现的，redo log怎么实现崩溃恢复，这个其实也挺重要的，因为我们自己进行一些数据处理，可能也需要理解这个，而且大部分的数据持久化，崩溃恢复机制核心都是一样的。</p>
-<p>还需要学习mySQL的锁，表锁，行锁，乐观锁，悲观锁，意向锁，间隙锁等等。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="概念学习"></p>
-<h2 id="架构学习"><a href="#架构学习" class="headerlink" title="架构学习"></a>架构学习</h2><p>你学习完上面的东西以后，可以说对于单机MySQL就已经很了解了。接下来就可以进一步保证数据的高可用、高扩展、高性能了。</p>
-<p>也就是去了解一些架构上面的知识，比如经典的主从架构，主从同步，异步同步，bin log,relay log，GTID同步。</p>
-<p>还有分库分表的只是，水平拆分、垂直拆分、mySQL自带的partition支持。</p>
-<p>再比如MySQL自身的集群组件，group replication。还有分布式数据库的一些实现，分布式事务。</p>
-<p>CAP理论等等。</p>
-<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-4.png" alt="概念学习"></p>
-<h2 id="扩展学习"><a href="#扩展学习" class="headerlink" title="扩展学习"></a>扩展学习</h2><p>当上面的都学习完成以后，可以扩展学习一些其他的数据库。</p>
-<p>比如同类型的PostgreSQL。这个更偏向学术性。</p>
-<p>再比如其他的文档数据库mongoDB。</p>
-<p>常用的搜索数据库ES。</p>
-<p>列式数据库ClickHouse这些。</p>
-<h2 id="学习书籍推荐"><a href="#学习书籍推荐" class="headerlink" title="学习书籍推荐"></a>学习书籍推荐</h2><p>在这里也给大家推荐一些相关的书籍，可以看一看。</p>
-<ul>
-<li>MySQL必知必会</li>
-<li>InnoDB技术内幕</li>
-<li>数据库系统概念</li>
-<li>数据密集型应用系统设计</li>
-<li>亿级流量系统架构设计与实战</li>
-</ul>
-<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><p>以上就是整体的MySQL学习路线了。</p>
-<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
-<p>发送“电子书”即可领取价值上千的电子书资源。</p>
-<p>部分电子书如图所示。</p>
-<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
-<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
-]]></content>
-      <categories>
-        <category>CMU15445</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据库原理</tag>
-        <tag>sql</tag>
-        <tag>mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL学习路线</title>
     <url>/MySQL%E6%9F%A5%E8%AF%A2%E8%B7%AF%E5%BE%84%E9%80%89%E6%8B%A9%20copy.html</url>
     <content><![CDATA[<h1 id="MySQL索引失效"><a href="#MySQL索引失效" class="headerlink" title="MySQL索引失效"></a>MySQL索引失效</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
 <p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
@@ -15027,8 +16729,130 @@
       </tags>
   </entry>
   <entry>
+    <title>MySQL学习路线</title>
+    <url>/mysql/MySQL%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF.html</url>
+    <content><![CDATA[<h1 id="MySQL学习路线"><a href="#MySQL学习路线" class="headerlink" title="MySQL学习路线"></a>MySQL学习路线</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
+<p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
+<p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
+<p>其他的技能可能会变，比如业务开发、算法开发、基础设施开发，也不管你是用Java、php、golang、C++等等。你都会用到数据库，因此，学好数据库对于我们来说就至关重要了。</p>
+<p>接下来大头将分享自己学习数据库的路线以及心得。</p>
+<p>后续也会根据这个路线分享所有的学习方法以及实操案例。关注我一起学习！文末有惊喜哦！</p>
+<h2 id="如何学好数据库"><a href="#如何学好数据库" class="headerlink" title="如何学好数据库"></a>如何学好数据库</h2><p>如何学好数据库？我相信这是一个老生常谈的问题了，如何学好XXX，这里我觉得最重要的是<code>实践</code>。</p>
+<p>相信大家都知道这句话。<code>实践是检验真理的唯一标准</code>。因此，当分享结束以后，大头还会分享完整的实操应用，完全免费分享，放在外面至少价值大几百的实操应用训练营。</p>
+<p>在现在这个AI发展迅速的时代，你不用点AI好像就被社会淘汰了一样。所以，我们来看一下AI给出的回答。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">学好数据库需要系统的学习方法和实践相结合，以下是一些建议：</span><br><span class="line">1. 基础知识积累</span><br><span class="line">理解数据库概念：首先明确数据库的定义，它是存储、管理和检索数据的系统。了解其基本功能，如数据存储、查询、更新和删除等。</span><br><span class="line">学习数据库类型：常见的数据库有关系型数据库（如MySQL、Oracle、SQL Server）和非关系型数据库（如MongoDB、Redis）。了解它们的特点和适用场景。</span><br><span class="line">掌握数据库模型：重点学习关系型数据库的表结构、字段类型、主键、外键等概念，以及非关系型数据库的键值存储、文档存储、列存储等模型。</span><br><span class="line">2. 理论学习</span><br><span class="line">学习SQL语言：SQL是数据库的核心语言，用于操作关系型数据库。学习SQL的基本语法，包括数据定义语言（DDL）、数据操纵语言（DML）和数据控制语言（DCL）。</span><br><span class="line">DDL：创建、修改和删除数据库对象（如表、索引）。</span><br><span class="line">DML：插入、更新、删除和查询数据。</span><br><span class="line">DCL：控制用户对数据的访问权限。</span><br><span class="line">理解数据库设计原则：学习如何设计合理的数据库结构，包括范式理论（如第一范式、第二范式、第三范式），以减少数据冗余和提高数据一致性。</span><br><span class="line">学习事务管理：了解事务的ACID特性（原子性、一致性、隔离性、持久性），以及事务的提交和回滚机制。</span><br><span class="line">掌握索引和优化：学习索引的原理和类型（如B树索引、哈希索引），以及如何通过索引优化查询性能。</span><br><span class="line">3. 实践操作</span><br><span class="line">安装和配置数据库：选择一种主流的数据库（如MySQL、SQLite），在本地安装并进行配置。熟悉数据库的启动、停止和基本管理操作。</span><br><span class="line">动手操作SQL：通过实际操作来巩固SQL语言的学习。可以使用在线数据库平台（如SQLFiddle）或本地数据库进行练习，编写和执行SQL语句，完成数据的增删改查操作。</span><br><span class="line">进行数据库设计：尝试设计一个小型的数据库项目，如学生管理系统或图书管理系统。从需求分析开始，设计表结构，确定字段类型和关系，然后实现数据库的创建和数据的插入。</span><br><span class="line">参与项目实践：如果有机会，参与实际的数据库项目开发，或者在开源项目中学习和实践。通过实际项目，了解数据库在真实场景中的应用和优化方法。</span><br><span class="line">4. 进阶学习</span><br><span class="line">学习高级SQL技术：如子查询、连接查询（内连接、外连接）、分组查询、窗口函数等。</span><br><span class="line">了解数据库架构设计：学习如何设计高可用、高性能的数据库架构，包括主从复制、读写分离、分库分表等技术。</span><br><span class="line">掌握数据库安全：学习如何保护数据库的安全，包括用户认证、授权、数据加密、备份和恢复等。</span><br><span class="line">学习数据库性能优化：了解如何分析和优化数据库性能，包括查询优化、存储优化、硬件优化等。</span><br><span class="line">5. 持续学习和拓展</span><br><span class="line">关注新技术：数据库领域不断发展，新的技术和工具不断涌现。关注NoSQL数据库、分布式数据库（如Cassandra、HBase）、云数据库（如AWS RDS、阿里云数据库）等新技术的发展。</span><br><span class="line">阅读经典书籍和文档：推荐一些经典书籍，如《数据库系统概念》《SQL必知必会》《高性能MySQL》等。同时，阅读数据库官方文档，深入了解其特性和最佳实践。</span><br><span class="line">参加培训和认证：如果条件允许，可以参加数据库相关的培训课程或考取相关认证（如Oracle认证、MySQL认证），提升自己的专业水平。</span><br><span class="line">加入技术社区：加入数据库相关的技术社区（如Stack Overflow、CSDN、知乎等），与其他开发者交流经验和问题，拓宽视野。</span><br><span class="line">总之，学好数据库需要理论学习和实践操作相结合，通过不断的学习和实践，逐步提升自己的数据库技能。</span><br></pre></td></tr></table></figure>
+
+<p>可以看到AI给出的回答相当不错了。看起来也是那么回事。</p>
+<p>对于学习一种新事物来说，我觉得要分为几个阶段吧，对于所有新事物都适用。</p>
+<ol>
+<li>新概念学习：逐步了解这个东西的概念，是什么？能做什么？什么时候用？如何使用？</li>
+<li>基础学习：学习这个东西的一些基础使用，并实践应用。</li>
+<li>实战应用：当了解概念和基础以后，可以自己开始实践了，最好能完整的实践每一个功能。一般来说到这一步就可以说熟练使用这个东西了。</li>
+<li>深入学习原理：开始深入学习相关的原理性知识，了解这个东西是如何实现的，它当时为什么要这么做？有没有其他替代的方案呢？我们可以尝试自己去实现这个东西。一般来说这一步完成就可以说精通了。</li>
+<li>扩展学习：扩展学习其他同类的产品，了解使用场景，优劣等。</li>
+</ol>
+<p>那么回到我们的话题上，如何学好数据库？</p>
+<ol>
+<li>概念学习：数据库是什么？能做什么？什么时候用？如何使用？</li>
+<li>基础学习：数据库的基础操作，增删改查，DDL、DCL、DML语言。</li>
+<li>实战应用：自己去使用数据库的各个功能，包括增删改查、函数、触发器、存储过程、视图等。</li>
+<li>学习原理：深入学习数据库的原理，包括事务的实现、锁的实现、增删改查的实现、索引的实现等。</li>
+<li>扩展学习：学习不同类型的数据库，如列式数据库、内存数据库、文档数据库等。</li>
+</ol>
+<p>那么再详细一些呢？如何学好MySQL数据库？</p>
+<ol>
+<li>概念学习：MySQL数据库是什么？能做什么？什么时候用？如何使用？</li>
+<li>基础学习：MySQL数据库的基础操作，增删改查，DDL、DCL、DML语言。</li>
+<li>实战应用：自己去使用MySQL数据库的各个功能，包括增删改查、函数、触发器、存储过程、视图等。</li>
+<li>学习原理：深入学习MySQL数据库的原理，包括事务的实现、锁的实现、增删改查的实现、索引的实现等。</li>
+<li>扩展学习：学习一些其他的数据库，如PostgreSQL、ES、ClickHouse、MongoDB等。</li>
+</ol>
+<h2 id="概念学习"><a href="#概念学习" class="headerlink" title="概念学习"></a>概念学习</h2><p>首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据库管理系统。</p>
+<p>数据库的英文是<code>DataBase</code>。它的概念是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据库是一个长期存储在计算机内的、有组织的、可共享的数据集合，它具有以下特点</span><br><span class="line">1. 数据的集合性</span><br><span class="line">2. 数据的共享性</span><br><span class="line">3. 数据的冗余度低</span><br><span class="line">4. 数据的独立性</span><br><span class="line">5. 数据的安全性</span><br><span class="line">6. 数据的完整性</span><br><span class="line">7. 数据的可维护性</span><br></pre></td></tr></table></figure>
+
+<p>而数据库管理系统的英文是<code>DataBase Management System</code>。它的概念是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据库管理软件（Database Management System，简称DBMS）是用于创建、管理、维护和操作数据库的软件系统。它在用户和数据库之间提供了一个接口，使得用户能够方便地存储、检索、更新和管理数据。</span><br></pre></td></tr></table></figure>
+
+<p>因此，我们要明白，<code>MySQL</code>是一个数据库管理系统，而不是一个数据库。</p>
+<p>虽然我们老说<code>MySQL数据库</code>，但这个是因为大家已经习惯了，大家都明白MySQL是什么，因此省略了一些。</p>
+<p><code>MySQL</code>是用来管理数据库的一个系统。</p>
+<p>那么问题来了，<code>SQL</code>又是什么呢？</p>
+<p>这里给出基础篇的概念学习路线。大家可以根据这些去了解具体的概念。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-1.png" alt="概念学习"></p>
+<p>这一个部分1-2小时就差不多了。</p>
+<h2 id="实战应用"><a href="#实战应用" class="headerlink" title="实战应用"></a>实战应用</h2><p>学会了概念以后，我们就要应用，进行实践。只有这样才能将知识转化成我们自己的。</p>
+<p>对于实战来说，首先肯定要进行MySQL的安装，可以直接到官网进行安装，这里给出连接。</p>
+<blockquote>
+<p><a href="https://www.mysql.com/">https://www.mysql.com/</a></p>
+</blockquote>
+<p>安装完成以后，根据上面学习的概念，首先执行一遍DCL、DML、DDL。</p>
+<p>接下来需要学习<code>ER图</code>。如何学习ER图呢？同意的，先了解一下概念，在进行实战应用。自己画一画ER图。</p>
+<p>画ER图的工具，这里推荐几个</p>
+<ul>
+<li>visio，可以自己去网上买一些key，不贵，要注意买key，而不是破解机。</li>
+<li><a href="https://www.processon.com/">processOn</a>，强烈推荐，网页版，使用方便，免费的一般也够用了。</li>
+<li><a href="https://app.diagrams.net/">drwa.io</a>，强烈推荐，同样有网页版，使用方便，免费。</li>
+<li><a href="https://dbdiagram.io/">dbdiagram</a>，不同于自己画图，这个网站可以进行数据库建模，支持导入导出。缺点是需要使用<code>DBML</code>进行建模，需要学习一下。</li>
+</ul>
+<p>接下来进行一些高级的应用、包括CTE、窗口函数、存储过程、视图、触发器等等。</p>
+<p>还可以进行导入导出。</p>
+<p>还可以使用你熟悉的语言进行操作。Java的使用可以使用MyBatis Plus。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-2.png" alt="概念学习"></p>
+<h2 id="深入学习原理"><a href="#深入学习原理" class="headerlink" title="深入学习原理"></a>深入学习原理</h2><p>MySQL原理性的东西就比较多了。</p>
+<p>自顶向下来看，首先有连接器、分析器、优化器、执行器。</p>
+<p>连接器可以不用管。</p>
+<p>分析器的原理，如何进行语法分析的，这里需要学一下<code>关系代数</code>。数据库是将SQL转化成关系代数，然后在生成执行树的。</p>
+<p>优化器的原理，如何选择索引的，成本模型是什么？直方图是什么？MySQL本身实现了哪些优化？谓词下推，索引下推，Index Merge等等。</p>
+<p>接下来会生成具体的执行计划，如何查看执行计划的各个字段，如何根据执行计划来优化SQL。</p>
+<p>还需要学习MySQL事务，事务的隔离级别，ACID特性，MVCC实现，undo log等等。</p>
+<p>还要学习SQL语句如何执行的，Select是怎么查询出数据的，where条件怎么筛选数据，join是怎么进行连表查询的，update是怎么更新的，delete怎么删除的，group by,order by怎么实现的。</p>
+<p>接下来最重要的索引部分，学习b+树索引，hash索引，倒排索引等等的实现。</p>
+<p>数据存储部分的原理，我们知道数据库只是管理数据的，数据最终存储在磁盘上还是一些文件，那么这些文件是如何存储的呢？文件内容是什么？加载到内存以后，内存布局是什么样的？老说page,page是什么？</p>
+<p>还有数据库崩溃恢复怎么实现的，redo log怎么实现崩溃恢复，这个其实也挺重要的，因为我们自己进行一些数据处理，可能也需要理解这个，而且大部分的数据持久化，崩溃恢复机制核心都是一样的。</p>
+<p>还需要学习mySQL的锁，表锁，行锁，乐观锁，悲观锁，意向锁，间隙锁等等。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="概念学习"></p>
+<h2 id="架构学习"><a href="#架构学习" class="headerlink" title="架构学习"></a>架构学习</h2><p>你学习完上面的东西以后，可以说对于单机MySQL就已经很了解了。接下来就可以进一步保证数据的高可用、高扩展、高性能了。</p>
+<p>也就是去了解一些架构上面的知识，比如经典的主从架构，主从同步，异步同步，bin log,relay log，GTID同步。</p>
+<p>还有分库分表的只是，水平拆分、垂直拆分、mySQL自带的partition支持。</p>
+<p>再比如MySQL自身的集群组件，group replication。还有分布式数据库的一些实现，分布式事务。</p>
+<p>CAP理论等等。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-4.png" alt="概念学习"></p>
+<h2 id="扩展学习"><a href="#扩展学习" class="headerlink" title="扩展学习"></a>扩展学习</h2><p>当上面的都学习完成以后，可以扩展学习一些其他的数据库。</p>
+<p>比如同类型的PostgreSQL。这个更偏向学术性。</p>
+<p>再比如其他的文档数据库mongoDB。</p>
+<p>常用的搜索数据库ES。</p>
+<p>列式数据库ClickHouse这些。</p>
+<h2 id="学习书籍推荐"><a href="#学习书籍推荐" class="headerlink" title="学习书籍推荐"></a>学习书籍推荐</h2><p>在这里也给大家推荐一些相关的书籍，可以看一看。</p>
+<ul>
+<li>MySQL必知必会</li>
+<li>InnoDB技术内幕</li>
+<li>数据库系统概念</li>
+<li>数据密集型应用系统设计</li>
+<li>亿级流量系统架构设计与实战</li>
+</ul>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><p>以上就是整体的MySQL学习路线了。</p>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
+<p>发送“电子书”即可领取价值上千的电子书资源。</p>
+<p>部分电子书如图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+]]></content>
+      <categories>
+        <category>CMU15445</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据库原理</tag>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL零基础教程基础篇</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQLDML%E7%AF%87.html</url>
     <content><![CDATA[<h1 id="MySQL零基础教程基础篇"><a href="#MySQL零基础教程基础篇" class="headerlink" title="MySQL零基础教程基础篇"></a>MySQL零基础教程基础篇</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
 <p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
 <p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
@@ -15117,70 +16941,70 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#104;&#x61;&#x6e;&#x67;&#x73;&#97;&#x6e;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;">&#x7a;&#104;&#x61;&#x6e;&#x67;&#x73;&#97;&#x6e;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#110;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#x6f;&#109;">&#122;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#110;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>002</td>
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#x6c;&#x69;&#x73;&#x69;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#x69;&#x73;&#x69;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x6c;&#x69;&#x73;&#105;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#x63;&#111;&#109;">&#x6c;&#x69;&#x73;&#105;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#x63;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>003</td>
 <td>王五</td>
 <td>男</td>
 <td>13700009012</td>
-<td><a href="mailto:&#119;&#97;&#x6e;&#103;&#x77;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#119;&#97;&#x6e;&#103;&#x77;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x77;&#97;&#110;&#103;&#x77;&#117;&#x40;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#109;">&#x77;&#97;&#110;&#103;&#x77;&#117;&#x40;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>004</td>
 <td>赵六</td>
 <td>女</td>
 <td>13600003456</td>
-<td><a href="mailto:&#122;&#104;&#x61;&#111;&#108;&#105;&#117;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#104;&#x61;&#111;&#108;&#105;&#117;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#x61;&#111;&#x6c;&#105;&#x75;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#122;&#104;&#x61;&#111;&#x6c;&#105;&#x75;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>005</td>
 <td>孙七</td>
 <td>男</td>
 <td>13500007890</td>
-<td><a href="mailto:&#115;&#117;&#x6e;&#113;&#x69;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;">&#115;&#117;&#x6e;&#113;&#x69;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x73;&#117;&#110;&#113;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#x73;&#117;&#110;&#113;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>006</td>
 <td>周八</td>
 <td>女</td>
 <td>13400001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#x6f;&#117;&#98;&#97;&#64;&#101;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#99;&#x6f;&#109;">&#x7a;&#x68;&#x6f;&#117;&#98;&#97;&#64;&#101;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;">&#x7a;&#104;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>007</td>
 <td>吴九</td>
 <td>男</td>
 <td>13300005678</td>
-<td><a href="mailto:&#x77;&#117;&#106;&#x69;&#117;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;">&#x77;&#117;&#106;&#x69;&#117;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#119;&#x75;&#x6a;&#x69;&#x75;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#119;&#x75;&#x6a;&#x69;&#x75;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>008</td>
 <td>郑十</td>
 <td>女</td>
 <td>13200009012</td>
-<td><a href="mailto:&#122;&#104;&#x65;&#x6e;&#x67;&#115;&#104;&#x69;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#x65;&#x6e;&#x67;&#115;&#104;&#x69;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#101;&#x6e;&#103;&#115;&#x68;&#x69;&#64;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;">&#x7a;&#104;&#101;&#x6e;&#103;&#115;&#x68;&#x69;&#64;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>009</td>
 <td>钱伯</td>
 <td>男</td>
 <td>13100003456</td>
-<td><a href="mailto:&#113;&#105;&#x61;&#110;&#98;&#x6f;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#113;&#105;&#x61;&#110;&#98;&#x6f;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x71;&#x69;&#x61;&#110;&#98;&#111;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#x71;&#x69;&#x61;&#110;&#98;&#111;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>010</td>
 <td>孔仲</td>
 <td>女</td>
 <td>13000007890</td>
-<td><a href="mailto:&#107;&#111;&#x6e;&#103;&#x7a;&#104;&#111;&#x6e;&#x67;&#64;&#x65;&#120;&#97;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#107;&#111;&#x6e;&#103;&#x7a;&#104;&#111;&#x6e;&#x67;&#64;&#x65;&#120;&#97;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x6b;&#x6f;&#x6e;&#x67;&#122;&#x68;&#111;&#110;&#103;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;">&#x6b;&#x6f;&#x6e;&#x67;&#122;&#x68;&#111;&#110;&#103;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
 </tr>
 </tbody></table>
 <p>这个时候我们需要查询出张三的用户信息，而不是将这10个数据都查询出来到程序里在筛选出张三的数据。</p>
@@ -15203,7 +17027,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#x61;&#110;&#x67;&#x73;&#97;&#x6e;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#x7a;&#x68;&#x61;&#110;&#x67;&#x73;&#97;&#x6e;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#x61;&#x6e;&#103;&#x73;&#97;&#110;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#122;&#x68;&#x61;&#x6e;&#103;&#x73;&#97;&#110;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
 </tr>
 </tbody></table>
 <p>where条件支持的类型如下：</p>
@@ -15388,14 +17212,14 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#x61;&#110;&#x67;&#x73;&#97;&#110;&#x40;&#101;&#x78;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#109;">&#x7a;&#x68;&#x61;&#110;&#x67;&#x73;&#97;&#110;&#x40;&#101;&#x78;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#x68;&#x61;&#x6e;&#103;&#x73;&#x61;&#x6e;&#x40;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#x7a;&#x68;&#x61;&#x6e;&#103;&#x73;&#x61;&#x6e;&#x40;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>002</td>
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#x69;&#x73;&#105;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#108;&#x69;&#x73;&#105;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#108;&#x69;&#115;&#105;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#108;&#x69;&#115;&#105;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
 </tr>
 </tbody></table>
 <p>还有表user_account存储用户的账户余额信息如下：</p>
@@ -15440,7 +17264,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#97;&#x6e;&#x67;&#x73;&#x61;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#x7a;&#x68;&#97;&#x6e;&#x67;&#x73;&#x61;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#104;&#x61;&#110;&#x67;&#x73;&#x61;&#110;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#x61;&#110;&#x67;&#x73;&#x61;&#110;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 <td>001</td>
 <td>001</td>
 <td>10</td>
@@ -15450,7 +17274,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#122;&#104;&#x61;&#x6e;&#x67;&#115;&#97;&#x6e;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#x6c;&#x65;&#46;&#99;&#x6f;&#109;">&#122;&#104;&#x61;&#x6e;&#x67;&#115;&#97;&#x6e;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#x6c;&#x65;&#46;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#97;&#110;&#103;&#115;&#x61;&#x6e;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#x6d;">&#122;&#x68;&#97;&#110;&#103;&#115;&#x61;&#x6e;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#x6d;</a></td>
 <td>002</td>
 <td>002</td>
 <td>20</td>
@@ -15460,7 +17284,7 @@
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#105;&#x73;&#105;&#x40;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#109;">&#108;&#105;&#x73;&#105;&#x40;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#109;</a></td>
+<td><a href="mailto:&#108;&#x69;&#x73;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#109;">&#108;&#x69;&#x73;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#109;</a></td>
 <td>001</td>
 <td>001</td>
 <td>10</td>
@@ -15470,7 +17294,7 @@
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#105;&#115;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#108;&#105;&#115;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#108;&#x69;&#115;&#105;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#109;">&#108;&#x69;&#115;&#105;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#109;</a></td>
 <td>002</td>
 <td>002</td>
 <td>20</td>
@@ -15498,70 +17322,70 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#104;&#x61;&#x6e;&#103;&#115;&#x61;&#110;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#x7a;&#104;&#x61;&#x6e;&#103;&#115;&#x61;&#110;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#97;&#110;&#103;&#115;&#97;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#97;&#110;&#103;&#115;&#97;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>002</td>
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#x6c;&#x69;&#x73;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;">&#x6c;&#x69;&#x73;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#x6c;&#x69;&#x73;&#x69;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#111;&#109;">&#x6c;&#x69;&#x73;&#x69;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>003</td>
 <td>王五</td>
 <td>男</td>
 <td>13700009012</td>
-<td><a href="mailto:&#119;&#x61;&#110;&#103;&#119;&#x75;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#119;&#x61;&#110;&#103;&#119;&#x75;&#x40;&#x65;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#x77;&#x61;&#110;&#103;&#119;&#117;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#x77;&#x61;&#110;&#103;&#119;&#117;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>004</td>
 <td>赵六</td>
 <td>女</td>
 <td>13600003456</td>
-<td><a href="mailto:&#122;&#x68;&#97;&#x6f;&#x6c;&#x69;&#117;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;">&#122;&#x68;&#97;&#x6f;&#x6c;&#x69;&#117;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#x68;&#97;&#111;&#108;&#x69;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#x7a;&#x68;&#97;&#111;&#108;&#x69;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>005</td>
 <td>孙七</td>
 <td>男</td>
 <td>13500007890</td>
-<td><a href="mailto:&#x73;&#117;&#x6e;&#x71;&#x69;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#109;">&#x73;&#117;&#x6e;&#x71;&#x69;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x73;&#117;&#110;&#x71;&#105;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#x73;&#117;&#110;&#x71;&#105;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>006</td>
 <td>周八</td>
 <td>女</td>
 <td>13400001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#109;">&#x7a;&#x68;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#x6f;&#117;&#98;&#x61;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#x7a;&#104;&#x6f;&#117;&#98;&#x61;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>007</td>
 <td>吴九</td>
 <td>男</td>
 <td>13300005678</td>
-<td><a href="mailto:&#119;&#117;&#106;&#105;&#x75;&#64;&#101;&#x78;&#97;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#109;">&#119;&#117;&#106;&#105;&#x75;&#64;&#101;&#x78;&#97;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#119;&#x75;&#106;&#105;&#117;&#64;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#119;&#x75;&#106;&#105;&#117;&#64;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>008</td>
 <td>郑十</td>
 <td>女</td>
 <td>13200009012</td>
-<td><a href="mailto:&#x7a;&#x68;&#x65;&#x6e;&#103;&#115;&#x68;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#x7a;&#x68;&#x65;&#x6e;&#103;&#115;&#x68;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#101;&#x6e;&#x67;&#x73;&#x68;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;">&#122;&#104;&#101;&#x6e;&#x67;&#x73;&#x68;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>009</td>
 <td>钱伯</td>
 <td>男</td>
 <td>13100003456</td>
-<td><a href="mailto:&#x71;&#105;&#x61;&#110;&#98;&#x6f;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#99;&#111;&#x6d;">&#x71;&#105;&#x61;&#110;&#98;&#x6f;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x71;&#105;&#97;&#110;&#x62;&#x6f;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#x71;&#105;&#97;&#110;&#x62;&#x6f;&#64;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>010</td>
 <td>孔仲</td>
 <td>女</td>
 <td>13000007890</td>
-<td><a href="mailto:&#107;&#x6f;&#x6e;&#x67;&#x7a;&#x68;&#x6f;&#110;&#x67;&#64;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;">&#107;&#x6f;&#x6e;&#x67;&#x7a;&#x68;&#x6f;&#110;&#x67;&#64;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x6b;&#x6f;&#x6e;&#x67;&#122;&#104;&#111;&#110;&#x67;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#x6f;&#x6d;">&#x6b;&#x6f;&#x6e;&#x67;&#122;&#104;&#111;&#110;&#x67;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#x6f;&#x6d;</a></td>
 </tr>
 </tbody></table>
 <p>还有表user_account存储用户的账户余额信息如下：</p>
@@ -15613,7 +17437,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#122;&#x68;&#x61;&#110;&#103;&#x73;&#x61;&#110;&#64;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#122;&#x68;&#x61;&#110;&#103;&#x73;&#x61;&#110;&#64;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#122;&#104;&#97;&#x6e;&#x67;&#x73;&#97;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#97;&#x6e;&#x67;&#x73;&#97;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 <td>001</td>
 <td>001</td>
 <td>10</td>
@@ -15623,7 +17447,7 @@
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#x69;&#x73;&#x69;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#111;&#109;">&#108;&#x69;&#x73;&#x69;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x6c;&#105;&#x73;&#105;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;">&#x6c;&#105;&#x73;&#105;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#109;</a></td>
 <td>002</td>
 <td>002</td>
 <td>20</td>
@@ -15650,70 +17474,70 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#122;&#x68;&#97;&#110;&#x67;&#115;&#97;&#110;&#64;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;">&#122;&#x68;&#97;&#110;&#x67;&#115;&#97;&#110;&#64;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#x68;&#x61;&#x6e;&#103;&#115;&#x61;&#x6e;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;">&#122;&#x68;&#x61;&#x6e;&#103;&#115;&#x61;&#x6e;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>002</td>
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#x6c;&#105;&#115;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#99;&#111;&#109;">&#x6c;&#105;&#115;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#108;&#105;&#115;&#x69;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;">&#108;&#105;&#115;&#x69;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>003</td>
 <td>王五</td>
 <td>男</td>
 <td>13700009012</td>
-<td><a href="mailto:&#119;&#x61;&#110;&#x67;&#119;&#x75;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#119;&#x61;&#110;&#x67;&#119;&#x75;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#x77;&#x61;&#110;&#103;&#119;&#117;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;">&#x77;&#x61;&#110;&#103;&#119;&#117;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>004</td>
 <td>赵六</td>
 <td>女</td>
 <td>13600003456</td>
-<td><a href="mailto:&#122;&#x68;&#x61;&#111;&#x6c;&#105;&#x75;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;">&#122;&#x68;&#x61;&#111;&#x6c;&#105;&#x75;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#x61;&#111;&#x6c;&#105;&#117;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;">&#x7a;&#104;&#x61;&#111;&#x6c;&#105;&#117;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>005</td>
 <td>孙七</td>
 <td>男</td>
 <td>13500007890</td>
-<td><a href="mailto:&#x73;&#x75;&#110;&#113;&#105;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;">&#x73;&#x75;&#110;&#113;&#105;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#111;&#109;</a></td>
+<td><a href="mailto:&#x73;&#x75;&#110;&#x71;&#x69;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#x73;&#x75;&#110;&#x71;&#x69;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>006</td>
 <td>周八</td>
 <td>女</td>
 <td>13400001234</td>
-<td><a href="mailto:&#x7a;&#104;&#111;&#x75;&#x62;&#x61;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;">&#x7a;&#104;&#111;&#x75;&#x62;&#x61;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;">&#122;&#104;&#x6f;&#117;&#x62;&#97;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>007</td>
 <td>吴九</td>
 <td>男</td>
 <td>13300005678</td>
-<td><a href="mailto:&#x77;&#x75;&#x6a;&#105;&#x75;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#x77;&#x75;&#x6a;&#105;&#x75;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#119;&#117;&#x6a;&#x69;&#x75;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;">&#119;&#117;&#x6a;&#x69;&#x75;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>008</td>
 <td>郑十</td>
 <td>女</td>
 <td>13200009012</td>
-<td><a href="mailto:&#x7a;&#x68;&#x65;&#x6e;&#x67;&#115;&#x68;&#105;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#109;">&#x7a;&#x68;&#x65;&#x6e;&#x67;&#115;&#x68;&#105;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#101;&#110;&#103;&#115;&#104;&#105;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#x7a;&#104;&#101;&#110;&#103;&#115;&#104;&#105;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>009</td>
 <td>钱伯</td>
 <td>男</td>
 <td>13100003456</td>
-<td><a href="mailto:&#113;&#105;&#97;&#x6e;&#98;&#x6f;&#x40;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#113;&#105;&#97;&#x6e;&#98;&#x6f;&#x40;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x71;&#x69;&#97;&#110;&#98;&#x6f;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#x71;&#x69;&#97;&#110;&#98;&#x6f;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a></td>
 </tr>
 <tr>
 <td>010</td>
 <td>孔仲</td>
 <td>女</td>
 <td>13000007890</td>
-<td><a href="mailto:&#107;&#x6f;&#x6e;&#x67;&#x7a;&#104;&#x6f;&#110;&#103;&#x40;&#x65;&#120;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#107;&#x6f;&#x6e;&#x67;&#x7a;&#104;&#x6f;&#110;&#103;&#x40;&#x65;&#120;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x6b;&#x6f;&#x6e;&#103;&#x7a;&#x68;&#x6f;&#110;&#x67;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#x6b;&#x6f;&#x6e;&#103;&#x7a;&#x68;&#x6f;&#110;&#x67;&#64;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
 </tr>
 </tbody></table>
 <p>还有表user_account存储用户的账户余额信息如下：</p>
@@ -15763,7 +17587,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#104;&#x61;&#110;&#103;&#x73;&#x61;&#110;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;">&#x7a;&#104;&#x61;&#110;&#103;&#x73;&#x61;&#110;&#64;&#x65;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#97;&#110;&#103;&#115;&#97;&#110;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#x6d;">&#x7a;&#104;&#97;&#110;&#103;&#115;&#97;&#110;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#x6d;</a></td>
 <td>001</td>
 <td>001</td>
 <td>10</td>
@@ -15773,7 +17597,7 @@
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#x6c;&#x69;&#x73;&#105;&#64;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#x6c;&#x69;&#x73;&#105;&#64;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#x6c;&#105;&#115;&#x69;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;">&#x6c;&#105;&#115;&#x69;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;</a></td>
 <td>002</td>
 <td>002</td>
 <td>20</td>
@@ -15783,7 +17607,7 @@
 <td>王五</td>
 <td>男</td>
 <td>13700009012</td>
-<td><a href="mailto:&#x77;&#97;&#110;&#103;&#x77;&#117;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;">&#x77;&#97;&#110;&#103;&#x77;&#117;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#x77;&#x61;&#x6e;&#103;&#x77;&#117;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#x77;&#x61;&#x6e;&#103;&#x77;&#117;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15793,7 +17617,7 @@
 <td>赵六</td>
 <td>女</td>
 <td>13600003456</td>
-<td><a href="mailto:&#122;&#104;&#x61;&#x6f;&#x6c;&#x69;&#117;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#104;&#x61;&#x6f;&#x6c;&#x69;&#117;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#x61;&#x6f;&#x6c;&#x69;&#117;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#99;&#111;&#x6d;">&#122;&#104;&#x61;&#x6f;&#x6c;&#x69;&#117;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#99;&#111;&#x6d;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15803,7 +17627,7 @@
 <td>孙七</td>
 <td>男</td>
 <td>13500007890</td>
-<td><a href="mailto:&#115;&#117;&#110;&#113;&#x69;&#64;&#101;&#x78;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;">&#115;&#117;&#110;&#113;&#x69;&#64;&#101;&#x78;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x73;&#117;&#110;&#x71;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#x63;&#111;&#109;">&#x73;&#117;&#110;&#x71;&#105;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15813,7 +17637,7 @@
 <td>周八</td>
 <td>女</td>
 <td>13400001234</td>
-<td><a href="mailto:&#122;&#104;&#111;&#x75;&#98;&#97;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#111;&#109;">&#122;&#104;&#111;&#x75;&#98;&#97;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#111;&#117;&#98;&#97;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#x68;&#111;&#117;&#98;&#97;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15823,7 +17647,7 @@
 <td>吴九</td>
 <td>男</td>
 <td>13300005678</td>
-<td><a href="mailto:&#x77;&#117;&#106;&#105;&#117;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;">&#x77;&#117;&#106;&#105;&#117;&#64;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#x77;&#x75;&#x6a;&#105;&#117;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#109;">&#x77;&#x75;&#x6a;&#105;&#117;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#109;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15833,7 +17657,7 @@
 <td>郑十</td>
 <td>女</td>
 <td>13200009012</td>
-<td><a href="mailto:&#x7a;&#x68;&#x65;&#x6e;&#x67;&#115;&#x68;&#105;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#x7a;&#x68;&#x65;&#x6e;&#x67;&#115;&#x68;&#105;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#x68;&#101;&#110;&#103;&#x73;&#x68;&#105;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#x68;&#101;&#110;&#103;&#x73;&#x68;&#105;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15843,7 +17667,7 @@
 <td>钱伯</td>
 <td>男</td>
 <td>13100003456</td>
-<td><a href="mailto:&#113;&#x69;&#97;&#110;&#x62;&#x6f;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#113;&#x69;&#97;&#110;&#x62;&#x6f;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#113;&#x69;&#97;&#110;&#98;&#x6f;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#113;&#x69;&#97;&#110;&#98;&#x6f;&#x40;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15853,7 +17677,7 @@
 <td>孔仲</td>
 <td>女</td>
 <td>13000007890</td>
-<td><a href="mailto:&#x6b;&#x6f;&#110;&#103;&#122;&#104;&#x6f;&#x6e;&#x67;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#x6b;&#x6f;&#110;&#103;&#122;&#104;&#x6f;&#x6e;&#x67;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a></td>
+<td><a href="mailto:&#107;&#111;&#x6e;&#103;&#x7a;&#x68;&#111;&#x6e;&#x67;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#107;&#111;&#x6e;&#103;&#x7a;&#x68;&#111;&#x6e;&#x67;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a></td>
 <td>null</td>
 <td>null</td>
 <td>null</td>
@@ -15878,70 +17702,70 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#97;&#x6e;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#97;&#x6e;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#97;&#110;&#103;&#x73;&#x61;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#x68;&#97;&#110;&#103;&#x73;&#x61;&#110;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#99;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>002</td>
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#x69;&#x73;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;">&#108;&#x69;&#x73;&#105;&#64;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#108;&#105;&#115;&#105;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;">&#108;&#105;&#115;&#105;&#x40;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#46;&#99;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>003</td>
 <td>王五</td>
 <td>男</td>
 <td>13700009012</td>
-<td><a href="mailto:&#x77;&#x61;&#110;&#x67;&#x77;&#117;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#x77;&#x61;&#110;&#x67;&#x77;&#117;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#119;&#x61;&#x6e;&#103;&#x77;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;">&#119;&#x61;&#x6e;&#103;&#x77;&#x75;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>004</td>
 <td>赵六</td>
 <td>女</td>
 <td>13600003456</td>
-<td><a href="mailto:&#122;&#x68;&#97;&#111;&#x6c;&#x69;&#117;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#122;&#x68;&#97;&#111;&#x6c;&#x69;&#117;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#122;&#104;&#97;&#x6f;&#108;&#x69;&#x75;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#122;&#104;&#97;&#x6f;&#108;&#x69;&#x75;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>005</td>
 <td>孙七</td>
 <td>男</td>
 <td>13500007890</td>
-<td><a href="mailto:&#115;&#117;&#110;&#113;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;">&#115;&#117;&#110;&#113;&#x69;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x63;&#111;&#109;</a></td>
+<td><a href="mailto:&#x73;&#x75;&#x6e;&#x71;&#x69;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#x73;&#x75;&#x6e;&#x71;&#x69;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>006</td>
 <td>周八</td>
 <td>女</td>
 <td>13400001234</td>
-<td><a href="mailto:&#x7a;&#104;&#111;&#x75;&#x62;&#97;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;">&#x7a;&#104;&#111;&#x75;&#x62;&#97;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#x63;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#104;&#111;&#117;&#98;&#x61;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#122;&#104;&#111;&#117;&#98;&#x61;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#x6d;</a></td>
 </tr>
 <tr>
 <td>007</td>
 <td>吴九</td>
 <td>男</td>
 <td>13300005678</td>
-<td><a href="mailto:&#119;&#x75;&#x6a;&#105;&#x75;&#64;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#109;">&#119;&#x75;&#x6a;&#105;&#x75;&#64;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#109;</a></td>
+<td><a href="mailto:&#119;&#117;&#106;&#105;&#117;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#109;">&#119;&#117;&#106;&#105;&#117;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>008</td>
 <td>郑十</td>
 <td>女</td>
 <td>13200009012</td>
-<td><a href="mailto:&#x7a;&#104;&#101;&#110;&#103;&#115;&#x68;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;">&#x7a;&#104;&#101;&#110;&#103;&#115;&#x68;&#105;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x7a;&#104;&#x65;&#x6e;&#103;&#115;&#x68;&#105;&#64;&#x65;&#120;&#97;&#109;&#x70;&#108;&#x65;&#46;&#99;&#111;&#109;">&#x7a;&#104;&#x65;&#x6e;&#103;&#115;&#x68;&#105;&#64;&#x65;&#120;&#97;&#109;&#x70;&#108;&#x65;&#46;&#99;&#111;&#109;</a></td>
 </tr>
 <tr>
 <td>009</td>
 <td>钱伯</td>
 <td>男</td>
 <td>13100003456</td>
-<td><a href="mailto:&#113;&#105;&#97;&#x6e;&#98;&#111;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;">&#113;&#105;&#97;&#x6e;&#98;&#111;&#64;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#113;&#x69;&#97;&#110;&#x62;&#111;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#113;&#x69;&#97;&#110;&#x62;&#111;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#x6d;</a></td>
 </tr>
 <tr>
 <td>010</td>
 <td>孔仲</td>
 <td>女</td>
 <td>13000007890</td>
-<td><a href="mailto:&#107;&#111;&#110;&#103;&#x7a;&#x68;&#111;&#110;&#103;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;">&#107;&#111;&#110;&#103;&#x7a;&#x68;&#111;&#110;&#103;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#107;&#111;&#110;&#103;&#x7a;&#104;&#111;&#x6e;&#103;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;">&#107;&#111;&#110;&#103;&#x7a;&#104;&#111;&#x6e;&#103;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;</a></td>
 </tr>
 </tbody></table>
 <p>还有表user_account存储用户的账户余额信息如下：</p>
@@ -15991,7 +17815,7 @@
 <td>张三</td>
 <td>男</td>
 <td>13800001234</td>
-<td><a href="mailto:&#x7a;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#x6e;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#99;&#111;&#109;">&#x7a;&#x68;&#97;&#x6e;&#103;&#115;&#97;&#x6e;&#x40;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#99;&#111;&#109;</a></td>
+<td><a href="mailto:&#122;&#x68;&#97;&#x6e;&#103;&#115;&#x61;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;">&#122;&#x68;&#97;&#x6e;&#103;&#115;&#x61;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;</a></td>
 <td>001</td>
 <td>001</td>
 <td>10</td>
@@ -16001,7 +17825,7 @@
 <td>李四</td>
 <td>女</td>
 <td>13900005678</td>
-<td><a href="mailto:&#108;&#x69;&#115;&#105;&#64;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;">&#108;&#x69;&#115;&#105;&#64;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;</a></td>
+<td><a href="mailto:&#x6c;&#x69;&#x73;&#x69;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#x6f;&#109;">&#x6c;&#x69;&#x73;&#x69;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#x6f;&#109;</a></td>
 <td>002</td>
 <td>002</td>
 <td>20</td>
@@ -16343,7 +18167,7 @@
   </entry>
   <entry>
     <title>MySQL零基础教程基础篇</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQL%E7%AF%87.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8BSQL%E7%AF%87.html</url>
     <content><![CDATA[<h1 id="MySQL零基础教程基础篇"><a href="#MySQL零基础教程基础篇" class="headerlink" title="MySQL零基础教程基础篇"></a>MySQL零基础教程基础篇</h1><p>大家好，我是大头，98年，职高毕业，做过上市公司架构师，做过大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
 <p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
 <p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
@@ -16627,13 +18451,13 @@
   </entry>
   <entry>
     <title>MySQL零基础教程基础篇</title>
-    <url>/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html</url>
+    <url>/mysql/MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B%E5%9F%BA%E7%A1%80%E7%AF%87.html</url>
     <content><![CDATA[<h1 id="MySQL零基础教程基础篇"><a href="#MySQL零基础教程基础篇" class="headerlink" title="MySQL零基础教程基础篇"></a>MySQL零基础教程基础篇</h1><p>大家好，我是大头，98年，职高毕业，上市公司架构师，大厂资深开发，管理过10人团队，我是如何做到的呢？</p>
 <p>这离不开持续学习的能力，而其中最重要的当然是数据库技术了！</p>
 <p>对于所有开发来说，都离不开数据库，因为所有的数据都是要存储的。</p>
 <p>关注我一起学习！文末有惊喜哦！</p>
 <p>基础篇的内容大致如下图所示。</p>
-<p><img src="/../images/mysql/mysql1-1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/mysql/mysql1-1.png" alt="概念学习"></p>
 <h2 id="概念学习"><a href="#概念学习" class="headerlink" title="概念学习"></a>概念学习</h2><p>首先，我们应该知道什么是数据库？很多人都会搞混一个概念，那就是数据库和数据库管理系统。</p>
 <p>数据库的英文是<code>DataBase</code>。它的概念是</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">数据库是一个长期存储在计算机内的、有组织的、可共享的数据集合，它具有以下特点</span><br><span class="line">1. 数据的集合性</span><br><span class="line">2. 数据的共享性</span><br><span class="line">3. 数据的冗余度低</span><br><span class="line">4. 数据的独立性</span><br><span class="line">5. 数据的安全性</span><br><span class="line">6. 数据的完整性</span><br><span class="line">7. 数据的可维护性</span><br></pre></td></tr></table></figure>
@@ -16826,7 +18650,7 @@
 </li>
 </ul>
 <p>下图就是一个<code>ER图</code>，<code>实体</code>是<code>管理员用户</code>。<code>属性</code>有头像、密码、登录名、ID、邮箱、手机号。</p>
-<p><img src="/../images/mysql/mysql3-1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/mysql/mysql3-1.png" alt="概念学习"></p>
 <ul>
 <li>关系（Relationship）：<ul>
 <li>关系描述了实体之间的联系。例如，学生和课程之间的关系可以是选修。</li>
@@ -16841,7 +18665,7 @@
 </li>
 </ul>
 <p>下图就是一个ER图，<code>实体</code>是管理员用户和角色两个。<code>关系</code>是<code>拥有</code>，表示管理员用户拥有角色的关系。关系的类型用<code>m和n</code>表示<code>多对多关系</code>。意思是一个管理员用户可以拥有多个角色，一个角色也可以被多个管理员用户拥有。</p>
-<p><img src="/../images/mysql/mysql3-2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/mysql/mysql3-2.png" alt="概念学习"></p>
 <p>画ER图可以使用<a href="https://www.processon.com/i/637308dd762131535d6884f7?full_name=osgpjw20iEaJn-L">processOn</a></p>
 <h3 id="OLTP"><a href="#OLTP" class="headerlink" title="OLTP"></a>OLTP</h3><p>OLTP（Online Transaction Processing，联机事务处理）数据库是一种用于支持日常事务处理和业务操作的数据库系统。它旨在快速处理大量的在线事务，确保数据的完整性和一致性。OLTP数据库广泛应用于各种需要实时数据处理的场景，如银行系统、电子商务平台、企业资源规划（ERP）系统等。</p>
 <p>OLTP数据库</p>
@@ -17093,18 +18917,18 @@
 </ul>
 </li>
 </ul>
-<p><img src="/../images/15445001.png" alt="001"></p>
-<p><img src="/../images/15445002.png" alt="002"></p>
-<p><img src="/../images/15445003.png" alt="003"></p>
+<p><img src="https://thepatterraining.github.io/imagess/15445001.png" alt="001"></p>
+<p><img src="https://thepatterraining.github.io/imagess/15445002.png" alt="002"></p>
+<p><img src="https://thepatterraining.github.io/imagess/15445003.png" alt="003"></p>
 <h4 id="获取每个课程中分数最高的学生信息"><a href="#获取每个课程中分数最高的学生信息" class="headerlink" title="获取每个课程中分数最高的学生信息"></a>获取每个课程中分数最高的学生信息</h4><p>下面的SQL，在postgresql中执行成功，mysql8执行报错。</p>
 <p>首先查询所有课程信息，并按照课程分组，按照分数排序。</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line"><span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line"><span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled</span><br></pre></td></tr></table></figure>
 
-<p><img src="/../images/15445004.png" alt="004"></p>
+<p><img src="https://thepatterraining.github.io/imagess/15445004.png" alt="004"></p>
 <p>接着搜索上表中分数为1，也就是分数最高的学生。也就是每个课分数最高的学生信息。</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span>,</span><br><span class="line">    <span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> cid</span><br><span class="line">    <span class="keyword">ORDER</span> <span class="keyword">BY</span> grade <span class="keyword">ASC</span>)</span><br><span class="line">    <span class="keyword">AS</span> rank <span class="keyword">FROM</span> enrolled) <span class="keyword">AS</span> ranking</span><br><span class="line"><span class="keyword">WHERE</span> ranking.rank <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/../images/15445005.png" alt="005"></p>
+<p><img src="https://thepatterraining.github.io/imagess/15445005.png" alt="005"></p>
 <h4 id="CTE-common-table-expressions"><a href="#CTE-common-table-expressions" class="headerlink" title="CTE(common table expressions)"></a>CTE(common table expressions)</h4><p>在MySQL中，<strong>CTE（Common Table Expressions，公共表表达式）</strong>是一种临时的结果集，可以在查询中被引用。CTE通常用于简化复杂的查询，使查询更易于理解和维护。CTE在MySQL 8.0及更高版本中得到了支持。</p>
 <h5 id="CTE的主要特点"><a href="#CTE的主要特点" class="headerlink" title="CTE的主要特点"></a>CTE的主要特点</h5><p>临时结果集：</p>
 <ul>
@@ -17134,10 +18958,10 @@
 <p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。</p>
 <p>发送“电子书”即可领取价值上千的电子书资源。</p>
 <p>部分电子书如图所示。</p>
-<p><img src="/../images/bottom1.png" alt="概念学习"></p>
-<p><img src="/../images/bottom2.png" alt="概念学习"></p>
-<p><img src="/../images/bottom3.png" alt="概念学习"></p>
-<p><img src="/../images/bottom4.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/bottom1.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/bottom2.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/bottom3.png" alt="概念学习"></p>
+<p><img src="https://thepatterraining.github.io/imagess/bottom4.png" alt="概念学习"></p>
 ]]></content>
       <categories>
         <category>CMU15445</category>

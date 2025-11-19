@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="YwTcBpc08sCpJAE8mKZglCGHjZc1BiK9UUagC8ldlaA">
+  <meta name="msvalidate.01" content="true">
+  <meta name="yandex-verification" content="true">
+  <meta name="baidu-site-verification" content="3PbJKzlOf0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"thepatterraining.github.io","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零基础MySQL教程原理篇之SQL数据存储">
+<meta property="og:url" content="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html">
+<meta property="og:site_name" content="dream">
+<meta property="og:description" content="大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！关注我一起挣大钱！文末有惊喜哦！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445006.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445010.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445007.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445008.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445009.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445011.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445016.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445017.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445018.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445019.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445020.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/15445021.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom1.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom2.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom3.png">
+<meta property="og:image" content="https://thepatterraining.github.io/images/bottom4.png">
+<meta property="article:published_time" content="2025-10-13T02:12:47.000Z">
+<meta property="article:modified_time" content="2025-10-13T11:26:30.503Z">
+<meta property="article:author" content="Thepatter">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据库原理">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thepatterraining.github.io/images/mysql/mysql1-3.png">
+
+<link rel="canonical" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>零基础MySQL教程原理篇之SQL数据存储 | dream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="dream" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸟程序员的成长历程</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://thepatterraining.github.io/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpeg">
+      <meta itemprop="name" content="Thepatter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          零基础MySQL教程原理篇之SQL数据存储
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-10-13 10:12:47 / 修改时间：19:26:30" itemprop="dateCreated datePublished" datetime="2025-10-13T10:12:47+08:00">2025-10-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html" class="post-meta-item leancloud_visitors" data-flag-title="零基础MySQL教程原理篇之SQL数据存储" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！<br>我将持续分享成体系的知识以及我自身的转码经验、面试经验、架构技术分享、AI技术分享等！<br>愿景是带领更多人完成破局、打破信息差！我自身知道走到现在是如何艰难，因此让以后的人少走弯路！<br>无论你是统本CS专业出身、专科出身、还是我和一样职高毕业等。都可以跟着我学习，一起成长！一起涨工资挣钱！<br>关注我一起挣大钱！文末有惊喜哦！</p>
+</blockquote>
+<blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。</p>
+</blockquote>
+<h1 id="MySQL零基础教程"><a href="#MySQL零基础教程" class="headerlink" title="MySQL零基础教程"></a>MySQL零基础教程</h1><p>本教程为零基础教程，零基础小白也可以直接学习。<br>基础篇和应用篇已经更新完成。<br>接下来是原理篇，原理篇的内容大致如下图所示。</p>
+<p><img src="https://thepatterraining.github.io/images/mysql/mysql1-3.png" alt="原理学习"></p>
+<h2 id="零基础MySQL教程原理篇之SQL数据存储"><a href="#零基础MySQL教程原理篇之SQL数据存储" class="headerlink" title="零基础MySQL教程原理篇之SQL数据存储"></a>零基础MySQL教程原理篇之SQL数据存储</h2><p>我们知道数据库只是管理数据的，数据最终存储在磁盘上还是一些文件，那么这些文件是如何存储的呢？文件内容是什么？加载到内存以后，内存布局是什么样的？老说page,page是什么？</p>
+<h3 id="page-页"><a href="#page-页" class="headerlink" title="page(页)"></a>page(页)</h3><p>页的三个概念</p>
+<ol>
+<li>硬件上的页面(通常是4KB)</li>
+<li>操作系统上的页面(4KB,x64 2MB&#x2F;1GB)</li>
+<li>数据库页面(512B-32KB)</li>
+</ol>
+<p>磁盘和内存通信是一页一页的，如果数据都在一页里，后续的访问请求就可以走内存了，要不然还的从磁盘获取。内存中可以获取bit数据。</p>
+<p>这样做的好处就是加快获取速度，对于MySQL中的一张表来说，相邻的10行数据通常都在一页里，因此我们只产生一次IO，就可以获取到10行数据。</p>
+<p>流程：</p>
+<ul>
+<li>查询执行器：向内存中的<code>buffer pool</code>请求查询内容。</li>
+<li>buffer pool: 如果数据所在的页已经在buffer pool中，就直接返回。如果数据所在的页不在buffer pool中，就向磁盘中的<code>database file</code>请求。</li>
+<li>database file: 有页目录，还有具体的页，数据存在页中，查询页目录找到对应的页返回给<code>buffer pool</code>。</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445006.png" alt="数据存储"></p>
+<p>上面的步骤操作系统本身就可以实现，比如使用<code>mmap</code>，但是操作系统是统一的动作，遇到一些问题不知道该如何处理，而<code>DBMS</code>则可以根据不同的情况做不同的处理，进行优化。像主流的<code>mysql</code>,<code>SqlServer</code>,<code>Oracle</code>都没有用<code>mmap</code>。<code>mongoDB</code>早期使用的<code>mmap</code>，后面也是用<code>WiredTiger</code>替换掉了<code>mmap</code>。</p>
+<p>MySQL自己实现的话，主要关心的两个问题:</p>
+<ol>
+<li>如何表示磁盘上文件的数据</li>
+<li>如何管理内存以及在硬盘间移动数据</li>
+</ol>
+<h4 id="如何表示磁盘上文件的数据"><a href="#如何表示磁盘上文件的数据" class="headerlink" title="如何表示磁盘上文件的数据"></a>如何表示磁盘上文件的数据</h4><p>数据库的数据最终以文件的形式放在磁盘中。通过文件读写将数据读写到文件中。文件有特定的格式，具体的内容有数据库进行解析然后展示在数据库中。这就是<code>storage manager</code> or <code>storage engine</code>。或者换一个名字，大家就知道了，就是<code>存储引擎</code>。例如<code>InnoDB</code>或者<code>Myisam</code>。</p>
+<p><code>storage manager</code>负责文件的读写工作。所有的文件（不管是一个或者多个）以 <code>page</code> 的形式存储，管理多个 <code>page</code> 组成的集合。</p>
+<p>一个<code>page</code>就是一个固定大小的数据块。<code>page</code> 可以保存任何东西，<code>tupe（表中的一行数据）</code>, <code>metadata（表的元数据）</code>, <code>indexes（索引）</code>, <code>log</code>等等。每个<code>page</code>有唯一的ID,是<code>page ID</code>。</p>
+<p>有些<code>page</code>要求是独立的，自包含的(self-contained)。比如<code>mysql</code>的<code>InnoDB</code>。因为这样的话一个表的元数据和本身的数据内容在一起，如果发生问题的话，可以找回元数据和数据。如果元数据和数据在不同的<code>page</code>中，如果发生问题导致元数据的<code>page</code>丢失，那么数据则恢复不了了。</p>
+<p><code>indirection layer</code>记录page ID的相对位置，方便找到对应的偏移量。这样page目录就能找到对应的page。 </p>
+<p>不同的DBMS对于文件在磁盘上的存储方式不一样，有下面几种</p>
+<ul>
+<li>堆存储</li>
+<li>树存储</li>
+<li>有序文件存储（ISAM）</li>
+<li>hashing文件存储</li>
+</ul>
+<p>我们这里主要介绍<code>堆存储</code></p>
+<p>堆存储</p>
+<ul>
+<li>无序的，保存的顺序和存储的顺序无关。</li>
+<li>需要读写page</li>
+<li>遍历所有的page</li>
+<li>需要元数据记录哪些是空闲的page,哪些是已经使用的page。</li>
+<li>使用 <code>page directory</code> 方式来记录文件位置。</li>
+</ul>
+<p>page directory</p>
+<ul>
+<li>存储page ID和所在位置的关系</li>
+<li>存储page的空闲空间信息</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445010.png" alt="堆存储"></p>
+<p>page header(页的元数据)</p>
+<ul>
+<li>page 大小</li>
+<li>checksum 校验和</li>
+<li>DBMS版本信息</li>
+<li>事务可见性</li>
+<li>压缩信息</li>
+</ul>
+<h4 id="页布局"><a href="#页布局" class="headerlink" title="页布局"></a>页布局</h4><h5 id="面向元组的存储"><a href="#面向元组的存储" class="headerlink" title="面向元组的存储"></a>面向元组的存储</h5><p>一般想法，直接存储，并在后面追加，比如存储张三的用户信息，然后紧跟着后面存储李四的用户信息，这就像我们平时写<code>txt</code>文件一样，不断追加。但是对于可变数据长度很难管理。</p>
+<ul>
+<li>记录page数，也就是page内部可插入的偏移量</li>
+<li>一个一个tupe按照顺序存储</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445007.png" alt="页布局"></p>
+<p>所以，page内部，通常不使用上面那种，而使用的是<code>slotted pages(插槽布局)</code></p>
+<ul>
+<li>slotted pages<ul>
+<li>slot array 存储插槽信息的偏移量，通过他找到对应的tuple</li>
+<li>支持可变长度的<code>tuple</code></li>
+<li>但是会产生一些碎片空间，因为太小，tuple放不下。</li>
+<li>压缩可以去除碎片空间，但是压缩的时候这个page就不能读写了。</li>
+</ul>
+</li>
+</ul>
+<p>slotted pages的样式如下，通过这样的改造，我们就可以支持可变长度的管理了。</p>
+<p><img src="https://thepatterraining.github.io/images/15445008.png" alt="slotted pages"></p>
+<p><code>record ID</code>表示一个tuple的物理位置,不同的DBMS有不同的名称，来表示数据的唯一位置，比如<code>postgresql</code>的<code>ctid</code>,<code>oracle</code>的<code>rowid</code>。<code>ctid</code>由<code>page id</code>和<code>slot number</code>组成。</p>
+<p><img src="https://thepatterraining.github.io/images/15445009.png" alt="009"></p>
+<p>这里要注意一点，<code>record ID</code>并不是我们表里的主键ID，主键ID代表一行数据的唯一标识，而<code>record ID</code>表示的是这一行数据存储的物理位置，这是两个东西。在MySQL中，<code>record ID</code>是不可见的。</p>
+<p>接下来，看一下<code>增删改查</code>的操作。</p>
+<p>插入新的tuple的时候，也就是执行insert语句的时候。</p>
+<ol>
+<li>检查<code>page direactory</code>,找到一个page里面有空的可用的<code>slot(插槽位置)</code></li>
+<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存，这需要一次读IO</li>
+<li>在page里面检查slot array，找到一个空的空间，将tuple插入</li>
+</ol>
+<p>更新tuple的时候</p>
+<ol>
+<li>检查page direactory,找到tuple对应的page</li>
+<li>如果该page不在内存,就从磁盘上获取它，将它加载到内存</li>
+<li>在page里面通过<code>slot array</code>获取tuple的偏移量</li>
+<li>如果数据空间合适，那么直接覆盖该tuple，否则，将原来的tuple标记为<code>已删除</code>，并将新tuple插入其他page。</li>
+</ol>
+<p>因此更新的时候有一些问题</p>
+<ul>
+<li>page会产生碎片空间，如果有一个空闲空间是1KB的，但是每次插入的数据都放不下，那么这1KB空间就一直都没办法使用了。</li>
+<li>更新的时候需要从磁盘获取整个page,也就是说，哪怕你就更新一行数据，他也会读取一页数据出来。</li>
+<li>更新多条数据的时候，可能多个tuple在多个page中，产生随机IO，如果你更新的数据不在一起，就会产生多次IO加载多个page。</li>
+</ul>
+<p>所以有些DBMS不能更新数据，只能增加数据，比如<code>HDFS</code>等</p>
+<p>MySQL使用的就是<code>面向元组的存储</code>，除了这个，其实还有<code>日志结构化存储</code>和<code>面向索引的存储</code>。</p>
+<h4 id="行布局"><a href="#行布局" class="headerlink" title="行布局"></a>行布局</h4><p><code>tuple</code>就是一行数据，也就是一堆<code>bit</code>，<code>DBMS</code>解释他们的作用。里面包含</p>
+<ul>
+<li>header</li>
+<li>data</li>
+</ul>
+<p>首先看看行数据是怎么表示的</p>
+<h5 id="数据布局"><a href="#数据布局" class="headerlink" title="数据布局"></a>数据布局</h5><p>假设我们有一个数据表<code>foo</code>，有id和value字段如下：</p>
+<ul>
+<li>id int类型 primary key</li>
+<li>value bigint类型</li>
+</ul>
+<p><img src="https://thepatterraining.github.io/images/15445011.png" alt="数据布局"></p>
+<p>我们每一行的数据和上面的图一样，最前面是这一行的<code>header</code>，然后就是一些字段了，比如id、value，然后后面在跟着下一行数据的<code>header</code>，以此类推。</p>
+<h5 id="数据对齐"><a href="#数据对齐" class="headerlink" title="数据对齐"></a>数据对齐</h5><p>现代CPU是64位对齐，创建表以后，<code>DBMS</code>会自动的将数据进行对齐存储，不过，如果在创建表的时候考虑对齐，可以优化速度和存储空间。</p>
+<p><code>数据对齐</code>是可以直接对MySQL起到优化作用的，尤其是数据量大的时候，但是很多人都忽视了这一点，比如同样一行数据，如果有4个字段，分别是32位的id，64位的cdate，16位的color和32位的zipcode</p>
+<p>那么占用空间如下：</p>
+<ul>
+<li>id: 32位，但是会占用64位，因为下一个是64位，所以会插入一个32位的空白进行64位对齐</li>
+<li>cdate: 64位</li>
+<li>zipcode：32位，但是会占用64位因为要64位对齐</li>
+</ul>
+<p>上面的实际占用空间达到了 64 + 64 + 64 &#x3D; 192位空间</p>
+<p>而如果我们稍微改变一下顺序呢？</p>
+<ul>
+<li>id: 32位</li>
+<li>zipcode：32位</li>
+<li>cdate：64位</li>
+</ul>
+<p>这样以来，我们就只占用了 64 + 64 &#x3D; 128位空间，节省了64位空间，在数据量大的情况下，就意味着一页可以放更多的行数据，因此查询的IO次数就会减少。</p>
+<h5 id="数据表示"><a href="#数据表示" class="headerlink" title="数据表示"></a>数据表示</h5><p>可变长度的数据<code>varchar</code>,<code>varbinary</code>,<code>text</code>,<code>blob</code>,他们的长度存在header里面。</p>
+<p>日期时间类型存储的是时间戳。</p>
+<p>float&#x2F;real&#x2F;double: 是浮点数，cpu支持浮点数运算，优点是速度快，但是会精度缺失<br>decimal: 是定点数，运算速度慢，但是精度高。</p>
+<p>对于一些很大的数据，比如text,blob，应该避免使用这种类型，有可能一行就占用了一半的page空间，因此，不会在page里直接存储这些数据，而是采用了<code>overflow page</code>的方式。</p>
+<ul>
+<li>tuple中存储另外一个page页的指针，将具体数据存放到另外一个page页中。</li>
+<li>postgresql中叫<code>toast</code>，如果数据大于2KB，就会放到toast中，tuple中只存储指针。</li>
+<li>mysql中叫<code>overflow page</code>，如果数据大于1&#x2F;2的page大小，就会放进去，tuple中只存储指针。</li>
+</ul>
+<p>我们应该避免使用这些类型，因为维护<code>overflow page</code>很麻烦。</p>
+<p>外部存储</p>
+<ul>
+<li>tuple中存储指向外部文件的指针或者文件地址。</li>
+</ul>
+<p>NULL存储</p>
+<ul>
+<li>行数据库通常是在Header里面增加bit map来判断是否是null</li>
+<li>列数据库通常使用占位符来标识NULL</li>
+<li>在每个属性前面增加bit来标识是否是NULL，这么做会破坏对齐，或增加存储空间，MySQL曾使用这个方法，后来抛弃了这个方法。</li>
+<li>NULL &#x3D;&#x3D; NULL 是 NULL, NULL is NULL 是 true</li>
+</ul>
+<blockquote>
+<p>所以大家知道为什么 NULL !&#x3D; NULL 了吗？</p>
+</blockquote>
+<p><code>catalogs</code> 用来存储数据库元信息，大多数数据库将这些信息存到一张表里面,下面的都是元数据。</p>
+<ul>
+<li>表，字段，索引，视图等</li>
+<li>用户，权限，安全等</li>
+<li>内部数据统计等</li>
+<li><code>infomation schemal api</code> 通过这个来获取catalogs信息<ul>
+<li>mysql<ul>
+<li>show tables 获取所有的表</li>
+<li>describe table_name 获取表的信息</li>
+</ul>
+</li>
+<li>postgresql<ul>
+<li>\d or \d+ 获取所有的表</li>
+<li>\d table_name 获取表信息</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="数据库压缩"><a href="#数据库压缩" class="headerlink" title="数据库压缩"></a>数据库压缩</h3><p>目标1：必须产生固定长度的值<br>目标2：在查询期间尽可能推迟解压缩，你不希望先解压缩在查询，这样很占空间且影响速度<br>目标3：必须是无损方案</p>
+<p>压缩粒度</p>
+<ul>
+<li>Block-level: 压缩同一张表的tuple</li>
+<li>Tuple-level: 压缩整个tuple的内容（仅限行存储）</li>
+<li>Attribute-level：压缩同一个tuple的多个属性或单个属性</li>
+<li>Column-level：压缩存储于多个tuple中的一个或多个属性的多个值（仅限列存储）</li>
+</ul>
+<h4 id="mysql-innodb-压缩"><a href="#mysql-innodb-压缩" class="headerlink" title="mysql innodb 压缩"></a>mysql innodb 压缩</h4><p>innodb 在写入的时候可以不解压，但是读取的时候会先在buffer pool中解压在读取。因此Mysql innodb的压缩的好处是提升空间利用率，减少了磁盘IO,缺点是读取的时候需要解压，因此增加了这部分的时间和CPU功耗以及解压以后会占用更多的内存空间。<br>innodb 默认page 是 16KB,可以压缩到1&#x2F;2&#x2F;4&#x2F;8KB。</p>
+<p><img src="https://thepatterraining.github.io/images/15445016.png" alt="mysql innodb 压缩"></p>
+<h4 id="Column-level-压缩算法"><a href="#Column-level-压缩算法" class="headerlink" title="Column-level 压缩算法"></a>Column-level 压缩算法</h4><h5 id="run-length-encoding"><a href="#run-length-encoding" class="headerlink" title="run length encoding"></a>run length encoding</h5><p>将单个column中的相同值压缩成三元组，需要对列进行智能排序，以最大限度地提高压缩机会。</p>
+<ul>
+<li>属性的值</li>
+<li>column segment的起始位置</li>
+<li>值的数量</li>
+</ul>
+<p>比如下面的数据，将压缩成右边的数据，(Y,0,3)，代表值是Y，起始位置0,值的数量有3个。后面的压缩数据是一样的。这种压缩方法可以快速计算count的数量等。</p>
+<p>如果你的值类型很少，且有序，那么将大大减少空间占用。</p>
+<p><img src="https://thepatterraining.github.io/images/15445017.png" alt="run length encoding"></p>
+<h5 id="bit-packing"><a href="#bit-packing" class="headerlink" title="bit packing"></a>bit packing</h5><p>如果字段里面的值都比较小，但是column type很大，可以忽略掉不需要的bit，比如int是32 bit，但是里面的值都很小，用不了这么多，就可以忽略他们。</p>
+<p><img src="https://thepatterraining.github.io/images/15445018.png" alt="bit packing"></p>
+<h5 id="bit-map-encoding"><a href="#bit-map-encoding" class="headerlink" title="bit map encoding"></a>bit map encoding</h5><p>使用bit map来标识数据值，仅仅适用于值的类型比较少的。</p>
+<p><img src="https://thepatterraining.github.io/images/15445019.png" alt="bit map encoding"></p>
+<h5 id="delta-encoding"><a href="#delta-encoding" class="headerlink" title="delta encoding"></a>delta encoding</h5><p>找到一个基本的数据，以它为基础，进行压缩，+1，-1这种。再将其按照<code>run length encoding</code>的方式压缩，可以再次节省空间。</p>
+<p><img src="https://thepatterraining.github.io/images/15445020.png" alt="delta encoding"></p>
+<h5 id="DICTIONARY-COMPRESSION"><a href="#DICTIONARY-COMPRESSION" class="headerlink" title="DICTIONARY COMPRESSION"></a>DICTIONARY COMPRESSION</h5><p>按照字典将数据进行映射，并存储，这样可以节省空间，如果在字典映射的时候还能先排序，那么还可以完成将<code>where like &#39;and%&#39;</code>转成<code>where between 10 and 20</code>。</p>
+<p><img src="https://thepatterraining.github.io/images/15445021.png" alt="DICTIONARY COMPRESSION"></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本次讲解了数据库是如何存储数据的，数据布局是什么样子的，更是讲解了一些优化方法，比如<code>数据压缩</code>、<code>数据对齐</code>。如果你不理解原理的话，面试的时候你就只能背八股答出来网上千篇一律的回答了。</p>
+<h2 id="文末福利"><a href="#文末福利" class="headerlink" title="文末福利"></a>文末福利</h2><blockquote>
+<p>关注我发送“MySQL知识图谱”领取完整的MySQL学习路线。<br>发送“电子书”即可领取价值上千的电子书资源。<br>发送“大厂内推”即可获取京东、美团等大厂内推信息，祝你获得高薪职位。<br>发送“AI”即可领取AI学习资料。<br>部分电子书如图所示。</p>
+</blockquote>
+<p><img src="https://thepatterraining.github.io/images/bottom1.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom2.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom3.png"></p>
+<p><img src="https://thepatterraining.github.io/images/bottom4.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86/" rel="tag"># 数据库原理</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/mysql/%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8B%E4%BC%98%E5%8C%96%E5%99%A8%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.html" rel="prev" title="零基础MySQL教程原理篇之优化器原理解析">
+      <i class="fa fa-chevron-left"></i> 零基础MySQL教程原理篇之优化器原理解析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/AI/%E4%BB%80%E4%B9%88%EF%BC%8C%E4%BD%A0%E8%AF%B4%E5%BE%AE%E7%A7%AF%E5%88%86%E4%B9%8B%E7%B1%BB%E7%9A%84%E5%A4%AA%E9%9A%BE%EF%BC%9F%E9%82%A3%E6%98%AF%E4%BD%A0%E4%B8%8D%E4%BC%9A%E7%94%A8chatGPT%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%BC%8F%EF%BC%81.html" rel="next" title="什么，你说微积分之类的太难？那是你不会用chatGPT学习模式！">
+      什么，你说微积分之类的太难？那是你不会用chatGPT学习模式！ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL%E9%9B%B6%E5%9F%BA%E7%A1%80%E6%95%99%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">MySQL零基础教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%9F%BA%E7%A1%80MySQL%E6%95%99%E7%A8%8B%E5%8E%9F%E7%90%86%E7%AF%87%E4%B9%8BSQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="nav-number">1.1.</span> <span class="nav-text">零基础MySQL教程原理篇之SQL数据存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#page-%E9%A1%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">page(页)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E7%A3%81%E7%9B%98%E4%B8%8A%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">如何表示磁盘上文件的数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E5%B8%83%E5%B1%80"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">页布局</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%85%83%E7%BB%84%E7%9A%84%E5%AD%98%E5%82%A8"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">面向元组的存储</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E5%B8%83%E5%B1%80"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">行布局</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">1.1.1.3.1.</span> <span class="nav-text">数据布局</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AF%B9%E9%BD%90"><span class="nav-number">1.1.1.3.2.</span> <span class="nav-text">数据对齐</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.1.1.3.3.</span> <span class="nav-text">数据表示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.2.</span> <span class="nav-text">数据库压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql-innodb-%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">mysql innodb 压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Column-level-%E5%8E%8B%E7%BC%A9%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">Column-level 压缩算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#run-length-encoding"><span class="nav-number">1.1.2.2.1.</span> <span class="nav-text">run length encoding</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#bit-packing"><span class="nav-number">1.1.2.2.2.</span> <span class="nav-text">bit packing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#bit-map-encoding"><span class="nav-number">1.1.2.2.3.</span> <span class="nav-text">bit map encoding</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#delta-encoding"><span class="nav-number">1.1.2.2.4.</span> <span class="nav-text">delta encoding</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DICTIONARY-COMPRESSION"><span class="nav-number">1.1.2.2.5.</span> <span class="nav-text">DICTIONARY COMPRESSION</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AB%E7%A6%8F%E5%88%A9"><span class="nav-number">1.3.</span> <span class="nav-text">文末福利</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Thepatter"
+      src="/images/header.jpeg">
+  <p class="site-author-name" itemprop="name">Thepatter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">227</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Thepatterraining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ztzhoutao041@163.com" title="E-Mail → mailto:ztzhoutao041@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://blog.csdn.net/Thepatterraining" title="CSDN → http:&#x2F;&#x2F;blog.csdn.net&#x2F;Thepatterraining" rel="noopener" target="_blank"><i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Thepatter</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz","app_key":"hXeefwCw8aDKTJ1Xqye7fLYb","security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'RWllimOI5okO7WFTUmJ4EeeD-gzGzoHsz',
+      appKey     : 'hXeefwCw8aDKTJ1Xqye7fLYb',
+      placeholder: "给我的文章加点评论吧~",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
