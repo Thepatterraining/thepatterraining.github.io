@@ -1,9 +1,9 @@
 ---
-title: 分布式容错论文VMWareFT论文详解
-date: 2025-11-27 10:12:47
-tags: ['分布式', '容错', 'VMware', '虚拟化', '系统设计', 'MIT6.824', '论文解析']
+title: 分布式文件领域经典论文GFS详解
+date: 2025-11-28 10:12:47
+tags: ['分布式', '容错', 'GFS', 'MIT6.824', '论文解析']
 category: 分布式
-article: 分布式容错论文VMWareFT论文详解
+article: 分布式文件领域经典论文GFS详解
 ---
 
 > 大家好，我是大头，职高毕业，现在大厂资深开发，前上市公司架构师，管理过10人团队！
@@ -520,10 +520,10 @@ flushIntervalMs = batchSizeBytes >= MAX_CHUNK_SIZE_BYTES ? IMMEDIATE_FLUSH_MS : 
 > 发送“AI”即可领取AI学习资料。
 > 部分电子书如图所示。
 
-![概念学习](https://thepatterraining.github.io/images/bottom1.png)
+![](https://thepatterraining.github.io/images/bottom1.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom2.png)
+![](https://thepatterraining.github.io/images/bottom2.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom3.png)
+![](https://thepatterraining.github.io/images/bottom3.png)
 
-![概念学习](https://thepatterraining.github.io/images/bottom4.png)
+![](https://thepatterraining.github.io/images/bottom4.png)
